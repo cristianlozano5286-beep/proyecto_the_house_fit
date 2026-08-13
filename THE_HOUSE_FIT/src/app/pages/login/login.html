@@ -1,0 +1,30 @@
+
+<div class="login-container">
+    <!--Tarjeta Principal-->
+    <div class="Login-card">
+        <!--Logo de la app-->
+        <div class="Logo-section">
+            <h1>🏋️THE HOUSE FIT</h1>
+            <p>Iniciar Sesión</p>
+        </div>
+
+        @if (mensaje) {
+            <small class="error" style="display:block;margin-bottom:12px;">{{ mensaje }}</small>
+        }
+
+        <div class="form-group">
+            <label>Correo Electrónico</label>
+            <input type="email" [(ngModel)]="email" placeholder="Ingrese su correo electrónico">
+        </div>
+        <div class="form-group">
+            <label>Contraseña</label>
+            <input type="password" [(ngModel)]="password" placeholder="Ingrese su contraseña">
+        </div>
+        <a routerLink="/recuperar-password" class="olvide">¿Olvidaste tu contraseña?</a>
+        <button (click)="login()">Iniciar Sesión</button>
+        <button type="button" class="register-button" (click)="goToRegister()">
+            Registrarme
+        </button>
+        <a routerLink="/" class="volver-inicio">← Volver al sitio</a>
+    </div>
+</div>
