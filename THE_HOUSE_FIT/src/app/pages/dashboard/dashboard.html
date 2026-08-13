@@ -1,0 +1,104 @@
+<div class="dashboard-container">
+    <!--Contenido Principal de dashboard-->
+    <main class="content">
+        <div class="header">
+            <div>
+                <h1>Dashboard</h1>
+                <p>Panel principal de The House Fit</p>
+            </div>
+
+            <div class="user-info">
+                <strong>{{usuario}}</strong>
+                <span>{{rol}}</span>
+            </div>
+        </div>
+        <!--Tarjetas de informacion-->
+        <div class="cards">
+            <div class="card">
+                <h3> 🏋️ Gimnasios </h3>
+                <p> {{Estadisticas.Gimnasios}} </p>
+            </div>
+            <div class="card">
+                <h3> 🧑‍🏫 Instructores </h3>
+                <p> {{Estadisticas.Instructores}} </p>
+            </div>
+            <div class="card">
+                <h3> 🛒 Productos </h3>
+                <p> {{Estadisticas.Productos}} </p>
+            </div>
+            <div class="card">
+                <h3> 🙋 Usuarios </h3>
+                <p> {{Estadisticas.Usuarios}} </p>
+            </div>
+        </div>
+        <!--Grafica-->
+        <section class="wordspace">
+            <h2>Actividad Mensual</h2>
+            <p>
+                Representacion grafica utilizando unicamente 
+                HTML, CSS y Angular
+            </p>
+            <!--Graficar La grafica-->
+            <div class="chart">
+                @for(item of Grafica; track item.mes){
+                    <div class="bar-container">
+                        <div class="bar" [style.height.%]="item.valor">
+                        </div>
+                        <span>{{item.mes}}</span>
+                    </div>
+                }
+            </div>
+        </section>
+        <!--Tabla-->
+        <section class="wordspaces">
+
+            <h2>Ultimos Usuarios Registrados</h2>
+            <p>Total Registrados: 
+                <strong>{{obtenerTotalUsuarios()}}</strong>
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Rol</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (usuario of usuarios; track usuario.id){
+                        <tr>
+                            <td>
+                                {{usuario.id}}
+                            </td>
+                            <td>
+                                {{usuario.nombre}}
+                            </td>
+                            <td>
+                                {{usuario.correo}}
+                            </td>
+                            <td>
+                                {{usuario.rol}}
+                            </td>
+                            <td>
+                                {{usuario.estado}}
+                            </td>
+                        </tr>
+                    } 
+                </tbody>
+            </table>
+        </section>
+        <section class="workspace">
+            <h2> Área de trabajo </h2>
+            <p> Desde este panel podrás administrar gimnasios, instructores, productos,
+                rutinas, noticias, pagos y roles de la plataforma The House Fit.</p>
+            <button 
+                type="button" 
+                (click)="mostrarMensaje()"
+            >
+                Mostrar mensaje
+            </button>
+        </section>
+    </main>
+</div>
