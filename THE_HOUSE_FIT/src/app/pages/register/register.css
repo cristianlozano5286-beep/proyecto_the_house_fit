@@ -1,0 +1,122 @@
+/*Reset General*/
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Contenedor Principal*/
+.register-container{
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+}
+
+/*Estilo tarjeta*/
+.register-card{
+    width: 500px;
+    background-color: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px rgba(0, 0, 0, .3);
+}
+
+/*Encabezado*/
+.header{
+    text-align: center;
+    margin-bottom: 30px;
+}
+.header h1{
+    color: #0f172a;
+    margin-bottom: 10px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+}
+
+/*Estilo de formulario*/
+.form-group{
+    margin-bottom: 20px;
+}
+.form-group label{
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+.form-group input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    transition: .3s;
+}
+.form-group input:focus{
+    outline: none;
+    border-color: #ff4500;
+    box-shadow: 0 0 8px rgba(37, 99, 235, .25);
+}
+
+/*Estilo de botón*/
+.button{
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    background: #ff4500;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: .3s;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+button:hover:not(:disabled){
+    background-color: #cc3700;
+    transform: translateY(-2px);
+}
+
+button:disabled{
+    background: #94a3b8;
+    cursor: not-allowed;
+}
+
+.error{
+    display: block;
+    margin-top: 6px;
+    color: #dc2626;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+input.ng-invalid.ng-touched{
+    border: 2px solid #dc2626;
+}
+
+input.ng-valid.ng-touched{
+    border: 2px solid #16a34a;
+}
+.register-container{
+    background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+}
+button.button{
+    background:#ff4500;
+}
+button.button:hover:not(:disabled){
+    background:#cc3700;
+}
+.volver-inicio{
+    display:block;
+    margin-top:16px;
+    font-size:13px;
+    color:#ff4500;
+    font-weight:600;
+    text-align:center;
+}
+.alert.info{
+    background:#dbeafe; color:#1e3a8a; border:1px solid #93c5fd;
+    padding:10px; border-radius:8px; font-size:13px; margin-bottom:14px;
+}

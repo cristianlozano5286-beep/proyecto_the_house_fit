@@ -1,44 +1,38 @@
-import { Injectable, inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-
-export interface UsuarioAuth {
-  nombre: string;
-  correo: string;
-  rol: string;
-}
+import { UsuarioAuth } from '../models/usuario-auth';
+import { Injectable } from '@angular/core';
 
 export interface UsuarioSistema extends UsuarioAuth {
   password: string;
   correoVerificado: boolean;
 }
 
-const STORAGE_USUARIOS = 'fitzone_usuariosSistema';
+const STORAGE_USUARIOS = 'thehousefit_usuariosSistema';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private platformId = inject(PLATFORM_ID); // Identificador de plataforma (Servidor vs Navegador)
   private readonly STORAGE_KEY = 'usuarioSesion';
 
+  // Usuarios semilla del sistema (roles del Módulo 7: Administrador, Entrenador, Usuario)
   private usuariosIniciales: UsuarioSistema[] = [
     {
-      nombre: 'Administrador FitZone',
-      correo: '@adminfitzone.com',
+      nombre: 'Administrador The House Fit',
+      correo: 'admin@thehousefit.com',
       password: '123456',
       rol: 'Administrador',
       correoVerificado: true,
     },
     {
       nombre: 'Marlon Monsalve',
-      correo: 'entrenador@fitzone.com',
+      correo: 'entrenador@thehousefit.com',
       password: '123456',
       rol: 'Entrenador',
       correoVerificado: true,
     },
     {
       nombre: 'Andrés Torres',
-      correo: 'usuario@fitzone.com',
+      correo: 'usuario@thehousefit.com',
       password: '123456',
       rol: 'Usuario',
       correoVerificado: true,
@@ -46,20 +40,15 @@ export class AuthService {
   ];
 
   private usuariosSistema: UsuarioSistema[] = [];
+
+  // Código de verificación / recuperación simulado en memoria (HU04, HU05, HU07, HU08)
   private codigoTemporal: { correo: string; codigo: string } | null = null;
 
   constructor() {
     this.cargarUsuarios();
   }
 
-  // Comprueba de forma segura si estamos ejecutando en el navegador
-  private esNavegador(): boolean {
-    return isPlatformBrowser(this.platformId);
-  }
-
   private cargarUsuarios(): void {
-    if (!this.esNavegador()) return; // Evita que se ejecute en el servidor Node.js
-
     const datos = localStorage.getItem(STORAGE_USUARIOS);
     if (datos) {
       this.usuariosSistema = JSON.parse(datos);
@@ -70,14 +59,16 @@ export class AuthService {
   }
 
   private guardarUsuarios(): void {
-    if (!this.esNavegador()) return;
     localStorage.setItem(STORAGE_USUARIOS, JSON.stringify(this.usuariosSistema));
   }
 
-  // ------------------- LOGIN -------------------
+  // ------------------- LOGIN (HU09, HU10, HU11) -------------------
   inciarSesion(correo: string, password: string): boolean {
     const usuario = this.usuariosSistema.find((u) => u.correo === correo);
-    if (!usuario || usuario.password !== password) {
+    if (!usuario) {
+      return false;
+    }
+    if (usuario.password !== password) {
       return false;
     }
 
@@ -87,29 +78,26 @@ export class AuthService {
       rol: usuario.rol,
     };
 
-    if (this.esNavegador()) {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(usuarioAuth));
-      localStorage.setItem('usuarioLogueado', 'true');
-    }
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(usuarioAuth));
+    localStorage.setItem('usuarioLogueado', 'true');
     return true;
   }
 
   cerrarSesion(): void {
-    if (this.esNavegador()) {
-      localStorage.removeItem(this.STORAGE_KEY);
-      localStorage.removeItem('usuarioLogueado');
-    }
+    localStorage.removeItem(this.STORAGE_KEY);
+    localStorage.removeItem('usuarioLogueado');
   }
 
   estaAutenticado(): boolean {
-    if (!this.esNavegador()) return false;
     return localStorage.getItem(this.STORAGE_KEY) != null;
   }
 
   obtenerUsuario(): UsuarioAuth | null {
-    if (!this.esNavegador()) return null;
     const usuario = localStorage.getItem(this.STORAGE_KEY);
-    return usuario ? JSON.parse(usuario) : null;
+    if (!usuario) {
+      return null;
+    }
+    return JSON.parse(usuario);
   }
 
   obtenerRol(): string {
@@ -120,7 +108,7 @@ export class AuthService {
     return this.obtenerUsuario()?.nombre ?? '';
   }
 
-  // ------------------- REGISTRO -------------------
+  // ------------------- REGISTRO (HU01, HU02, HU03) -------------------
   correoExiste(correo: string): boolean {
     return this.usuariosSistema.some((u) => u.correo.toLowerCase() === correo.toLowerCase());
   }
@@ -137,10 +125,11 @@ export class AuthService {
     this.guardarUsuarios();
   }
 
-  // ------------------- VERIFICACIÓN DE CORREO -------------------
+  // ------------------- VERIFICACIÓN DE CORREO (HU04, HU05) -------------------
   enviarCodigoVerificacion(correo: string): string {
     const codigo = Math.floor(100000 + Math.random() * 900000).toString();
     this.codigoTemporal = { correo, codigo };
+    // Simulación de envío de correo: en un entorno real esto llamaría a un servicio de backend/SMTP.
     return codigo;
   }
 
@@ -158,7 +147,7 @@ export class AuthService {
     return valido;
   }
 
-  // ------------------- RECUPERAR CONTRASEÑA -------------------
+  // ------------------- RECUPERAR CONTRASEÑA (HU06, HU07, HU08) -------------------
   solicitarRecuperacion(correo: string): boolean {
     if (!this.correoExiste(correo)) return false;
     this.enviarCodigoVerificacion(correo);
@@ -181,7 +170,7 @@ export class AuthService {
     return this.codigoTemporal?.codigo ?? null;
   }
 
-  // ------------------- GESTIÓN DE ROLES -------------------
+  // ------------------- GESTIÓN DE ROLES (HU44, HU45, HU46, HU47) -------------------
   listarUsuariosSistema(): UsuarioSistema[] {
     return this.usuariosSistema;
   }
@@ -191,12 +180,11 @@ export class AuthService {
     if (usuario) {
       usuario.rol = nuevoRol;
       this.guardarUsuarios();
-
+      // Si el usuario con sesión activa es el editado, se refleja el cambio
       const sesion = this.obtenerUsuario();
-      if (sesion && sesion.correo === correo && this.esNavegador()) {
+      if (sesion && sesion.correo === correo) {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify({ ...sesion, rol: nuevoRol }));
       }
     }
->> release
   }
 }
