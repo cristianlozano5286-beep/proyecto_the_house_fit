@@ -1,3 +1,28 @@
+<<<<<<< HEAD
+<section class="auth-card">
+  <div class="auth-header">
+    <span class="auth-badge">Bienvenido</span>
+    <h2>Iniciar sesión</h2>
+  </div>
+
+  <form (ngSubmit)="login()">
+    <label>
+      Correo
+      <input type="email" [(ngModel)]="email" name="email" required />
+    </label>
+
+    <label>
+      Contraseña
+      <input type="password" [(ngModel)]="password" name="password" required />
+    </label>
+
+    <button type="submit">Entrar</button>
+  </form>
+
+  <p *ngIf="mensaje" class="error-msg">{{ mensaje }}</p>
+  <a routerLink="/auth/register">Crear cuenta</a>
+</section>
+=======
 
 <div class="login-container">
     <!--Tarjeta Principal-->
@@ -28,3 +53,4 @@
         <a routerLink="/" class="volver-inicio">← Volver al sitio</a>
     </div>
 </div>
+>>>>>>> 6e4c6a911139f7607dc2ce788dc20365171388cb
