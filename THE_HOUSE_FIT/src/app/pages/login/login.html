@@ -1,3 +1,26 @@
+<section class="auth-card">
+  <div class="auth-header">
+    <span class="auth-badge">Bienvenido</span>
+    <h2>Iniciar sesión</h2>
+  </div>
+
+  <form (ngSubmit)="login()">
+    <label>
+      Correo
+      <input type="email" [(ngModel)]="email" name="email" required />
+    </label>
+
+    <label>
+      Contraseña
+      <input type="password" [(ngModel)]="password" name="password" required />
+    </label>
+
+    <button type="submit">Entrar</button>
+  </form>
+
+  <p *ngIf="mensaje" class="error-msg">{{ mensaje }}</p>
+  <a routerLink="/auth/register">Crear cuenta</a>
+</section>
 <div class="login-container">
   <!-- Carrusel de imágenes de fondo -->
   <div class="bg-slider">
@@ -63,3 +86,4 @@
     </form>
   </div>
 </div>
+
