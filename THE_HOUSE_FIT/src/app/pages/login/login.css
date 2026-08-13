@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .auth-card {
   width: min(100%, 430px);
   margin: 60px auto;
@@ -82,3 +83,163 @@
   color: #a12d2d;
   font-weight: 600;
 }
+=======
+
+/*
+CONFIGURACION GENERAL 
+*/
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/*
+Configuracion de la pagina de login 
+*/
+
+.login-container{
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(
+        135deg,
+        #0f172a,
+        #1e293b,
+        #334155
+    );
+
+    
+}
+
+/*
+CARD DE LOGIN
+*/
+
+.Login-card{
+    width: 400px;
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+    text-align: center;
+}
+
+/*
+LOGO
+*/
+
+.logo-section{
+    text-align: center;
+    margin-bottom: 30px;
+
+}
+.Logo-section h1{
+    color: #0f172a;
+    margin-bottom: 10px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+}
+.logo-section p{
+    color: #64748b;
+}
+
+/*
+FORMULARIO DE LOGIN
+*/
+.form-group{
+    margin-bottom: 8px;
+
+}
+.form-group label{
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+.form-group input{
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    transition: .3s;
+}
+.form-group input:focus{
+    outline: none;
+    border-color: #ff4500;
+}
+
+/*
+BOTON DE LOGIN
+*/
+
+button{
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    border: none;
+    background: #ff4500;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: .3s;
+}
+
+button:hover{
+    background: #cc3700;
+}
+/*
+ESTILO BOTON REGISTRAR
+*/
+
+.register-button{
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    border: 2px solid #ff4500;
+    background: white;
+    color: #ff4500;
+    font-size: 16px;
+    cursor: pointer;
+    transition: .3s;
+    margin-top: 15px;
+}
+register-button:hover{
+    background: #ff4500;
+    color: white;
+}
+
+.login-container{
+    background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+}
+button:not(.register-button){
+    background: #ff4500;
+}
+button:not(.register-button):hover{
+    background: #cc3700;
+}
+.register-button{
+    border-color: #ff4500;
+    color: #ff4500;
+}
+.register-button:hover{
+    background: #ff4500;
+}
+.olvide{
+    display:block;
+    text-align:right;
+    font-size:13px;
+    color:#ff4500;
+    margin-bottom:16px;
+    font-weight:600;
+}
+.volver-inicio{
+    display:block;
+    margin-top:16px;
+    font-size:13px;
+    color:#64748b;
+}
+>>>>>>> 6e4c6a911139f7607dc2ce788dc20365171388cb
