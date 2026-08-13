@@ -1,158 +1,291 @@
-
-/*
-CONFIGURACION GENERAL 
-*/
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', sans-serif;
+/* --- RESET Y CONTROL DE PANTALLA COMPLETA --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
-/*
-Configuracion de la pagina de login 
-*/
 
-.login-container{
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(
-        135deg,
-        #0f172a,
-        #1e293b,
-        #334155
-    );
-
-    
+/* Quita márgenes por defecto y elimina scrollbars molestas */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
-/*
-CARD DE LOGIN
-*/
-
-.Login-card{
-    width: 400px;
-    background: white;
-    border-radius: 16px;
-    padding: 40px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
-    text-align: center;
+.login-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px; /* Padding para que no toque los bordes si hay scroll */
+  overflow-x: hidden; /* Evita franja blanca lateral */
 }
 
-/*
-LOGO
-*/
-
-.logo-section{
-    text-align: center;
-    margin-bottom: 30px;
-
-}
-.Logo-section h1{
-    color: #0f172a;
-    margin-bottom: 10px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: .02em;
-}
-.logo-section p{
-    color: #64748b;
+/* --- CARRUSEL DE FONDO OSCURO Y ELEGANTE --- */
+.bg-slider {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
 }
 
-/*
-FORMULARIO DE LOGIN
-*/
-.form-group{
-    margin-bottom: 8px;
-
-}
-.form-group label{
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-}
-.form-group input{
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #d1d5db;
-    transition: .3s;
-}
-.form-group input:focus{
-    outline: none;
-    border-color: #ff4500;
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  animation: imageCarousel 20s infinite ease-in-out;
 }
 
-/*
-BOTON DE LOGIN
-*/
-
-button{
-    width: 100%;
-    padding: 14px;
-    border-radius: 8px;
-    border: none;
-    background: #ff4500;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    transition: .3s;
+.slide-1 {
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)),
+    url('https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1920&auto=format&fit=crop');
+  animation-delay: 0s;
 }
 
-button:hover{
-    background: #cc3700;
-}
-/*
-ESTILO BOTON REGISTRAR
-*/
-
-.register-button{
-    width: 100%;
-    padding: 14px;
-    border-radius: 8px;
-    border: 2px solid #ff4500;
-    background: white;
-    color: #ff4500;
-    font-size: 16px;
-    cursor: pointer;
-    transition: .3s;
-    margin-top: 15px;
-}
-register-button:hover{
-    background: #ff4500;
-    color: white;
+.slide-2 {
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)),
+    url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1920&auto=format&fit=crop');
+  animation-delay: 5s;
 }
 
-.login-container{
-    background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+.slide-3 {
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)),
+    url('https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=1920&auto=format&fit=crop');
+  animation-delay: 10s;
 }
-button:not(.register-button){
-    background: #ff4500;
+
+.slide-4 {
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)),
+    url('https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=1920&auto=format&fit=crop');
+  animation-delay: 15s;
 }
-button:not(.register-button):hover{
-    background: #cc3700;
+
+@keyframes imageCarousel {
+  0% { opacity: 0; transform: scale(1); }
+  5% { opacity: 1; }
+  25% { opacity: 1; }
+  30% { opacity: 0; transform: scale(1.04); }
+  100% { opacity: 0; }
 }
-.register-button{
-    border-color: #ff4500;
-    color: #ff4500;
+
+/* --- TARJETA CON EFECTO VIDRIO CRISTAL (Glassmorphism) --- */
+.login-card {
+  position: relative;
+  z-index: 2;
+  
+  /* Fondo blanco semi-transparente */
+  background: rgba(255, 255, 255, 0.53);
+  
+  /* Efecto de desenfoque del fondo */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  
+  width: 100%;
+  max-width: 420px;
+  padding: 40px 32px;
+  border-radius: 24px;
+  
+  /* Borde translúcido sutil */
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.5);
+              
+  animation: cardFade 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.register-button:hover{
-    background: #ff4500;
+
+.login-header {
+  text-align: center;
+  margin-bottom: 28px;
 }
-.olvide{
-    display:block;
-    text-align:right;
-    font-size:13px;
-    color:#ff4500;
-    margin-bottom:16px;
-    font-weight:600;
+
+.brand-logo {
+  width: 240px;
+  height: auto;
+  display: block;
+  margin: 0 auto 20px;
+  object-fit: contain;
+  filter: brightness(0);
 }
-.volver-inicio{
-    display:block;
-    margin-top:16px;
-    font-size:13px;
-    color:#64748b;
+
+/* Badge para "INICIO DE SESIÓN" */
+.subtitle-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #ff4500;
+  text-transform: uppercase;
+  background: #f1f5f9;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+/* --- CAMPOS DE FORMULARIO --- */
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 13px;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  width: 18px;
+  height: 18px;
+  color: #ff4500;
+  pointer-events: none;
+  transition: color 0.3s;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 14px 12px 42px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.9);
+  transition: all 0.25s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: #ff4500;
+  box-shadow: 0 0 0 4px rgba(255, 69, 0, 0.18);
+}
+
+/* --- BOTONES Y ENLACES --- */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 30px;
+}
+
+.form-actions a {
+  color: #ff4500;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.form-actions a:hover {
+  color: #cc3700;
+  text-decoration: underline;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 12px;
+  background: #ff4500;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(240, 126, 84, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #e03d00;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(255, 69, 0, 0.35);
+}
+
+.btn-secondary {
+  width: 100%;
+  padding: 13px;
+  background: transparent;
+  border: 2px solid #ff4500;
+  color: #ff4500;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 69, 0, 0.06);
+}
+
+.link-back {
+  display: block;
+  text-align: center;
+  margin-top: 8px;
+  color: #64748b;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.link-back:hover {
+  color: #0f172a;
+}
+
+/* ALERTAS */
+.alert {
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 18px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.alert.error {
+  background: #f8f8f8;
+  color: #ff0404;
+  border: 1px solid #f80000;
+}
+
+@keyframes cardFade {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
