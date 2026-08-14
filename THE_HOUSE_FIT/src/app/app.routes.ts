@@ -7,8 +7,13 @@ import { InicioComponent } from './pages/inicio/inicio';
 import { RegisterComponent } from './pages/register/register';
 import { LoginComponent } from './pages/login/login';
 import { DashboardComponent } from './pages/dashboard/dashboard';
+import { ResenasComponent } from './pages/resenas/resenas';
+// Importación de componentes
+import { LoginComponent } from './pages/login/login';
+// Descomenta/ajusta las importaciones de tus otros componentes a medida que los uses:
+// import { RegisterComponent } from './pages/register/register';
+// import { DashboardComponent } from './pages/dashboard/dashboard';
 
-<<<<<<< HEAD
 export const routes: Routes = [
   {
     path: '',
@@ -38,31 +43,4 @@ export const routes: Routes = [
   },
   { path: '**', redirectTo: '' },
 ];
-=======
-// Importación de componentes
-import { LoginComponent } from './pages/login/login';
-// Descomenta/ajusta las importaciones de tus otros componentes a medida que los uses:
-// import { RegisterComponent } from './pages/register/register';
-// import { DashboardComponent } from './pages/dashboard/dashboard';
-
-export const routes: Routes = [
-  // 1. Redirección automática de la raíz '/' hacia '/login'
-  {
-    path: '',
-    redirectTo: 'login',
-    pathMatch: 'full',
-  },
-
-  // 2. Ruta del Login
-  {
-    path: 'login',
-    component: LoginComponent,
-  },
-
-  // 3. Comodín: cualquier ruta no encontrada redirige a 'login'
-  {
-    path: '**',
-    redirectTo: 'login',
-  },
-];
->>>>>>> 6e4c6a911139f7607dc2ce788dc20365171388cb
+>>>> release

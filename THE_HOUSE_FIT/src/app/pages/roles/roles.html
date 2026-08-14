@@ -1,0 +1,51 @@
+<div class="page-wrapper">
+    <h1 class="section-title">🔑 Gestión de roles</h1>
+    <p class="section-subtitle">Consulta los permisos de cada rol y asigna roles a los usuarios del sistema</p>
+
+    @if (mensaje) {
+        <div class="alert success">{{ mensaje }}</div>
+    }
+
+    <div class="grid grid-3 mb-16">
+        @for (d of descripciones; track d.rol) {
+            <div class="card">
+                <h2>{{ d.icono }} {{ d.rol }}</h2>
+                <ul class="mt-16">
+                    @for (p of d.permisos; track p) {
+                        <li>{{ p }}</li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+
+    <section class="card">
+        <h2>Asignación de roles</h2>
+        <div class="table-responsive mt-16">
+            <table>
+                <thead>
+                    <tr><th>Nombre</th><th>Correo</th><th>Rol actual</th><th>Cambiar rol</th></tr>
+                </thead>
+                <tbody>
+                    @for (u of usuarios; track u.correo) {
+                        <tr>
+                            <td>{{ u.nombre }}</td>
+                            <td>{{ u.correo }}</td>
+                            <td><span class="chip-rol" style="background:#f1f5f9;color:#334155;">{{ u.rol }}</span></td>
+                            <td>
+                                <select [ngModel]="u.rol" (ngModelChange)="cambiarRol(u, $event)">
+                                    @for (r of rolesDisponibles; track r) {
+                                        <option [value]="r">{{ r }}</option>
+                                    }
+                                </select>
+                            </td>
+                        </tr>
+                    }
+                    @empty {
+                        <tr><td colspan="4" class="empty-state">No hay usuarios registrados.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
