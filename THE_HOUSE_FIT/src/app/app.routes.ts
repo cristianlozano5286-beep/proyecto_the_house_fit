@@ -7,6 +7,12 @@ import { InicioComponent } from './pages/inicio/inicio';
 import { RegisterComponent } from './pages/register/register';
 import { LoginComponent } from './pages/login/login';
 import { DashboardComponent } from './pages/dashboard/dashboard';
+import { ResenasComponent } from './pages/resenas/resenas';
+// Importación de componentes
+import { LoginComponent } from './pages/login/login';
+// Descomenta/ajusta las importaciones de tus otros componentes a medida que los uses:
+// import { RegisterComponent } from './pages/register/register';
+// import { DashboardComponent } from './pages/dashboard/dashboard';
 
 export const routes: Routes = [
   {
