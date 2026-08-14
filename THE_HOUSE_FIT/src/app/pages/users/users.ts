@@ -236,7 +236,7 @@ export class UsersComponent implements OnInit {
     this.rol = usuario.rol;
     this.estado = usuario.estado;
   }
-  
+
   actualizarPaginacion(): void {
     const inicio = (this.paginaActual - 1) * this.registrosPorPagina;
     const fin = inicio + this.registrosPorPagina;
@@ -347,3 +347,28 @@ export class UsersComponent implements OnInit {
     //cerrar el modal
     this.cerrarModal();
   }
+  
+  guardarUsuarios():void{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.usuarios))
+    
+  }  
+  cargarUsuarios():void{
+    const datos= localStorage.getItem(STORAGE_KEY)
+    if(datos){
+      this.usuarios= JSON.parse(datos);
+    }else{
+      this.cargarDatosInciales();
+      this.guardarUsuarios();
+    }
+    this.usuariosFiltrados=[...this.usuarios];
+  }
+  reiniciarDatos():void{
+    const respuesta = confirm('Desea Resturar los usuarios Iniciales')
+    if(!respuesta){
+      return
+    }
+    localStorage.removeItem(STORAGE_KEY)
+    this.cargarUsuarios();
+    this.buscarUsuarios();
+  }
+}
