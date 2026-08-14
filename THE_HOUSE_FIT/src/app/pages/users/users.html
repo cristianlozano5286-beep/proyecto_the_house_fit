@@ -8,6 +8,7 @@
           <p>Administración de usuarios registrados en el sistema</p>
         </div>
       </div>
+
     </section>
     <div class="content">
       <section class="form-panel">
@@ -15,3 +16,46 @@
           <span>➕</span>
           <h2>Registrar usuario</h2>
         </div>
+    <div
+          *ngIf="mensaje"
+          class="alert"
+          [class.success]="tipoMensaje === 'success'"
+          [class.error]="tipoMensaje === 'error'"
+        >
+          {{ mensaje }}
+        </div>
+
+        <div class="form-group">
+          <label>Nombre</label>
+          <input type="text" placeholder="Ingrese el nombre" [(ngModel)]="nombre" />
+        </div>
+        <div class="form-group">
+          <label>Apellido</label>
+          <input type="text" placeholder="Ingrese apellido" [(ngModel)]="apellido" />
+        </div>
+        <div class="form-group">
+          <label>Correo</label>
+          <input type="email" placeholder="Correo@thehousefit.com" [(ngModel)]="correo" />
+        </div>
+        <div class="form-group">
+          <label>Rol</label>
+          <select [(ngModel)]="rol">
+            <option>Administrador</option>
+            <option>Entrenador</option>
+            <option>Usuario</option>
+          </select>
+        </div>
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" [(ngModel)]="estado" />
+            Usuario Activo
+          </label>
+        </div>
+        <div class="buttons">
+          <button class="btn-primary" (click)="registrarUsuario()">
+            {{ idEditar == null ? 'Registro' : 'Actualizar' }}
+          </button>
+          <button class="btn-secondary" (click)="limpiarFormulario()">Limpiar</button>
+          <button class="btn-secundary" (click)="reiniciarDatos()">Restaurar Datos</button>
+        </div>
+      </section>
