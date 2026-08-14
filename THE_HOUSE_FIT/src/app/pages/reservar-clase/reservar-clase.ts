@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+/*import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,15 +12,22 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
-
-import { ClasesService } from '../../services/clases';
-import { GimnasiosService } from '../../services/gimnasios';
+import { ClasesService } from '../../services/clases.service';
+import { GimnasiosService } from '../../services/gimnasios.service';
 import { AuthService } from '../../services/auth';
 import { ClaseDisponible } from '../../models/clase.models';
 import {
   ConfirmarReservaDialogComponent,
   ConfirmarReservaData,
 } from './confirmar-reserva-dialog/confirmar-reserva-dialog';
+
+
+export interface ClaseDisponible {
+  id: number;
+  gimnasioId: number;
+  tipoClase: string;
+}
+
 
 @Component({
   selector: 'app-reservar-clase',
@@ -143,3 +150,4 @@ export class ReservarClaseComponent implements OnInit {
     });
   }
 }
+*/

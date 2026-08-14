@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+/*import { Component, Inject } from '@angular/core';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { ClaseDisponible } from '../../../models/clase.models';
@@ -34,3 +34,4 @@ export class ConfirmarReservaDialogComponent {
     return valor.toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
   }
 }
+*/
