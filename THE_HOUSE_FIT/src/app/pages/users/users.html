@@ -151,3 +151,30 @@
     <footer class="page-footer">The House Fit - Panel de Administración</footer>
   </div>
 </div>
+
+<div class="modal-overlay" *ngIf="mostrarModalEliminar">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Confirmar eliminación</h2>
+    </div>
+    <div class="modal-body">
+      <p>¿Desea eliminar el siguiente usuario?</p>
+
+      <div class="user-info-modal">
+        <strong>
+          {{ usuarioSeleccionado?.nombre }}
+          {{ usuarioSeleccionado?.apellido }}
+        </strong>
+        <span>
+          {{ usuarioSeleccionado?.correo }}
+        </span>
+      </div>
+      <p class="warning">Esta acción no se puede deshacer.</p>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn-danger" (click)="confirmarEliminar()">Eliminar</button>
+    </div>
+  </div>
+</div>

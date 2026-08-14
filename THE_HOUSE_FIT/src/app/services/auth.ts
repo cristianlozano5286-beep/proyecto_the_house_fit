@@ -23,22 +23,22 @@ export class AuthService {
 
   private usuariosIniciales: UsuarioSistema[] = [
     {
-      nombre: 'Administrador FitZone',
-      correo: '@adminfitzone.com',
+      nombre: 'Administrador The House Fit',
+      correo: 'admin@thehousefit.com',
       password: '123456',
       rol: 'Administrador',
       correoVerificado: true,
     },
     {
       nombre: 'Marlon Monsalve',
-      correo: 'entrenador@fitzone.com',
+      correo: 'entrenador@thehousefit.com',
       password: '123456',
       rol: 'Entrenador',
       correoVerificado: true,
     },
     {
       nombre: 'Andrés Torres',
-      correo: 'usuario@fitzone.com',
+      correo: 'usuario@thehousefit.com',
       password: '123456',
       rol: 'Usuario',
       correoVerificado: true,
