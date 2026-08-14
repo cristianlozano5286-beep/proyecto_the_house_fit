@@ -1,16 +1,3 @@
-<<<<<<< HEAD
-import { Injectable } from '@angular/core';
-
-@Injectable({
-  providedIn: 'root'
-})
-export class AuthService {
-  constructor() {}
-
-  // Agrega aquí tus métodos de autenticación (ej. registro, login, etc.)
-  registro(datosUsuario: any) {
-    // Lógica o petición HTTP
-=======
 import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
@@ -210,6 +197,6 @@ export class AuthService {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify({ ...sesion, rol: nuevoRol }));
       }
     }
->>>>>>> 6e4c6a911139f7607dc2ce788dc20365171388cb
+>> release
   }
 }
