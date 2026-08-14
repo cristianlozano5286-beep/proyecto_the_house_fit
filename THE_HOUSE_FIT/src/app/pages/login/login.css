@@ -204,6 +204,90 @@ html, body {
   color: #cc3700;
   text-decoration: underline;
 }
+.auth-card {
+  width: min(100%, 430px);
+  margin: 60px auto;
+  background: rgba(255,255,255,0.96);
+  border-radius: 22px;
+  padding: 30px 28px;
+  box-shadow: 0 24px 64px rgba(30, 18, 10, 0.18);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+.auth-badge {
+  display: inline-block;
+  background: #f7eadf;
+  color: #9b4e1d;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.auth-card h2 {
+  margin: 14px 0 0;
+  color: #2b160f;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+}
+
+.auth-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #422918;
+  font-weight: 600;
+}
+
+.auth-card input {
+  border: 1px solid #dcc2ae;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-card input:focus {
+  outline: none;
+  border-color: #d36f2f;
+  box-shadow: 0 0 0 3px rgba(211, 111, 47, 0.12);
+}
+
+.auth-card button {
+  background: linear-gradient(135deg, #d46d2d, #b9531f);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.auth-card a {
+  display: inline-block;
+  margin-top: 18px;
+  color: #7d3b1d;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.error-msg {
+  margin-top: 16px;
+  color: #a12d2d;
+  font-weight: 600;
+}
 
 .buttons {
   display: flex;
@@ -280,6 +364,7 @@ html, body {
 }
 
 @keyframes cardFade {
+
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
@@ -312,3 +397,15 @@ html, body {
 .spinner {
   animation: spin 0.8s linear infinite; /* Debe ir DENTRO de las llaves */
 }
+
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
