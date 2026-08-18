@@ -1,0 +1,66 @@
+<div class="page-wrapper">
+    <h1 class="section-title">📰 Gestión de noticias y ofertas</h1>
+    <p class="section-subtitle">Publica novedades, ofertas y promociones visibles en el blog público</p>
+
+    @if (mensaje) {
+        <div class="alert success">{{ mensaje }}</div>
+    }
+
+    <div class="grid grid-2">
+        <section class="card">
+            <h2>Nueva noticia</h2>
+            <div class="form-row mt-16">
+                <div class="form-group">
+                    <label>Título</label>
+                    <input type="text" [(ngModel)]="titulo" placeholder="Ej. Promoción de matrícula" />
+                </div>
+                <div class="form-group">
+                    <label>Tipo</label>
+                    <select [(ngModel)]="tipo">
+                        @for (t of tipos; track t) { <option [value]="t">{{ t }}</option> }
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Gimnasio (opcional)</label>
+                    <select [(ngModel)]="gimnasioId">
+                        <option [ngValue]="null">General (todos)</option>
+                        @for (g of gimnasios; track g.id) {
+                            <option [ngValue]="g.id">{{ g.nombre }}</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Ícono</label>
+                    <input type="text" [(ngModel)]="imagen" placeholder="📰" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Contenido</label>
+                <textarea rows="4" [(ngModel)]="cuerpo" placeholder="Describe la novedad u oferta..."></textarea>
+            </div>
+            <button class="btn btn-primary" (click)="agregarNoticia()">Publicar noticia</button>
+        </section>
+
+        <section class="card">
+            <h2>Noticias publicadas ({{ noticias.length }})</h2>
+            <div class="mt-16" style="max-height:520px;overflow-y:auto;">
+                @for (n of noticias; track n.id) {
+                    <div class="card" style="padding:14px;margin-bottom:10px;">
+                        <div class="flex-between">
+                            <span class="badge badge-warning">{{ n.tipo }}</span>
+                            <button class="btn btn-danger btn-sm" (click)="eliminarNoticia(n.id)">🗑️</button>
+                        </div>
+                        <h3 class="mt-8">{{ n.imagen }} {{ n.titulo }}</h3>
+                        <p class="mt-8" style="font-size:14px;">{{ n.cuerpo }}</p>
+                        <small style="color:var(--color-gray);">{{ nombreGimnasio(n.gimnasioId) }} · {{ n.fecha }}</small>
+                    </div>
+                }
+                @empty {
+                    <p class="empty-state">Aún no hay noticias publicadas.</p>
+                }
+            </div>
+        </section>
+    </div>
+</div>
