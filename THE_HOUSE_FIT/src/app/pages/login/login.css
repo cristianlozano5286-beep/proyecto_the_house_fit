@@ -10,8 +10,14 @@
   --auth-shadow: 0 24px 64px rgba(30, 18, 10, 0.18);
 }
 
+/* --- RESET Y ESTRUCTURA GENERAL --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
 
-/* Quita márgenes por defecto y elimina scrollbars molestas */
 html, body {
   margin: 0;
   padding: 0;
@@ -27,11 +33,11 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 40px 20px; /* Padding para que no toque los bordes si hay scroll */
-  overflow-x: hidden; /* Evita franja blanca lateral */
+  padding: 40px 20px;
+  overflow-x: hidden;
 }
 
-/* --- CARRUSEL DE FONDO OSCURO Y ELEGANTE --- */
+/* --- CARRUSEL DE FONDO --- */
 .bg-slider {
   position: fixed;
   top: 0;
@@ -81,36 +87,20 @@ html, body {
   animation-delay: 15s;
 }
 
-@keyframes imageCarousel {
-  0% { opacity: 0; transform: scale(1); }
-  5% { opacity: 1; }
-  25% { opacity: 1; }
-  30% { opacity: 0; transform: scale(1.04); }
-  100% { opacity: 0; }
-}
-
-/* --- TARJETA CON EFECTO VIDRIO CRISTAL (Glassmorphism) --- */
+/* --- TARJETA DE LOGIN / GLASSMORPHISM --- */
 .login-card {
   position: relative;
   z-index: 2;
-  
-  /* Fondo blanco semi-transparente */
   background: rgba(255, 255, 255, 0.285);
-  
-  /* Efecto de desenfoque del fondo */
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  
   width: 100%;
   max-width: 420px;
   padding: 40px 32px;
   border-radius: 24px;
-  
-  /* Borde translúcido sutil */
   border: 1px solid rgba(255, 255, 255, 0.6);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 
               inset 0 1px 1px rgba(255, 255, 255, 0.5);
-              
   animation: cardFade 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -128,7 +118,6 @@ html, body {
   filter: brightness(0);
 }
 
-/* Badge para "INICIO DE SESIÓN" */
 .subtitle-badge {
   display: inline-block;
   font-size: 11px;
@@ -142,7 +131,7 @@ html, body {
   border: 1px solid #e2e8f0;
 }
 
-/* --- CAMPOS DE FORMULARIO --- */
+/* --- CAMPOS Y FORMULARIOS --- */
 .form-group {
   margin-bottom: 18px;
 }
@@ -189,7 +178,6 @@ html, body {
   box-shadow: 0 0 0 4px rgba(255, 69, 0, 0.18);
 }
 
-/* --- BOTONES Y ENLACES --- */
 .form-actions {
   display: flex;
   justify-content: flex-end;
@@ -208,6 +196,8 @@ html, body {
   color: #cc3700;
   text-decoration: underline;
 }
+
+/* --- AUTH CARD ALTERNATIVA --- */
 .auth-card {
   width: min(100%, 430px);
   margin: 60px auto;
@@ -256,7 +246,7 @@ html, body {
 }
 
 .auth-card input {
-  font: inherit; /* Asegura que herede la fuente global correctamente */
+  font: inherit;
   border: 1px solid var(--auth-border);
   padding: 12px 14px;
   border-radius: 12px;
@@ -305,12 +295,7 @@ html, body {
   text-decoration: underline;
 }
 
-.error-msg {
-  margin-top: 16px;
-  color: #a12d2d;
-  font-weight: 600;
-}
-
+/* --- BOTONES Y ALERTAS --- */
 .buttons {
   display: flex;
   flex-direction: column;
@@ -369,7 +354,6 @@ html, body {
   color: #ff4500;
 }
 
-/* ALERTAS */
 .alert {
   padding: 10px 14px;
   border-radius: 10px;
@@ -379,55 +363,42 @@ html, body {
   text-align: center;
 }
 
-.alert.error {
+.alert.error, .alert-error {
   background: #f8f8f8;
   color: #ff0404;
   border: 1px solid #f80000;
+  animation: slideDown 0.3s ease;
+}
+
+.error-msg {
+  margin-top: 16px;
+  color: #a12d2d;
+  font-weight: 600;
+}
+
+.spinner {
+  animation: spin 0.8s linear infinite;
+}
+
+/* --- ANIMACIONES KEYFRAMES --- */
+@keyframes imageCarousel {
+  0% { opacity: 0; transform: scale(1); }
+  5% { opacity: 1; }
+  25% { opacity: 1; }
+  30% { opacity: 0; transform: scale(1.04); }
+  100% { opacity: 0; }
 }
 
 @keyframes cardFade {
-
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* 2. Se la aplicas a su clase correspondiente */
-.login-card {
-  animation: cardFade 0.6s ease;
-}
-
-
-/* Error slide down */
 @keyframes slideDown {
   from { opacity: 0; transform: translateY(-8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.alert-error {
-  background: #f8f8f8;
-  color: #ff0404;
-  border: 1px solid #f80000;
-  animation: slideDown 0.3s ease; /* Debe ir DENTRO de las llaves */
-}
-
-
-/* Spinner */
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
-
-.spinner {
-  animation: spin 0.8s linear infinite; /* Debe ir DENTRO de las llaves */
-}
-
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-
