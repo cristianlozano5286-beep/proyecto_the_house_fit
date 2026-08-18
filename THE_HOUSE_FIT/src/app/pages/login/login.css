@@ -1,9 +1,13 @@
-/* --- RESET Y CONTROL DE PANTALLA COMPLETA --- */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+:root {
+  --auth-bg: rgba(255, 255, 255, 0.96);
+  --auth-text-main: #2b160f;
+  --auth-text-muted: #422918;
+  --auth-primary: #d46d2d;
+  --auth-primary-hover: #b9531f;
+  --auth-border: #dcc2ae;
+  --auth-badge-bg: #f7eadf;
+  --auth-badge-text: #9b4e1d;
+  --auth-shadow: 0 24px 64px rgba(30, 18, 10, 0.18);
 }
 
 
@@ -207,10 +211,10 @@ html, body {
 .auth-card {
   width: min(100%, 430px);
   margin: 60px auto;
-  background: rgba(255,255,255,0.96);
+  background: var(--auth-bg);
   border-radius: 22px;
   padding: 30px 28px;
-  box-shadow: 0 24px 64px rgba(30, 18, 10, 0.18);
+  box-shadow: var(--auth-shadow);
 }
 
 .auth-header {
@@ -220,8 +224,8 @@ html, body {
 
 .auth-badge {
   display: inline-block;
-  background: #f7eadf;
-  color: #9b4e1d;
+  background: var(--auth-badge-bg);
+  color: var(--auth-badge-text);
   border-radius: 999px;
   padding: 6px 12px;
   font-size: 0.72rem;
@@ -232,7 +236,7 @@ html, body {
 
 .auth-card h2 {
   margin: 14px 0 0;
-  color: #2b160f;
+  color: var(--auth-text-main);
   font-size: clamp(1.8rem, 4vw, 2.5rem);
 }
 
@@ -246,12 +250,14 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  color: #422918;
+  color: var(--auth-text-muted);
   font-weight: 600;
+  font-size: 0.95rem;
 }
 
 .auth-card input {
-  border: 1px solid #dcc2ae;
+  font: inherit; /* Asegura que herede la fuente global correctamente */
+  border: 1px solid var(--auth-border);
   padding: 12px 14px;
   border-radius: 12px;
   font-size: 1rem;
@@ -260,12 +266,12 @@ html, body {
 
 .auth-card input:focus {
   outline: none;
-  border-color: #d36f2f;
+  border-color: var(--auth-primary);
   box-shadow: 0 0 0 3px rgba(211, 111, 47, 0.12);
 }
 
 .auth-card button {
-  background: linear-gradient(135deg, #d46d2d, #b9531f);
+  background: linear-gradient(135deg, var(--auth-primary), var(--auth-primary-hover));
   color: white;
   border: none;
   border-radius: 12px;
@@ -273,14 +279,30 @@ html, body {
   font-weight: 700;
   cursor: pointer;
   margin-top: 10px;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.auth-card button:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.auth-card button:active {
+  transform: translateY(0);
 }
 
 .auth-card a {
   display: inline-block;
   margin-top: 18px;
-  color: #7d3b1d;
+  color: var(--auth-text-muted);
   text-decoration: none;
   font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.auth-card a:hover {
+  color: var(--auth-primary);
+  text-decoration: underline;
 }
 
 .error-msg {
