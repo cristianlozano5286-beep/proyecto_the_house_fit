@@ -1,0 +1,245 @@
+<<<<<<< HEAD
+.auth-card {
+  width: min(100%, 430px);
+  margin: 60px auto;
+  background: rgba(255,255,255,0.96);
+  border-radius: 22px;
+  padding: 30px 28px;
+  box-shadow: 0 24px 64px rgba(30, 18, 10, 0.18);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+.auth-badge {
+  display: inline-block;
+  background: #f7eadf;
+  color: #9b4e1d;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.auth-card h2 {
+  margin: 14px 0 0;
+  color: #2b160f;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+}
+
+.auth-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #422918;
+  font-weight: 600;
+}
+
+.auth-card input {
+  border: 1px solid #dcc2ae;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-card input:focus {
+  outline: none;
+  border-color: #d36f2f;
+  box-shadow: 0 0 0 3px rgba(211, 111, 47, 0.12);
+}
+
+.auth-card button {
+  background: linear-gradient(135deg, #d46d2d, #b9531f);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.auth-card a {
+  display: inline-block;
+  margin-top: 18px;
+  color: #7d3b1d;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.error-msg {
+  margin-top: 16px;
+  color: #a12d2d;
+  font-weight: 600;
+}
+=======
+
+/*
+CONFIGURACION GENERAL 
+*/
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/*
+Configuracion de la pagina de login 
+*/
+
+.login-container{
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(
+        135deg,
+        #0f172a,
+        #1e293b,
+        #334155
+    );
+
+    
+}
+
+/*
+CARD DE LOGIN
+*/
+
+.Login-card{
+    width: 400px;
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+    text-align: center;
+}
+
+/*
+LOGO
+*/
+
+.logo-section{
+    text-align: center;
+    margin-bottom: 30px;
+
+}
+.Logo-section h1{
+    color: #0f172a;
+    margin-bottom: 10px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+}
+.logo-section p{
+    color: #64748b;
+}
+
+/*
+FORMULARIO DE LOGIN
+*/
+.form-group{
+    margin-bottom: 8px;
+
+}
+.form-group label{
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+.form-group input{
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    transition: .3s;
+}
+.form-group input:focus{
+    outline: none;
+    border-color: #ff4500;
+}
+
+/*
+BOTON DE LOGIN
+*/
+
+button{
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    border: none;
+    background: #ff4500;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: .3s;
+}
+
+button:hover{
+    background: #cc3700;
+}
+/*
+ESTILO BOTON REGISTRAR
+*/
+
+.register-button{
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    border: 2px solid #ff4500;
+    background: white;
+    color: #ff4500;
+    font-size: 16px;
+    cursor: pointer;
+    transition: .3s;
+    margin-top: 15px;
+}
+register-button:hover{
+    background: #ff4500;
+    color: white;
+}
+
+.login-container{
+    background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+}
+button:not(.register-button){
+    background: #ff4500;
+}
+button:not(.register-button):hover{
+    background: #cc3700;
+}
+.register-button{
+    border-color: #ff4500;
+    color: #ff4500;
+}
+.register-button:hover{
+    background: #ff4500;
+}
+.olvide{
+    display:block;
+    text-align:right;
+    font-size:13px;
+    color:#ff4500;
+    margin-bottom:16px;
+    font-weight:600;
+}
+.volver-inicio{
+    display:block;
+    margin-top:16px;
+    font-size:13px;
+    color:#64748b;
+}
+>>>>>>> 6e4c6a911139f7607dc2ce788dc20365171388cb
