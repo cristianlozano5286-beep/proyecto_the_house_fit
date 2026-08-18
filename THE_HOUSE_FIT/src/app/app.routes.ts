@@ -15,23 +15,32 @@ import { LoginComponent } from './pages/login/login';
 // import { DashboardComponent } from './pages/dashboard/dashboard';
 
 export const routes: Routes = [
-  // 1. Redirección automática de la raíz '/' hacia '/login'
   {
     path: '',
-    redirectTo: 'login',
-    pathMatch: 'full',
+    component: PublicLayoutComponent,
+    children: [
+      { path: '', component: InicioComponent },
+      { path: 'gimnasios', component: InicioComponent },
+      { path: 'register', component: RegisterComponent },
+    ],
   },
-
-  // 2. Ruta del Login
   {
-    path: 'login',
-    component: LoginComponent,
+    path: 'auth',
+    component: AuthLayoutComponent,
+    children: [
+      { path: 'login', component: LoginComponent },
+      { path: 'register', component: RegisterComponent },
+    ],
   },
-
-  // 3. Comodín: cualquier ruta no encontrada redirige a 'login'
   {
-    path: '**',
-    redirectTo: 'login',
+    path: 'panel',
+    component: AdminLayoutComponent,
+    canActivate: [authGuard],
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: DashboardComponent },
+    ],
   },
+  { path: '**', redirectTo: '' },
 ];
-
+>>>> release

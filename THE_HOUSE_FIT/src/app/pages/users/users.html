@@ -1,0 +1,180 @@
+<div class="users-container">
+  <div class="page-wrapper">
+    <section class="page-header">
+      <div class="header-info">
+        <div class="header-icon">🙈</div>
+        <div>
+          <h1>Gestión de Usuarios</h1>
+          <p>Administración de usuarios registrados en el sistema</p>
+        </div>
+      </div>
+
+    </section>
+    <div class="content">
+      <section class="form-panel">
+        <div class="panel-title">
+          <span>➕</span>
+          <h2>Registrar usuario</h2>
+        </div>
+    <div
+          *ngIf="mensaje"
+          class="alert"
+          [class.success]="tipoMensaje === 'success'"
+          [class.error]="tipoMensaje === 'error'"
+        >
+          {{ mensaje }}
+        </div>
+
+        <div class="form-group">
+          <label>Nombre</label>
+          <input type="text" placeholder="Ingrese el nombre" [(ngModel)]="nombre" />
+        </div>
+        <div class="form-group">
+          <label>Apellido</label>
+          <input type="text" placeholder="Ingrese apellido" [(ngModel)]="apellido" />
+        </div>
+        <div class="form-group">
+          <label>Correo</label>
+          <input type="email" placeholder="Correo@thehousefit.com" [(ngModel)]="correo" />
+        </div>
+        <div class="form-group">
+          <label>Rol</label>
+          <select [(ngModel)]="rol">
+            <option>Administrador</option>
+            <option>Entrenador</option>
+            <option>Usuario</option>
+          </select>
+        </div>
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" [(ngModel)]="estado" />
+            Usuario Activo
+          </label>
+        </div>
+        <div class="buttons">
+          <button class="btn-primary" (click)="registrarUsuario()">
+            {{ idEditar == null ? 'Registro' : 'Actualizar' }}
+          </button>
+          <button class="btn-secondary" (click)="limpiarFormulario()">Limpiar</button>
+          <button class="btn-secundary" (click)="reiniciarDatos()">Restaurar Datos</button>
+        </div>
+      </section>
+      
+      <section class="table-panel">
+        <div class="panel-title">
+          <span>📝</span>
+          <h2>Usuario Registrados</h2>
+          <p class="table-info">
+            Total de usuarios: <strong>{{ obtenerTotalUsuarios() }}</strong>
+          </p>
+        </div>
+        <div class="toolbar">
+          <input
+            type="text"
+            placeholder="Buscar usuario..."
+            [(ngModel)]="textoBusqueda"
+            (input)="buscarUsuarios()"
+          />
+          <select [(ngModel)]="filtroRol" (change)="buscarUsuarios()">
+            <option value="">Todos los roles</option>
+            <option value="Administrador">Administrador</option>
+            <option value="Entrenador">Entrenador</option>
+            <option value="Usuario">Usuario</option>
+          </select>
+        </div>
+        <p class="table-info">
+          Usuarios Encontrados: <strong>{{ usuariosFiltrados.length }}</strong>
+        </p>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th class="sortable" (click)="ordenar('id')">ID {{ obtenerIconoOrden('id') }}</th>
+                <th class="sortable" (click)="ordenar('nombre')">
+                  Nombre {{ obtenerIconoOrden('nombre') }}
+                </th>
+                <th>Apellido</th>
+                <th>Correo</th>
+                <th class="sortable" (click)="ordenar('rol')">
+                  Rol {{ obtenerIconoOrden('rol') }}
+                </th>
+                <th class="sortable" (click)="ordenar('estado')">
+                  Estado {{ obtenerIconoOrden('estado') }}
+                </th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let usuario of usuariosPaginados">
+                <td>{{ usuario.id }}</td>
+                <td>{{ usuario.nombre }}</td>
+                <td>{{ usuario.apellido }}</td>
+                <td>{{ usuario.correo }}</td>
+                <td>{{ usuario.rol }}</td>
+                <td>
+                  <span
+                    class="status-badge"
+                    [class.active]="usuario.estado"
+                    [class.inactive]="!usuario.estado"
+                  >
+                    {{ usuario.estado ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+                <td>
+                  <button class="btn-edit" (click)="editarUsuario(usuario)">✏️</button>
+                  <button class="btn-delete" (click)="abriModalEliminar(usuario)">🪰</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="pagination-info">
+            Mostrando {{ usuariosPaginados.length }} de {{ usuariosFiltrados.length }} usuarios
+          </div>
+
+          <div class="pagination">
+            <button (click)="anteriorPagina()" [disabled]="paginaActual == 1">⬅️Anterior</button>
+            <button
+              *ngFor="let pagina of obtenerPaginas()"
+              (click)="cambiarPagina(pagina)"
+              [class.active-page]="pagina == paginaActual"
+            >
+              {{ pagina }}
+            </button>
+            <button (click)="siguientePagina()" [disabled]="paginaActual == obtenerTotalPaginas()">
+              Siguiente ➡️
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="page-footer">The House Fit - Panel de Administración</footer>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="mostrarModalEliminar">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Confirmar eliminación</h2>
+    </div>
+    <div class="modal-body">
+      <p>¿Desea eliminar el siguiente usuario?</p>
+
+      <div class="user-info-modal">
+        <strong>
+          {{ usuarioSeleccionado?.nombre }}
+          {{ usuarioSeleccionado?.apellido }}
+        </strong>
+        <span>
+          {{ usuarioSeleccionado?.correo }}
+        </span>
+      </div>
+      <p class="warning">Esta acción no se puede deshacer.</p>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn-danger" (click)="confirmarEliminar()">Eliminar</button>
+    </div>
+  </div>
+</div>
