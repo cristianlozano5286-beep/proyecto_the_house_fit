@@ -1,0 +1,7 @@
+.metodo-card{
+    border:2px solid var(--color-border); border-radius:12px; padding:16px; cursor:pointer; transition:.2s; text-align:center;
+}
+.metodo-card:hover{ border-color:var(--color-primary); }
+.metodo-card.seleccionado{ border-color:var(--color-primary); background:#fff7ed; }
+.metodo-icono{ font-size:28px; display:block; margin-bottom:6px; }
+.metodo-card p{ font-size:12px; color:var(--color-gray); margin-top:4px; }
