@@ -1,0 +1,45 @@
+<section class="dark-page">
+    <div class="page-header">
+        <span class="eyebrow">SUPLEMENTOS · IMPLEMENTOS · ROPA</span>
+        <h1 class="display-title" style="font-size:clamp(36px,6vw,64px);">TIENDA <span class="accent">THE HOUSE FIT</span></h1>
+        <p class="page-desc">Todo lo que necesitas para entrenar mejor, con guías nutricionales incluidas.</p>
+    </div>
+
+    <div class="filter-tabs">
+        <button class="tab" [class.active]="categoriaFiltro===''" (click)="filtrar('')">TODOS</button>
+        @for (c of categorias; track c) {
+            <button class="tab" [class.active]="categoriaFiltro===c" (click)="filtrar(c)">{{ c.toUpperCase() }}</button>
+        }
+    </div>
+
+    <div class="product-grid">
+        @for (p of productosFiltrados; track p.id) {
+            <div class="product-card">
+                <div class="product-icon">{{ p.imagen }}</div>
+                <span class="tag-outline">{{ p.categoria.toUpperCase() }}</span>
+                <h3>{{ p.nombre }}</h3>
+                <p class="product-desc">{{ p.descripcion }}</p>
+                <p class="product-price">{{ formatearPrecio(p.precio) }}</p>
+                <p class="product-stock">Stock: {{ p.stock }}</p>
+                @if (p.guiaNutricional) {
+                    <button class="btn-landing outline btn-full" (click)="verGuia(p)">GUÍA NUTRICIONAL</button>
+                }
+            </div>
+        }
+    </div>
+</section>
+
+@if (productoSeleccionado) {
+    <div class="modal-overlay" (click)="cerrarGuia()">
+        <div class="modal-dark" (click)="$event.stopPropagation()">
+            <div class="modal-dark-header">
+                <h2>{{ productoSeleccionado.imagen }} {{ productoSeleccionado.nombre }}</h2>
+                <button (click)="cerrarGuia()">✕</button>
+            </div>
+            <div class="modal-dark-body">
+                <h3>GUÍA NUTRICIONAL</h3>
+                <p class="mt-8">{{ productoSeleccionado.guiaNutricional }}</p>
+            </div>
+        </div>
+    </div>
+}

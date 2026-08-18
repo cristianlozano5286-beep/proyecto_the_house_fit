@@ -1,0 +1,150 @@
+/*<div class="reserva-container">
+    <div class="page-header">
+        <h1>Reservar clase</h1>
+        <p>Busca y reserva tu próximo cupo en los gimnasios afiliados</p>
+    </div>
+
+    <mat-card class="search-card">
+        <mat-card-header>
+            <mat-card-title>Buscar clase</mat-card-title>
+            <mat-card-subtitle>Encuentra la clase que necesites</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+            <div class="search-form">
+                <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>Gimnasio</mat-label>
+                    <mat-select [(ngModel)]="gimnasioId">
+                        <mat-option [value]="null">Todos los gimnasios</mat-option>
+                        @for (g of gimnasios; track g.id) {
+                            <mat-option [value]="g.id">{{ g.nombre }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>Tipo de clase</mat-label>
+                    <mat-select [(ngModel)]="tipoClase">
+                        <mat-option [value]="null">Todas</mat-option>
+                        @for (t of tiposClase; track t) {
+                            <mat-option [value]="t">{{ t }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>Fecha de asistencia</mat-label>
+                    <input matInput [matDatepicker]="picker" [(ngModel)]="fecha">
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>Personas</mat-label>
+                    <input matInput type="number" min="1" [(ngModel)]="personas">
+                </mat-form-field>
+            </div>
+        </mat-card-content>
+
+        <mat-card-actions align="end" class="card-actions">
+            <button mat-stroked-button type="button" (click)="limpiarBusqueda()">Limpiar</button>
+            <button mat-raised-button color="primary" type="button" (click)="buscarClases()">Buscar clases</button>
+        </mat-card-actions>
+    </mat-card>
+
+    @if (cargando) {
+        <mat-card class="loading-card">
+            <mat-card-content>
+                <div class="loading-content">
+                    <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+                    <div class="loading-text">
+                        <h3>Buscando clases</h3>
+                        <p>Estamos buscando los mejores cupos disponibles para ti</p>
+                    </div>
+                </div>
+                <mat-progress-bar mode="determinate" [value]="progreso"></mat-progress-bar>
+            </mat-card-content>
+        </mat-card>
+    }
+
+    <section class="results-section">
+        <div class="section-header">
+            <div>
+                <h2>Clases disponibles</h2>
+                <p>Selecciona la clase que deseas reservar</p>
+            </div>
+            <span class="results-count">{{ clases.length }} clases</span>
+        </div>
+
+        <mat-card class="table-card">
+            <mat-card-content>
+                <div class="table-container">
+                    <table mat-table [dataSource]="clases" class="classes-table">
+
+                        <ng-container matColumnDef="gimnasio">
+                            <th mat-header-cell *matHeaderCellDef>Gimnasio</th>
+                            <td mat-cell *matCellDef="let clase"><strong>{{ nombreGimnasio(clase.gimnasioId) }}</strong></td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="tipoClase">
+                            <th mat-header-cell *matHeaderCellDef>Clase</th>
+                            <td mat-cell *matCellDef="let clase"><strong>{{ clase.tipoClase }}</strong></td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="instructor">
+                            <th mat-header-cell *matHeaderCellDef>Instructor</th>
+                            <td mat-cell *matCellDef="let clase">{{ clase.instructor }}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="hora">
+                            <th mat-header-cell *matHeaderCellDef>Hora</th>
+                            <td mat-cell *matCellDef="let clase">{{ clase.hora }}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="duracion">
+                            <th mat-header-cell *matHeaderCellDef>Duración</th>
+                            <td mat-cell *matCellDef="let clase">{{ clase.duracion }}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="precio">
+                            <th mat-header-cell *matHeaderCellDef>Precio</th>
+                            <td mat-cell *matCellDef="let clase"><strong>{{ formatearPrecio(clase.precio) }}</strong></td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="accion">
+                            <th mat-header-cell *matHeaderCellDef>Acción</th>
+                            <td mat-cell *matCellDef="let clase">
+                                <button mat-raised-button color="primary" type="button" (click)="reservarClase(clase)">
+                                    Reservar
+                                </button>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+                    </table>
+
+                    @if (clases.length === 0) {
+                        <div class="empty-table">No hay clases disponibles con esos filtros.</div>
+                    }
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </section>
+
+    <section class="informacion-section">
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>Información importante</mat-panel-title>
+                <mat-panel-description>Cupos, cancelaciones y políticas</mat-panel-description>
+            </mat-expansion-panel-header>
+            <div class="information-content">
+                <h3>Cupos</h3>
+                <p>Cada clase tiene un número limitado de cupos; se asignan por orden de reserva.</p>
+                <h3>Cancelaciones</h3>
+                <p>Puedes cancelar tu reserva hasta 2 horas antes del inicio de la clase sin costo.</p>
+            </div>
+        </mat-expansion-panel>
+    </section>
+</div>
+*/

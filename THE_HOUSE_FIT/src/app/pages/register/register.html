@@ -1,0 +1,44 @@
+<section class="auth-card">
+  <h2>Crear cuenta</h2>
+
+  <form *ngIf="paso === 1" [formGroup]="registerForm" (ngSubmit)="registrarUsuario()">
+    <label>
+      Nombre
+      <input type="text" formControlName="nombre" />
+    </label>
+
+    <label>
+      Apellido
+      <input type="text" formControlName="apellido" />
+    </label>
+
+    <label>
+      Correo
+      <input type="email" formControlName="correo" />
+    </label>
+
+    <label>
+      Contraseña
+      <input type="password" formControlName="password" />
+    </label>
+
+    <label>
+      Confirmar contraseña
+      <input type="password" formControlName="confirmarPassword" />
+    </label>
+
+    <button type="submit">Registrarme</button>
+  </form>
+
+  <form *ngIf="paso === 2" (ngSubmit)="confirmarCodigo()">
+    <p>Se envió un código a {{ correoRegistrado }}</p>
+    <label>
+      Código de verificación
+      <input type="text" [(ngModel)]="codigoIngresado" name="codigoIngresado" />
+    </label>
+    <button type="submit">Confirmar código</button>
+  </form>
+
+  <p *ngIf="mensajeVerificacion">{{ mensajeVerificacion }}</p>
+  <a routerLink="/auth/login">Ya tengo cuenta</a>
+</section>
