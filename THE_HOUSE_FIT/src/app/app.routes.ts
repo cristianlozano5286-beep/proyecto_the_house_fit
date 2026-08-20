@@ -5,6 +5,7 @@ import { LoginComponent } from './pages/login/login';
 import { RegisterComponent } from './pages/register/register';
 import { RecuperarPasswordComponent } from './pages/recuperar-password/recuperar-password';
 
+import { authGuard } from './guards/auth-guard';
 // Layouts
 import { AdminLayoutComponent } from './layout/admin-layout/admin-layout';
 import { PublicLayoutComponent } from './layout/public-layout/public-layout';
@@ -27,6 +28,12 @@ import { NoticiasAdminComponent } from './pages/noticias-admin/noticias-admin';
 import { PagosComponent } from './pages/pagos/pagos';
 import { RolesComponent } from './pages/roles/roles';
 import { ReservarClaseComponent } from './pages/reservar-clase/reservar-clase';
+import { ProductosAdminComponent } from './pages/productos-admin/productos-admin';
+import { ResenasComponent } from './pages/resenas/resenas';
+import { RolesComponent } from './pages/roles/roles';
+
+
+
 
 import { authGuard } from './guards/auth-guard';
 
