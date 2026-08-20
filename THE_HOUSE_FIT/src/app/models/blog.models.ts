@@ -11,14 +11,12 @@ export interface Noticia {
 }
 
 export interface Resena {
-  id?: number;
-  titulo?: string;
-  cuerpo?: string;
+  id: number;
+  gimnasioId: number;
   usuario: string;
-  comentario?: string;
-  calificacion?: number;
-  puntuacion?: number;
-  gimnasioId?: number;
+  titulo: string;
+  cuerpo: string;
+  puntuacion: number;
+  imagen: string;
   fecha?: string;
-  imagen?: string;
 }

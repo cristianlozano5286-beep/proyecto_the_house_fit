@@ -1,0 +1,90 @@
+<div class="page-wrapper">
+    <h1 class="section-title">🧑‍🏫 Gestión de instructores</h1>
+    <p class="section-subtitle">Registra y administra los instructores/entrenadores de cada gimnasio</p>
+
+    @if (mensaje) {
+        <div class="alert" [class.success]="tipoMensaje==='success'" [class.error]="tipoMensaje==='error'">{{ mensaje }}</div>
+    }
+
+    <div class="grid grid-2">
+        <section class="card">
+            <h2>{{ idEditar == null ? 'Registrar instructor' : 'Editar instructor' }}</h2>
+            <div class="form-row mt-16">
+                <div class="form-group">
+                    <label>Nombre completo</label>
+                    <input type="text" [(ngModel)]="nombre" placeholder="Nombre del instructor" />
+                </div>
+                <div class="form-group">
+                    <label>Correo</label>
+                    <input type="email" [(ngModel)]="correo" placeholder="correo@thehousefit.com" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="text" [(ngModel)]="telefono" placeholder="300 000 0000" />
+                </div>
+                <div class="form-group">
+                    <label>Años de experiencia</label>
+                    <input type="number" min="0" [(ngModel)]="experiencia" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Especialidad</label>
+                <input type="text" [(ngModel)]="especialidad" placeholder="Ej. Musculación, Yoga, Crossfit" />
+            </div>
+            <div class="form-group">
+                <label>Gimnasio asignado</label>
+                <select [(ngModel)]="gimnasioId">
+                    <option [ngValue]="null">Sin asignar</option>
+                    @for (g of gimnasios; track g.id) {
+                        <option [ngValue]="g.id">{{ g.nombre }}</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Biografía</label>
+                <textarea rows="3" [(ngModel)]="biografia" placeholder="Breve descripción del instructor..."></textarea>
+            </div>
+            <div class="checkbox-group mb-16">
+                <label><input type="checkbox" [(ngModel)]="activo" /> Instructor activo</label>
+            </div>
+            <div class="flex gap-8">
+                <button class="btn btn-primary" (click)="guardar()">{{ idEditar == null ? 'Registrar' : 'Actualizar' }}</button>
+                <button class="btn btn-outline" (click)="limpiarFormulario()">Limpiar</button>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Instructores registrados ({{ instructores.length }})</h2>
+            <div class="table-responsive mt-16">
+                <table>
+                    <thead>
+                        <tr><th>Instructor</th><th>Especialidad</th><th>Gimnasio</th><th>Estado</th><th>Acciones</th></tr>
+                    </thead>
+                    <tbody>
+                        @for (i of instructores; track i.id) {
+                            <tr>
+                                <td>{{ i.imagen }} {{ i.nombre }}</td>
+                                <td>{{ i.especialidad }}</td>
+                                <td>{{ nombreGimnasio(i.gimnasioId) }}</td>
+                                <td>
+                                    <span class="badge" [class.badge-success]="i.activo" [class.badge-gray]="!i.activo">
+                                        {{ i.activo ? 'Activo' : 'Inactivo' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-outline btn-sm" (click)="editar(i)">✏️</button>
+                                    <button class="btn btn-danger btn-sm" (click)="eliminar(i)">🗑️</button>
+                                </td>
+                            </tr>
+                        }
+                        @empty {
+                            <tr><td colspan="5" class="empty-state">No hay instructores registrados.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>

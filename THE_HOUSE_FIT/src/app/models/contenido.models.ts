@@ -18,7 +18,7 @@ export interface GuiaFisica {
 
 export interface GuiaNutricional {
   id: number;
-  categoriaIMC: 'Bajo peso' | 'Peso normal' | 'Sobrepeso' | 'Obesidad' | string;
+  categoriaIMC: string;
   titulo: string;
   recomendaciones: string;
   ejemploComidas: string;
