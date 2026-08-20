@@ -1,0 +1,39 @@
+<section class="dark-page">
+    <div class="page-header text-center">
+        <span class="eyebrow">TU PUNTO DE PARTIDA</span>
+        <h1 class="display-title" style="font-size:clamp(36px,6vw,64px);">CALCULA TU <span class="accent">IMC</span></h1>
+        <p class="page-desc" style="margin:14px auto 0;">Ingresa tu peso y estatura para conocer tu Índice de Masa Corporal y recibir una recomendación nutricional.</p>
+    </div>
+
+    <div class="imc-card">
+        <div class="form-field">
+            <label>PESO (KG)</label>
+            <input type="number" min="1" placeholder="Ej. 70" [(ngModel)]="peso" />
+        </div>
+        <div class="form-field">
+            <label>ESTATURA (M)</label>
+            <input type="number" min="0.5" max="2.5" step="0.01" placeholder="Ej. 1.70" [(ngModel)]="estatura" />
+        </div>
+        <div class="imc-actions">
+            <button class="btn-landing primary" (click)="calcular()" [disabled]="!peso || !estatura">CALCULAR</button>
+            <button class="btn-landing outline" (click)="reiniciar()">REINICIAR</button>
+        </div>
+    </div>
+
+    @if (calculado && resultado !== null) {
+        <div class="imc-result">
+            <span class="eyebrow">TU RESULTADO</span>
+            <p class="imc-valor">{{ resultado }}</p>
+            <span class="tag-outline">{{ categoria.toUpperCase() }}</span>
+
+            @if (guia) {
+                <div class="mt-24">
+                    <h3>{{ guia.titulo.toUpperCase() }}</h3>
+                    <p class="mt-8">{{ guia.recomendaciones }}</p>
+                    <p class="mt-8"><strong>Ejemplo de comidas:</strong> {{ guia.ejemploComidas }}</p>
+                </div>
+            }
+            <a routerLink="/register" class="btn-landing primary mt-24">CREAR CUENTA Y GUARDAR MI PROGRESO</a>
+        </div>
+    }
+</section>

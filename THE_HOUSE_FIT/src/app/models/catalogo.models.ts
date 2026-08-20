@@ -7,7 +7,15 @@ export interface Gimnasio {
   descripcion: string;
 }
 
-export interface Categoria {
+export interface Instructor {
   id: number;
   nombre: string;
+  correo: string;
+  telefono: string;
+  especialidad: string;
+  experiencia: number; // años
+  biografia: string;
+  imagen: string;
+  gimnasioId: number | null;
+  activo: boolean;
 }
