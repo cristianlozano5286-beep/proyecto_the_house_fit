@@ -35,26 +35,3 @@ export interface Instructor {
   activo: boolean;
 }
 
-export interface Producto {
-  id: number;
-  nombre: string;
-  categoria: string;
-  precio: number;
-  stock: number;
-  descripcion: string;
-  guiaNutricional: string;
-  imagen: string;
-}
-
-export interface Instructor {
-  id: number;
-  nombre: string;
-  correo: string;
-  telefono: string;
-  especialidad: string;
-  experiencia: number;
-  biografia: string;
-  imagen: string;
-  gimnasioId: number | null;
-  activo: boolean;
-}
