@@ -10,6 +10,9 @@ import { InicioComponent } from './pages/inicio/inicio';
 // Páginas del panel (protegidas)
 import { DashboardComponent } from './pages/dashboard/dashboard';
 
+
+
+
 export const routes: Routes = [
   // ---------- Ruta inicial / raíz ----------
   { path: '', redirectTo: 'login', pathMatch: 'full' }, // Redirige la raíz al login
@@ -35,5 +38,7 @@ export const routes: Routes = [
       { path: 'roles', component: RolesComponent },
     ],
   },
-  { path: '**', redirectTo: '' },
+
+  // ---------- Ruta comodín ----------
+  { path: '**', redirectTo: 'login' }, // Redirige cualquier ruta desconocida a login holaaaaa 
 ];
