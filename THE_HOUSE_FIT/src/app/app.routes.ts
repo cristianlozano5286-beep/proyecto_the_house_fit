@@ -1,46 +1,41 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './guards/auth-guard';
-import { PublicLayoutComponent } from './layouts/public-layout/public-layout';
-import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout';
-import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout';
-import { InicioComponent } from './pages/inicio/inicio';
-import { RegisterComponent } from './pages/register/register';
+
+// Autenticación
 import { LoginComponent } from './pages/login/login';
+import { RegisterComponent } from './pages/register/register';
+// Layouts
+// Páginas públicas
+import { InicioComponent } from './pages/inicio/inicio';
+// Páginas del panel (protegidas)
 import { DashboardComponent } from './pages/dashboard/dashboard';
+import { UsersComponent } from './pages/users/users';
+import { ProductosAdminComponent } from './pages/productos-admin/productos-admin';
 import { ResenasComponent } from './pages/resenas/resenas';
-// Importación de componentes
-
-// Descomenta/ajusta las importaciones de tus otros componentes a medida que los uses:
-// import { RegisterComponent } from './pages/register/register';
-// import { DashboardComponent } from './pages/dashboard/dashboard';
-
+import { RolesComponent } from './pages/roles/roles';
+import { authGuard } from './guards/auth-guard';
 export const routes: Routes = [
-  {
-    path: '',
-    component: PublicLayoutComponent,
-    children: [
-      { path: '', component: InicioComponent },
-      { path: 'gimnasios', component: InicioComponent },
-      { path: 'register', component: RegisterComponent },
-    ],
-  },
-  {
-    path: 'auth',
-    component: AuthLayoutComponent,
-    children: [
-      { path: 'login', component: LoginComponent },
-      { path: 'register', component: RegisterComponent },
-    ],
-  },
+  // ---------- Sitio público (sin autenticación) ----------
+
+  // ---------- Autenticación ----------
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+  
+
+  // ---------- Panel administrativo (requiere sesión) ----------
   {
     path: 'panel',
-    component: AdminLayoutComponent,
+    component: LayoutComponent,
     canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
+      { path: 'usuarios', component: UsersComponent },
+      { path: 'productos', component: ProductosAdminComponent },
+      { path: 'resenas', component: ResenasComponent },
+      { path: 'roles', component: RolesComponent },
     ],
   },
+
+  // ---------- Ruta comodín ----------
   { path: '**', redirectTo: '' },
 ];
-
