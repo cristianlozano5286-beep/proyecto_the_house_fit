@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GuiaFisica, GuiaNutricional, Rutina } from '../models/contenido.models';
+import { storage } from './storage';
 
 const KEY_RUTINAS = 'thehousefit_rutinas';
 const KEY_GUIAS_FISICAS = 'thehousefit_guias_fisicas';
@@ -119,9 +120,9 @@ export class ContenidoService {
   }
 
   private cargarLista<T>(key: string, iniciales: T[]): T[] {
-    const datos = localStorage.getItem(key);
+    const datos = storage.getItem(key);
     if (datos) return JSON.parse(datos);
-    localStorage.setItem(key, JSON.stringify(iniciales));
+    storage.setItem(key, JSON.stringify(iniciales));
     return [...iniciales];
   }
 
@@ -135,11 +136,11 @@ export class ContenidoService {
   crearRutina(rutina: Omit<Rutina, 'id'>): void {
     const id = this.rutinas.length ? Math.max(...this.rutinas.map((r) => r.id)) + 1 : 1;
     this.rutinas.push({ ...rutina, id });
-    localStorage.setItem(KEY_RUTINAS, JSON.stringify(this.rutinas));
+    storage.setItem(KEY_RUTINAS, JSON.stringify(this.rutinas));
   }
   eliminarRutina(id: number): void {
     this.rutinas = this.rutinas.filter((r) => r.id !== id);
-    localStorage.setItem(KEY_RUTINAS, JSON.stringify(this.rutinas));
+    storage.setItem(KEY_RUTINAS, JSON.stringify(this.rutinas));
   }
 
   // ----- Guías físicas -----
@@ -149,11 +150,11 @@ export class ContenidoService {
   crearGuiaFisica(guia: Omit<GuiaFisica, 'id'>): void {
     const id = this.guiasFisicas.length ? Math.max(...this.guiasFisicas.map((g) => g.id)) + 1 : 1;
     this.guiasFisicas.push({ ...guia, id });
-    localStorage.setItem(KEY_GUIAS_FISICAS, JSON.stringify(this.guiasFisicas));
+    storage.setItem(KEY_GUIAS_FISICAS, JSON.stringify(this.guiasFisicas));
   }
   eliminarGuiaFisica(id: number): void {
     this.guiasFisicas = this.guiasFisicas.filter((g) => g.id !== id);
-    localStorage.setItem(KEY_GUIAS_FISICAS, JSON.stringify(this.guiasFisicas));
+    storage.setItem(KEY_GUIAS_FISICAS, JSON.stringify(this.guiasFisicas));
   }
 
   // ----- Guías nutricionales -----
@@ -168,11 +169,11 @@ export class ContenidoService {
       ? Math.max(...this.guiasNutricionales.map((g) => g.id)) + 1
       : 1;
     this.guiasNutricionales.push({ ...guia, id });
-    localStorage.setItem(KEY_GUIAS_NUTRICIONALES, JSON.stringify(this.guiasNutricionales));
+    storage.setItem(KEY_GUIAS_NUTRICIONALES, JSON.stringify(this.guiasNutricionales));
   }
   eliminarGuiaNutricional(id: number): void {
     this.guiasNutricionales = this.guiasNutricionales.filter((g) => g.id !== id);
-    localStorage.setItem(KEY_GUIAS_NUTRICIONALES, JSON.stringify(this.guiasNutricionales));
+    storage.setItem(KEY_GUIAS_NUTRICIONALES, JSON.stringify(this.guiasNutricionales));
   }
 
   // ----- Calculadora de IMC (HU30) -----

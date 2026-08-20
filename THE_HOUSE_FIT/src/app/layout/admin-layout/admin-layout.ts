@@ -17,6 +17,6 @@ export class AdminLayoutComponent {
 
   cerrarSesion(): void {
     this.authService.cerrarSesion();
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/login']);
   }
 }

@@ -1,3 +1,56 @@
+/* ============ HOME THEME ============ */
+:host {
+    --color-primary: #f27a24;
+    --color-primary-dark: #c95612;
+    --font-display: 'Arial Narrow', 'Segoe UI', sans-serif;
+    --font-body: 'Segoe UI', Arial, sans-serif;
+    display: block;
+}
+
+.block { display: block; }
+.accent { color: var(--color-primary); }
+.display-title {
+    margin: 0;
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 900;
+    line-height: .92;
+    letter-spacing: .01em;
+    text-transform: uppercase;
+}
+
+.btn-landing {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0 20px;
+    border: 1px solid transparent;
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-decoration: none;
+    transition: background .2s, border-color .2s, transform .2s;
+}
+.btn-landing:hover { transform: translateY(-2px); }
+.btn-landing.primary { background: var(--color-primary); }
+.btn-landing.primary:hover { background: var(--color-primary-dark); }
+.btn-landing.outline { border-color: rgba(255,255,255,.55); }
+.btn-landing.outline:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+.tag-outline {
+    border: 1px solid var(--color-primary);
+    padding: 5px 8px;
+    color: var(--color-primary);
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
 /* ============ HERO ============ */
 .hero{
     position:relative; 
@@ -63,6 +116,7 @@
 
 .hero-headline{ 
     font-size: clamp(52px, 11vw, 140px); 
+    color: #fff;
     margin-bottom:22px; 
 }
 .hero-desc{ 
@@ -260,6 +314,10 @@
     margin:14px 0 26px; 
     font-family: var(--font-body); 
     font-size:15px; 
+}
+
+@media (min-width: 900px) {
+    .hero-content { padding-left: 78px; }
 }
 
 @media (max-width:600px){

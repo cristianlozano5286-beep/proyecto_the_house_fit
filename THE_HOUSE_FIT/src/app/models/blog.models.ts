@@ -20,3 +20,14 @@ export interface Noticia {
   gimnasioId: number | null;
   fecha: string;
 }
+
+export interface Resena {
+  id: number;
+  gimnasioId: number;
+  usuario: string;
+  titulo: string;
+  cuerpo: string;
+  puntuacion: number;
+  imagen: string;
+  fecha?: string;
+}

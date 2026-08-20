@@ -1,0 +1,41 @@
+.dark-page{ background:#0a0a0a; min-height:100vh; padding:140px 24px 80px; }
+.page-header{ max-width:1200px; margin:0 auto 40px; }
+.page-desc{ color:#888; font-family: var(--font-body); font-size:15px; max-width:520px; margin-top:14px; }
+.accent{ color: var(--color-primary); }
+
+.filter-bar{
+    max-width:1200px; margin:0 auto 8px; display:grid; grid-template-columns:1fr 1fr; gap:16px;
+    background:#111; border:1px solid #1e1e1e; padding:20px;
+}
+@media (max-width:640px){ .filter-bar{ grid-template-columns:1fr; } }
+.filter-field label{ display:block; font-size:11px; letter-spacing:.1em; color:#666; margin-bottom:8px; font-family: var(--font-body); font-weight:600; }
+.filter-field input, .filter-field select{
+    width:100%; padding:11px 12px; background:#0a0a0a; border:1px solid #222; color:#f0f0f0; font-family: var(--font-body); font-size:14px;
+}
+.filter-field input:focus, .filter-field select:focus{ outline:none; border-color: var(--color-primary); }
+
+.result-count{ max-width:1200px; margin:24px auto 20px; color:#666; font-size:13px; font-family: var(--font-body); }
+
+.services-grid{ max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1px; background:#1e1e1e; }
+.service-card{ background:#0a0a0a; padding:28px; transition:.2s; }
+.service-card.clickable{ cursor:pointer; }
+.service-card:hover{ background:#111; }
+.service-top{ display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:18px; }
+.service-icon{ font-size:34px; }
+.service-title{ font-family: var(--font-display); font-weight:800; text-transform:uppercase; color:#fff; font-size:22px; margin-bottom:8px; }
+.service-desc{ font-size:13px; color:#888; font-family: var(--font-body); margin-top:4px; }
+.service-footer{ margin-top:18px; }
+.service-link{ color:#555; font-size:13px; font-weight:600; font-family: var(--font-body); }
+.stars{ color:#f59e0b; font-size:13px; }
+
+.empty-state-dark{ grid-column: 1/-1; text-align:center; padding:60px 20px; color:#555; font-family: var(--font-body); background:#0a0a0a; }
+
+/* Modal oscuro */
+.modal-dark{ background:#111; border:1px solid #222; max-width:600px; width:100%; max-height:85vh; overflow-y:auto; }
+.modal-dark-header{ display:flex; align-items:center; justify-content:space-between; padding:20px 24px; border-bottom:1px solid #222; }
+.modal-dark-header h2{ font-family: var(--font-display); font-weight:800; text-transform:uppercase; color:#fff; font-size:22px; }
+.modal-dark-header button{ background:none; border:1px solid #333; color:#888; width:32px; height:32px; cursor:pointer; }
+.modal-dark-body{ padding:24px; color:#ccc; font-family: var(--font-body); font-size:14px; line-height:1.6; }
+.modal-dark-body h3{ font-family: var(--font-display); color:#fff; font-size:16px; letter-spacing:.05em; }
+.mini-card{ background:#0a0a0a; border:1px solid #1e1e1e; padding:14px; margin-top:8px; font-size:13px; }
+.muted{ color:#555; font-size:13px; }

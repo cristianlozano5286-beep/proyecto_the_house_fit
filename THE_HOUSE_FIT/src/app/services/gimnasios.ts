@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Gimnasio } from '../models/catalogo.models';
+import { storage } from './storage';
 
 const STORAGE_KEY = 'thehousefit_gimnasios';
 
@@ -51,7 +52,7 @@ export class GimnasiosService {
   }
 
   private cargar(): void {
-    const datos = localStorage.getItem(STORAGE_KEY);
+    const datos = storage.getItem(STORAGE_KEY);
     if (datos) {
       this.gimnasios = JSON.parse(datos);
     } else {
@@ -61,7 +62,7 @@ export class GimnasiosService {
   }
 
   private guardar(): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.gimnasios));
+    storage.setItem(STORAGE_KEY, JSON.stringify(this.gimnasios));
   }
 
   listar(): Gimnasio[] {

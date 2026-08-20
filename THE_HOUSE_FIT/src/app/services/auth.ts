@@ -12,6 +12,7 @@ const STORAGE_USUARIOS = 'thehousefit_usuariosSistema';
   providedIn: 'root',
 })
 export class AuthService {
+  private platformId = inject(PLATFORM_ID);
   private readonly STORAGE_KEY = 'usuarioSesion';
 
   // Usuarios semilla del sistema (roles del Módulo 7: Administrador, Entrenador, Usuario)
@@ -39,23 +40,41 @@ export class AuthService {
     },
   ];
 
-  private usuariosSistema: UsuarioSistema[] = [];
-
-  // Código de verificación / recuperación simulado en memoria (HU04, HU05, HU07, HU08)
+  // Se inicializa siempre con el fallback por defecto para evitar arreglos vacíos por SSR
+  private usuariosSistema: UsuarioSistema[] = [...this.usuariosIniciales];
   private codigoTemporal: { correo: string; codigo: string } | null = null;
 
   constructor() {
     this.cargarUsuarios();
   }
 
+  private esNavegador(): boolean {
+    return isPlatformBrowser(this.platformId);
+  }
+
   private cargarUsuarios(): void {
+    if (!this.esNavegador()) return;
+
     const datos = localStorage.getItem(STORAGE_USUARIOS);
     if (datos) {
-      this.usuariosSistema = JSON.parse(datos);
+      try {
+        const parsed = JSON.parse(datos);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          this.usuariosSistema = parsed;
+        } else {
+          this.restablecerUsuariosBase();
+        }
+      } catch {
+        this.restablecerUsuariosBase();
+      }
     } else {
-      this.usuariosSistema = [...this.usuariosIniciales];
-      this.guardarUsuarios();
+      this.restablecerUsuariosBase();
     }
+  }
+
+  public restablecerUsuariosBase(): void {
+    this.usuariosSistema = [...this.usuariosIniciales];
+    this.guardarUsuarios();
   }
 
   private guardarUsuarios(): void {
@@ -64,11 +83,19 @@ export class AuthService {
 
   // ------------------- LOGIN (HU09, HU10, HU11) -------------------
   inciarSesion(correo: string, password: string): boolean {
-    const usuario = this.usuariosSistema.find((u) => u.correo === correo);
-    if (!usuario) {
-      return false;
+    // Si la lista está vacía en runtime (CSR/SSR mismatch), recarga desde el navegador
+    if (this.usuariosSistema.length === 0) {
+      this.cargarUsuarios();
     }
-    if (usuario.password !== password) {
+
+    const correoLimpio = correo ? correo.trim().toLowerCase() : '';
+    const passLimpia = password ? password.trim() : '';
+    
+    const usuario = this.usuariosSistema.find(
+      (u) => u.correo.trim().toLowerCase() === correoLimpio
+    );
+
+    if (!usuario || usuario.password.trim() !== passLimpia) {
       return false;
     }
 
@@ -110,13 +137,14 @@ export class AuthService {
 
   // ------------------- REGISTRO (HU01, HU02, HU03) -------------------
   correoExiste(correo: string): boolean {
-    return this.usuariosSistema.some((u) => u.correo.toLowerCase() === correo.toLowerCase());
+    const correoLimpio = correo.trim().toLowerCase();
+    return this.usuariosSistema.some((u) => u.correo.trim().toLowerCase() === correoLimpio);
   }
 
   registrarUsuario(nombre: string, correo: string, password: string): void {
     const nuevoUsuario: UsuarioSistema = {
       nombre,
-      correo,
+      correo: correo.trim().toLowerCase(),
       password,
       rol: 'Usuario',
       correoVerificado: false,
@@ -128,16 +156,16 @@ export class AuthService {
   // ------------------- VERIFICACIÓN DE CORREO (HU04, HU05) -------------------
   enviarCodigoVerificacion(correo: string): string {
     const codigo = Math.floor(100000 + Math.random() * 900000).toString();
-    this.codigoTemporal = { correo, codigo };
-    // Simulación de envío de correo: en un entorno real esto llamaría a un servicio de backend/SMTP.
+    this.codigoTemporal = { correo: correo.trim().toLowerCase(), codigo };
     return codigo;
   }
 
   verificarCodigo(correo: string, codigo: string): boolean {
     if (!this.codigoTemporal) return false;
-    const valido = this.codigoTemporal.correo === correo && this.codigoTemporal.codigo === codigo;
+    const correoLimpio = correo.trim().toLowerCase();
+    const valido = this.codigoTemporal.correo === correoLimpio && this.codigoTemporal.codigo === codigo;
     if (valido) {
-      const usuario = this.usuariosSistema.find((u) => u.correo === correo);
+      const usuario = this.usuariosSistema.find((u) => u.correo.trim().toLowerCase() === correoLimpio);
       if (usuario) {
         usuario.correoVerificado = true;
         this.guardarUsuarios();
@@ -157,7 +185,7 @@ export class AuthService {
   restablecerPassword(correo: string, codigo: string, nuevaPassword: string): boolean {
     const valido = this.verificarCodigo(correo, codigo);
     if (!valido) return false;
-    const usuario = this.usuariosSistema.find((u) => u.correo === correo);
+    const usuario = this.usuariosSistema.find((u) => u.correo.trim().toLowerCase() === correo.trim().toLowerCase());
     if (usuario) {
       usuario.password = nuevaPassword;
       this.guardarUsuarios();
@@ -176,13 +204,13 @@ export class AuthService {
   }
 
   actualizarRol(correo: string, nuevoRol: string): void {
-    const usuario = this.usuariosSistema.find((u) => u.correo === correo);
+    const usuario = this.usuariosSistema.find((u) => u.correo.trim().toLowerCase() === correo.trim().toLowerCase());
     if (usuario) {
       usuario.rol = nuevoRol;
       this.guardarUsuarios();
       // Si el usuario con sesión activa es el editado, se refleja el cambio
       const sesion = this.obtenerUsuario();
-      if (sesion && sesion.correo === correo) {
+      if (sesion && sesion.correo.trim().toLowerCase() === correo.trim().toLowerCase() && this.esNavegador()) {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify({ ...sesion, rol: nuevoRol }));
       }
     }

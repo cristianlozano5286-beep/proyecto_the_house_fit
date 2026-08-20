@@ -1,0 +1,228 @@
+<div class="page-wrapper">
+    <h1 class="section-title">📋 Rutinas y guías</h1>
+    <p class="section-subtitle">Administra rutinas de entrenamiento, manuales físicos y guías nutricionales</p>
+
+    <div class="tag-row mb-16">
+        <button class="pill" [class.active]="pestanaActiva==='rutinas'" (click)="cambiarPestana('rutinas')">🏋️ Rutinas</button>
+        <button class="pill" [class.active]="pestanaActiva==='guias'" (click)="cambiarPestana('guias')">📖 Manuales físicos</button>
+        <button class="pill" [class.active]="pestanaActiva==='nutricion'" (click)="cambiarPestana('nutricion')">🥗 Nutrición</button>
+        <button class="pill" [class.active]="pestanaActiva==='clases'" (click)="cambiarPestana('clases')">📅 Clases reservables</button>
+    </div>
+
+    @if (mensaje) {
+        <div class="alert success">{{ mensaje }}</div>
+    }
+
+    @if (pestanaActiva === 'rutinas') {
+        <div class="grid grid-2">
+            <section class="card">
+                <h2>Nueva rutina</h2>
+                <div class="form-row mt-16">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" [(ngModel)]="rNombre" placeholder="Nombre de la rutina" />
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de entrenamiento</label>
+                        <select [(ngModel)]="rTipo">
+                            @for (t of tiposEntrenamiento; track t) { <option [value]="t">{{ t }}</option> }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nivel</label>
+                        <select [(ngModel)]="rNivel">
+                            @for (n of niveles; track n) { <option [value]="n">{{ n }}</option> }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Duración (semanas)</label>
+                        <input type="number" min="1" [(ngModel)]="rDuracion" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea rows="2" [(ngModel)]="rDescripcion"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Ejercicios (separados por coma)</label>
+                    <textarea rows="2" [(ngModel)]="rEjerciciosTexto" placeholder="Sentadilla 4x10, Press banca 4x8..."></textarea>
+                </div>
+                <button class="btn btn-primary" (click)="guardarRutina()">Agregar rutina</button>
+            </section>
+
+            <section class="card">
+                <h2>Rutinas disponibles ({{ rutinas.length }})</h2>
+                <div class="mt-16" style="max-height:480px;overflow-y:auto;">
+                    @for (r of rutinas; track r.id) {
+                        <div class="card" style="padding:12px;margin-bottom:10px;">
+                            <div class="flex-between">
+                                <strong>{{ r.nombre }}</strong>
+                                <button class="btn btn-danger btn-sm" (click)="eliminarRutina(r.id)">🗑️</button>
+                            </div>
+                            <div class="tag-row mt-8">
+                                <span class="badge badge-info">{{ r.tipoEntrenamiento }}</span>
+                                <span class="badge badge-gray">{{ r.nivel }}</span>
+                                <span class="badge badge-warning">{{ r.duracionSemanas }} semanas</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </section>
+        </div>
+    }
+
+    @if (pestanaActiva === 'guias') {
+        <div class="grid grid-2">
+            <section class="card">
+                <h2>Nuevo manual de guía física</h2>
+                <div class="form-group mt-16">
+                    <label>Título</label>
+                    <input type="text" [(ngModel)]="gTitulo" placeholder="Ej. Manual de técnica de sentadilla" />
+                </div>
+                <div class="form-group">
+                    <label>Método / categoría</label>
+                    <input type="text" [(ngModel)]="gMetodo" placeholder="Ej. Fuerza, Funcional..." />
+                </div>
+                <div class="form-group">
+                    <label>Contenido</label>
+                    <textarea rows="5" [(ngModel)]="gContenido" placeholder="Describe la técnica o el método de ejercicio..."></textarea>
+                </div>
+                <button class="btn btn-primary" (click)="guardarGuiaFisica()">Publicar manual</button>
+            </section>
+
+            <section class="card">
+                <h2>Manuales publicados ({{ guiasFisicas.length }})</h2>
+                <div class="mt-16" style="max-height:480px;overflow-y:auto;">
+                    @for (g of guiasFisicas; track g.id) {
+                        <div class="card" style="padding:12px;margin-bottom:10px;">
+                            <div class="flex-between">
+                                <strong>{{ g.titulo }}</strong>
+                                <button class="btn btn-danger btn-sm" (click)="eliminarGuiaFisica(g.id)">🗑️</button>
+                            </div>
+                            <span class="badge badge-info mt-8">{{ g.metodo }}</span>
+                            <p class="mt-8" style="font-size:13px;">{{ g.contenido }}</p>
+                        </div>
+                    }
+                </div>
+            </section>
+        </div>
+    }
+
+    @if (pestanaActiva === 'nutricion') {
+        <div class="grid grid-2">
+            <section class="card">
+                <h2>Nueva guía nutricional</h2>
+                <div class="form-group mt-16">
+                    <label>Categoría de IMC</label>
+                    <select [(ngModel)]="nCategoria">
+                        @for (c of categoriasIMC; track c) { <option [value]="c">{{ c }}</option> }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Título</label>
+                    <input type="text" [(ngModel)]="nTitulo" placeholder="Ej. Plan de mantenimiento saludable" />
+                </div>
+                <div class="form-group">
+                    <label>Recomendaciones</label>
+                    <textarea rows="3" [(ngModel)]="nRecomendaciones"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Ejemplo de comidas</label>
+                    <textarea rows="3" [(ngModel)]="nEjemploComidas"></textarea>
+                </div>
+                <button class="btn btn-primary" (click)="guardarGuiaNutricional()">Publicar guía</button>
+            </section>
+
+            <section class="card">
+                <h2>Guías publicadas ({{ guiasNutricionales.length }})</h2>
+                <div class="mt-16" style="max-height:480px;overflow-y:auto;">
+                    @for (g of guiasNutricionales; track g.id) {
+                        <div class="card" style="padding:12px;margin-bottom:10px;">
+                            <div class="flex-between">
+                                <strong>{{ g.titulo }}</strong>
+                                <button class="btn btn-danger btn-sm" (click)="eliminarGuiaNutricional(g.id)">🗑️</button>
+                            </div>
+                            <span class="badge badge-info mt-8">{{ g.categoriaIMC }}</span>
+                            <p class="mt-8" style="font-size:13px;">{{ g.recomendaciones }}</p>
+                        </div>
+                    }
+                </div>
+            </section>
+        </div>
+    }
+
+    @if (pestanaActiva === 'clases') {
+        <div class="grid grid-2">
+            <section class="card">
+                <h2>Nueva clase reservable</h2>
+                <div class="form-row mt-16">
+                    <div class="form-group">
+                        <label>Gimnasio</label>
+                        <select [(ngModel)]="cGimnasioId">
+                            <option [ngValue]="null">Selecciona un gimnasio</option>
+                            @for (g of gimnasios; track g.id) {
+                                <option [ngValue]="g.id">{{ g.nombre }}</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de clase</label>
+                        <select [(ngModel)]="cTipoClase">
+                            @for (t of tiposClase; track t) { <option [value]="t">{{ t }}</option> }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Instructor</label>
+                        <input type="text" [(ngModel)]="cInstructor" placeholder="Nombre del instructor" />
+                    </div>
+                    <div class="form-group">
+                        <label>Hora</label>
+                        <input type="text" [(ngModel)]="cHora" placeholder="Ej. 6:00 am" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Cupos</label>
+                        <input type="number" min="1" [(ngModel)]="cCupos" />
+                    </div>
+                    <div class="form-group">
+                        <label>Duración</label>
+                        <input type="text" [(ngModel)]="cDuracion" placeholder="Ej. 45 min" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Precio</label>
+                    <input type="number" min="0" [(ngModel)]="cPrecio" />
+                </div>
+                <button class="btn btn-primary" (click)="guardarClase()">Agregar clase</button>
+            </section>
+
+            <section class="card">
+                <h2>Clases disponibles ({{ clases.length }})</h2>
+                <div class="mt-16" style="max-height:480px;overflow-y:auto;">
+                    @for (c of clases; track c.id) {
+                        <div class="card" style="padding:12px;margin-bottom:10px;">
+                            <div class="flex-between">
+                                <strong>{{ c.tipoClase }} · {{ nombreGimnasio(c.gimnasioId) }}</strong>
+                                <button class="btn btn-danger btn-sm" (click)="eliminarClase(c.id)">🗑️</button>
+                            </div>
+                            <div class="tag-row mt-8">
+                                <span class="badge badge-info">{{ c.hora }}</span>
+                                <span class="badge badge-gray">{{ c.duracion }}</span>
+                                <span class="badge badge-warning">{{ c.cupos }} cupos</span>
+                            </div>
+                            <p class="mt-8" style="font-size:13px;color:var(--color-gray);">Instructor: {{ c.instructor }}</p>
+                        </div>
+                    }
+                    @empty {
+                        <p class="empty-state">Aún no hay clases registradas.</p>
+                    }
+                </div>
+            </section>
+        </div>
+    }
+</div>
