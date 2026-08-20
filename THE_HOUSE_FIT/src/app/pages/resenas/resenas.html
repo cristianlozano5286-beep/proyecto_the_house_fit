@@ -1,0 +1,66 @@
+<div class="page-wrapper">
+    <h1 class="section-title">⭐ Reseñas de gimnasios</h1>
+    <p class="section-subtitle">Comparte tu experiencia y ayuda a otros usuarios a elegir su gimnasio ideal</p>
+
+    @if (mensaje) {
+        <div class="alert success">{{ mensaje }}</div>
+    }
+
+    <div class="grid grid-2">
+        <section class="card">
+            <h2>Agregar reseña</h2>
+            <div class="form-group mt-16">
+                <label>Gimnasio</label>
+                <select [(ngModel)]="gimnasioId">
+                    <option [ngValue]="null">Selecciona un gimnasio</option>
+                    @for (g of gimnasios; track g.id) {
+                        <option [ngValue]="g.id">{{ g.nombre }}</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Título</label>
+                <input type="text" [(ngModel)]="titulo" placeholder="Ej. Excelente atención" />
+            </div>
+            <div class="form-group">
+                <label>Comentario</label>
+                <textarea rows="3" [(ngModel)]="cuerpo" placeholder="Cuéntanos tu experiencia..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Puntuación</label>
+                <select [(ngModel)]="puntuacion">
+                    <option [ngValue]="5">5 - Excelente</option>
+                    <option [ngValue]="4">4 - Muy bueno</option>
+                    <option [ngValue]="3">3 - Bueno</option>
+                    <option [ngValue]="2">2 - Regular</option>
+                    <option [ngValue]="1">1 - Malo</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" (click)="agregarResena()">Publicar reseña</button>
+        </section>
+
+        <section class="card">
+            <h2>Reseñas recientes ({{ resenas.length }})</h2>
+            <div class="mt-16" style="max-height:520px;overflow-y:auto;">
+                @for (r of resenas; track r.id) {
+                    <div class="card" style="padding:14px;margin-bottom:10px;">
+                        <div class="flex-between">
+                            <strong>{{ r.titulo }}</strong>
+                            <span class="stars">{{ estrellas(r.puntuacion) }}</span>
+                        </div>
+                        <p class="mt-8" style="font-size:14px;">{{ r.cuerpo }}</p>
+                        <div class="flex-between mt-8">
+                            <small style="color:var(--color-gray);">{{ nombreGimnasio(r.gimnasioId) }} · {{ r.usuario }} · {{ r.fecha }}</small>
+                            @if (esAdministrador) {
+                                <button class="btn btn-danger btn-sm" (click)="eliminarResena(r.id)">🗑️</button>
+                            }
+                        </div>
+                    </div>
+                }
+                @empty {
+                    <p class="empty-state">Aún no hay reseñas.</p>
+                }
+            </div>
+        </section>
+    </div>
+</div>

@@ -1,0 +1,117 @@
+<!-- ── HERO ── -->
+<section class="hero">
+    <div class="hero-bg">
+        <img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1800&h=1200&fit=crop&auto=format" alt="Gimnasios en Yopal" />
+        <div class="hero-gradient"></div>
+        <div class="hero-vignette"></div>
+    </div>
+    <div class="hero-accent-line"></div>
+
+    <div class="hero-content">
+        <div class="hero-pretag">
+            <span>DIRECTORIO FITNESS · YOPAL, CASANARE</span>
+            <div class="pretag-line"></div>
+        </div>
+
+        <h1 class="display-title hero-headline">
+            <span class="block">ENCUENTRA TU</span>
+            <span class="block accent">GIMNASIO</span>
+            <span class="block">IDEAL.</span>
+        </h1>
+
+        <p class="hero-desc">
+            Compara gimnasios, instructores, rutinas y planes de nutrición en un solo lugar.
+            Sin excusas, sin vueltas: elige y empieza hoy.
+        </p>
+
+        <div class="hero-actions">
+            <a routerLink="/gimnasios" class="btn-landing primary">VER GIMNASIOS</a>
+            <a routerLink="/register" class="btn-landing outline">CREAR CUENTA</a>
+        </div>
+    </div>
+
+    <div class="scroll-indicator">
+        <span>SCROLL</span>
+        <div class="scroll-line"></div>
+    </div>
+</section>
+
+<!-- ── STATS STRIP ── -->
+<section class="stats-strip">
+    <div class="stats-inner">
+        @for (s of stats; track s.label) {
+            <div class="stat-item">
+                <div class="stat-value">{{ s.value }}</div>
+                <div class="stat-label">{{ s.label }}</div>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- ── GIMNASIOS DESTACADOS ── -->
+<section class="section-dark">
+    <div class="section-inner">
+        <div class="section-header">
+            <div>
+                <span class="eyebrow">LO MEJOR CALIFICADO</span>
+                <h2 class="display-title">
+                    GIMNASIOS
+                    <br />
+                    <span class="accent">DESTACADOS</span>
+                </h2>
+            </div>
+            <p class="section-desc">
+                Los espacios mejor valorados por nuestra comunidad de usuarios en Yopal.
+            </p>
+        </div>
+
+        <div class="services-grid">
+            @for (g of gimnasiosDestacados; track g.id) {
+                <a routerLink="/gimnasios" class="service-card">
+                    <div class="service-top">
+                        <span class="service-icon">{{ g.imagen }}</span>
+                        <span class="tag-outline">{{ $any(g).servicios[0] || 'GYM' }}</span>
+                    </div>
+                    <h3 class="service-title">{{ g.nombre }}</h3>
+                    <p class="service-desc">{{ g.descripcion }}</p>
+                    <div class="service-footer">
+                        <span class="stars">{{ estrellas(g.id) }}</span>
+                        <span class="service-link">Ver más →</span>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- ── NOTICIAS ── -->
+<section class="section-dark alt">
+    <div class="section-inner">
+        <div class="flex-between mb-16">
+            <div>
+                <span class="eyebrow">EN LA COMUNIDAD</span>
+                <h2 class="display-title" style="font-size:clamp(28px,4vw,44px);">ÚLTIMAS NOTICIAS</h2>
+            </div>
+            <a routerLink="/blog" class="btn-landing outline">VER BLOG</a>
+        </div>
+
+        <div class="news-grid">
+            @for (n of noticiasRecientes; track n.id) {
+                <div class="news-card">
+                    <span class="tag-outline">{{ ($any(n).tipo || '').toUpperCase() }}</span>
+                    <h3>{{ $any(n).imagen }} {{ n.titulo }}</h3>
+                    <p>{{ $any(n).cuerpo }}</p>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- ── CTA IMC ── -->
+<section class="cta-strip">
+    <div class="cta-inner">
+        <h2 class="display-title" style="color:#fff;font-size:clamp(28px,5vw,52px);">¿YA SABES TU IMC?</h2>
+        <p>Calcula tu Índice de Masa Corporal y recibe una rutina y plan nutricional recomendado.</p>
+        <a routerLink="/imc" class="btn-landing" style="background:#0a0a0a;color:#fff;">CALCULAR MI IMC</a>
+    </div>
+</section>

@@ -1,0 +1,13 @@
+/*<h2 mat-dialog-title>Confirmar reserva</h2>
+<mat-dialog-content>
+    <p><strong>Gimnasio:</strong> {{ data.nombreGimnasio }}</p>
+    <p><strong>Clase:</strong> {{ data.clase.tipoClase }} con {{ data.clase.instructor }}</p>
+    <p><strong>Hora:</strong> {{ data.clase.hora }} · {{ data.clase.duracion }}</p>
+    <p><strong>Fecha:</strong> {{ data.fecha }}</p>
+    <p><strong>Personas:</strong> {{ data.personas }}</p>
+    <p class="total"><strong>Total:</strong> {{ formatearPrecio(data.clase.precio * data.personas) }}</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-stroked-button (click)="cancelar()">Cancelar</button>
+    <button mat-raised-button color="primary" (click)="confirmar()">Confirmar reserva</button>
+</mat-dialog-actions>

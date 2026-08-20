@@ -1,0 +1,14 @@
+<div class="admin-shell">
+  <aside class="sidebar">
+    <h3>Panel</h3>
+    <nav>
+      <a routerLink="/panel/dashboard">Dashboard</a>
+      <a routerLink="/panel/usuarios">Usuarios</a>
+      <button type="button" (click)="cerrarSesion()">Cerrar sesión</button>
+    </nav>
+  </aside>
+
+  <main>
+    <router-outlet></router-outlet>
+  </main>
+</div>

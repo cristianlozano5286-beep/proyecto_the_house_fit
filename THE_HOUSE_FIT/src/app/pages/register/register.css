@@ -1,0 +1,161 @@
+/* Custom Properties (Variables CSS) */
+:root {
+  --primary: #ff4500;
+  --primary-hover: #cc3700;
+  --bg-dark-1: #0f172a;
+  --bg-dark-2: #1e293b;
+  --bg-dark-3: #334155;
+  --text-main: #0f172a;
+  --border-default: #d1d5db;
+  --danger: #dc2626;
+  --success: #16a34a;
+  --disabled: #94a3b8;
+  --info-bg: #dbeafe;
+  --info-text: #1e3a8a;
+  --info-border: #93c5fd;
+  --radius-card: 20px;
+  --radius-input: 8px;
+}
+
+/* Reset General */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Contenedor Principal */
+.register-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px; /* Previene que la tarjeta toque los bordes en pantalla pequeña */
+  background: linear-gradient(135deg, var(--bg-dark-1), var(--bg-dark-2), var(--bg-dark-3));
+}
+
+/* Estilo Tarjeta */
+.register-card {
+  width: min(100%, 500px); /* Responsivo sin perder los 500px en pantallas grandes */
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: var(--radius-card);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25); /* Sintaxis de sombra corregida */
+}
+
+/* Encabezado */
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  color: var(--text-main);
+  margin-bottom: 10px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Alertas */
+.alert.info {
+  background: var(--info-bg);
+  color: var(--info-text);
+  border: 1px solid var(--info-border);
+  padding: 10px 14px;
+  border-radius: var(--radius-input);
+  font-size: 0.825rem;
+  margin-bottom: 16px;
+}
+
+/* Formularios */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.form-group input {
+  width: 100%;
+  padding: 14px;
+  font: inherit; /* Hereda tipografía correctamente */
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-input);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.2); /* Mismo tono que el borde */
+}
+
+/* Validación Angular */
+input.ng-invalid.ng-touched {
+  border: 2px solid var(--danger);
+}
+
+input.ng-valid.ng-touched {
+  border: 2px solid var(--success);
+}
+
+.error {
+  display: block;
+  margin-top: 6px;
+  color: var(--danger);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+/* Botones y Enlaces */
+.button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: var(--radius-input);
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.button:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.button:disabled {
+  background: var(--disabled);
+  cursor: not-allowed;
+}
+
+.volver-inicio {
+  display: block;
+  margin-top: 16px;
+  font-size: 0.8125rem;
+  color: var(--primary);
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.volver-inicio:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}

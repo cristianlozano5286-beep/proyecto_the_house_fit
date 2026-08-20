@@ -1,0 +1,69 @@
+.public-shell {
+  min-height: 100vh;
+  background: #f5efe9;
+  color: #1d120d;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(90deg, #2b160f 0%, #4a2216 50%, #2b160f 100%);
+  color: white;
+  padding: 16px 28px;
+  box-shadow: 0 10px 26px rgba(30, 18, 10, 0.18);
+}
+
+.brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.brand-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f8b349, #d5672a);
+  color: #2b160f;
+  font-size: 0.8rem;
+}
+
+.brand-name {
+  font-size: 0.82rem;
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.main-nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.main-nav a:hover {
+  opacity: 1;
+}
+
+.nav-cta {
+  background: rgba(255,255,255,0.12);
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.public-content {
+  padding: 28px 18px 42px;
+}
