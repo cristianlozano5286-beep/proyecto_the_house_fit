@@ -1,18 +1,12 @@
-import { Injectable, inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-
-export interface UsuarioAuth {
-  nombre: string;
-  correo: string;
-  rol: string;
-}
+import { UsuarioAuth } from '../models/usuario-auth';
+import { Injectable } from '@angular/core';
 
 export interface UsuarioSistema extends UsuarioAuth {
   password: string;
   correoVerificado: boolean;
 }
 
-const STORAGE_USUARIOS = 'fitzone_usuariosSistema';
+const STORAGE_USUARIOS = 'thehousefit_usuariosSistema';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +15,7 @@ export class AuthService {
   private platformId = inject(PLATFORM_ID);
   private readonly STORAGE_KEY = 'usuarioSesion';
 
+  // Usuarios semilla del sistema (roles del Módulo 7: Administrador, Entrenador, Usuario)
   private usuariosIniciales: UsuarioSistema[] = [
     {
       nombre: 'Administrador The House Fit',
@@ -83,11 +78,10 @@ export class AuthService {
   }
 
   private guardarUsuarios(): void {
-    if (!this.esNavegador()) return;
     localStorage.setItem(STORAGE_USUARIOS, JSON.stringify(this.usuariosSistema));
   }
 
-  // ------------------- LOGIN -------------------
+  // ------------------- LOGIN (HU09, HU10, HU11) -------------------
   inciarSesion(correo: string, password: string): boolean {
     // Si la lista está vacía en runtime (CSR/SSR mismatch), recarga desde el navegador
     if (this.usuariosSistema.length === 0) {
@@ -111,29 +105,26 @@ export class AuthService {
       rol: usuario.rol,
     };
 
-    if (this.esNavegador()) {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(usuarioAuth));
-      localStorage.setItem('usuarioLogueado', 'true');
-    }
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(usuarioAuth));
+    localStorage.setItem('usuarioLogueado', 'true');
     return true;
   }
 
   cerrarSesion(): void {
-    if (this.esNavegador()) {
-      localStorage.removeItem(this.STORAGE_KEY);
-      localStorage.removeItem('usuarioLogueado');
-    }
+    localStorage.removeItem(this.STORAGE_KEY);
+    localStorage.removeItem('usuarioLogueado');
   }
 
   estaAutenticado(): boolean {
-    if (!this.esNavegador()) return false;
     return localStorage.getItem(this.STORAGE_KEY) != null;
   }
 
   obtenerUsuario(): UsuarioAuth | null {
-    if (!this.esNavegador()) return null;
     const usuario = localStorage.getItem(this.STORAGE_KEY);
-    return usuario ? JSON.parse(usuario) : null;
+    if (!usuario) {
+      return null;
+    }
+    return JSON.parse(usuario);
   }
 
   obtenerRol(): string {
@@ -144,7 +135,7 @@ export class AuthService {
     return this.obtenerUsuario()?.nombre ?? '';
   }
 
-  // ------------------- REGISTRO -------------------
+  // ------------------- REGISTRO (HU01, HU02, HU03) -------------------
   correoExiste(correo: string): boolean {
     const correoLimpio = correo.trim().toLowerCase();
     return this.usuariosSistema.some((u) => u.correo.trim().toLowerCase() === correoLimpio);
@@ -162,7 +153,7 @@ export class AuthService {
     this.guardarUsuarios();
   }
 
-  // ------------------- VERIFICACIÓN DE CORREO -------------------
+  // ------------------- VERIFICACIÓN DE CORREO (HU04, HU05) -------------------
   enviarCodigoVerificacion(correo: string): string {
     const codigo = Math.floor(100000 + Math.random() * 900000).toString();
     this.codigoTemporal = { correo: correo.trim().toLowerCase(), codigo };
@@ -184,7 +175,7 @@ export class AuthService {
     return valido;
   }
 
-  // ------------------- RECUPERAR CONTRASEÑA -------------------
+  // ------------------- RECUPERAR CONTRASEÑA (HU06, HU07, HU08) -------------------
   solicitarRecuperacion(correo: string): boolean {
     if (!this.correoExiste(correo)) return false;
     this.enviarCodigoVerificacion(correo);
@@ -207,7 +198,7 @@ export class AuthService {
     return this.codigoTemporal?.codigo ?? null;
   }
 
-  // ------------------- GESTIÓN DE ROLES -------------------
+  // ------------------- GESTIÓN DE ROLES (HU44, HU45, HU46, HU47) -------------------
   listarUsuariosSistema(): UsuarioSistema[] {
     return this.usuariosSistema;
   }
@@ -217,7 +208,7 @@ export class AuthService {
     if (usuario) {
       usuario.rol = nuevoRol;
       this.guardarUsuarios();
-
+      // Si el usuario con sesión activa es el editado, se refleja el cambio
       const sesion = this.obtenerUsuario();
       if (sesion && sesion.correo.trim().toLowerCase() === correo.trim().toLowerCase() && this.esNavegador()) {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify({ ...sesion, rol: nuevoRol }));
