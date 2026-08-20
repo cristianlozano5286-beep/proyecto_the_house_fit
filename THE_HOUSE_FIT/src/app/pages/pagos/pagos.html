@@ -1,0 +1,63 @@
+<div class="page-wrapper">
+    <h1 class="section-title">💳 Pagos</h1>
+    <p class="section-subtitle">Selecciona tu método de pago preferido para tu membresía o compra</p>
+
+    <div class="grid grid-2">
+        <section class="card">
+            <h2>Detalle del pago</h2>
+            <div class="form-group mt-16">
+                <label>Concepto</label>
+                <input type="text" [(ngModel)]="concepto" />
+            </div>
+            <div class="form-group">
+                <label>Monto</label>
+                <input type="number" [(ngModel)]="monto" />
+            </div>
+
+            <h3 class="mt-16">Elige tu método de pago</h3>
+            <div class="grid grid-2 mt-8">
+                @for (m of metodos; track m.id) {
+                    <div class="metodo-card" [class.seleccionado]="metodoSeleccionado?.id===m.id" (click)="seleccionarMetodo(m)">
+                        <span class="metodo-icono">{{ m.icono }}</span>
+                        <strong>{{ m.nombre }}</strong>
+                        <p>{{ m.descripcion }}</p>
+                    </div>
+                }
+            </div>
+
+            <button class="btn btn-primary mt-16" [disabled]="!metodoSeleccionado || procesando" (click)="pagar()">
+                {{ procesando ? 'Procesando pago...' : 'Pagar ' + formatearPrecio(monto) }}
+            </button>
+
+            @if (transaccionExitosa) {
+                <div class="alert success mt-16">
+                    ✅ Pago aprobado con {{ nombreMetodo(transaccionExitosa.metodoPagoId) }}. Serás redirigido a la pasarela para confirmar el comprobante.
+                </div>
+            }
+        </section>
+
+        <section class="card">
+            <h2>Mis transacciones</h2>
+            <div class="table-responsive mt-16">
+                <table>
+                    <thead>
+                        <tr><th>Concepto</th><th>Monto</th><th>Método</th><th>Estado</th></tr>
+                    </thead>
+                    <tbody>
+                        @for (t of transacciones; track t.id) {
+                            <tr>
+                                <td>{{ t.concepto }}</td>
+                                <td>{{ formatearPrecio(t.monto) }}</td>
+                                <td>{{ nombreMetodo(t.metodoPagoId) }}</td>
+                                <td><span class="badge badge-success">{{ t.estado }}</span></td>
+                            </tr>
+                        }
+                        @empty {
+                            <tr><td colspan="4" class="empty-state">Aún no tienes transacciones registradas.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>
