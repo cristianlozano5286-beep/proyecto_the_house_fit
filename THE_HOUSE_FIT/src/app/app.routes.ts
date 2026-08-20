@@ -4,6 +4,7 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login';
 import { RegisterComponent } from './pages/register/register';
 // Layouts
+import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout';
 // Páginas públicas
 import { InicioComponent } from './pages/inicio/inicio';
 // Páginas del panel (protegidas)
@@ -13,18 +14,22 @@ import { ProductosAdminComponent } from './pages/productos-admin/productos-admin
 import { ResenasComponent } from './pages/resenas/resenas';
 import { RolesComponent } from './pages/roles/roles';
 import { authGuard } from './guards/auth-guard';
+
 export const routes: Routes = [
+  // ---------- Ruta inicial / raíz ----------
+  { path: '', redirectTo: 'login', pathMatch: 'full' }, // Redirige la raíz al login
+
   // ---------- Sitio público (sin autenticación) ----------
+  { path: 'inicio', component: InicioComponent },
 
   // ---------- Autenticación ----------
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  
 
   // ---------- Panel administrativo (requiere sesión) ----------
   {
     path: 'panel',
-    component: LayoutComponent,
+    component: AdminLayoutComponent,
     canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -37,5 +42,5 @@ export const routes: Routes = [
   },
 
   // ---------- Ruta comodín ----------
-  { path: '**', redirectTo: '' },
+  { path: '**', redirectTo: 'login' }, // Redirige cualquier ruta desconocida a login
 ];

@@ -20,4 +20,5 @@ export interface Resena {
   puntuacion?: number;
   gimnasioId?: number;
   fecha?: string;
+  imagen?: string;
 }

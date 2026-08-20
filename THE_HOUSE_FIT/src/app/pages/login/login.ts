@@ -7,7 +7,7 @@ import { AuthService } from '../../services/auth';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, RouterLink, NgIf],
+  imports: [FormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -17,12 +17,14 @@ export class LoginComponent {
   private authService = inject(AuthService);
 
   // Variables para el formulario
-  email: string = 'admin@thehousefit.com';
+  email: string = 'usuario@thehousefit.com';
   password: string = '123456';
   mensaje: string = '';
 
   // Método ejecutado al presionar ingresar (HU10, HU11)
   login(): void {
+    console.log('Intentando iniciar sesión con:', this.email, this.password);
+
     const autenticado = this.authService.inciarSesion(this.email, this.password);
 
     if (!autenticado) {
@@ -30,8 +32,8 @@ export class LoginComponent {
       return;
     }
 
-    // Redirección tras inicio de sesión exitoso
-    this.router.navigate(['/dashboard']);
+    // Redirección hacia el panel principal definido en tus rutas
+    this.router.navigate(['/panel/dashboard']);
   }
 
   goToRegister(): void {

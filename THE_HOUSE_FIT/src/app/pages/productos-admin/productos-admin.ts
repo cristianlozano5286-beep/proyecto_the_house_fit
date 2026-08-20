@@ -34,7 +34,7 @@ export class ProductosAdminComponent implements OnInit {
   cargar(): void {
     this.productos = this.productosService.listar();
   }
-  
+
   // HU22, HU23, HU24: registro de productos (implementos/suplementos) con stock y precio
   guardar(): void {
     if (!this.nombre.trim() || this.precio == null || this.stock == null) {
@@ -70,9 +70,7 @@ export class ProductosAdminComponent implements OnInit {
     this.nombre = producto.nombre;
     this.categoria = producto.categoria;
     this.precio = producto.precio;
-    this.stock = producto.stock;
     this.descripcion = producto.descripcion;
-    this.guiaNutricional = producto.guiaNutricional;
     this.imagen = producto.imagen;
   }
 
