@@ -3,7 +3,7 @@ name: Deploy Angular to GitHub Pages
 on:
   push:
     branches:
-      - release 
+      - release
 
 permissions:
   contents: read
@@ -15,7 +15,6 @@ jobs:
     name: Build Angular
     runs-on: ubuntu-latest
 
-    
     defaults:
       run:
         working-directory: THE_HOUSE_FIT
@@ -35,15 +34,15 @@ jobs:
         run: npm ci
 
       - name: Build Angular
-        run: npm run build -- --base-href=/THE_HOUSE_FIT/
+        run: npx ng build --base-href /proyecto_the_house_fit/
 
       - name: Copy index.html to 404.html for SPA routing
-        run: cp dist/THE_HOUSE_FIT/browser/index.html dist/THE_HOUSE_FIT/browser/404.html
+        run: cp dist/the_house_fit/browser/index.html dist/the_house_fit/browser/404.html
 
       - name: Upload GitHub Pages artifacts
         uses: actions/upload-pages-artifact@v4
         with:
-          path: THE_HOUSE_FIT/dist/THE_HOUSE_FIT/browser
+          path: THE_HOUSE_FIT/dist/the_house_fit/browser
 
   deploy:
     name: Deploy to GitHub Pages
