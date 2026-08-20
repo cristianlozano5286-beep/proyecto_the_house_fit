@@ -21,6 +21,8 @@ export class LoginComponent {
     private authService: AuthService,
   ) {}
   login(): void {
+    console.log('Intentando iniciar sesión con:', this.email, this.password);
+
     const autenticado = this.authService.inciarSesion(this.email, this.password);
 
     if (!autenticado) {

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MetodoPago, Transaccion } from '../models/pagos.models';
+import { storage } from './storage';
 
 const KEY_TRANSACCIONES = 'thehousefit_transacciones';
 
@@ -15,7 +16,7 @@ export class PagosService {
   private transacciones: Transaccion[] = [];
 
   constructor() {
-    const datos = localStorage.getItem(KEY_TRANSACCIONES);
+    const datos = storage.getItem(KEY_TRANSACCIONES);
     this.transacciones = datos ? JSON.parse(datos) : [];
   }
 
@@ -37,7 +38,7 @@ export class PagosService {
       fecha: new Date().toISOString().slice(0, 10),
     };
     this.transacciones.push(transaccion);
-    localStorage.setItem(KEY_TRANSACCIONES, JSON.stringify(this.transacciones));
+    storage.setItem(KEY_TRANSACCIONES, JSON.stringify(this.transacciones));
     return transaccion;
   }
 

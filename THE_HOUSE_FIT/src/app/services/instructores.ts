@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Instructor } from '../models/catalogo.models';
+import { storage } from './storage';
 
 const STORAGE_KEY = 'thehousefit_instructores';
 
@@ -39,7 +40,7 @@ export class InstructoresService {
   }
 
   private cargar(): void {
-    const datos = localStorage.getItem(STORAGE_KEY);
+    const datos = storage.getItem(STORAGE_KEY);
     if (datos) {
       this.instructores = JSON.parse(datos);
     } else {
@@ -49,7 +50,7 @@ export class InstructoresService {
   }
 
   private guardar(): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.instructores));
+    storage.setItem(STORAGE_KEY, JSON.stringify(this.instructores));
   }
 
   listar(): Instructor[] {

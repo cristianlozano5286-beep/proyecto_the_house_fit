@@ -1,31 +1,27 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './guards/auth-guard';
-import { PublicLayoutComponent } from './layouts/public-layout/public-layout';
-import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout';
-import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout';
-import { InicioComponent } from './pages/inicio/inicio';
-import { RegisterComponent } from './pages/register/register';
+
+// Autenticación
 import { LoginComponent } from './pages/login/login';
+import { RegisterComponent } from './pages/register/register';
+// Layouts
+import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout';
+// Páginas públicas
+import { InicioComponent } from './pages/inicio/inicio';
+// Páginas del panel (protegidas)
 import { DashboardComponent } from './pages/dashboard/dashboard';
 
 export const routes: Routes = [
-  {
-    path: '',
-    component: PublicLayoutComponent,
-    children: [
-      { path: '', component: InicioComponent },
-      { path: 'gimnasios', component: InicioComponent },
-      { path: 'register', component: RegisterComponent },
-    ],
-  },
-  {
-    path: 'auth',
-    component: AuthLayoutComponent,
-    children: [
-      { path: 'login', component: LoginComponent },
-      { path: 'register', component: RegisterComponent },
-    ],
-  },
+  // ---------- Ruta inicial / raíz ----------
+  { path: '', redirectTo: 'login', pathMatch: 'full' }, // Redirige la raíz al login
+
+  // ---------- Sitio público (sin autenticación) ----------
+  { path: 'inicio', component: InicioComponent },
+
+  // ---------- Autenticación ----------
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+
+  // ---------- Panel administrativo (requiere sesión) ----------
   {
     path: 'panel',
     component: AdminLayoutComponent,
@@ -33,6 +29,10 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
+      { path: 'usuarios', component: UsersComponent },
+      { path: 'productos', component: ProductosAdminComponent },
+      { path: 'resenas', component: ResenasComponent },
+      { path: 'roles', component: RolesComponent },
     ],
   },
   { path: '**', redirectTo: '' },
