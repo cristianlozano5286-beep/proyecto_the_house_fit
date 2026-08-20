@@ -1,0 +1,25 @@
+<div class="page-wrapper">
+    <h1 class="section-title">🛒 Gestión de productos</h1>
+    <p class="section-subtitle">Registra suplementos, implementos y ropa deportiva de la tienda</p>
+
+    @if (mensaje) {
+        <div class="alert" [class.success]="tipoMensaje==='success'" [class.error]="tipoMensaje==='error'">{{ mensaje }}</div>
+    }
+
+    <div class="grid grid-2">
+        <section class="card">
+            <h2>{{ idEditar == null ? 'Registrar producto' : 'Editar producto' }}</h2>
+            <div class="form-row mt-16">
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" [(ngModel)]="nombre" placeholder="Nombre del producto" />
+                </div>
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select [(ngModel)]="categoria">
+                        @for (c of categorias; track c) {
+                            <option [value]="c">{{ c }}</option>
+                        }
+                    </select>
+                </div>
+            </div>

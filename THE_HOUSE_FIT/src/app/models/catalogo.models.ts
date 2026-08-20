@@ -1,13 +1,15 @@
-export interface Gimnasio {
+export interface Producto {
   id: number;
   nombre: string;
-  ubicacion?: string;
-  imagen: string;
-  servicios: string[];
-  descripcion: string;
+  precio: number;
+  descripcion?: string;
+  imagen?: string;
+  categoria?: string;
 }
 
-export interface Categoria {
+export interface Instructor {
   id: number;
   nombre: string;
+  especialidad: string;
+  foto?: string;
 }
