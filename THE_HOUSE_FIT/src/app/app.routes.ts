@@ -15,9 +15,6 @@ import { ResenasComponent } from './pages/resenas/resenas';
 import { RolesComponent } from './pages/roles/roles';
 import { authGuard } from './guards/auth-guard';
 
-
-
-
 export const routes: Routes = [
   // ---------- Ruta inicial / raíz ----------
   { path: '', redirectTo: 'login', pathMatch: 'full' }, // Redirige la raíz al login
@@ -45,5 +42,5 @@ export const routes: Routes = [
   },
 
   // ---------- Ruta comodín ----------
-  { path: '**', redirectTo: 'login' }, // Redirige cualquier ruta desconocida a login
+  { path: '**', redirectTo: 'login' }, // Redirige cualquier ruta desconocida a login holaaaaa 
 ];
