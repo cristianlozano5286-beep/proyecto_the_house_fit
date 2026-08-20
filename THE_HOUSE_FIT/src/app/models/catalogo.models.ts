@@ -1,12 +1,12 @@
 export interface Producto {
   id: number;
   nombre: string;
+  categoria: 'Suplemento' | 'Implemento' | 'Ropa deportiva' | string;
   precio: number;
   stock: number;
-  descripcion?: string;
-  guiaNutricional?: string;
-  imagen?: string;
-  categoria?: 'Suplemento' | 'Implemento' | 'Ropa deportiva' | string;
+  descripcion: string;
+  guiaNutricional: string;
+  imagen: string;
 }
 
 export interface Gimnasio {
@@ -20,22 +20,6 @@ export interface Gimnasio {
   servicios: string[];
   descripcion: string;
   activo: boolean;
-}
-
-export interface Instructor {
-  id: number;
-  nombre: string;
-}
-
-export interface Producto {
-  id: number;
-  nombre: string;
-  categoria: string;
-  precio: number;
-  stock: number;
-  descripcion: string;
-  guiaNutricional: string;
-  imagen: string;
 }
 
 export interface Instructor {

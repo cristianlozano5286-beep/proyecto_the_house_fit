@@ -3,12 +3,17 @@ import { Routes } from '@angular/router';
 // Autenticación
 import { LoginComponent } from './pages/login/login';
 import { RegisterComponent } from './pages/register/register';
+import { authGuard } from './guards/auth-guard';
 // Layouts
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout';
 // Páginas públicas
 import { InicioComponent } from './pages/inicio/inicio';
 // Páginas del panel (protegidas)
 import { DashboardComponent } from './pages/dashboard/dashboard';
+import { UsersComponent } from './pages/users/users';
+import { ProductosAdminComponent } from './pages/productos-admin/productos-admin';
+import { ResenasComponent } from './pages/resenas/resenas';
+import { RolesComponent } from './pages/roles/roles';
 
 
 
