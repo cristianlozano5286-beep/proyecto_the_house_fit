@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgIf } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -7,21 +7,19 @@ import { AuthService } from '../../services/auth';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, NgIf],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
 export class LoginComponent {
-  // Inyección de servicios
-  private router = inject(Router);
-  private authService = inject(AuthService);
+  email = 'admin@thehousefit.com';
+  password = '123456';
+  mensaje = '';
 
-  // Variables para el formulario
-  email: string = 'usuario@thehousefit.com';
-  password: string = '123456';
-  mensaje: string = '';
-
-  // Método ejecutado al presionar ingresar (HU10, HU11)
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+  ) {}
   login(): void {
     console.log('Intentando iniciar sesión con:', this.email, this.password);
 
@@ -32,7 +30,6 @@ export class LoginComponent {
       return;
     }
 
-    // Redirección hacia el panel principal definido en tus rutas
     this.router.navigate(['/panel/dashboard']);
   }
 

@@ -15,5 +15,5 @@ export interface ReservaClase {
   claseId: number;
   fecha: string;
   personas: number;
-  estado: 'Confirmada' | 'Cancelada' | string;
+  estado: string;
 }

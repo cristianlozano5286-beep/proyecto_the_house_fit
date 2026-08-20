@@ -12,6 +12,6 @@ export interface Transaccion {
   concepto: string;
   monto: number;
   metodoPagoId: number;
-  estado: 'Aprobado' | 'Pendiente' | 'Rechazado' | string;
+  estado: string;
   fecha: string;
 }

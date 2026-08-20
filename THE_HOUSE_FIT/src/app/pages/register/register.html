@@ -1,15 +1,10 @@
 <section class="auth-card">
   <h2>Crear cuenta</h2>
 
-  <form *ngIf="paso === 1" [formGroup]="registerForm" (ngSubmit)="registrarUsuario()">
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
     <label>
       Nombre
       <input type="text" formControlName="nombre" />
-    </label>
-
-    <label>
-      Apellido
-      <input type="text" formControlName="apellido" />
     </label>
 
     <label>
@@ -24,21 +19,12 @@
 
     <label>
       Confirmar contraseña
-      <input type="password" formControlName="confirmarPassword" />
+      <input type="password" formControlName="confirmPassword" />
     </label>
 
     <button type="submit">Registrarme</button>
   </form>
 
-  <form *ngIf="paso === 2" (ngSubmit)="confirmarCodigo()">
-    <p>Se envió un código a {{ correoRegistrado }}</p>
-    <label>
-      Código de verificación
-      <input type="text" [(ngModel)]="codigoIngresado" name="codigoIngresado" />
-    </label>
-    <button type="submit">Confirmar código</button>
-  </form>
-
-  <p *ngIf="mensajeVerificacion">{{ mensajeVerificacion }}</p>
+  <p *ngIf="registerForm.touched && registerForm.errors?.['passwordMismatch']">Las contraseñas no coinciden.</p>
   <a routerLink="/auth/login">Ya tengo cuenta</a>
 </section>

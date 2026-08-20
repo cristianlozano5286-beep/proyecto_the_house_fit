@@ -16,10 +16,26 @@ export interface Gimnasio {
   barrio: string;
   telefono: string;
   horario: string;
-  descripcion: string;
   imagen: string;
   servicios: string[];
+  descripcion: string;
   activo: boolean;
+}
+
+export interface Instructor {
+  id: number;
+  nombre: string;
+}
+
+export interface Producto {
+  id: number;
+  nombre: string;
+  categoria: string;
+  precio: number;
+  stock: number;
+  descripcion: string;
+  guiaNutricional: string;
+  imagen: string;
 }
 
 export interface Instructor {
@@ -31,6 +47,6 @@ export interface Instructor {
   experiencia: number;
   biografia: string;
   imagen: string;
-  gimnasioId: number;
+  gimnasioId: number | null;
   activo: boolean;
 }
