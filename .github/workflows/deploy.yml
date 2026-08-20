@@ -1,0 +1,60 @@
+name: Deploy Angular to GitHub Pages
+
+on:
+  push:
+    branches:
+      - release 
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    name: Build Angular
+    runs-on: ubuntu-latest
+
+    
+    defaults:
+      run:
+        working-directory: THE_HOUSE_FIT
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: THE_HOUSE_FIT/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Angular
+        run: npm run build -- --base-href=/THE_HOUSE_FIT/
+
+      - name: Copy index.html to 404.html for SPA routing
+        run: cp dist/THE_HOUSE_FIT/browser/index.html dist/THE_HOUSE_FIT/browser/404.html
+
+      - name: Upload GitHub Pages artifacts
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: THE_HOUSE_FIT/dist/THE_HOUSE_FIT/browser
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
