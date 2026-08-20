@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ClaseDisponible, ReservaClase } from '../models/clase.models';
+import { storage } from './storage';
 
 const KEY_CLASES = 'thehousefit_clases';
 const KEY_RESERVAS = 'thehousefit_reservas_clases';
@@ -20,14 +21,14 @@ export class ClasesService {
 
   constructor() {
     this.clases = this.cargar(KEY_CLASES, this.clasesIniciales);
-    const datosReservas = localStorage.getItem(KEY_RESERVAS);
+    const datosReservas = storage.getItem(KEY_RESERVAS);
     this.reservas = datosReservas ? JSON.parse(datosReservas) : [];
   }
 
   private cargar<T>(key: string, iniciales: T[]): T[] {
-    const datos = localStorage.getItem(key);
+    const datos = storage.getItem(key);
     if (datos) return JSON.parse(datos);
-    localStorage.setItem(key, JSON.stringify(iniciales));
+    storage.setItem(key, JSON.stringify(iniciales));
     return [...iniciales];
   }
 
@@ -47,19 +48,19 @@ export class ClasesService {
   crear(clase: Omit<ClaseDisponible, 'id'>): void {
     const id = this.clases.length ? Math.max(...this.clases.map((c) => c.id)) + 1 : 1;
     this.clases.push({ ...clase, id });
-    localStorage.setItem(KEY_CLASES, JSON.stringify(this.clases));
+    storage.setItem(KEY_CLASES, JSON.stringify(this.clases));
   }
 
   eliminar(id: number): void {
     this.clases = this.clases.filter((c) => c.id !== id);
-    localStorage.setItem(KEY_CLASES, JSON.stringify(this.clases));
+    storage.setItem(KEY_CLASES, JSON.stringify(this.clases));
   }
 
   reservar(usuario: string, claseId: number, fecha: string, personas: number): ReservaClase {
     const id = this.reservas.length ? Math.max(...this.reservas.map((r) => r.id)) + 1 : 1;
     const reserva: ReservaClase = { id, usuario, claseId, fecha, personas, estado: 'Confirmada' };
     this.reservas.push(reserva);
-    localStorage.setItem(KEY_RESERVAS, JSON.stringify(this.reservas));
+    storage.setItem(KEY_RESERVAS, JSON.stringify(this.reservas));
     return reserva;
   }
 

@@ -1,0 +1,92 @@
+<div class="page-wrapper">
+    <div class="flex-between mb-16">
+        <div>
+            <h1 class="section-title">🏋️ Gestión de gimnasios</h1>
+            <p class="section-subtitle">Registra y administra la información de los gimnasios afiliados</p>
+        </div>
+    </div>
+
+    @if (mensaje) {
+        <div class="alert" [class.success]="tipoMensaje==='success'" [class.error]="tipoMensaje==='error'">{{ mensaje }}</div>
+    }
+
+    <div class="grid grid-2">
+        <section class="card">
+            <h2>{{ idEditar == null ? 'Registrar gimnasio' : 'Editar gimnasio' }}</h2>
+            <div class="form-row mt-16">
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" [(ngModel)]="nombre" placeholder="Nombre del gimnasio" />
+                </div>
+                <div class="form-group">
+                    <label>Ícono</label>
+                    <input type="text" [(ngModel)]="imagen" placeholder="🏋️" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Dirección</label>
+                <input type="text" [(ngModel)]="direccion" placeholder="Cra / Calle #" />
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Barrio</label>
+                    <input type="text" [(ngModel)]="barrio" placeholder="Barrio" />
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="text" [(ngModel)]="telefono" placeholder="300 000 0000" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Horario</label>
+                <input type="text" [(ngModel)]="horario" placeholder="Lunes a sábado 6am - 9pm" />
+            </div>
+            <div class="form-group">
+                <label>Descripción</label>
+                <textarea rows="3" [(ngModel)]="descripcion" placeholder="Describe el gimnasio..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Servicios (separados por coma)</label>
+                <input type="text" [(ngModel)]="serviciosTexto" placeholder="Musculación, Cardio, Yoga" />
+            </div>
+            <div class="checkbox-group mb-16">
+                <label><input type="checkbox" [(ngModel)]="activo" /> Gimnasio activo en el catálogo</label>
+            </div>
+            <div class="flex gap-8">
+                <button class="btn btn-primary" (click)="guardar()">{{ idEditar == null ? 'Registrar' : 'Actualizar' }}</button>
+                <button class="btn btn-outline" (click)="limpiarFormulario()">Limpiar</button>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Gimnasios registrados ({{ gimnasios.length }})</h2>
+            <div class="table-responsive mt-16">
+                <table>
+                    <thead>
+                        <tr><th>Gimnasio</th><th>Barrio</th><th>Estado</th><th>Acciones</th></tr>
+                    </thead>
+                    <tbody>
+                        @for (g of gimnasios; track g.id) {
+                            <tr>
+                                <td>{{ g.imagen }} {{ g.nombre }}</td>
+                                <td>{{ g.barrio }}</td>
+                                <td>
+                                    <span class="badge" [class.badge-success]="g.activo" [class.badge-gray]="!g.activo">
+                                        {{ g.activo ? 'Activo' : 'Inactivo' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-outline btn-sm" (click)="editar(g)">✏️</button>
+                                    <button class="btn btn-danger btn-sm" (click)="eliminar(g)">🗑️</button>
+                                </td>
+                            </tr>
+                        }
+                        @empty {
+                            <tr><td colspan="4" class="empty-state">No hay gimnasios registrados.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>

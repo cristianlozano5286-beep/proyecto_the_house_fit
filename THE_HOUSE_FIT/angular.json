@@ -25,14 +25,12 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/material-theme.scss", "src/styles.css"],
-            "server": "src/main.server.ts",
-            "outputMode": "server",
+            "styles": [
+              "src/styles.css"
+            ],
+            "outputMode": "static",
             "security": {
               "allowedHosts": []
-            },
-            "ssr": {
-              "entry": "src/server.ts"
             }
           },
           "configurations": {
@@ -49,6 +47,11 @@
                   "maximumError": "8kB"
                 }
               ],
+              "outputHashing": "all"
+            },
+            "github-pages": {
+              "baseHref": "/proyecto_the_house_fit/",
+              "deployUrl": "/proyecto_the_house_fit/",
               "outputHashing": "all"
             },
             "development": {
