@@ -197,6 +197,5 @@ export class AuthService {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify({ ...sesion, rol: nuevoRol }));
       }
     }
->> release
   }
 }

@@ -9,3 +9,14 @@ export interface Noticia {
   tipo: string;
   imagen: string;
 }
+
+export interface Resena {
+  id: number;
+  gimnasioId: number;
+  usuario: string;
+  titulo: string;
+  cuerpo: string;
+  puntuacion: number;
+  imagen: string;
+  fecha?: string;
+}
