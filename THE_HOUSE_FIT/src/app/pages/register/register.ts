@@ -1,77 +1,145 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { 
-  ReactiveFormsModule, 
-  FormBuilder, 
-  FormGroup, 
-  Validators, 
-  AbstractControl, 
-  ValidationErrors 
-} from '@angular/forms';
+
+import { Component } from '@angular/core';
+
+//MODULO FORMULARIOS DE ANGULAR
+import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { AuthService } from '../../services/auth';
+
 
 @Component({
   selector: 'app-register',
-  standalone: true,
-  imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
-    RouterLink
-  ],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './register.html',
-  styleUrl: './register.css'
+  styleUrl: './register.css',
 })
 export class RegisterComponent {
-  private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
-  private router = inject(Router);
 
-  // --- Propiedades requeridas por la plantilla HTML ---
-  paso: number = 1;
-  codigoVerificacion: string = '';
+  /** FORMULARIO PRINCIPAL DEL COMPONENTE */
+  registerForm: FormGroup;
+
+  /** Paso 1: formulario. Paso 2: verificación de correo (HU04, HU05) */
+  paso: 1 | 2 = 1;
+  codigoIngresado: string = '';
+  codigoSimulado: string | null = null;
   mensajeVerificacion: string = '';
+  correoRegistrado: string = '';
 
-  // Definición del formulario con validaciones
-  registerForm: FormGroup = this.fb.group({
-    nombre: ['', [Validators.required, Validators.minLength(3)]],
-    correo: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    confirmPassword: ['', [Validators.required]]
-  }, { validators: this.passwordMatchValidator });
+/* constructor */
 
-  // Validador personalizado para verificar que las contraseñas coincidan
-  passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
-    const password = control.get('password')?.value;
-    const confirmPassword = control.get('confirmPassword')?.value;
-    return password === confirmPassword ? null : { passwordMismatch: true };
+  constructor(private router: Router, private fb: FormBuilder, private authService: AuthService) {
+    this.registerForm = this.fb.group({
+      /**PRIMER CAMPO DEL FORMULARIO */
+      nombre: ['',
+        [Validators.required,
+        Validators.minLength(3)],
+      ],
+
+      /**SEGUNDO CAMPO DEL FORMULARIO */
+      apellido: ['',
+        [Validators.required,
+        Validators.minLength(3)],
+      ],
+
+      /**TERCER CAMPO DEL FORMULARIO */
+      correo: ['',
+        [Validators.required,
+        Validators.email],
+      ],
+
+      /**CUARTO CAMPO DEL FORMULARIO */
+      password: ['',
+        [Validators.required,
+        Validators.minLength(8),
+        Validators.pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/)],
+      ],
+
+      /**QUINTO CAMPO DEL FORMULARIO */
+      confirmarPassword: ['',
+        [
+          Validators.required
+        ]
+      ],
+    },
+    {
+      validators: this.passwordsIguales
+    });
   }
 
-  // Método al enviar el formulario inicial (Paso 1)
-  onSubmit(): void {
-    if (this.registerForm.valid) {
-      console.log('Datos de registro:', this.registerForm.value);
-      // Cambiamos al paso 2 (verificación de código)
-      this.paso = 2;
-    } else {
-      this.registerForm.markAllAsTouched();
+  /**METODOS GET PAR ACCEDER A LOS DATOS EN EL HTML */
+
+  get nombre(){
+    return this.registerForm.get('nombre');
+  }
+
+  get apellido() {
+    return this.registerForm.get('apellido');
+  }
+
+  get correo() {
+    return this.registerForm.get('correo');
+  }
+
+  get password() {
+    return this.registerForm.get('password');
+  }
+
+  get confirmarPassword() {
+    return this.registerForm.get('confirmarPassword');
+  }
+
+  passwordsIguales(form: AbstractControl): ValidationErrors | null {
+    const password = form.get('password')?.value;
+    const confirmarPassword =form.get('confirmarPassword')?.value;
+
+    if (password !== confirmarPassword) {
+      return { passwordsNoCoinciden: true };
     }
+    return null;
   }
 
-  // --- Método para confirmar el código (Paso 2) ---
-  confirmarCodigo(): void {
-    if (!this.codigoVerificacion) {
-      this.mensajeVerificacion = 'Por favor ingresa el código enviado a tu correo.';
+  //MÉTODO PARA EL REGISTRO DE USUARIO (HU01, HU02, HU03)
+  registrarUsuario(): void {
+
+    /**VALIDACION SI EL FORMULARIO ES INVALIDO */
+    if (this.registerForm.invalid) {
+
+      /**MARCAR LOS CAMPOS QUE MUESTRAN ERROR */
+      this.registerForm.markAllAsTouched();
       return;
     }
 
-    // Lógica ficticia o conexión con AuthService
-    console.log('Código a verificar:', this.codigoVerificacion);
-    this.mensajeVerificacion = 'Código verificado con éxito.';
-    
-    // Redirección al login tras completar el flujo
-    setTimeout(() => {
-      this.router.navigate(['/login']);
-    }, 1500);
+    const { nombre, apellido, correo, password } = this.registerForm.value;
+    const nombreCompleto = `${nombre} ${apellido}`;
+
+    if (this.authService.correoExiste(correo)) {
+      this.mensajeVerificacion = 'Ese correo ya se encuentra registrado.';
+      return;
+    }
+
+    // Se crea el usuario en el sistema (HU02, HU03) y se envía el código de verificación (HU04, HU05)
+    this.authService.registrarUsuario(nombreCompleto, correo, password);
+    this.codigoSimulado = this.authService.enviarCodigoVerificacion(correo);
+    this.correoRegistrado = correo;
+    this.paso = 2;
+  }
+
+  // Confirmación del código de verificación (HU04, HU05)
+  confirmarCodigo(): void {
+    const valido = this.authService.verificarCodigo(this.correoRegistrado, this.codigoIngresado);
+    if (!valido) {
+      this.mensajeVerificacion = 'El código ingresado no es válido.';
+      return;
+    }
+    alert('¡Correo verificado! Tu cuenta ha sido creada exitosamente.');
+    this.router.navigate(['/login']);
   }
 }

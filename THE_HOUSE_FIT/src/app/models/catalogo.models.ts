@@ -1,13 +1,4 @@
-export interface Producto {
-  id: number;
-  nombre: string;
-  categoria: 'Suplemento' | 'Implemento' | 'Ropa deportiva' | string;
-  precio: number;
-  stock: number;
-  descripcion: string;
-  guiaNutricional: string;
-  imagen: string;
-}
+// Modelos relacionados con el Módulo 2 (Gimnasios) y Módulo 3 (Servicios)
 
 export interface Gimnasio {
   id: number;
@@ -16,9 +7,9 @@ export interface Gimnasio {
   barrio: string;
   telefono: string;
   horario: string;
+  descripcion: string;
   imagen: string;
   servicios: string[];
-  descripcion: string;
   activo: boolean;
 }
 
@@ -35,3 +26,13 @@ export interface Instructor {
   activo: boolean;
 }
 
+export interface Producto {
+  id: number;
+  nombre: string;
+  categoria: 'Suplemento' | 'Implemento' | 'Ropa deportiva';
+  precio: number;
+  stock: number;
+  descripcion: string;
+  guiaNutricional: string;
+  imagen: string;
+}

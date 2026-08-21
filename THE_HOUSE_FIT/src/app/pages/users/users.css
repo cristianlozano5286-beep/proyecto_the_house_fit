@@ -191,6 +191,7 @@ tbody tr {
 tbody tr:hover {
   background: #f1f7ff;
 }
+
 .status-badge {
   display: inline-block;
   padding: 6px 14px;

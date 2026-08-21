@@ -1,0 +1,62 @@
+.public-nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background: transparent; border-bottom:1px solid transparent;
+    transition: all .3s;
+}
+.public-nav.scrolled{
+    background: rgba(10,10,10,.97);
+    border-bottom:1px solid #1e1e1e;
+    backdrop-filter: blur(12px);
+}
+.brand-logo-img {
+    height: 80px;
+    width: auto;
+    object-fit: contain;
+    display: inline-block;
+    vertical-align: middle;
+}
+.nav-inner{
+    max-width:1200px; margin:0 auto; padding:0 24px;
+    display:flex; align-items:center; justify-content:space-between; height:64px;
+}
+.brand{ display:flex; align-items:center; gap:10px; }
+.brand-mark{
+    width:32px; height:32px; display:flex; align-items:center; justify-content:center;
+    background: var(--color-primary); color:#fff; font-family: var(--font-display);
+    font-weight:900; font-size:14px; letter-spacing:-.02em;
+}
+.brand-text{
+    font-family: var(--font-display); font-weight:900; text-transform:uppercase;
+    letter-spacing:.05em; font-size:20px; color:#fff;
+}
+.brand-text .accent{ color: var(--color-primary); }
+
+.links{ display:flex; align-items:center; gap:28px; }
+.links a{
+    font-size:13px; font-weight:600; letter-spacing:.06em; color:#999; transition:.2s;
+    font-family: var(--font-body);
+}
+.links a:hover, .links a.active{ color: var(--color-primary); }
+.link-login{ font-size:13px; font-weight:600; letter-spacing:.06em; color:#ccc !important; }
+.link-login:hover{ color:#fff !important; }
+
+.desktop-only{ display:flex; }
+.mobile-only{ display:none; }
+
+.burger{ background:none; border:none; cursor:pointer; display:flex; flex-direction:column; gap:5px; padding:6px; }
+.burger span{ display:block; width:22px; height:2px; background: var(--color-primary); }
+
+.mobile-menu{
+    background:#0a0a0a; padding:8px 24px 24px; display:flex; flex-direction:column; gap:2px;
+}
+.mobile-menu a{
+    padding:14px 0; color:#ccc; font-family: var(--font-display); font-weight:600;
+    text-transform:uppercase; letter-spacing:.08em; font-size:16px; border-bottom:1px solid #1c1c1c;
+}
+.mobile-menu a.active{ color: var(--color-primary); }
+.mobile-menu .btn-landing{ margin-top:12px; text-align:center; }
+
+@media (max-width: 860px){
+    .desktop-only{ display:none; }
+    .mobile-only{ display:flex; }
+}

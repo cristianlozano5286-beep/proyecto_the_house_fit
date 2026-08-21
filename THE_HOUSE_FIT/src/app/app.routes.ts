@@ -5,18 +5,17 @@ import { LoginComponent } from './pages/login/login';
 import { RegisterComponent } from './pages/register/register';
 import { RecuperarPasswordComponent } from './pages/recuperar-password/recuperar-password';
 
-// Guards
-import { authGuard } from './guards/auth-guard';
-
 // Layouts
-import { AdminLayoutComponent } from './layout/admin-layout/admin-layout';
+import { LayoutComponent } from './layout/layout/layout';
 import { PublicLayoutComponent } from './layout/public-layout/public-layout';
 
 // Páginas públicas
 import { InicioComponent } from './pages/inicio/inicio';
 import { CatalogoGimnasiosComponent } from './pages/catalogo-gimnasios/catalogo-gimnasios';
 import { TiendaComponent } from './pages/tienda/tienda';
+import { BlogPublicoComponent } from './pages/blog-publico/blog-publico';
 import { CalculadoraImcComponent } from './pages/calculadora-imc/calculadora-imc';
+import { ContenidoDestacadoComponent } from './pages/contenido-destacado/contenido-destacado';
 
 // Páginas del panel (protegidas)
 import { DashboardComponent } from './pages/dashboard/dashboard';
@@ -25,11 +24,14 @@ import { GimnasiosAdminComponent } from './pages/gimnasios-admin/gimnasios-admin
 import { InstructoresAdminComponent } from './pages/instructores-admin/instructores-admin';
 import { ProductosAdminComponent } from './pages/productos-admin/productos-admin';
 import { ContenidoAdminComponent } from './pages/contenido-admin/contenido-admin';
+import { EntrenamientoComponent } from './pages/entrenamiento/entrenamiento';
 import { ResenasComponent } from './pages/resenas/resenas';
 import { NoticiasAdminComponent } from './pages/noticias-admin/noticias-admin';
 import { PagosComponent } from './pages/pagos/pagos';
 import { RolesComponent } from './pages/roles/roles';
-//import { ReservarClaseComponent } from './pages/reservar-clase/reservar-clase';
+import { ReservarClaseComponent } from './pages/reservar-clase/reservar-clase';
+
+import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
   // ---------- Sitio público (sin autenticación) ----------
@@ -40,7 +42,9 @@ export const routes: Routes = [
       { path: '', component: InicioComponent },
       { path: 'gimnasios', component: CatalogoGimnasiosComponent },
       { path: 'tienda', component: TiendaComponent },
+      { path: 'blog', component: BlogPublicoComponent },
       { path: 'imc', component: CalculadoraImcComponent },
+      { path: 'destacados', component: ContenidoDestacadoComponent },
     ],
   },
 
@@ -52,7 +56,7 @@ export const routes: Routes = [
   // ---------- Panel administrativo (requiere sesión) ----------
   {
     path: 'panel',
-    component: AdminLayoutComponent,
+    component: LayoutComponent,
     canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -62,7 +66,8 @@ export const routes: Routes = [
       { path: 'instructores', component: InstructoresAdminComponent },
       { path: 'productos', component: ProductosAdminComponent },
       { path: 'contenido', component: ContenidoAdminComponent },
-      //{ path: 'reservar-clase', component: ReservarClaseComponent },
+      { path: 'entrenamiento', component: EntrenamientoComponent },
+      { path: 'reservar-clase', component: ReservarClaseComponent },
       { path: 'resenas', component: ResenasComponent },
       { path: 'noticias', component: NoticiasAdminComponent },
       { path: 'pagos', component: PagosComponent },

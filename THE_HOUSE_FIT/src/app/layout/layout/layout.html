@@ -1,0 +1,22 @@
+<div class="layout-container">
+    <header class="layout-header">
+        <!--posteriormente se carga el componente de headercomponet-->
+        <app-header></app-header>
+    </header>
+
+    <main class="layout-main">
+        <aside class="layout-sidebar">
+            <app-sidebar></app-sidebar>
+        </aside>
+        <!--Contenido dinamico-->
+        <section class="layout-content">
+            <!--Aqui va los componentes de deshboard, usuarios, roles, etc-->
+            <router-outlet></router-outlet>
+
+            <footer class="panel-footer">
+                <span>© {{ anio }} The House Fit · Panel de administración</span>
+                <span>v1.0.0</span>
+            </footer>
+        </section>
+    </main>
+</div>

@@ -5,30 +5,26 @@ import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
   imports: [FormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
 export class LoginComponent {
-  email = 'admin@thehousefit.com';
-  password = '123456';
-  mensaje = '';
+  constructor(private router: Router, private authService: AuthService) {}
 
-  constructor(
-    private router: Router,
-    private authService: AuthService,
-  ) {}
+  email: string = '';
+  password: string = '';
+  mensaje: string = '';
+
+  // Método que será ejecutado al presionar el botón ingresar (HU10, HU11)
   login(): void {
-    console.log('Intentando iniciar sesión con:', this.email, this.password);
-
     const autenticado = this.authService.inciarSesion(this.email, this.password);
 
     if (!autenticado) {
       this.mensaje = 'Correo o contraseña incorrectos.';
       return;
     }
-
+    // Redirección al menú principal según el rol tras un inicio de sesión exitoso
     this.router.navigate(['/panel/dashboard']);
   }
 

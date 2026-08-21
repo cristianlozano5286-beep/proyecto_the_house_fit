@@ -1,0 +1,19 @@
+<aside class="sidebar">
+    <section class="sidebar-logo">
+        <div class="logo-circle">TH</div>
+        <h2>THE HOUSE FIT</h2>
+    </section>
+    <nav class="menu">
+        @for (item of menuVisible; track item.ruta) {
+            <a [routerLink]="item.ruta" routerLinkActive="active">
+                <span class="icono">{{ item.icono }}</span>
+                <span>{{ item.nombre }}</span>
+            </a>
+        }
+    </nav>
+
+    <section class="sidebar-footer">
+        <small>The House Fit</small>
+        <small>Version 1.0.0</small>
+    </section>
+</aside>
