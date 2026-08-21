@@ -1,22 +1,18 @@
 import { Routes } from '@angular/router';
-
-// Autenticación
 import { LoginComponent } from './pages/login/login';
 import { RegisterComponent } from './pages/register/register';
 import { authGuard } from './guards/auth-guard';
-// Layouts
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout';
-// Páginas públicas
 import { InicioComponent } from './pages/inicio/inicio';
-// Páginas del panel (protegidas)
 import { DashboardComponent } from './pages/dashboard/dashboard';
 import { UsersComponent } from './pages/users/users';
 import { ProductosAdminComponent } from './pages/productos-admin/productos-admin';
 import { ResenasComponent } from './pages/resenas/resenas';
 import { RolesComponent } from './pages/roles/roles';
+
 export const routes: Routes = [
   // ---------- Ruta inicial / raíz ----------
-  { path: '', redirectTo: 'login', pathMatch: 'full' }, // Redirige la raíz al login
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
 
   // ---------- Sitio público (sin autenticación) ----------
   { path: 'inicio', component: InicioComponent },
@@ -41,5 +37,5 @@ export const routes: Routes = [
   },
 
   // ---------- Ruta comodín ----------
-  { path: '**', redirectTo: 'login' }, // Redirige cualquier ruta desconocida a login holaaaaa 
+  { path: '**', redirectTo: 'login' },
 ];

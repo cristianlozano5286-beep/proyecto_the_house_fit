@@ -45,7 +45,6 @@ export class AuthService {
     },
   ];
 
-  // Se inicializa siempre con el fallback por defecto para evitar arreglos vacíos por SSR
   private usuariosSistema: UsuarioSistema[] = [...this.usuariosIniciales];
   private codigoTemporal: { correo: string; codigo: string } | null = null;
 
@@ -88,8 +87,7 @@ export class AuthService {
   }
 
   // ------------------- LOGIN -------------------
-  inciarSesion(correo: string, password: string): boolean {
-    // Si la lista está vacía en runtime (CSR/SSR mismatch), recarga desde el navegador
+  iniciarSesion(correo: string, password: string): boolean {
     if (this.usuariosSistema.length === 0) {
       this.cargarUsuarios();
     }
@@ -116,6 +114,11 @@ export class AuthService {
       localStorage.setItem('usuarioLogueado', 'true');
     }
     return true;
+  }
+
+  // Mantener alias para evitar incompatibilidades si se llamaba con el error de escritura anterior
+  inciarSesion(correo: string, password: string): boolean {
+    return this.iniciarSesion(correo, password);
   }
 
   cerrarSesion(): void {
