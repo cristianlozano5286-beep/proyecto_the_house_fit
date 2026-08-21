@@ -28,9 +28,10 @@ export interface Instructor {
   correo: string;
   telefono: string;
   especialidad: string;
-  experiencia: number;
+  experiencia: number; // años
   biografia: string;
   imagen: string;
   gimnasioId: number | null;
   activo: boolean;
 }
+
