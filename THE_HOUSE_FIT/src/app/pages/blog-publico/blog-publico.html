@@ -1,40 +1,197 @@
 <section class="dark-page">
-    <div class="page-header">
-        <span class="eyebrow">NOVEDADES Y COMUNIDAD</span>
-        <h1 class="display-title" style="font-size:clamp(36px,6vw,64px);">BLOG <span class="accent">THE HOUSE FIT</span></h1>
-        <p class="page-desc">Novedades, ofertas y reseñas de la comunidad de gimnasios en Yopal.</p>
-    </div>
+  <!-- Header -->
+  <div class="page-header">
+    <span class="eyebrow">📝 NOVEDADES Y COMUNIDAD</span>
+    <h1 class="display-title">
+      BLOG <span class="accent">THE HOUSE FIT</span>
+    </h1>
+    <p class="page-desc">
+      Novedades, ofertas y reseñas de la comunidad de gimnasios en Yopal.
+    </p>
+  </div>
 
-    <div class="filter-tabs">
-        <button class="tab" [class.active]="pestanaActiva==='noticias'" (click)="cambiarPestana('noticias')">📰 NOTICIAS</button>
-        <button class="tab" [class.active]="pestanaActiva==='resenas'" (click)="cambiarPestana('resenas')">⭐ RESEÑAS</button>
+  <!-- Controles mejorados -->
+  <div class="blog-controls">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input 
+        type="text" 
+        [(ngModel)]="terminoBusqueda" 
+        placeholder="Buscar artículos..."
+        (input)="filtrarContenido()"
+      />
     </div>
+    
+    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+      <!-- Selector de vista -->
+      <div class="view-toggle">
+        <button [class.active]="vista === 'grid'" (click)="cambiarVista('grid')" title="Vista cuadrícula">⊞</button>
+        <button [class.active]="vista === 'lista'" (click)="cambiarVista('lista')" title="Vista lista">☰</button>
+      </div>
+      
+      <!-- Ordenación -->
+      <select class="sort-select" [(ngModel)]="ordenSeleccionado" (change)="ordenarContenido()">
+        <option value="reciente">📅 Más reciente</option>
+        <option value="antiguo">📅 Más antiguo</option>
+        <option value="puntuacion" *ngIf="pestanaActiva === 'resenas'">⭐ Mejor puntuación</option>
+        <option value="populares">🔥 Más populares</option>
+      </select>
+    </div>
+  </div>
 
+  <!-- Filtros principales -->
+  <div class="filter-tabs">
+    <button class="tab" [class.active]="pestanaActiva === 'noticias'" (click)="cambiarPestana('noticias')">
+      <span class="tab-icon">📰</span> NOTICIAS
+    </button>
+    <button class="tab" [class.active]="pestanaActiva === 'resenas'" (click)="cambiarPestana('resenas')">
+      <span class="tab-icon">⭐</span> RESEÑAS
+    </button>
+  </div>
+
+  <!-- Filtro por categorías (solo noticias) -->
+  <div class="category-filters" *ngIf="pestanaActiva === 'noticias'">
+    <button class="cat-tab" [class.active]="categoriaSeleccionada === 'todas'" (click)="filtrarPorCategoria('todas')">
+      Todas
+    </button>
+    <button class="cat-tab" [class.active]="categoriaSeleccionada === 'noticia'" (click)="filtrarPorCategoria('noticia')">
+      📰 Noticias
+    </button>
+    <button class="cat-tab" [class.active]="categoriaSeleccionada === 'promocion'" (click)="filtrarPorCategoria('promocion')">
+      🎯 Promociones
+    </button>
+    <button class="cat-tab" [class.active]="categoriaSeleccionada === 'evento'" (click)="filtrarPorCategoria('evento')">
+      📅 Eventos
+    </button>
+  </div>
+
+  <!-- Contador -->
+  <div class="result-count" *ngIf="contenidoFiltrado.length > 0">
+    Mostrando <strong>{{ contenidoFiltrado.length }}</strong> 
+    {{ pestanaActiva === 'noticias' ? 'noticias' : 'reseñas' }}
+    <span *ngIf="terminoBusqueda"> · Buscando: "{{ terminoBusqueda }}"</span>
+    <span *ngIf="categoriaSeleccionada !== 'todas' && pestanaActiva === 'noticias'"> · Categoría: {{ categoriaSeleccionada | uppercase }}</span>
+  </div>
+
+  <!-- Grid -->
+  @if (cargando) {
+    <!-- Esqueletos de carga -->
+    <div class="blog-grid" [class.lista]="vista === 'lista'">
+      <div class="skeleton-card" *ngFor="let _ of [].constructor(6)">
+        <div class="skeleton-line short"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line medium"></div>
+        <div class="skeleton-line short"></div>
+      </div>
+    </div>
+  } @else {
     @if (pestanaActiva === 'noticias') {
-        <div class="blog-grid">
-            @for (n of noticias; track n.id) {
-                <div class="blog-card">
-                    <span class="tag-outline">{{ n.tipo.toUpperCase() }}</span>
-                    <h3>{{ n.imagen }} {{ n.titulo }}</h3>
-                    <p>{{ n.cuerpo }}</p>
-                    <small>{{ nombreGimnasio(n.gimnasioId) }} · {{ n.fecha }}</small>
+      <div class="blog-grid" [class.lista]="vista === 'lista'">
+        @for (n of contenidoFiltrado; track n.id; let i = $index) {
+          <div class="blog-card" style="animation-delay: {{ i * 50 }}ms;">
+            <!-- Badge destacado -->
+            <span class="badge-destacado" *ngIf="n.destacado">⭐ DESTACADO</span>
+            
+            <span class="tag noticia">{{ n.tipo?.toUpperCase() || 'NOTICIA' }}</span>
+            
+            <div class="card-content">
+              <h3><span class="emoji">{{ n.imagen || '📌' }}</span> {{ n.titulo }}</h3>
+              
+              <!-- Tooltip con info extra -->
+              <div class="tooltip-trigger">
+                <p>{{ n.cuerpo | slice:0:120 }}{{ n.cuerpo.length > 120 ? '...' : '' }}</p>
+                <div class="tooltip" *ngIf="n.cuerpo.length > 120">
+                  {{ n.cuerpo }}
                 </div>
-            }
-            @empty { <div class="empty-state-dark">Aún no hay noticias publicadas.</div> }
-        </div>
+              </div>
+              
+              <!-- Texto expandido -->
+              <div class="cuerpo-expandido" [class.visible]="n.expandido">
+                <p style="margin-top: 8px; color: #666; font-size: 13px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 12px;">
+                  {{ n.cuerpoCompleto || n.cuerpo }}
+                </p>
+              </div>
+              
+              <button class="btn-ver-mas" [class.expanded]="n.expandido" (click)="toggleExpandir(n)">
+                {{ n.expandido ? 'Ver menos' : 'Ver más' }}
+              </button>
+              
+              <div class="card-stats">
+                <span>👁️ {{ n.visitas || 0 }}</span>
+                <span>💬 {{ n.comentarios || 0 }}</span>
+                <span class="time-ago">{{ n.fecha | timeAgo }}</span>
+              </div>
+            </div>
+            
+            <div class="meta">
+              <small><span class="gym-icon">🏢</span> {{ nombreGimnasio(n.gimnasioId) }}</small>
+              <small><span class="dot">•</span> {{ n.fecha }}</small>
+            </div>
+            
+            <!-- Botones de compartir -->
+            <div class="social-share">
+              <button (click)="compartir('twitter', n.titulo, n.id)" title="Compartir en Twitter">🐦</button>
+              <button (click)="compartir('facebook', n.titulo, n.id)" title="Compartir en Facebook">📘</button>
+              <button (click)="compartir('whatsapp', n.titulo, n.id)" title="Compartir en WhatsApp">💬</button>
+              <button (click)="copiarEnlace(n.id)" title="Copiar enlace">🔗</button>
+            </div>
+          </div>
+        }
+        @empty {
+          <div class="empty-state-dark">
+            <span class="empty-icon">📭</span>
+            No hay noticias que coincidan con tu búsqueda.
+          </div>
+        }
+      </div>
     } @else {
-        <div class="blog-grid">
-            @for (r of resenas; track r.id) {
-                <div class="blog-card">
-                    <div class="flex-between">
-                        <h3 style="margin:0;">{{ r.titulo }}</h3>
-                        <span class="stars">{{ estrellas(r.puntuacion) }}</span>
-                    </div>
-                    <p class="mt-8">{{ r.cuerpo }}</p>
-                    <small>{{ nombreGimnasio(r.gimnasioId) }} · {{ r.usuario }} · {{ r.fecha }}</small>
-                </div>
-            }
-            @empty { <div class="empty-state-dark">Aún no hay reseñas publicadas.</div> }
-        </div>
+      <div class="blog-grid" [class.lista]="vista === 'lista'">
+        @for (r of contenidoFiltrado; track r.id; let i = $index) {
+          <div class="blog-card" style="animation-delay: {{ i * 50 }}ms;">
+            <span class="tag resena">⭐ RESEÑA</span>
+            
+            <div class="card-content">
+              <div class="flex-between">
+                <h3 style="margin:0;">{{ r.titulo }}</h3>
+                <span class="stars" [innerHTML]="estrellas(r.puntuacion)"></span>
+              </div>
+              <p class="mt-8">{{ r.cuerpo }}</p>
+              
+              <div class="card-stats">
+                <span>❤️ {{ r.likes || 0 }}</span>
+                <span class="time-ago">{{ r.fecha | timeAgo }}</span>
+              </div>
+            </div>
+            
+            <div class="meta">
+              <small><span class="gym-icon">🏢</span> {{ nombreGimnasio(r.gimnasioId) }}</small>
+              <small><span class="dot">•</span> {{ r.usuario }}</small>
+              <small><span class="dot">•</span> {{ r.fecha }}</small>
+            </div>
+            
+            <!-- Botones de compartir -->
+            <div class="social-share">
+              <button (click)="compartir('twitter', r.titulo, r.id)" title="Compartir en Twitter">🐦</button>
+              <button (click)="compartir('facebook', r.titulo, r.id)" title="Compartir en Facebook">📘</button>
+              <button (click)="compartir('whatsapp', r.titulo, r.id)" title="Compartir en WhatsApp">💬</button>
+              <button (click)="copiarEnlace(r.id)" title="Copiar enlace">🔗</button>
+            </div>
+          </div>
+        }
+        @empty {
+          <div class="empty-state-dark">
+            <span class="empty-icon">💬</span>
+            No hay reseñas que coincidan con tu búsqueda.
+          </div>
+        }
+      </div>
     }
+    
+    <!-- Botón cargar más -->
+    <div style="text-align: center; margin-top: 32px;" *ngIf="contenidoFiltrado.length > 0 && contenidoFiltrado.length < totalItems">
+      <button class="btn-cargar-mas" (click)="cargarMas()" [disabled]="cargandoMas">
+        {{ cargandoMas ? 'Cargando...' : 'Cargar más publicaciones' }}
+      </button>
+    </div>
+  }
 </section>
