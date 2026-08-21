@@ -17,10 +17,15 @@ export class GimnasiosAdminComponent implements OnInit {
   nombre = '';
   direccion = '';
   barrio = '';
+  ciudad = '';
+  pais = 'Colombia';
   telefono = '';
   horario = '';
   descripcion = '';
   imagen = '🏋️';
+  fotosTexto = '';
+  precio: number = 0;
+  moneda = 'COP';
   serviciosTexto = '';
   activo = true;
 
@@ -49,14 +54,24 @@ export class GimnasiosAdminComponent implements OnInit {
       .map((s) => s.trim())
       .filter((s) => s.length > 0);
 
+    const fotos = this.fotosTexto
+      .split(',')
+      .map((f) => f.trim())
+      .filter((f) => f.length > 0);
+
     const datos = {
       nombre: this.nombre,
       direccion: this.direccion,
       barrio: this.barrio,
+      ciudad: this.ciudad || 'Yopal',
+      pais: this.pais || 'Colombia',
       telefono: this.telefono,
       horario: this.horario,
       descripcion: this.descripcion,
       imagen: this.imagen || '🏋️',
+      fotos: fotos.length ? fotos : ['https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=900&q=80'],
+      precio: this.precio || 0,
+      moneda: this.moneda || 'COP',
       servicios,
       activo: this.activo,
     };
@@ -80,10 +95,15 @@ export class GimnasiosAdminComponent implements OnInit {
     this.nombre = gimnasio.nombre;
     this.direccion = gimnasio.direccion;
     this.barrio = gimnasio.barrio;
+    this.ciudad = gimnasio.ciudad;
+    this.pais = gimnasio.pais;
     this.telefono = gimnasio.telefono;
     this.horario = gimnasio.horario;
     this.descripcion = gimnasio.descripcion;
     this.imagen = gimnasio.imagen;
+    this.fotosTexto = gimnasio.fotos.join(', ');
+    this.precio = gimnasio.precio;
+    this.moneda = gimnasio.moneda;
     this.serviciosTexto = gimnasio.servicios.join(', ');
     this.activo = gimnasio.activo;
   }
@@ -100,10 +120,15 @@ export class GimnasiosAdminComponent implements OnInit {
     this.nombre = '';
     this.direccion = '';
     this.barrio = '';
+    this.ciudad = '';
+    this.pais = 'Colombia';
     this.telefono = '';
     this.horario = '';
     this.descripcion = '';
     this.imagen = '🏋️';
+    this.fotosTexto = '';
+    this.precio = 0;
+    this.moneda = 'COP';
     this.serviciosTexto = '';
     this.activo = true;
   }
