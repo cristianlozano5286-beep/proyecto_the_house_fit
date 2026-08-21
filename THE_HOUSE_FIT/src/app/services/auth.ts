@@ -1,5 +1,6 @@
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { UsuarioAuth } from '../models/usuario-auth';
-import { Injectable } from '@angular/core';
 
 export interface UsuarioSistema extends UsuarioAuth {
   password: string;
@@ -40,7 +41,6 @@ export class AuthService {
     },
   ];
 
-  // Se inicializa siempre con el fallback por defecto para evitar arreglos vacíos por SSR
   private usuariosSistema: UsuarioSistema[] = [...this.usuariosIniciales];
   private codigoTemporal: { correo: string; codigo: string } | null = null;
 
@@ -78,19 +78,19 @@ export class AuthService {
   }
 
   private guardarUsuarios(): void {
+    if (!this.esNavegador()) return;
     localStorage.setItem(STORAGE_USUARIOS, JSON.stringify(this.usuariosSistema));
   }
 
   // ------------------- LOGIN (HU09, HU10, HU11) -------------------
-  inciarSesion(correo: string, password: string): boolean {
-    // Si la lista está vacía en runtime (CSR/SSR mismatch), recarga desde el navegador
+  iniciarSesion(correo: string, password: string): boolean {
     if (this.usuariosSistema.length === 0) {
       this.cargarUsuarios();
     }
 
     const correoLimpio = correo ? correo.trim().toLowerCase() : '';
     const passLimpia = password ? password.trim() : '';
-    
+
     const usuario = this.usuariosSistema.find(
       (u) => u.correo.trim().toLowerCase() === correoLimpio
     );
@@ -105,26 +105,34 @@ export class AuthService {
       rol: usuario.rol,
     };
 
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(usuarioAuth));
-    localStorage.setItem('usuarioLogueado', 'true');
+    if (this.esNavegador()) {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(usuarioAuth));
+      localStorage.setItem('usuarioLogueado', 'true');
+    }
     return true;
   }
 
+  // Alias compatible por si algún componente invoca inciarSesion()
+  inciarSesion(correo: string, password: string): boolean {
+    return this.iniciarSesion(correo, password);
+  }
+
   cerrarSesion(): void {
-    localStorage.removeItem(this.STORAGE_KEY);
-    localStorage.removeItem('usuarioLogueado');
+    if (this.esNavegador()) {
+      localStorage.removeItem(this.STORAGE_KEY);
+      localStorage.removeItem('usuarioLogueado');
+    }
   }
 
   estaAutenticado(): boolean {
+    if (!this.esNavegador()) return false;
     return localStorage.getItem(this.STORAGE_KEY) != null;
   }
 
   obtenerUsuario(): UsuarioAuth | null {
+    if (!this.esNavegador()) return null;
     const usuario = localStorage.getItem(this.STORAGE_KEY);
-    if (!usuario) {
-      return null;
-    }
-    return JSON.parse(usuario);
+    return usuario ? JSON.parse(usuario) : null;
   }
 
   obtenerRol(): string {
@@ -208,7 +216,7 @@ export class AuthService {
     if (usuario) {
       usuario.rol = nuevoRol;
       this.guardarUsuarios();
-      // Si el usuario con sesión activa es el editado, se refleja el cambio
+      
       const sesion = this.obtenerUsuario();
       if (sesion && sesion.correo.trim().toLowerCase() === correo.trim().toLowerCase() && this.esNavegador()) {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify({ ...sesion, rol: nuevoRol }));
