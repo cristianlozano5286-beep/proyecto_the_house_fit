@@ -1,4 +1,3 @@
-// Modelos relacionados con el Módulo 5 (Blog)
 
 export interface Resena {
   id: number;
@@ -7,8 +6,8 @@ export interface Resena {
   titulo: string;
   cuerpo: string;
   imagen: string;
-  puntuacion: number; // 1 a 5
-  fecha: string;
+  puntuacion: number; 
+  fecha?: string;
 }
 
 export interface Noticia {
@@ -18,16 +17,5 @@ export interface Noticia {
   imagen: string;
   tipo: 'Novedad' | 'Oferta' | 'Promoción';
   gimnasioId: number | null;
-  fecha: string;
-}
-
-export interface Resena {
-  id: number;
-  gimnasioId: number;
-  usuario: string;
-  titulo: string;
-  cuerpo: string;
-  puntuacion: number;
-  imagen: string;
   fecha?: string;
 }
