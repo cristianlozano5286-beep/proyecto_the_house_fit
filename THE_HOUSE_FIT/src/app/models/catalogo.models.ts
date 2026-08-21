@@ -5,12 +5,19 @@ export interface Gimnasio {
   nombre: string;
   direccion: string;
   barrio: string;
+  ciudad: string;
+  pais: string;
   telefono: string;
   horario: string;
   descripcion: string;
   imagen: string;
+  fotos: string[];
+  precio: number;
+  moneda: string;
   servicios: string[];
   activo: boolean;
+  lat?: number;
+  lng?: number;
 }
 
 export interface Instructor {
