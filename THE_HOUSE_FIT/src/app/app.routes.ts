@@ -14,10 +14,6 @@ import { UsersComponent } from './pages/users/users';
 import { ProductosAdminComponent } from './pages/productos-admin/productos-admin';
 import { ResenasComponent } from './pages/resenas/resenas';
 import { RolesComponent } from './pages/roles/roles';
-
-
-
-
 export const routes: Routes = [
   // ---------- Ruta inicial / raíz ----------
   { path: '', redirectTo: 'login', pathMatch: 'full' }, // Redirige la raíz al login
