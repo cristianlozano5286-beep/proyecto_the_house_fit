@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Noticia, Resena } from '../models/blog.models';
-import { storage } from './storage';
 
 const KEY_RESENAS = 'thehousefit_resenas';
 const KEY_NOTICIAS = 'thehousefit_noticias';
@@ -60,9 +59,9 @@ export class BlogService {
   }
 
   private cargar<T>(key: string, iniciales: T[]): T[] {
-    const datos = storage.getItem(key);
+    const datos = localStorage.getItem(key);
     if (datos) return JSON.parse(datos);
-    storage.setItem(key, JSON.stringify(iniciales));
+    localStorage.setItem(key, JSON.stringify(iniciales));
     return [...iniciales];
   }
 
@@ -82,11 +81,11 @@ export class BlogService {
   agregarResena(resena: Omit<Resena, 'id' | 'fecha'>): void {
     const id = this.resenas.length ? Math.max(...this.resenas.map((r) => r.id)) + 1 : 1;
     this.resenas.push({ ...resena, id, fecha: new Date().toISOString().slice(0, 10) });
-    storage.setItem(KEY_RESENAS, JSON.stringify(this.resenas));
+    localStorage.setItem(KEY_RESENAS, JSON.stringify(this.resenas));
   }
   eliminarResena(id: number): void {
     this.resenas = this.resenas.filter((r) => r.id !== id);
-    storage.setItem(KEY_RESENAS, JSON.stringify(this.resenas));
+    localStorage.setItem(KEY_RESENAS, JSON.stringify(this.resenas));
   }
 
   // ----- Noticias (HU38, HU39, HU40) -----
@@ -96,10 +95,10 @@ export class BlogService {
   agregarNoticia(noticia: Omit<Noticia, 'id' | 'fecha'>): void {
     const id = this.noticias.length ? Math.max(...this.noticias.map((n) => n.id)) + 1 : 1;
     this.noticias.push({ ...noticia, id, fecha: new Date().toISOString().slice(0, 10) });
-    storage.setItem(KEY_NOTICIAS, JSON.stringify(this.noticias));
+    localStorage.setItem(KEY_NOTICIAS, JSON.stringify(this.noticias));
   }
   eliminarNoticia(id: number): void {
     this.noticias = this.noticias.filter((n) => n.id !== id);
-    storage.setItem(KEY_NOTICIAS, JSON.stringify(this.noticias));
+    localStorage.setItem(KEY_NOTICIAS, JSON.stringify(this.noticias));
   }
 }

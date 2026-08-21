@@ -1,4 +1,4 @@
-/*import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,8 +12,9 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
-import { ClasesService } from '../../services/clases.service';
-import { GimnasiosService } from '../../services/gimnasios.service';
+
+import { ClasesService } from '../../services/clases';
+import { GimnasiosService } from '../../services/gimnasios';
 import { AuthService } from '../../services/auth';
 import { ClaseDisponible } from '../../models/clase.models';
 import {
@@ -21,16 +22,9 @@ import {
   ConfirmarReservaData,
 } from './confirmar-reserva-dialog/confirmar-reserva-dialog';
 
-
-export interface ClaseDisponible {
-  id: number;
-  gimnasioId: number;
-  tipoClase: string;
-}
-
-
 @Component({
   selector: 'app-reservar-clase',
+  standalone: true,
   imports: [
     FormsModule,
     MatButtonModule,
@@ -84,7 +78,6 @@ export class ReservarClaseComponent implements OnInit {
     return valor.toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
   }
 
-  // Búsqueda simulada de clases disponibles (con progreso, como en el ejemplo de reserva de vuelos)
   buscarClases(): void {
     if (!this.fecha) {
       alert('Por favor selecciona la fecha en la que deseas asistir.');
@@ -121,7 +114,6 @@ export class ReservarClaseComponent implements OnInit {
     this.clases = this.clasesService.listar();
   }
 
-  // HU: reservar cupo en una clase, con confirmación en un mat-dialog
   reservarClase(clase: ClaseDisponible): void {
     if (!this.fecha) {
       alert('Selecciona primero la fecha en la que deseas asistir.');
@@ -150,4 +142,3 @@ export class ReservarClaseComponent implements OnInit {
     });
   }
 }
-*/

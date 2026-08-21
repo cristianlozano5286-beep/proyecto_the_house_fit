@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AuthService,UsuarioSistema } from '../../services/auth';
+import { AuthService, UsuarioSistema } from '../../services/auth';
+
 interface DescripcionRol {
   rol: string;
   icono: string;
@@ -17,6 +18,7 @@ export class RolesComponent implements OnInit {
   usuarios: UsuarioSistema[] = [];
   rolesDisponibles = ['Administrador', 'Entrenador', 'Usuario'];
 
+  // HU44, HU45, HU46: descripción de permisos por rol
   descripciones: DescripcionRol[] = [
     {
       rol: 'Administrador',
@@ -60,6 +62,7 @@ export class RolesComponent implements OnInit {
     this.usuarios = this.authService.listarUsuariosSistema();
   }
 
+  // HU47: interfaz para que el administrador gestione/asigne roles
   cambiarRol(usuario: UsuarioSistema, nuevoRol: string): void {
     this.authService.actualizarRol(usuario.correo, nuevoRol);
     this.mensaje = `Rol de ${usuario.nombre} actualizado a "${nuevoRol}".`;

@@ -8,7 +8,6 @@
           <p>Administración de usuarios registrados en el sistema</p>
         </div>
       </div>
-
     </section>
     <div class="content">
       <section class="form-panel">
@@ -16,7 +15,8 @@
           <span>➕</span>
           <h2>Registrar usuario</h2>
         </div>
-    <div
+
+        <div
           *ngIf="mensaje"
           class="alert"
           [class.success]="tipoMensaje === 'success'"
@@ -59,7 +59,7 @@
           <button class="btn-secundary" (click)="reiniciarDatos()">Restaurar Datos</button>
         </div>
       </section>
-      
+
       <section class="table-panel">
         <div class="panel-title">
           <span>📝</span>
@@ -152,6 +152,7 @@
   </div>
 </div>
 
+<!--Modal elminar usuario-->
 <div class="modal-overlay" *ngIf="mostrarModalEliminar">
   <div class="modal">
     <div class="modal-header">

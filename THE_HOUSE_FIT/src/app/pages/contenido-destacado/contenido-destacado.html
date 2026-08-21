@@ -1,0 +1,46 @@
+<section class="dark-page">
+    <div class="page-header">
+        <span class="eyebrow">EXPLORA LA PLATAFORMA</span>
+        <h1 class="display-title" style="font-size:clamp(36px,6vw,64px);">CONTENIDO <span class="accent">DESTACADO</span></h1>
+        <p class="page-desc">Explora las diferentes opciones disponibles en The House Fit.</p>
+    </div>
+
+    <!-- Carrusel de tarjetas -->
+    <div class="carousel-container">
+        <div class="cards-container">
+            @for (card of cards; track card.texto) {
+                <article class="card-item" [routerLink]="card.ruta">
+                    <div class="card-image">
+                        <img [src]="card.imagen" [alt]="card.texto" />
+                    </div>
+                    <div class="card-content">
+                        <p>{{ card.texto }}</p>
+                        <span class="card-btn">{{ card.boton }} →</span>
+                    </div>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Subsecciones -->
+<section class="section-dark alt">
+    <div class="section-inner">
+        <div class="mb-16">
+            <span class="eyebrow">POR QUÉ ELEGIRNOS</span>
+            <h2 class="display-title" style="font-size:clamp(28px,4vw,44px);">INFORMACIÓN</h2>
+        </div>
+
+        @for (seccion of subsecciones; track seccion.titulo; let i = $index) {
+            <article class="subsection" [class.reverse]="i % 2 === 1">
+                <div class="subsection-image">
+                    <img [src]="seccion.imagen" [alt]="seccion.titulo" />
+                </div>
+                <div class="subsection-content">
+                    <h3>{{ seccion.titulo }}</h3>
+                    <p>{{ seccion.texto }}</p>
+                </div>
+            </article>
+        }
+    </div>
+</section>
