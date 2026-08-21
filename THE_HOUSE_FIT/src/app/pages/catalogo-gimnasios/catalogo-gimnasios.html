@@ -1,1 +1,91 @@
-<p>catalogo-gimnasios works!</p>
+<section class="dark-page">
+    <div class="page-header">
+        <span class="eyebrow">DIRECTORIO COMPLETO</span>
+        <h1 class="display-title" style="font-size:clamp(36px,6vw,64px);">CATÁLOGO DE <span class="accent">GIMNASIOS</span></h1>
+        <p class="page-desc">Encuentra el gimnasio ideal según tu barrio y los servicios que buscas en Yopal.</p>
+    </div>
+
+    <div class="filter-bar">
+        <div class="filter-field">
+            <label>BUSCAR</label>
+            <input type="text" placeholder="Nombre o barrio..." [(ngModel)]="textoBusqueda" (input)="buscar()" />
+        </div>
+        <div class="filter-field">
+            <label>SERVICIO</label>
+            <select [(ngModel)]="servicioFiltro" (change)="buscar()">
+                <option value="">Todos</option>
+                @for (s of serviciosDisponibles; track s) {
+                    <option [value]="s">{{ s }}</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <p class="result-count">{{ gimnasiosFiltrados.length }} gimnasio(s) encontrado(s)</p>
+
+    <div class="services-grid">
+        @for (g of gimnasiosFiltrados; track g.id) {
+            <div class="service-card clickable" (click)="verDetalle(g)">
+                <div class="service-top">
+                    <span class="service-icon">{{ g.imagen }}</span>
+                    <span class="stars">{{ promedio(g.id) || '—' }} ⭐</span>
+                </div>
+                <h3 class="service-title">{{ g.nombre }}</h3>
+                <p class="service-desc">📍 {{ g.direccion }}, {{ g.barrio }}</p>
+                <p class="service-desc">🕒 {{ g.horario }}</p>
+                <div class="tag-row mt-16">
+                    @for (s of g.servicios; track s) {
+                        <span class="tag-outline">{{ s.toUpperCase() }}</span>
+                    }
+                </div>
+                <div class="service-footer">
+                    <span class="service-link">Ver detalle →</span>
+                </div>
+            </div>
+        }
+        @empty {
+            <div class="empty-state-dark">No se encontraron gimnasios con esos filtros.</div>
+        }
+    </div>
+</section>
+
+@if (gimnasioSeleccionado) {
+    <div class="modal-overlay" (click)="cerrarDetalle()">
+        <div class="modal-dark" (click)="$event.stopPropagation()">
+            <div class="modal-dark-header">
+                <h2>{{ gimnasioSeleccionado.imagen }} {{ gimnasioSeleccionado.nombre }}</h2>
+                <button (click)="cerrarDetalle()">✕</button>
+            </div>
+            <div class="modal-dark-body">
+                <p><strong>Dirección:</strong> {{ gimnasioSeleccionado.direccion }}, {{ gimnasioSeleccionado.barrio }}</p>
+                <p class="mt-8"><strong>Teléfono:</strong> {{ gimnasioSeleccionado.telefono }}</p>
+                <p class="mt-8"><strong>Horario:</strong> {{ gimnasioSeleccionado.horario }}</p>
+                <p class="mt-8">{{ gimnasioSeleccionado.descripcion }}</p>
+
+                <h3 class="mt-16">INSTRUCTORES</h3>
+                <div class="grid grid-2 mt-8">
+                    @for (i of instructoresDe(gimnasioSeleccionado.id); track i.id) {
+                        <div class="mini-card">
+                            <strong>{{ i.imagen }} {{ i.nombre }}</strong>
+                            <p>{{ i.especialidad }} · {{ i.experiencia }} años</p>
+                        </div>
+                    }
+                    @empty { <p class="muted">Aún no hay instructores registrados.</p> }
+                </div>
+
+                <h3 class="mt-16">RESEÑAS</h3>
+                @for (r of resenasDe(gimnasioSeleccionado.id); track r.id) {
+                    <div class="mini-card">
+                        <div class="flex-between">
+                            <strong>{{ r.titulo }}</strong>
+                            <span class="stars">{{ '★'.repeat(r.puntuacion) }}</span>
+                        </div>
+                        <p style="margin-top:6px;">{{ r.cuerpo }}</p>
+                        <small class="muted">{{ r.usuario }} · {{ r.fecha }}</small>
+                    </div>
+                }
+                @empty { <p class="muted">Este gimnasio aún no tiene reseñas.</p> }
+            </div>
+        </div>
+    </div>
+}

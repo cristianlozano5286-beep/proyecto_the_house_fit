@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgForOf, NgIf } from '@angular/common';
 
-
-
 interface Usuario {
   id: number;
   nombre: string;
@@ -12,7 +10,6 @@ interface Usuario {
   rol: string;
   estado: boolean;
 }
-
 
 const STORAGE_KEY='usuariosSistema';
 
@@ -69,7 +66,11 @@ export class UsersComponent implements OnInit {
   modoEdicion: boolean = false;
   //mostrar o no mostral el modal
   mostrarModalEliminar: boolean = false;
-   //usuario a eliminar
+
+
+  
+
+  //usuario a eliminar
 
   usuarioSeleccionado: Usuario | null = null;
 
@@ -347,7 +348,7 @@ export class UsersComponent implements OnInit {
     //cerrar el modal
     this.cerrarModal();
   }
-  
+
   guardarUsuarios():void{
     localStorage.setItem(STORAGE_KEY, JSON.stringify(this.usuarios))
     

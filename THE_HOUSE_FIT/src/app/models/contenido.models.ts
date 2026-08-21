@@ -1,8 +1,10 @@
+// Modelos relacionados con el Módulo 4 (Rutinas y Nutrición)
+
 export interface Rutina {
   id: number;
-  tipoEntrenamiento: string;
+  tipoEntrenamiento: 'Fuerza' | 'Cardio' | 'Funcional' | 'Flexibilidad' | 'Pérdida de peso';
   nombre: string;
-  nivel: string;
+  nivel: 'Principiante' | 'Intermedio' | 'Avanzado';
   descripcion: string;
   ejercicios: string[];
   duracionSemanas: number;
@@ -18,7 +20,7 @@ export interface GuiaFisica {
 
 export interface GuiaNutricional {
   id: number;
-  categoriaIMC: string;
+  categoriaIMC: 'Bajo peso' | 'Peso normal' | 'Sobrepeso' | 'Obesidad';
   titulo: string;
   recomendaciones: string;
   ejemploComidas: string;

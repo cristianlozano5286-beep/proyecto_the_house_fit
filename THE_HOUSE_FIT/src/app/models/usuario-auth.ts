@@ -1,5 +1,5 @@
-export interface UsuarioAuth {
-    nombre: string;
-    correo: string;
-    rol: string;
+export interface UsuarioAuth{
+    nombre:string;
+    correo:string;
+    rol:string;
 }

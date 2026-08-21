@@ -70,7 +70,7 @@
                 <a routerLink="/gimnasios" class="service-card">
                     <div class="service-top">
                         <span class="service-icon">{{ g.imagen }}</span>
-                        <span class="tag-outline">{{ $any(g).servicios[0] || 'GYM' }}</span>
+                        <span class="tag-outline">{{ g.servicios[0] || 'GYM' }}</span>
                     </div>
                     <h3 class="service-title">{{ g.nombre }}</h3>
                     <p class="service-desc">{{ g.descripcion }}</p>
@@ -98,9 +98,9 @@
         <div class="news-grid">
             @for (n of noticiasRecientes; track n.id) {
                 <div class="news-card">
-                    <span class="tag-outline">{{ ($any(n).tipo || '').toUpperCase() }}</span>
-                    <h3>{{ $any(n).imagen }} {{ n.titulo }}</h3>
-                    <p>{{ $any(n).cuerpo }}</p>
+                    <span class="tag-outline">{{ n.tipo.toUpperCase() }}</span>
+                    <h3>{{ n.imagen }} {{ n.titulo }}</h3>
+                    <p>{{ n.cuerpo }}</p>
                 </div>
             }
         </div>
