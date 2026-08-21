@@ -1,0 +1,20 @@
+<header class="header">
+    <section class="system">
+        <a routerLink="/" class="logo">🏋️</a>
+        <div class="system-text">
+            <h1>{{ nombreSistema }}</h1>
+            <span>{{ descripcionSistema }}</span>
+        </div>
+    </section>
+
+    <section class="user">
+        <div class="user-data">
+            <h3>{{ usuario }}</h3>
+            <span class="chip-rol">{{ rol }}</span>
+            <small>📅 {{ fechaActual() }}</small>
+            <small>⌚ {{ horaActual() }}</small>
+        </div>
+        <a routerLink="/" class="ver-sitio">Ver sitio</a>
+        <button class="logout" (click)="cerrarSesion()">Cerrar sesión</button>
+    </section>
+</header>

@@ -1,0 +1,34 @@
+.site-footer{ background:#050505; border-top:1px solid #111; }
+.footer-inner{ max-width:1200px; margin:0 auto; padding:48px 24px 24px; }
+.footer-top{
+    display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:28px;
+}
+.brand{ display:flex; align-items:center; gap:10px; }
+.brand-mark{
+    width:32px; height:32px; display:flex; align-items:center; justify-content:center;
+    background: var(--color-primary); color:#fff; font-family: var(--font-display);
+    font-weight:900; font-size:14px;
+}
+.brand-text{
+    font-family: var(--font-display); font-weight:900; text-transform:uppercase;
+    letter-spacing:.05em; font-size:20px; color:#fff;
+}
+.brand-text .accent{ color: var(--color-primary); }
+
+.footer-links{ display:flex; flex-wrap:wrap; gap:22px; }
+.footer-links a{ font-size:11px; letter-spacing:.1em; color:#555; font-family: var(--font-body); font-weight:600; transition:.2s; }
+.footer-links a:hover{ color: var(--color-primary); }
+
+.socials{ display:flex; gap:12px; }
+.social-box{
+    width:34px; height:34px; display:flex; align-items:center; justify-content:center;
+    border:1px solid #222; color:#555; font-size:11px; font-weight:700; cursor:pointer;
+    font-family: var(--font-display); transition:.2s;
+}
+.social-box:hover{ border-color: var(--color-primary); color: var(--color-primary); }
+
+.footer-bottom{
+    margin-top:36px; padding-top:22px; border-top:1px solid #111;
+    display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px;
+    font-size:11px; color:#3a3a3a; font-family: var(--font-body);
+}

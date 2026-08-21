@@ -1,3 +1,5 @@
+// Modelos relacionados con el Módulo 6 (Pagos)
+
 export interface MetodoPago {
   id: number;
   nombre: string;
@@ -12,6 +14,6 @@ export interface Transaccion {
   concepto: string;
   monto: number;
   metodoPagoId: number;
-  estado: string;
+  estado: 'Pendiente' | 'Aprobado' | 'Rechazado';
   fecha: string;
 }

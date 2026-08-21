@@ -1,0 +1,91 @@
+<div class="page-wrapper">
+    <h1 class="section-title">🥗 Mi entrenamiento y nutrición</h1>
+    <p class="section-subtitle">Hola {{ nombreUsuario }}, elige tu tipo de entrenamiento y descubre tu plan ideal</p>
+
+    <!-- HU27, HU28, HU33: elegir tipo de entrenamiento -->
+    <section class="card mb-16">
+        <h2>1. Elige tu tipo de entrenamiento</h2>
+        <div class="tag-row mt-16">
+            @for (t of tiposEntrenamiento; track t) {
+                <button class="pill" [class.active]="tipoSeleccionado===t" (click)="seleccionarTipo(t)">{{ t }}</button>
+            }
+        </div>
+
+        @if (tipoSeleccionado) {
+            <div class="grid grid-2 mt-16">
+                @for (r of rutinasFiltradas; track r.id) {
+                    <div class="card" style="padding:14px;cursor:pointer;" (click)="verRutina(r)">
+                        <div class="flex-between">
+                            <strong>{{ r.nombre }}</strong>
+                            <span class="badge badge-gray">{{ r.nivel }}</span>
+                        </div>
+                        <p class="mt-8" style="font-size:13px;">{{ r.descripcion }}</p>
+                        <small style="color:var(--color-gray);">Duración: {{ r.duracionSemanas }} semanas</small>
+                    </div>
+                }
+                @empty {
+                    <p class="empty-state">Aún no hay rutinas para este tipo de entrenamiento.</p>
+                }
+            </div>
+        }
+
+        @if (rutinaSeleccionada) {
+            <div class="alert info mt-16">
+                <h3>{{ rutinaSeleccionada.nombre }}</h3>
+                <ul class="mt-8">
+                    @for (e of rutinaSeleccionada.ejercicios; track e) {
+                        <li>{{ e }}</li>
+                    }
+                </ul>
+            </div>
+        }
+    </section>
+
+    <!-- HU29, HU31: manuales / guías físicas -->
+    <section class="card mb-16">
+        <h2>2. Manuales y guías físicas</h2>
+        <div class="mt-16">
+            @for (g of guiasFisicas; track g.id) {
+                <div class="card" style="padding:14px;margin-bottom:10px;cursor:pointer;" (click)="verGuiaFisica(g)">
+                    <div class="flex-between">
+                        <strong>📖 {{ g.titulo }}</strong>
+                        <span class="badge badge-info">{{ g.metodo }}</span>
+                    </div>
+                    @if (guiaSeleccionada?.id === g.id) {
+                        <p class="mt-8">{{ g.contenido }}</p>
+                    }
+                </div>
+            }
+            @empty {
+                <p class="empty-state">Aún no hay manuales publicados.</p>
+            }
+        </div>
+    </section>
+
+    <!-- HU30, HU32, HU34: calculadora de IMC + plan nutricional -->
+    <section class="card">
+        <h2>3. Calcula tu IMC y obtén tu plan nutricional</h2>
+        <div class="form-row mt-16">
+            <div class="form-group">
+                <label>Peso (kg)</label>
+                <input type="number" [(ngModel)]="peso" placeholder="Ej. 70" />
+            </div>
+            <div class="form-group">
+                <label>Estatura (m)</label>
+                <input type="number" step="0.01" [(ngModel)]="estatura" placeholder="Ej. 1.70" />
+            </div>
+        </div>
+        <button class="btn btn-primary" (click)="calcularImc()">Calcular</button>
+
+        @if (imc !== null) {
+            <div class="mt-16">
+                <p class="imc-valor">{{ imc }} <span class="badge badge-info">{{ categoriaIMC }}</span></p>
+                @if (guiaNutricional) {
+                    <h3 class="mt-16">{{ guiaNutricional.titulo }}</h3>
+                    <p class="mt-8">{{ guiaNutricional.recomendaciones }}</p>
+                    <p class="mt-8"><strong>Ejemplo de comidas:</strong> {{ guiaNutricional.ejemploComidas }}</p>
+                }
+            </div>
+        }
+    </section>
+</div>

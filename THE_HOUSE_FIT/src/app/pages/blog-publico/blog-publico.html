@@ -1,0 +1,40 @@
+<section class="dark-page">
+    <div class="page-header">
+        <span class="eyebrow">NOVEDADES Y COMUNIDAD</span>
+        <h1 class="display-title" style="font-size:clamp(36px,6vw,64px);">BLOG <span class="accent">THE HOUSE FIT</span></h1>
+        <p class="page-desc">Novedades, ofertas y reseñas de la comunidad de gimnasios en Yopal.</p>
+    </div>
+
+    <div class="filter-tabs">
+        <button class="tab" [class.active]="pestanaActiva==='noticias'" (click)="cambiarPestana('noticias')">📰 NOTICIAS</button>
+        <button class="tab" [class.active]="pestanaActiva==='resenas'" (click)="cambiarPestana('resenas')">⭐ RESEÑAS</button>
+    </div>
+
+    @if (pestanaActiva === 'noticias') {
+        <div class="blog-grid">
+            @for (n of noticias; track n.id) {
+                <div class="blog-card">
+                    <span class="tag-outline">{{ n.tipo.toUpperCase() }}</span>
+                    <h3>{{ n.imagen }} {{ n.titulo }}</h3>
+                    <p>{{ n.cuerpo }}</p>
+                    <small>{{ nombreGimnasio(n.gimnasioId) }} · {{ n.fecha }}</small>
+                </div>
+            }
+            @empty { <div class="empty-state-dark">Aún no hay noticias publicadas.</div> }
+        </div>
+    } @else {
+        <div class="blog-grid">
+            @for (r of resenas; track r.id) {
+                <div class="blog-card">
+                    <div class="flex-between">
+                        <h3 style="margin:0;">{{ r.titulo }}</h3>
+                        <span class="stars">{{ estrellas(r.puntuacion) }}</span>
+                    </div>
+                    <p class="mt-8">{{ r.cuerpo }}</p>
+                    <small>{{ nombreGimnasio(r.gimnasioId) }} · {{ r.usuario }} · {{ r.fecha }}</small>
+                </div>
+            }
+            @empty { <div class="empty-state-dark">Aún no hay reseñas publicadas.</div> }
+        </div>
+    }
+</section>

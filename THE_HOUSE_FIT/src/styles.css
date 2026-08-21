@@ -1,14 +1,147 @@
-html, body {
-  margin: 0;
-  min-height: 100%;
-  font-family: "Segoe UI", Arial, sans-serif;
-  background: #f5efe9;
+/* ============================================================
+   DESIGN SYSTEM GLOBAL - THE HOUSE FIT
+   Inspirado en el diseño "The House Fit" (Figma Make):
+   dark theme, acento naranja, tipografía Barlow Condensed + Inter
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Inter:wght@300;400;500;600;700&display=swap');
+
+* { box-sizing: border-box; }
+:root{
+  --color-bg: #0a0a0a;
+  --color-bg-alt: #111111;
+  --color-card: #141414;
+  --color-primary: #ff4500;      /* naranja de marca */
+  --color-primary-dark: #cc3700;
+  --color-secondary: #22c55e;    /* verde salud (usos puntuales) */
+  --color-dark: #0a0a0a;
+  --color-gray: #888888;
+  --color-light: #f8fafc;
+  --color-border: #e2e8f0;
+  --color-border-dark: #242424;
+  --color-danger: #dc2626;
+  --radius: 10px;
+  --shadow: 0 10px 30px rgba(0,0,0,.12);
+  --font-display: 'Barlow Condensed', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  font-family: var(--font-body);
+}
+html, body { margin:0; padding:0; font-family: var(--font-body); background: var(--color-light); color:#1e293b; scroll-behavior:smooth; }
+h1,h2,h3,h4 { margin:0; }
+p { margin:0; }
+a { text-decoration:none; color:inherit; }
+
+/* ---------- Eyebrow / etiqueta de sección (estilo "LO QUE OFRECEMOS") ---------- */
+.eyebrow{
+  display:block; font-size:12px; font-weight:600; letter-spacing:.15em;
+  color: var(--color-primary); font-family: var(--font-body); text-transform:uppercase;
+  margin-bottom:10px;
+}
+.display-title{
+  font-family: var(--font-display); font-weight:900; text-transform:uppercase;
+  letter-spacing:-0.01em; line-height:0.95; color:#fff;
+}
+.display-title .accent{ color: var(--color-primary); }
+
+/* ---------- Botones ---------- */
+.btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 20px; border-radius:8px; border:none; font-size:15px; font-weight:600; cursor:pointer; transition:.25s; }
+.btn-primary{ background: var(--color-primary); color:#fff; }
+.btn-primary:hover{ background: var(--color-primary-dark); }
+.btn-secondary{ background:#fff; color: var(--color-primary); border:2px solid var(--color-primary); }
+.btn-secondary:hover{ background: var(--color-primary); color:#fff; }
+.btn-dark{ background: var(--color-dark); color:#fff; }
+.btn-dark:hover{ background:#1e293b; }
+.btn-danger{ background: var(--color-danger); color:#fff; }
+.btn-danger:hover{ background:#b91c1c; }
+.btn-outline{ background:transparent; border:1px solid var(--color-border); color:#334155; }
+.btn-outline:hover{ background:#f1f5f9; }
+.btn:disabled{ opacity:.5; cursor:not-allowed; }
+.btn-block{ width:100%; }
+.btn-sm{ padding:8px 12px; font-size:13px; }
+
+/* Botón estilo "landing" (mayúsculas, Barlow Condensed, sin radius) */
+.btn-landing{
+  font-family: var(--font-display); font-weight:800; text-transform:uppercase;
+  letter-spacing:.06em; font-size:17px; padding:14px 28px; border:none; cursor:pointer;
+  transition:.2s; border-radius:0;
+}
+.btn-landing.primary{ background: var(--color-primary); color:#fff; }
+.btn-landing.primary:hover{ background: var(--color-primary-dark); }
+.btn-landing.outline{ background:transparent; color:#ccc; border:1px solid #444; }
+.btn-landing.outline:hover{ border-color: var(--color-primary); color: var(--color-primary); }
+
+/* ---------- Layout de secciones ---------- */
+.page-wrapper{ max-width:1200px; margin:0 auto; padding:24px; }
+.section-title{ font-family: var(--font-display); font-size:26px; font-weight:800; text-transform:uppercase; color:var(--color-dark); margin-bottom:6px; letter-spacing:.01em; }
+.section-subtitle{ color:var(--color-gray); margin-bottom:24px; font-family: var(--font-body); }
+
+/* ---------- Tarjetas ---------- */
+.card{ background:#fff; border-radius: var(--radius); box-shadow: var(--shadow); padding:20px; }
+.grid{ display:grid; gap:20px; }
+.grid-2{ grid-template-columns: repeat(auto-fit, minmax(320px,1fr)); }
+.grid-3{ grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); }
+.grid-4{ grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); }
+
+/* ---------- Formularios ---------- */
+.form-group{ margin-bottom:16px; text-align:left; }
+.form-group label{ display:block; margin-bottom:6px; font-weight:600; font-size:14px; color:#334155; }
+.form-group input, .form-group select, .form-group textarea{
+  width:100%; padding:11px 12px; border-radius:8px; border:1px solid var(--color-border);
+  font-size:14px; transition:.2s; font-family: inherit;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus{
+  outline:none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(255,69,0,.15);
+}
+.form-row{ display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+small.error{ color: var(--color-danger); font-size:12px; display:block; margin-top:4px; }
+.checkbox-group label{ display:flex; align-items:center; gap:8px; font-weight:500; cursor:pointer; }
+
+/* ---------- Alertas ---------- */
+.alert{ padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:14px; font-weight:500; }
+.alert.success{ background:#dcfce7; color:#166534; border:1px solid #86efac; }
+.alert.error{ background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; }
+.alert.info{ background:#dbeafe; color:#1e3a8a; border:1px solid #93c5fd; }
+
+/* ---------- Badges ---------- */
+.badge{ display:inline-block; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:600; }
+.badge-success{ background:#dcfce7; color:#166534; }
+.badge-danger{ background:#fee2e2; color:#991b1b; }
+.badge-warning{ background:#fef3c7; color:#92400e; }
+.badge-info{ background:#e0e7ff; color:#3730a3; }
+.badge-gray{ background:#f1f5f9; color:#475569; }
+
+/* Etiqueta estilo landing (borde fino, mayúsculas) */
+.tag-outline{
+  font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
+  padding:4px 10px; border:1px solid #2a2a2a; color:#888; font-family: var(--font-body);
 }
 
-* {
-  box-sizing: border-box;
-}
+/* ---------- Tablas ---------- */
+.table-responsive{ overflow-x:auto; }
+table{ width:100%; border-collapse:collapse; background:#fff; }
+table th{ text-align:left; padding:12px; background:#f8fafc; font-size:13px; text-transform:uppercase; letter-spacing:.03em; color:#475569; border-bottom:2px solid var(--color-border); }
+table td{ padding:12px; border-bottom:1px solid #f1f5f9; font-size:14px; }
+table tr:hover td{ background:#fafafa; }
+.sortable{ cursor:pointer; user-select:none; }
 
-a {
-  transition: all 0.2s ease;
-}
+/* ---------- Modal ---------- */
+.modal-overlay{ position:fixed; inset:0; background:rgba(15,23,42,.6); display:flex; align-items:center; justify-content:center; z-index:1000; padding:20px;}
+.modal{ background:#fff; border-radius: var(--radius); max-width:480px; width:100%; box-shadow: var(--shadow); overflow:hidden;}
+.modal-header{ padding:20px; border-bottom:1px solid var(--color-border); }
+.modal-body{ padding:20px; }
+.modal-footer{ padding:16px 20px; border-top:1px solid var(--color-border); display:flex; gap:10px; justify-content:flex-end; }
+
+/* ---------- Utilidades ---------- */
+.text-center{ text-align:center; }
+.flex{ display:flex; }
+.flex-between{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;}
+.gap-8{ gap:8px; }
+.mt-8{ margin-top:8px; }
+.mt-16{ margin-top:16px; }
+.mt-24{ margin-top:24px; }
+.mb-16{ margin-bottom:16px; }
+.tag-row{ display:flex; flex-wrap:wrap; gap:8px; }
+.pill{ padding:6px 14px; border-radius:999px; border:1px solid var(--color-border); background:#fff; cursor:pointer; font-size:13px; font-weight:600; transition:.2s;}
+.pill.active{ background: var(--color-primary); color:#fff; border-color: var(--color-primary); }
+.stars{ color:#f59e0b; letter-spacing:2px; }
+.chip-rol{ padding:3px 10px; border-radius:6px; font-size:11px; font-weight:700; text-transform:uppercase; }
+.empty-state{ text-align:center; padding:40px 20px; color: var(--color-gray); }

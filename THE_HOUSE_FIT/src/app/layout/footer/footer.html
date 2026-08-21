@@ -1,0 +1,27 @@
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-top">
+            <a routerLink="/" class="brand">
+                <span class="brand-mark">TH</span>
+                <span class="brand-text">The House <span class="accent">Fit</span></span>
+            </a>
+
+            <nav class="footer-links">
+                @for (link of navLinks; track link.ruta) {
+                    <a [routerLink]="link.ruta">{{ link.label.toUpperCase() }}</a>
+                }
+            </nav>
+
+            <div class="socials">
+                @for (r of redes; track r) {
+                    <span class="social-box">{{ r }}</span>
+                }
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <span>© {{ anio }} The House Fit · Todos los derechos reservados</span>
+            <span>Directorio de gimnasios de Yopal, Casanare.</span>
+        </div>
+    </div>
+</footer>

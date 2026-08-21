@@ -7,10 +7,9 @@ import { Noticia } from '../../models/blog.models';
 
 @Component({
   selector: 'app-inicio',
-  standalone: true,
   imports: [RouterLink],
   templateUrl: './inicio.html',
-  styleUrls: ['./inicio.css'],
+  styleUrl: './inicio.css',
 })
 export class InicioComponent {
   gimnasiosDestacados: Gimnasio[] = [];

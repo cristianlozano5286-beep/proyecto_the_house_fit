@@ -1,7 +1,9 @@
+// Modelos relacionados con la reserva de clases en los gimnasios afiliados.
+
 export interface ClaseDisponible {
   id: number;
   gimnasioId: number;
-  tipoClase: string;
+  tipoClase: 'Spinning' | 'CrossFit' | 'Yoga' | 'Funcional' | 'Boxeo' | 'Pilates';
   instructor: string;
   hora: string;
   cupos: number;
@@ -15,5 +17,5 @@ export interface ReservaClase {
   claseId: number;
   fecha: string;
   personas: number;
-  estado: string;
+  estado: 'Confirmada' | 'Cancelada';
 }

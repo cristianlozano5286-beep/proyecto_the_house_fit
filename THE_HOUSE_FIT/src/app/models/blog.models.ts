@@ -1,3 +1,4 @@
+// Modelos relacionados con el Módulo 5 (Blog)
 
 export interface Resena {
   id: number;
@@ -6,7 +7,7 @@ export interface Resena {
   titulo: string;
   cuerpo: string;
   imagen: string;
-  puntuacion: number; 
+  puntuacion: number; // 1 a 5
   fecha?: string;
 }
 

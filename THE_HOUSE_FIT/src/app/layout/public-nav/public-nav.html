@@ -1,0 +1,39 @@
+<header class="public-nav" [class.scrolled]="scrolled">
+    <div class="nav-inner">
+        <a routerLink="/" class="brand" (click)="cerrarMenu()">
+    <img src="assets/logo.png" alt="Logo The House Fit" class="brand-logo-img" />
+    <span class="brand-text">The House <span class="accent">Fit</span></span>
+</a>
+
+        <nav class="links desktop-only">
+            @for (link of navLinks; track link.ruta) {
+                <a [routerLink]="link.ruta" routerLinkActive="active">{{ link.label.toUpperCase() }}</a>
+            }
+
+            @if (autenticado) {
+                <button class="btn-landing primary" (click)="irAlPanel()">MI PANEL</button>
+            } @else {
+                <a routerLink="/login" class="link-login">INICIAR SESIÓN</a>
+                <button class="btn-landing primary" (click)="irAlPanel()" [routerLink]="'/register'">REGÍSTRATE</button>
+            }
+        </nav>
+
+        <button class="burger mobile-only" (click)="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+
+    @if (menuAbierto) {
+        <div class="mobile-menu">
+            @for (link of navLinks; track link.ruta) {
+                <a [routerLink]="link.ruta" routerLinkActive="active" (click)="cerrarMenu()">{{ link.label.toUpperCase() }}</a>
+            }
+            @if (autenticado) {
+                <button class="btn-landing primary" (click)="irAlPanel()">MI PANEL</button>
+            } @else {
+                <a routerLink="/login" (click)="cerrarMenu()">INICIAR SESIÓN</a>
+                <a routerLink="/register" class="btn-landing primary" (click)="cerrarMenu()">REGÍSTRATE</a>
+            }
+        </div>
+    }
+</header>
