@@ -8,21 +8,48 @@
     <h1>{{ rutina.nombre }}</h1>
     <p class="descripcion">{{ rutina.descripcion }}</p>
     
+    <!-- Metadatos transformados en "Píldoras" (Consejo 3) -->
     <div class="meta-info">
-      <span>📅 Duración: <strong>{{ rutina.duracionSemanas }} semanas</strong></span>
-      <span>📶 Nivel: <strong>{{ rutina.nivel }}</strong></span>
-      <span>📋 Ejercicios totales: <strong>{{ rutina.ejercicios.length }}</strong></span>
+      <div class="meta-badge">
+        <span>📅</span>
+        <div>
+          <small>Duración</small>
+          <strong>{{ rutina.duracionSemanas }} semanas</strong>
+        </div>
+      </div>
+
+      <div class="meta-badge">
+        <span>📶</span>
+        <div>
+          <small>Nivel</small>
+          <strong>{{ rutina.nivel }}</strong>
+        </div>
+      </div>
+
+      <div class="meta-badge">
+        <span>📋</span>
+        <div>
+          <small>Ejercicios</small>
+          <strong>{{ rutina.ejercicios.length }} totales</strong>
+        </div>
+      </div>
     </div>
   </header>
 
   <section class="ejercicios-section">
     <h2>Ejercicios de la rutina</h2>
     
+    <!-- Cuadrícula / Tarjetas individuales preparadas para imágenes (Consejo 2) -->
     <div class="ejercicios-grid">
       @for (ejercicio of rutina.ejercicios; track ejercicio; let i = $index) {
         <div class="ejercicio-card">
-          <span class="numero-orden">#{{ i + 1 }}</span>
-          <div class="ejercicio-info">
+          <!-- Espacio reservado para la futura imagen -->
+          <div class="ejercicio-img-placeholder">
+            <span>📷</span>
+          </div>
+
+          <div class="ejercicio-content">
+            <span class="numero-orden">Ejercicio #{{ i + 1 }}</span>
             <h3>{{ ejercicio }}</h3>
           </div>
         </div>
