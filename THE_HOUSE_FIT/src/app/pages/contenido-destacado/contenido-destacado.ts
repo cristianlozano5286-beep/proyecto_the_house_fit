@@ -38,7 +38,7 @@ export class ContenidoDestacadoComponent {
       imagen: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop&auto=format',
       texto: 'Descubre rutinas de entrenamiento personalizadas',
       boton: 'Ver rutinas',
-      ruta: '/rutinas',
+      ruta: '/imc',
     },
     {
       imagen: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&h=400&fit=crop&auto=format',

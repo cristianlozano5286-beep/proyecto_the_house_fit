@@ -16,8 +16,6 @@ import { TiendaComponent } from './pages/tienda/tienda';
 import { BlogPublicoComponent } from './pages/blog-publico/blog-publico';
 import { CalculadoraImcComponent } from './pages/calculadora-imc/calculadora-imc';
 import { ContenidoDestacadoComponent } from './pages/contenido-destacado/contenido-destacado';
-import { RutinasComponent } from './pages/rutinas/rutinas';
-import { DetalleRutinasComponent } from './pages/detalle-rutinas/detalle-rutinas';
 
 // Páginas del panel (protegidas)
 import { DashboardComponent } from './pages/dashboard/dashboard';

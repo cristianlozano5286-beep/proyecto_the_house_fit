@@ -14,7 +14,6 @@ export class PublicNavComponent {
 
   navLinks = [
     { label: 'Gimnasios', ruta: '/gimnasios' },
-    { label: 'Rutinas', ruta: '/rutinas' },
     { label: 'Tienda', ruta: '/tienda' },
     { label: 'Blog', ruta: '/blog' },
     { label: 'IMC', ruta: '/imc' },

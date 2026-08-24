@@ -43,12 +43,3 @@ export interface Producto {
   guiaNutricional: string;
   imagen: string;
 }
-
-// 🔥 NUEVO: Extendemos el modelo para funcionalidades extra sin romper nada
-export interface ProductoExtendido extends Producto {
-  stockMaximo?: number;
-  oferta?: boolean;
-  nuevo?: boolean;
-  agregando?: boolean;
-  imagenUrl?: string;
-}

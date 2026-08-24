@@ -1,67 +1,65 @@
-* {
+*{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Segoe UI', sans-serif;
 }
 
-.layout-container {
+.layout-container{
     display: flex;
     flex-direction: column;
-    background: #0b0f17; /* Cambiado de #f1f5f9 a oscuro */
+    background: #f1f5f9;
     height: 100vh;
     overflow: hidden;
 }
 
-.layout-header {
+.layout-header{
     height: 110px;
     flex-shrink: 0;
-    background: #0b0f17;
 }
 
-.layout-main {
+.layout-main{
     flex: 1;
     overflow: hidden;
     display: flex;
-    background: #0b0f17;
 }
 
-.layout-sidebar {
+.layout-sidebar{
     width: 260px;
     flex-shrink: 0;
     overflow: hidden;
-    background: #0d1117; /* Fondo oscuro ajustado */
+    background:#1e293b;
     justify-content: center;
     display: flex;
-    border-right: 1px solid rgba(255, 255, 255, 0.08); /* Borde sutil oscuro */
 }
 
-.layout-content {
+.layout-content{
     flex: 1;
-    padding: 24px;
-    background: #0b0f17; /* Cambiado de #f8fafc a oscuro */
+    padding: 30px;
+    background: #f8fafc;
     overflow-y: auto;
     min-height: 0;
     display: flex;
     flex-direction: column;
 }
 
-.panel-footer {
+.panel-footer{
     margin-top: auto;
+    padding-top: 24px;
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 8px;
     font-size: 12px;
-    color: #6e7681;
+    color: #94a3b8;
     font-family: 'Inter', sans-serif;
-    border-top: 1px solid rgba(255, 255, 255, 0.08); /* Cambiado el borde claro */
+    border-top: 1px solid #e2e8f0;
     margin-top: 40px;
     padding-top: 16px;
 }
 
-@media(max-width: 700px) {
-    .panel-footer {
+@media(max-width: 700px){
+    .panel-footer{
         flex-direction: column;
         text-align: center;
     }

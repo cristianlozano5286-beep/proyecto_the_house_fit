@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
-// MÓDULO FORMULARIOS DE ANGULAR
+import { Component } from '@angular/core';
+
+//MODULO FORMULARIOS DE ANGULAR
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import {
@@ -14,14 +14,14 @@ import {
 } from '@angular/forms';
 import { AuthService } from '../../services/auth';
 
+
 @Component({
   selector: 'app-register',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
-export class RegisterComponent implements OnInit, OnDestroy {
+export class RegisterComponent {
 
   /** FORMULARIO PRINCIPAL DEL COMPONENTE */
   registerForm: FormGroup;
@@ -33,69 +33,50 @@ export class RegisterComponent implements OnInit, OnDestroy {
   mensajeVerificacion: string = '';
   correoRegistrado: string = '';
 
-  /** PROPIEDADES PARA EL CARRUSEL AUTOMÁTICO */
-  slideActual: number = 0;
-  private intervalId: any;
+/* constructor */
 
-  /* constructor */
-  constructor(
-    private router: Router, 
-    private fb: FormBuilder, 
-    private authService: AuthService,
-    private cdr: ChangeDetectorRef,
-    private ngZone: NgZone
-  ) {
+  constructor(private router: Router, private fb: FormBuilder, private authService: AuthService) {
     this.registerForm = this.fb.group({
-      /** PRIMER CAMPO DEL FORMULARIO */
-      nombre: ['', [Validators.required, Validators.minLength(3)]],
-
-      /** SEGUNDO CAMPO DEL FORMULARIO */
-      apellido: ['', [Validators.required, Validators.minLength(3)]],
-
-      /** TERCER CAMPO DEL FORMULARIO */
-      correo: ['', [Validators.required, Validators.email]],
-
-      /** CUARTO CAMPO DEL FORMULARIO */
-      password: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(8),
-          Validators.pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/),
-        ],
+      /**PRIMER CAMPO DEL FORMULARIO */
+      nombre: ['',
+        [Validators.required,
+        Validators.minLength(3)],
       ],
 
-      /** QUINTO CAMPO DEL FORMULARIO */
-      confirmarPassword: ['', [Validators.required]],
-    }, {
+      /**SEGUNDO CAMPO DEL FORMULARIO */
+      apellido: ['',
+        [Validators.required,
+        Validators.minLength(3)],
+      ],
+
+      /**TERCER CAMPO DEL FORMULARIO */
+      correo: ['',
+        [Validators.required,
+        Validators.email],
+      ],
+
+      /**CUARTO CAMPO DEL FORMULARIO */
+      password: ['',
+        [Validators.required,
+        Validators.minLength(8),
+        Validators.pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/)],
+      ],
+
+      /**QUINTO CAMPO DEL FORMULARIO */
+      confirmarPassword: ['',
+        [
+          Validators.required
+        ]
+      ],
+    },
+    {
       validators: this.passwordsIguales
     });
   }
 
-  ngOnInit(): void {
-    this.iniciarCarruselAutomatico();
-  }
+  /**METODOS GET PAR ACCEDER A LOS DATOS EN EL HTML */
 
-  iniciarCarruselAutomatico(): void {
-    this.ngZone.runOutsideAngular(() => {
-      this.intervalId = setInterval(() => {
-        this.ngZone.run(() => {
-          this.slideActual = (this.slideActual + 1) % 3;
-          this.cdr.detectChanges();
-        });
-      }, 4000);
-    });
-  }
-
-  ngOnDestroy(): void {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-    }
-  }
-
-  /** MÉTODOS GET PARA ACCEDER A LOS DATOS EN EL HTML */
-
-  get nombre() {
+  get nombre(){
     return this.registerForm.get('nombre');
   }
 
@@ -117,7 +98,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   passwordsIguales(form: AbstractControl): ValidationErrors | null {
     const password = form.get('password')?.value;
-    const confirmarPassword = form.get('confirmarPassword')?.value;
+    const confirmarPassword =form.get('confirmarPassword')?.value;
 
     if (password !== confirmarPassword) {
       return { passwordsNoCoinciden: true };
@@ -125,13 +106,13 @@ export class RegisterComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  // MÉTODO PARA EL REGISTRO DE USUARIO (HU01, HU02, HU03)
+  //MÉTODO PARA EL REGISTRO DE USUARIO (HU01, HU02, HU03)
   registrarUsuario(): void {
 
-    /** VALIDACIÓN SI EL FORMULARIO ES INVÁLIDO */
+    /**VALIDACION SI EL FORMULARIO ES INVALIDO */
     if (this.registerForm.invalid) {
 
-      /** MARCAR LOS CAMPOS QUE MUESTRAN ERROR */
+      /**MARCAR LOS CAMPOS QUE MUESTRAN ERROR */
       this.registerForm.markAllAsTouched();
       return;
     }
