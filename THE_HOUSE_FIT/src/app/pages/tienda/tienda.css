@@ -89,7 +89,7 @@
 
 /* 🔥 ESTO HACE QUE "FIT" SE VEA NARANJA */
 .display-title .accent {
-  background: linear-gradient(135deg, #ff5722, #ffab40) !important;
+  background: linear-gradient(135deg, #f78000, #d36200bf) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
