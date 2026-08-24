@@ -17,6 +17,7 @@ import { BlogPublicoComponent } from './pages/blog-publico/blog-publico';
 import { CalculadoraImcComponent } from './pages/calculadora-imc/calculadora-imc';
 import { ContenidoDestacadoComponent } from './pages/contenido-destacado/contenido-destacado';
 import { RutinasComponent } from './pages/rutinas/rutinas';
+import { DetalleRutinasComponent } from './pages/detalle-rutinas/detalle-rutinas';
 
 // Páginas del panel (protegidas)
 import { DashboardComponent } from './pages/dashboard/dashboard';
@@ -43,6 +44,7 @@ export const routes: Routes = [
       { path: '', component: InicioComponent },
       { path: 'gimnasios', component: CatalogoGimnasiosComponent },
       { path: 'rutinas', component: RutinasComponent },
+      { path: 'rutina/:id', component: DetalleRutinasComponent },
       { path: 'tienda', component: TiendaComponent },
       { path: 'blog', component: BlogPublicoComponent },
       { path: 'imc', component: CalculadoraImcComponent },

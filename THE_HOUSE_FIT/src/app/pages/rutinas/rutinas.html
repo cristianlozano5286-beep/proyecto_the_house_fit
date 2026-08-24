@@ -97,7 +97,8 @@
               <span>📶 {{ r.nivel }}</span>
               <span>📋 {{ r.ejercicios.length }} ejercicios</span>
             </div>
-            <button class="btn-outline">VER RUTINA</button>
+            <!-- Botón actualizado con routerLink para navegar al detalle de la rutina -->
+            <a [routerLink]="['/rutina', r.id]" class="btn-outline">VER RUTINA</a>
           </div>
         </article>
       }
