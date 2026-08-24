@@ -9,7 +9,7 @@ export class GimnasiosService {
   private datosIniciales: Gimnasio[] = [
     {
       id: 1,
-      nombre: 'PowerZone Yopal',
+      nombre: 'KAIROS GYM',
       direccion: 'Cra 23 # 15-40',
       barrio: 'Centro',
       ciudad: 'Yopal',
@@ -32,7 +32,7 @@ export class GimnasiosService {
     },
     {
       id: 2,
-      nombre: 'Vital Fitness Club',
+      nombre: 'GYM SENA',
       direccion: 'Calle 8 # 20-15',
       barrio: 'La Campiña',
       ciudad: 'Yopal',
@@ -55,7 +55,7 @@ export class GimnasiosService {
     },
     {
       id: 3,
-      nombre: 'Iron Temple Gym',
+      nombre: 'SMART FIT',
       direccion: 'Av. Circunvalar # 5-22',
       barrio: 'La Esperanza',
       ciudad: 'Yopal',
@@ -78,7 +78,7 @@ export class GimnasiosService {
     },
     {
       id: 4,
-      nombre: 'Madrid Strength Studio',
+      nombre: 'Yopal',
       direccion: 'Calle Gran Vía 45',
       barrio: 'Centro',
       ciudad: 'Madrid',
@@ -101,7 +101,7 @@ export class GimnasiosService {
     },
     {
       id: 5,
-      nombre: 'Miami Beach Fitness',
+      nombre: 'CYC GYM',
       direccion: '210 Ocean Drive',
       barrio: 'South Beach',
       ciudad: 'Miami',
@@ -124,7 +124,7 @@ export class GimnasiosService {
     },
     {
       id: 6,
-      nombre: 'Bogotá Iron Club',
+      nombre: 'Aguazul Iron Club',
       direccion: 'Cra 15 # 93-40',
       barrio: 'Chicó',
       ciudad: 'Bogotá',
