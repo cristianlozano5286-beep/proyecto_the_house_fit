@@ -1,13 +1,16 @@
 <section class="dark-page">
+    <!-- Header principal despejado -->
     <div class="page-header">
-        <span class="eyebrow">DIRECTORIO GLOBAL</span>
-        <h1 class="display-title" style="font-size:clamp(36px,6vw,64px);">ENCUENTRA TU <span class="accent">GIMNASIO IDEAL</span></h1>
+        <span class="eyebrow"></span>
+            <h1 class="display-title" style="font-size: clamp(36px, 6vw, 64px); margin-top: 35px;">
+                 ENCUENTRA TU <span class="accent">GIMNASIO IDEAL</span>
+            </h1>
         <p class="page-desc">Busca gimnasios por ciudad o país, filtra por servicio y precio, y reserva tu entrenamiento en cualquier parte del mundo.</p>
     </div>
 
     <!-- Barra de búsqueda estilo Airbnb -->
     <div class="airbnb-search">
-        <div class="airbnb-search-field grow" [class.active]="mostrarSugerencias">
+        <div class="airbnb-search-field grow" style="position: relative;" [class.active]="mostrarSugerencias">
             <label>DÓNDE</label>
             <input
                 type="text"
@@ -20,7 +23,7 @@
             @if (mostrarSugerencias && destinosDisponibles.length) {
                 <div class="airbnb-suggestions">
                     @for (d of destinosDisponibles; track d) {
-                        <button type="button" (mousedown)="seleccionarDestino(d)">📍 {{ d }}</button>
+                        <button type="button" (mousedown)="seleccionarDestino(d)"> {{ d }}</button>
                     }
                 </div>
             }
@@ -28,25 +31,59 @@
 
         <div class="airbnb-search-divider"></div>
 
-        <div class="airbnb-search-field">
+        <!-- CAMPO SERVICIO PERSONALIZADO -->
+        <div class="airbnb-search-field custom-dropdown" (click)="toggleDropdownServicio($event)">
             <label>SERVICIO</label>
-            <select [(ngModel)]="servicioFiltro" (change)="buscar()">
-                <option value="">Cualquiera</option>
-                @for (s of serviciosDisponibles; track s) {
-                    <option [value]="s">{{ s }}</option>
-                }
-            </select>
+            <div class="selected-value">
+                <span>{{ servicioFiltro || 'Cualquiera' }}</span>
+                <span class="chevron" [class.rotated]="dropdownServicioAbierto">▾</span>
+            </div>
+
+            @if (dropdownServicioAbierto) {
+                <div class="dropdown-menu-custom" (click)="$event.stopPropagation()">
+                    <div 
+                        class="dropdown-option" 
+                        [class.active]="!servicioFiltro" 
+                        (click)="seleccionarServicioCustom('')"
+                    >
+                        Cualquiera
+                    </div>
+                    @for (s of serviciosDisponibles; track s) {
+                        <div 
+                            class="dropdown-option" 
+                            [class.active]="servicioFiltro === s" 
+                            (click)="seleccionarServicioCustom(s)"
+                        >
+                            {{ s }}
+                        </div>
+                    }
+                </div>
+            }
         </div>
 
         <div class="airbnb-search-divider"></div>
 
-        <div class="airbnb-search-field">
+        <!-- CAMPO PRECIO MÁX. CON SIMBOLO Y SIN FLECHAS -->
+        <div class="airbnb-search-field precio-field">
             <label>PRECIO MÁX.</label>
-            <input type="number" placeholder="Sin límite" [(ngModel)]="precioMax" (input)="buscar()" />
+            <div class="precio-input-wrapper">
+                <span class="currency-symbol">$</span>
+                <input 
+                    type="number" 
+                    placeholder="Sin límite" 
+                    [(ngModel)]="precioMax" 
+                    (input)="buscar()" 
+                    min="0"
+                />
+            </div>
         </div>
 
+        <!-- BOTÓN DE BÚSQUEDA CON SVG LUPA INCLUIDO -->
         <button class="airbnb-search-btn" (click)="buscar()" aria-label="Buscar">
-            🔍
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
         </button>
     </div>
 
@@ -102,7 +139,7 @@
                     <div class="flex-between">
                         <h3 class="airbnb-card-title">{{ g.nombre }}</h3>
                     </div>
-                    <p class="airbnb-card-location">📍 {{ g.ciudad }}, {{ g.pais }}</p>
+                    <p class="airbnb-card-location"> {{ g.ciudad }}, {{ g.pais }}</p>
                     <p class="airbnb-card-barrio">{{ g.barrio }} · {{ g.horario }}</p>
                     <div class="tag-row mt-8">
                         @for (s of g.servicios.slice(0, 3); track s) {
@@ -121,6 +158,7 @@
     </div>
 </section>
 
+<!-- MODAL DE DETALLES MEJORADO -->
 @if (gimnasioSeleccionado) {
     <div class="modal-overlay" (click)="cerrarDetalle()">
         <div class="modal-dark listing-modal" (click)="$event.stopPropagation()">
@@ -128,15 +166,15 @@
                 <h2>{{ gimnasioSeleccionado.nombre }}</h2>
                 <div class="header-actions">
                     <button
-                        class="heart-btn heart-inline"
+                        class="modal-icon-btn"
                         [class.heart-active]="esFavorito(gimnasioSeleccionado.id)"
                         (click)="alternarFavorito($event, gimnasioSeleccionado.id)"
                     >{{ esFavorito(gimnasioSeleccionado.id) ? '♥' : '♡' }}</button>
-                    <button (click)="cerrarDetalle()">✕</button>
+                    <button class="modal-icon-btn close-btn" (click)="cerrarDetalle()">✕</button>
                 </div>
             </div>
 
-            <!-- Galería de fotos -->
+            <!-- Galería de fotos con navegación -->
             <div class="photo-gallery">
                 <img [src]="gimnasioSeleccionado.fotos[fotoActiva]" [alt]="gimnasioSeleccionado.nombre" />
                 @if (gimnasioSeleccionado.fotos.length > 1) {
@@ -151,51 +189,138 @@
             </div>
 
             <div class="modal-dark-body">
-                <div class="flex-between">
-                    <p class="listing-location">📍 {{ gimnasioSeleccionado.direccion }}, {{ gimnasioSeleccionado.barrio }}, {{ gimnasioSeleccionado.ciudad }}, {{ gimnasioSeleccionado.pais }}</p>
+                <div class="modal-info-bar">
+                    <p class="listing-location"> {{ gimnasioSeleccionado.direccion }}, {{ gimnasioSeleccionado.barrio }}, {{ gimnasioSeleccionado.ciudad }}, {{ gimnasioSeleccionado.pais }}</p>
                     @if (promedio(gimnasioSeleccionado.id)) {
-                        <span class="stars">★ {{ promedio(gimnasioSeleccionado.id) }} · {{ resenasDe(gimnasioSeleccionado.id).length }} reseñas</span>
+                        <span class="stars-badge">★ {{ promedio(gimnasioSeleccionado.id) }} <small>({{ resenasDe(gimnasioSeleccionado.id).length }})</small></span>
                     }
                 </div>
 
-                <p class="listing-price mt-8"><strong>{{ formatoPrecio(gimnasioSeleccionado) }}</strong> / mes</p>
-
-                <p class="mt-8"><strong>Teléfono:</strong> {{ gimnasioSeleccionado.telefono }}</p>
-                <p class="mt-8"><strong>Horario:</strong> {{ gimnasioSeleccionado.horario }}</p>
-                <p class="mt-8">{{ gimnasioSeleccionado.descripcion }}</p>
-
-                <div class="tag-row mt-16">
-                    @for (s of gimnasioSeleccionado.servicios; track s) {
-                        <span class="tag-outline">{{ s.toUpperCase() }}</span>
-                    }
+                <div class="price-container">
+                    <span class="price-value">{{ formatoPrecio(gimnasioSeleccionado) }}</span>
+                    <span class="price-period">/ mes</span>
                 </div>
 
-                <button class="btn btn-primary btn-block mt-16">Reservar visita / clase</button>
-
-                <h3 class="mt-16">INSTRUCTORES</h3>
-                <div class="grid grid-2 mt-8">
-                    @for (i of instructoresDe(gimnasioSeleccionado.id); track i.id) {
-                        <div class="mini-card">
-                            <strong>{{ i.imagen }} {{ i.nombre }}</strong>
-                            <p>{{ i.especialidad }} · {{ i.experiencia }} años</p>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-icon">📞</span>
+                        <div>
+                            <span class="info-label">Teléfono</span>
+                            <span class="info-val">{{ gimnasioSeleccionado.telefono }}</span>
                         </div>
-                    }
-                    @empty { <p class="muted">Aún no hay instructores registrados.</p> }
-                </div>
-
-                <h3 class="mt-16">RESEÑAS</h3>
-                @for (r of resenasDe(gimnasioSeleccionado.id); track r.id) {
-                    <div class="mini-card">
-                        <div class="flex-between">
-                            <strong>{{ r.titulo }}</strong>
-                            <span class="stars">{{ '★'.repeat(r.puntuacion) }}</span>
-                        </div>
-                        <p style="margin-top:6px;">{{ r.cuerpo }}</p>
-                        <small class="muted">{{ r.usuario }} · {{ r.fecha }}</small>
                     </div>
-                }
-                @empty { <p class="muted">Este gimnasio aún no tiene reseñas.</p> }
+                    <div class="info-item">
+                        <span class="info-icon">⏰</span>
+                        <div>
+                            <span class="info-label">Horario</span>
+                            <span class="info-val">{{ gimnasioSeleccionado.horario }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="description-text">{{ gimnasioSeleccionado.descripcion }}</p>
+
+                <div class="section-block">
+                    <h4 class="block-title">SERVICIOS INCLUIDOS</h4>
+                    <div class="tag-row">
+                        @for (s of gimnasioSeleccionado.servicios; track s) {
+                            <span class="tag-pill">{{ s.toUpperCase() }}</span>
+                        }
+                    </div>
+                </div>
+
+                <!-- Contenedor del Mapa / Ubicación -->
+<div class="airbnb-location-card">
+  <div class="map-preview-container" (click)="abrirMapaInteractivo()">
+    <div class="map-overlay">
+      <span class="map-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        Ver en mapa interactivo
+      </span>
+    </div>
+  </div>
+  
+  <div class="action-buttons-row">
+    <button class="btn-location-full" (click)="abrirMapaInteractivo()">
+      UBICACIÓN
+    </button>
+  </div>
+</div>
+                <!-- Instructores -->
+                <div class="section-block mt-24">
+                    <h4 class="block-title">INSTRUCTORES DESTACADOS</h4>
+                    <div class="cards-grid">
+                        @for (i of instructoresDe(gimnasioSeleccionado.id); track i.id) {
+                            <div class="instructor-card">
+                                <div class="instructor-avatar">{{ i.imagen || '🧘' }}</div>
+                                <div class="instructor-info">
+                                    <strong>{{ i.nombre }}</strong>
+                                    <p>{{ i.especialidad }} · {{ i.experiencia }} años exp.</p>
+                                </div>
+                            </div>
+                        }
+                        @empty {
+                            <p class="muted-text">Aún no hay instructores registrados.</p>
+                        }
+                    </div>
+                </div>
+
+                <!-- Reseñas -->
+                <div class="section-block mt-24">
+                    <h4 class="block-title">RESEÑAS DE CLIENTES</h4>
+                    <div class="reviews-list">
+                        @for (r of resenasDe(gimnasioSeleccionado.id); track r.id) {
+                            <div class="review-card">
+                                <div class="review-header">
+                                    <strong>{{ r.titulo }}</strong>
+                                    <span class="stars-rating">{{ '★'.repeat(r.puntuacion) }}</span>
+                                </div>
+                                <p class="review-body">{{ r.cuerpo }}</p>
+                                <span class="review-meta">{{ r.usuario }} · {{ r.fecha }}</span>
+                            </div>
+                        }
+                        @empty {
+                            <p class="muted-text">Este gimnasio aún no tiene reseñas.</p>
+                        }
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
+    <div class="order-field">
+  <label>ORDENAR POR</label>
+  <div class="custom-select-wrapper" (click)="toggleDropdownOrden()">
+    <button type="button" class="custom-select-trigger">
+      <span>{{ ordenSeleccionadoTexto }}</span>
+      <span class="chevron" [class.rotated]="dropdownOrdenAbierto">▼</span>
+    </button>
+    
+    <div class="dropdown-menu-custom order-dropdown" *ngIf="dropdownOrdenAbierto">
+      <button class="dropdown-option" 
+              [class.active]="ordenActual === 'relevancia'"
+              (click)="seleccionarOrden('relevancia', 'Relevancia')">
+        Relevancia
+      </button>
+      <button class="dropdown-option" 
+              [class.active]="ordenActual === 'precio_asc'"
+              (click)="seleccionarOrden('precio_asc', 'Precio: menor a mayor')">
+        Precio: menor a mayor
+      </button>
+      <button class="dropdown-option" 
+              [class.active]="ordenActual === 'precio_desc'"
+              (click)="seleccionarOrden('precio_desc', 'Precio: mayor a menor')">
+        Precio: mayor a menor
+      </button>
+      <button class="dropdown-option" 
+              [class.active]="ordenActual === 'rating'"
+              (click)="seleccionarOrden('rating', 'Mejor calificados')">
+        Mejor calificados
+      </button>
+    </div>
+  </div>
+</div>
 }

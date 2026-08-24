@@ -1,0 +1,184 @@
+.detalle-container {
+  max-width: 950px;
+  margin: 30px auto 60px auto;
+  padding: 0 20px;
+  color: #fff;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+.breadcrumb-row {
+  margin-top: 60px; /* Espacio perfecto respecto al menú superior */
+  margin-bottom: 25px;
+}
+
+.breadcrumb-row a {
+  color: #ff5722;
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.breadcrumb-row a:hover {
+  opacity: 0.8;
+}
+
+.detalle-header {
+  background: #161616;
+  padding: 35px;
+  border-radius: 14px;
+  margin-bottom: 35px;
+  border: 1px solid #262626;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.badge-tipo {
+  background: rgba(255, 87, 34, 0.15);
+  color: #ff5722;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detalle-header h1 {
+  font-size: 2.2rem;
+  margin: 15px 0 10px 0;
+  color: #fff;
+  font-weight: 700;
+}
+
+.descripcion {
+  color: #aaaaaa;
+  font-size: 1.05rem;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+/* Estilo de las "Píldoras" de metadatos */
+.meta-info {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  border-top: 1px solid #222;
+  padding-top: 20px;
+}
+
+.meta-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #1f1f1f;
+  border: 1px solid #2a2a2a;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+.meta-badge span {
+  font-size: 1.2rem;
+}
+
+.meta-badge small {
+  display: block;
+  color: #888;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.meta-badge strong {
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+/* Sección de ejercicios */
+.ejercicios-section h2 {
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.ejercicios-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Tarjetas individuales con diseño preparado para futuras imágenes */
+.ejercicio-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: #161616;
+  padding: 15px 20px;
+  border-radius: 12px;
+  border: 1px solid #262626;
+  border-left: 4px solid #ff5722;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.ejercicio-card:hover {
+  background: #1c1c1c;
+  transform: translateX(4px);
+}
+
+/* Placeholder visual para la futura imagen del ejercicio */
+.ejercicio-img-placeholder {
+  width: 50px;
+  height: 50px;
+  background: #222;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  border: 1px dashed #444;
+  flex-shrink: 0;
+}
+
+.ejercicio-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.numero-orden {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ff5722;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ejercicio-content h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #f1f1f1;
+  font-weight: 500;
+}
+
+.no-encontrada {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.no-encontrada h2 {
+  color: #fff;
+  margin-bottom: 20px;
+}

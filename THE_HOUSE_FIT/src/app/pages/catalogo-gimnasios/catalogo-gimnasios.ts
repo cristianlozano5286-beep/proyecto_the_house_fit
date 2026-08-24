@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { GimnasiosService } from '../../services/gimnasios';
 import { InstructoresService } from '../../services/instructores';
@@ -23,6 +23,9 @@ export class CatalogoGimnasiosComponent {
   precioMax: number | null = null;
   orden: Orden = 'relevancia';
   soloFavoritos: boolean = false;
+
+  // Estado para el menú desplegable personalizado de SERVICIO
+  dropdownServicioAbierto: boolean = false;
 
   gimnasioSeleccionado: Gimnasio | null = null;
   fotoActiva: number = 0;
@@ -51,6 +54,26 @@ export class CatalogoGimnasiosComponent {
     this.destinosDisponibles = Array.from(destinos);
   }
 
+  // Cierra los menús desplegables si se hace clic fuera del componente
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.custom-dropdown')) {
+      this.dropdownServicioAbierto = false;
+    }
+  }
+
+  toggleDropdownServicio(event: Event): void {
+    event.stopPropagation();
+    this.dropdownServicioAbierto = !this.dropdownServicioAbierto;
+  }
+
+  seleccionarServicioCustom(servicio: string): void {
+    this.servicioFiltro = servicio;
+    this.dropdownServicioAbierto = false;
+    this.buscar();
+  }
+
   cerrarSugerenciasDiferido(): void {
     // Pequeño retraso para permitir que el (mousedown) de una sugerencia se registre antes del blur.
     setTimeout(() => (this.mostrarSugerencias = false), 150);
@@ -73,6 +96,7 @@ export class CatalogoGimnasiosComponent {
     this.precioMax = null;
     this.orden = 'relevancia';
     this.soloFavoritos = false;
+    this.dropdownServicioAbierto = false;
     this.buscar();
   }
 
@@ -172,4 +196,13 @@ export class CatalogoGimnasiosComponent {
     const simbolo = g.moneda === 'COP' ? '$' : g.moneda === 'EUR' ? '€' : '$';
     return `${simbolo}${valor} ${g.moneda}`;
   }
+
+  abrirMapaInteractivo() {
+  // Opción A: Abrir ubicación en Google Maps
+  const direccionEncoded = encodeURIComponent(this.gimnasioSeleccionado.direccion);
+  window.open(`https://www.google.com/maps/search/?api=1&query=${direccionEncoded}`, '_blank');
+  
+  // Opción B: Si manejas un modal secundario con mapa interactivo en Angular, emite el evento aquí
+  // this.mostrarModalMapa = true;
+}
 }

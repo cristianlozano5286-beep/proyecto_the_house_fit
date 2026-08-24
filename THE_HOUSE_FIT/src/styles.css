@@ -1,147 +1,265 @@
 /* ============================================================
-   DESIGN SYSTEM GLOBAL - THE HOUSE FIT
-   Inspirado en el diseño "The House Fit" (Figma Make):
-   dark theme, acento naranja, tipografía Barlow Condensed + Inter
+   DESIGN SYSTEM GLOBAL - THE HOUSE FIT (CORREGIDO Y PULIDO)
    ============================================================ */
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Inter:wght@300;400;500;600;700&display=swap');
 
 * { box-sizing: border-box; }
-:root{
-  --color-bg: #0a0a0a;
-  --color-bg-alt: #111111;
-  --color-card: #141414;
-  --color-primary: #ff4500;      /* naranja de marca */
+
+:root {
+  --color-bg: #111111;
+  --color-bg-alt: #161616;
+  --color-card: #181818;
+  --color-primary: #ff4500;
   --color-primary-dark: #cc3700;
-  --color-secondary: #22c55e;    /* verde salud (usos puntuales) */
-  --color-dark: #0a0a0a;
+  --color-secondary: #22c55e;
+  --color-dark: #0f0f0f;
   --color-gray: #888888;
   --color-light: #f8fafc;
-  --color-border: #e2e8f0;
-  --color-border-dark: #242424;
+  --color-border: #2a2a2a;
+  --color-border-dark: #262626;
   --color-danger: #dc2626;
   --radius: 10px;
-  --shadow: 0 10px 30px rgba(0,0,0,.12);
+  --shadow: 0 10px 30px rgba(0,0,0,0.5);
   --font-display: 'Barlow Condensed', sans-serif;
   --font-body: 'Inter', sans-serif;
   font-family: var(--font-body);
 }
-html, body { margin:0; padding:0; font-family: var(--font-body); background: var(--color-light); color:#1e293b; scroll-behavior:smooth; }
-h1,h2,h3,h4 { margin:0; }
-p { margin:0; }
-a { text-decoration:none; color:inherit; }
 
-/* ---------- Eyebrow / etiqueta de sección (estilo "LO QUE OFRECEMOS") ---------- */
+/* ============================================================
+   ESTILOS GENERALES Y CONTENEDORES PRINCIPALES
+   ============================================================ */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  background-color: var(--color-bg) !important;
+  color: #ffffff;
+  scroll-behavior: smooth;
+}
+
+main, 
+.main-content, 
+.content, 
+.dashboard-content, 
+.content-area, 
+.admin-content, 
+.view-container,
+[class*="content"],
+[class*="container"] {
+  background-color: var(--color-bg) !important;
+}
+
+*::selection {
+  background-color: var(--color-primary) !important;
+  color: #ffffff !important;
+}
+
+*::-moz-selection {
+  background-color: var(--color-primary) !important;
+  color: #ffffff !important;
+}
+
+h1, h2, h3, h4 { margin: 0; color: #ffffff; }
+p { margin: 0; color: #a3a3a3; }
+a { text-decoration: none; color: inherit; }
+a:hover { color: var(--color-primary); }
+
+/* ============================================================
+   SIDEBAR Y PANELES LATERALES
+   ============================================================ */
+aside, .sidebar, .admin-sidebar, .menu-container, nav.sidebar, app-sidebar, app-admin {
+  background-color: #141414 !important;
+  border-right: 1px solid var(--color-border) !important;
+  border-left: none !important;
+  box-shadow: none !important;
+}
+
+.sidebar a, .sidebar button, .menu-item {
+  border: none !important;
+  outline: none !important;
+  background-color: transparent !important;
+}
+
+/* ============================================================
+   PESTAÑAS Y TABS MODERNAS
+   ============================================================ */
+.nav-tabs, .tabs, .tab-container, [role="tablist"] {
+  background: transparent !important;
+  border: none !important;
+  display: flex !important;
+  gap: 10px !important;
+  margin-bottom: 24px !important;
+  flex-wrap: wrap;
+}
+
+button, .tab-btn, .nav-link, [role="tab"] {
+  background-color: #181818 !important;
+  color: #a3a3a3 !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 8px !important;
+  padding: 10px 18px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  cursor: pointer;
+  transition: all 0.25s ease !important;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+button:hover, .tab-btn:hover, [role="tab"]:hover {
+  background-color: #222222 !important;
+  border-color: #444444 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+button.active, .tab-btn.active, .nav-link.active, [role="tab"][aria-selected="true"], .active-tab {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)) !important;
+  color: #ffffff !important;
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 4px 15px rgba(255, 69, 0, 0.4) !important;
+}
+
+/* ---------- Tipografía y Títulos ---------- */
 .eyebrow{
-  display:block; font-size:12px; font-weight:600; letter-spacing:.15em;
-  color: var(--color-primary); font-family: var(--font-body); text-transform:uppercase;
-  margin-bottom:10px;
+  display: block; font-size: 12px; font-weight: 600; letter-spacing: .15em;
+  color: var(--color-primary); font-family: var(--font-body); text-transform: uppercase;
+  margin-bottom: 10px;
 }
 .display-title{
-  font-family: var(--font-display); font-weight:900; text-transform:uppercase;
-  letter-spacing:-0.01em; line-height:0.95; color:#fff;
+  font-family: var(--font-display); font-weight: 900; text-transform: uppercase;
+  letter-spacing: -0.01em; line-height: 0.95; color: #fff;
 }
 .display-title .accent{ color: var(--color-primary); }
 
-/* ---------- Botones ---------- */
-.btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 20px; border-radius:8px; border:none; font-size:15px; font-weight:600; cursor:pointer; transition:.25s; }
-.btn-primary{ background: var(--color-primary); color:#fff; }
-.btn-primary:hover{ background: var(--color-primary-dark); }
-.btn-secondary{ background:#fff; color: var(--color-primary); border:2px solid var(--color-primary); }
-.btn-secondary:hover{ background: var(--color-primary); color:#fff; }
-.btn-dark{ background: var(--color-dark); color:#fff; }
-.btn-dark:hover{ background:#1e293b; }
-.btn-danger{ background: var(--color-danger); color:#fff; }
-.btn-danger:hover{ background:#b91c1c; }
-.btn-outline{ background:transparent; border:1px solid var(--color-border); color:#334155; }
-.btn-outline:hover{ background:#f1f5f9; }
-.btn:disabled{ opacity:.5; cursor:not-allowed; }
-.btn-block{ width:100%; }
-.btn-sm{ padding:8px 12px; font-size:13px; }
+/* ---------- Botones Generales ---------- */
+.btn{ display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; border-radius: 8px; border: none; font-size: 15px; font-weight: 600; cursor: pointer; transition: .25s; }
+.btn-primary{ background: var(--color-primary) !important; color: #fff; }
+.btn-primary:hover{ background: var(--color-primary-dark) !important; }
+.btn-secondary{ background: transparent; color: var(--color-primary); border: 2px solid var(--color-primary); }
+.btn-secondary:hover{ background: var(--color-primary); color: #fff; }
+.btn-dark{ background: #222222 !important; color: #fff; }
+.btn-dark:hover{ background: #2a2a2a !important; }
+.btn-danger{ background: var(--color-danger) !important; color: #fff; }
+.btn-danger:hover{ background: #b91c1c !important; }
+.btn-outline{ background: transparent; border: 1px solid var(--color-border); color: #ccc; }
+.btn-outline:hover{ background: rgba(255,255,255,.05); border-color: var(--color-primary); color: var(--color-primary); }
+.btn:disabled{ opacity: .5; cursor: not-allowed; }
+.btn-block{ width: 100%; }
+.btn-sm{ padding: 8px 12px; font-size: 13px; }
 
-/* Botón estilo "landing" (mayúsculas, Barlow Condensed, sin radius) */
+/* Botón estilo landing */
 .btn-landing{
-  font-family: var(--font-display); font-weight:800; text-transform:uppercase;
-  letter-spacing:.06em; font-size:17px; padding:14px 28px; border:none; cursor:pointer;
-  transition:.2s; border-radius:0;
+  font-family: var(--font-display); font-weight: 800; text-transform: uppercase;
+  letter-spacing: .06em; font-size: 17px; padding: 14px 28px; border: none; cursor: pointer;
+  transition: .2s; border-radius: 0;
 }
-.btn-landing.primary{ background: var(--color-primary); color:#fff; }
-.btn-landing.primary:hover{ background: var(--color-primary-dark); }
-.btn-landing.outline{ background:transparent; color:#ccc; border:1px solid #444; }
+.btn-landing.primary{ background: var(--color-primary) !important; color: #fff; }
+.btn-landing.primary:hover{ background: var(--color-primary-dark) !important; }
+.btn-landing.outline{ background: transparent; color: #ccc; border: 1px solid #444; }
 .btn-landing.outline:hover{ border-color: var(--color-primary); color: var(--color-primary); }
 
-/* ---------- Layout de secciones ---------- */
-.page-wrapper{ max-width:1200px; margin:0 auto; padding:24px; }
-.section-title{ font-family: var(--font-display); font-size:26px; font-weight:800; text-transform:uppercase; color:var(--color-dark); margin-bottom:6px; letter-spacing:.01em; }
-.section-subtitle{ color:var(--color-gray); margin-bottom:24px; font-family: var(--font-body); }
+/* ---------- Layout y Contenedores ---------- */
+.page-wrapper{ max-width: 1200px; margin: 0 auto; padding: 24px; background: var(--color-bg) !important; }
+.section-title{ font-family: var(--font-display); font-size: 26px; font-weight: 800; text-transform: uppercase; color: #fff; margin-bottom: 6px; letter-spacing: .01em; }
+.section-subtitle{ color: var(--color-gray); margin-bottom: 24px; font-family: var(--font-body); }
 
-/* ---------- Tarjetas ---------- */
-.card{ background:#fff; border-radius: var(--radius); box-shadow: var(--shadow); padding:20px; }
-.grid{ display:grid; gap:20px; }
+/* ---------- Tarjetas y Grids ---------- */
+.card{ background: var(--color-card) !important; border-radius: var(--radius); padding: 20px; border: 1px solid var(--color-border) !important; color: #fff; box-shadow: var(--shadow); }
+.grid{ display: grid; gap: 20px; }
 .grid-2{ grid-template-columns: repeat(auto-fit, minmax(320px,1fr)); }
 .grid-3{ grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); }
 .grid-4{ grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); }
 
-/* ---------- Formularios ---------- */
-.form-group{ margin-bottom:16px; text-align:left; }
-.form-group label{ display:block; margin-bottom:6px; font-weight:600; font-size:14px; color:#334155; }
-.form-group input, .form-group select, .form-group textarea{
-  width:100%; padding:11px 12px; border-radius:8px; border:1px solid var(--color-border);
-  font-size:14px; transition:.2s; font-family: inherit;
+/* ---------- Formularios e Inputs (Corregido para texto visible) ---------- */
+.form-group{ margin-bottom: 16px; text-align: left; }
+.form-group label{ display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; color: #d4d4d4; }
+
+input, select, textarea, 
+.form-control, 
+.input-field, 
+input[type="text"], 
+input[type="email"], 
+input[type="password"] {
+  width: 100%; 
+  padding: 11px 12px; 
+  border-radius: 8px; 
+  border: 1px solid var(--color-border);
+  font-size: 14px; 
+  transition: .2s; 
+  font-family: inherit; 
+  background: #141414 !important; 
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important; /* Fuerza el color blanco en navegadores Chromium */
 }
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus{
-  outline:none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(255,69,0,.15);
+
+input::placeholder, textarea::placeholder{ 
+  color: #777777 !important; 
+  opacity: 1; 
 }
-.form-row{ display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
-small.error{ color: var(--color-danger); font-size:12px; display:block; margin-top:4px; }
-.checkbox-group label{ display:flex; align-items:center; gap:8px; font-weight:500; cursor:pointer; }
+
+input:focus, select:focus, textarea:focus{
+  outline: none; 
+  border-color: var(--color-primary); 
+  box-shadow: 0 0 0 3px rgba(255,69,0,.2);
+}
+
+/* Evita que el autocompletado ponga el texto oscuro o fondo azul */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #141414 inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.form-group select option { background: #141414 !important; color: #fff; }
+.form-row{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+small.error{ color: var(--color-danger); font-size: 12px; display: block; margin-top: 4px; }
 
 /* ---------- Alertas ---------- */
-.alert{ padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:14px; font-weight:500; }
-.alert.success{ background:#dcfce7; color:#166534; border:1px solid #86efac; }
-.alert.error{ background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; }
-.alert.info{ background:#dbeafe; color:#1e3a8a; border:1px solid #93c5fd; }
+.alert{ padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; font-weight: 500; }
+.alert.success{ background: rgba(34,197,94,.15); color: #4ade80; border: 1px solid rgba(34,197,94,.3); }
+.alert.error{ background: rgba(239,68,68,.15); color: #f87171; border: 1px solid rgba(239,68,68,.3); }
+.alert.info{ background: rgba(59,130,246,.15); color: #60a5fa; border: 1px solid rgba(59,130,246,.3); }
 
 /* ---------- Badges ---------- */
-.badge{ display:inline-block; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:600; }
-.badge-success{ background:#dcfce7; color:#166534; }
-.badge-danger{ background:#fee2e2; color:#991b1b; }
-.badge-warning{ background:#fef3c7; color:#92400e; }
-.badge-info{ background:#e0e7ff; color:#3730a3; }
-.badge-gray{ background:#f1f5f9; color:#475569; }
-
-/* Etiqueta estilo landing (borde fino, mayúsculas) */
-.tag-outline{
-  font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
-  padding:4px 10px; border:1px solid #2a2a2a; color:#888; font-family: var(--font-body);
-}
+.badge{ display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.badge-success{ background: rgba(34,197,94,.15); color: #4ade80; }
+.badge-danger{ background: rgba(239,68,68,.15); color: #f87171; }
+.badge-warning{ background: rgba(234,179,8,.15); color: #facc15; }
+.badge-info{ background: rgba(59,130,246,.15); color: #60a5fa; }
+.badge-gray{ background: rgba(255,255,255,.08); color: #a3a3a3; }
 
 /* ---------- Tablas ---------- */
-.table-responsive{ overflow-x:auto; }
-table{ width:100%; border-collapse:collapse; background:#fff; }
-table th{ text-align:left; padding:12px; background:#f8fafc; font-size:13px; text-transform:uppercase; letter-spacing:.03em; color:#475569; border-bottom:2px solid var(--color-border); }
-table td{ padding:12px; border-bottom:1px solid #f1f5f9; font-size:14px; }
-table tr:hover td{ background:#fafafa; }
-.sortable{ cursor:pointer; user-select:none; }
+.table-responsive{ overflow-x: auto; background: var(--color-card) !important; border-radius: var(--radius); border: 1px solid var(--color-border); }
+table{ width: 100%; border-collapse: collapse; background: var(--color-card) !important; color: #fff; }
+table th{ text-align: left; padding: 12px; background: #141414 !important; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; color: var(--color-primary); border-bottom: 2px solid var(--color-border); }
+table td{ padding: 12px; border-bottom: 1px solid var(--color-border); font-size: 14px; color: #e5e5e5; background: var(--color-card) !important; }
+table tr:hover td{ background: rgba(255,255,255,.03) !important; }
 
-/* ---------- Modal ---------- */
-.modal-overlay{ position:fixed; inset:0; background:rgba(15,23,42,.6); display:flex; align-items:center; justify-content:center; z-index:1000; padding:20px;}
-.modal{ background:#fff; border-radius: var(--radius); max-width:480px; width:100%; box-shadow: var(--shadow); overflow:hidden;}
-.modal-header{ padding:20px; border-bottom:1px solid var(--color-border); }
-.modal-body{ padding:20px; }
-.modal-footer{ padding:16px 20px; border-top:1px solid var(--color-border); display:flex; gap:10px; justify-content:flex-end; }
+/* ---------- Modales ---------- */
+.modal-overlay{ position: fixed; inset: 0; background: rgba(0,0,0,.8) !important; display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px;}
+.modal{ background: var(--color-card) !important; border-radius: var(--radius); max-width: 480px; width: 100%; box-shadow: 0 15px 40px rgba(0,0,0,.8); overflow: hidden; border: 1px solid var(--color-border); color: #fff;}
+.modal-header{ padding: 20px; border-bottom: 1px solid var(--color-border); background: var(--color-card) !important; }
+.modal-body{ padding: 20px; background: var(--color-card) !important; }
+.modal-footer{ padding: 16px 20px; border-top: 1px solid var(--color-border); display: flex; gap: 10px; justify-content: flex-end; background: var(--color-card) !important; }
 
-/* ---------- Utilidades ---------- */
-.text-center{ text-align:center; }
-.flex{ display:flex; }
-.flex-between{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;}
-.gap-8{ gap:8px; }
-.mt-8{ margin-top:8px; }
-.mt-16{ margin-top:16px; }
-.mt-24{ margin-top:24px; }
-.mb-16{ margin-bottom:16px; }
-.tag-row{ display:flex; flex-wrap:wrap; gap:8px; }
-.pill{ padding:6px 14px; border-radius:999px; border:1px solid var(--color-border); background:#fff; cursor:pointer; font-size:13px; font-weight:600; transition:.2s;}
-.pill.active{ background: var(--color-primary); color:#fff; border-color: var(--color-primary); }
-.stars{ color:#f59e0b; letter-spacing:2px; }
-.chip-rol{ padding:3px 10px; border-radius:6px; font-size:11px; font-weight:700; text-transform:uppercase; }
-.empty-state{ text-align:center; padding:40px 20px; color: var(--color-gray); }
+/* ---------- Roles y Selectores en Tablas ---------- */
+.chip-rol {
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 8px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  background: rgba(255, 255, 255, 0.08); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.chip-rol.admin { background: rgba(255, 69, 0, 0.15); color: #ff4500; border-color: rgba(255, 69, 0, 0.35); }
+.chip-rol.entrenador { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border-color: rgba(59, 130, 246, 0.35); }
+.chip-rol.usuario { background: rgba(255, 255, 255, 0.06); color: #a3a3a3; border-color: rgba(255, 255, 255, 0.12); }
+
+table td select {
+  background-color: #141414 !important;
+  color: #ffffff !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+  font-size: 13px !important;
+}
+table td select option { background-color: #141414 !important; color: #ffffff !important; }

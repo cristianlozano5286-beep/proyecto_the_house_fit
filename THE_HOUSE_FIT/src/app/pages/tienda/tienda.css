@@ -74,7 +74,6 @@
   letter-spacing: -0.01em;
 }
 
-/* 🔥 TÍTULO NARANJA: TU TIENDA FIT → FIT en naranja */
 /* ===== TÍTULO CON "FIT" EN NARANJA ===== */
 .display-title {
   font-family: var(--font-display, 'Poppins', sans-serif);
@@ -89,7 +88,7 @@
 
 /* 🔥 ESTO HACE QUE "FIT" SE VEA NARANJA */
 .display-title .accent {
-  background: linear-gradient(135deg, #f78000, #d36200bf) !important;
+  background: linear-gradient(135deg, #ff5722, #ff7b00) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
@@ -360,7 +359,7 @@
 
 /* ===== TARJETA ===== */
 .product-card {
-  background-color: #1d1c1c !important;
+  background-color: #161616 !important;
   border: 1px solid var(--border-card);
   border-radius: var(--radius);
   padding: 18px;
