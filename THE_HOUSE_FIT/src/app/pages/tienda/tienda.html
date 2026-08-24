@@ -1,45 +1,436 @@
 <section class="dark-page">
-    <div class="page-header">
-        <span class="eyebrow">SUPLEMENTOS · IMPLEMENTOS · ROPA</span>
-        <h1 class="display-title" style="font-size:clamp(36px,6vw,64px);">TIENDA <span class="accent">THE HOUSE FIT</span></h1>
-        <p class="page-desc">Todo lo que necesitas para entrenar mejor, con guías nutricionales incluidas.</p>
+  <!-- HEADER -->
+  <div class="page-header">
+    <span class="eyebrow">🛒 SUPLEMENTOS · IMPLEMENTOS · ROPA</span>
+    <h1 class="display-title">TU <span class="accent">TIENDA</span> FIT.</h1>
+    <p class="page-desc">Todo lo que necesitas para entrenar mejor, con guías nutricionales incluidas. ¡Compra seguro con Nequi, PayPal y más!</p>
+  </div>
+
+  <!-- ESTADÍSTICAS -->
+  <div class="stats-row">
+    <div class="stat-box">
+      <span class="stat-number">{{ totalItemsCarrito }}</span>
+      <span class="stat-label">En tu carrito</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-number">{{ productosEnOferta }}</span>
+      <span class="stat-label">En oferta</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-number">{{ productosEnStock }}</span>
+      <span class="stat-label">En stock</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-number">{{ totalProductos }}</span>
+      <span class="stat-label">Productos disponibles</span>
+    </div>
+  </div>
+
+  <!-- CONTROLES -->
+  <div class="tienda-controls">
+    <div class="controls-left">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          [(ngModel)]="terminoBusqueda"
+          placeholder="Buscar productos..."
+          (input)="aplicarFiltros()"
+        />
+      </div>
+      <select class="sort-select" [(ngModel)]="ordenSeleccionado" (change)="aplicarFiltros()">
+        <option value="default">📋 Ordenar por</option>
+        <option value="precio-asc">💰 Precio: menor a mayor</option>
+        <option value="precio-desc">💰 Precio: mayor a menor</option>
+        <option value="nombre">🔤 Nombre A-Z</option>
+        <option value="stock">📦 Stock disponible</option>
+      </select>
     </div>
 
-    <div class="filter-tabs">
-        <button class="tab" [class.active]="categoriaFiltro===''" (click)="filtrar('')">TODOS</button>
-        @for (c of categorias; track c) {
-            <button class="tab" [class.active]="categoriaFiltro===c" (click)="filtrar(c)">{{ c.toUpperCase() }}</button>
-        }
+    <div class="cart-summary" (click)="toggleCarrito()">
+      <span class="cart-icon">
+        🛒
+        <span class="cart-badge" *ngIf="totalItemsCarrito > 0">{{ totalItemsCarrito }}</span>
+      </span>
+      <span class="cart-total">{{ formatearPrecio(totalCarrito) }}</span>
     </div>
+  </div>
 
-    <div class="product-grid">
-        @for (p of productosFiltrados; track p.id) {
-            <div class="product-card">
-                <div class="product-icon">{{ p.imagen }}</div>
-                <span class="tag-outline">{{ p.categoria.toUpperCase() }}</span>
-                <h3>{{ p.nombre }}</h3>
-                <p class="product-desc">{{ p.descripcion }}</p>
-                <p class="product-price">{{ formatearPrecio(p.precio) }}</p>
-                <p class="product-stock">Stock: {{ p.stock }}</p>
-                @if (p.guiaNutricional) {
-                    <button class="btn-landing outline btn-full" (click)="verGuia(p)">GUÍA NUTRICIONAL</button>
-                }
-            </div>
-        }
-    </div>
-</section>
+  <!-- FILTROS -->
+  <div class="filter-tabs">
+    <button class="tab" [class.active]="categoriaFiltro === ''" (click)="filtrar('')">📦 TODOS</button>
+    @for (c of categorias; track c) {
+      <button class="tab" [class.active]="categoriaFiltro === c" (click)="filtrar(c)">
+        {{ getIconoCategoria(c) }} {{ c.toUpperCase() }}
+      </button>
+    }
+  </div>
 
-@if (productoSeleccionado) {
-    <div class="modal-overlay" (click)="cerrarGuia()">
-        <div class="modal-dark" (click)="$event.stopPropagation()">
-            <div class="modal-dark-header">
-                <h2>{{ productoSeleccionado.imagen }} {{ productoSeleccionado.nombre }}</h2>
-                <button (click)="cerrarGuia()">✕</button>
-            </div>
-            <div class="modal-dark-body">
-                <h3>GUÍA NUTRICIONAL</h3>
-                <p class="mt-8">{{ productoSeleccionado.guiaNutricional }}</p>
-            </div>
+  <!-- CONTADOR -->
+  <div class="result-count" *ngIf="productosFiltrados.length > 0">
+    Mostrando <strong>{{ productosFiltrados.length }}</strong> productos
+    <span *ngIf="terminoBusqueda"> · Buscando: "{{ terminoBusqueda }}"</span>
+  </div>
+
+  <!-- GRID -->
+  <div class="product-grid">
+    @for (p of productosFiltrados; track p.id; let i = $index) {
+      <div class="product-card" style="animation-delay: {{ i * 40 }}ms;">
+        <!-- BADGES -->
+        <div class="product-badges">
+          <span class="product-badge oferta" *ngIf="p.oferta">🔥 OFERTA</span>
+          <span class="product-badge nuevo" *ngIf="p.nuevo">✨ NUEVO</span>
+          <span class="product-badge agotado" *ngIf="p.stock === 0">AGOTADO</span>
+          <span class="product-badge ultimas" *ngIf="p.stock > 0 && p.stock < 5">⚠️ ÚLTIMAS</span>
         </div>
+
+        <!-- IMAGEN -->
+        <div class="product-image-wrapper">
+          <img
+            [src]="getImagenUrl(p.imagen)"
+            [alt]="p.imagenAlt"
+            class="product-image"
+            (error)="p.imagenCargada = false"
+          />
+          <div class="product-image-placeholder" *ngIf="!p.imagenCargada">
+            {{ p.categoria === 'Suplemento' ? '💪' : p.categoria === 'Implemento' ? '🏋️' : '👕' }}
+          </div>
+        </div>
+
+        <!-- INFO -->
+        <span class="tag-outline">{{ p.categoria.toUpperCase() }}</span>
+        <h3>{{ p.nombre }}</h3>
+        <p class="product-desc">{{ p.descripcion }}</p>
+        <p class="product-price">{{ formatearPrecio(p.precio) }}</p>
+
+        <!-- STOCK -->
+        <div class="product-stock-info">
+          <div class="product-stock">
+            <span>Stock:</span>
+            <div class="stock-bar">
+              <div class="stock-fill"
+                   [class.high]="getPorcentajeStock(p) > 60"
+                   [class.medium]="getPorcentajeStock(p) >= 30 && getPorcentajeStock(p) <= 60"
+                   [class.low]="getPorcentajeStock(p) < 30"
+                   [style.width.%]="getPorcentajeStock(p)">
+              </div>
+            </div>
+            <span class="stock-text" [class.low]="p.stock < 5">{{ p.stock }}</span>
+          </div>
+        </div>
+
+        <!-- BOTONES -->
+        @if (p.stock > 0) {
+          <button class="btn-full btn-primary" (click)="agregarAlCarrito(p)">
+            🛒 Añadir al carrito
+          </button>
+        } @else {
+          <button class="btn-full btn-outline" disabled>Sin stock</button>
+        }
+
+        @if (p.guiaNutricional && p.guiaNutricional.length > 0) {
+          <button class="btn-full btn-outline" (click)="verGuia(p)" style="margin-top:6px;">
+            📋 GUÍA NUTRICIONAL
+          </button>
+        }
+      </div>
+    }
+    @empty {
+      <div class="empty-state-dark">
+        <span class="empty-icon">🔍</span>
+        No hay productos que coincidan con tu búsqueda
+      </div>
+    }
+  </div>
+
+  <!-- MODAL GUÍA -->
+  @if (productoSeleccionado) {
+    <div class="modal-overlay" (click)="cerrarGuia()">
+      <div class="modal-dark" (click)="$event.stopPropagation()">
+        <div class="modal-dark-header">
+          <h2>{{ productoSeleccionado.nombre }}</h2>
+          <button (click)="cerrarGuia()">✕</button>
+        </div>
+        <div class="modal-dark-body">
+          <img
+            [src]="getImagenUrl(productoSeleccionado.imagen)"
+            [alt]="productoSeleccionado.imagenAlt"
+            class="modal-product-image"
+          />
+          <div class="modal-guia-row">
+            <h3 class="modal-guia-title">📋 GUÍA NUTRICIONAL</h3>
+            <span class="modal-price">{{ formatearPrecio(productoSeleccionado.precio) }}</span>
+          </div>
+          <p class="modal-guia-texto">{{ productoSeleccionado.guiaNutricional }}</p>
+          <button class="btn-full btn-primary" style="margin-top:14px;" (click)="agregarAlCarrito(productoSeleccionado); cerrarGuia()">
+            🛒 Añadir al carrito
+          </button>
+        </div>
+      </div>
     </div>
-}
+  }
+
+  <!-- MODAL CARRITO CON PAGOS -->
+  @if (mostrarCarrito) {
+    <div class="cart-modal-overlay" (click)="toggleCarrito()">
+      <div class="cart-modal" (click)="$event.stopPropagation()">
+        <div class="cart-modal-header">
+          <h2>🛒 Tu Carrito</h2>
+          <button (click)="toggleCarrito()">✕</button>
+        </div>
+        <div class="cart-modal-body">
+          @if (!carritoVacio && !pagoExitoso) {
+            @for (item of carrito; track item.producto.id) {
+              <div class="cart-item">
+                <div class="cart-item-info">
+                  <img [src]="getImagenUrl(item.producto.imagen)" [alt]="item.producto.nombre" class="cart-item-image" />
+                  <div>
+                    <div class="cart-item-name">{{ item.producto.nombre }}</div>
+                    <div class="cart-item-price">{{ formatearPrecio(item.producto.precio) }}</div>
+                  </div>
+                </div>
+                <div class="cart-item-actions">
+                  <div class="cart-item-quantity">
+                    <button (click)="actualizarCantidad(item.producto.id, -1)">−</button>
+                    <span>{{ item.cantidad }}</span>
+                    <button (click)="actualizarCantidad(item.producto.id, 1)">+</button>
+                  </div>
+                  <button class="cart-item-remove" (click)="eliminarDelCarrito(item.producto.id)">🗑️</button>
+                </div>
+              </div>
+            }
+
+            <!-- SIN PAGO AÚN -->
+            @if (!mostrarPago) {
+              <div class="checkout-bar">
+                <div class="cart-total-section">
+                  <span class="cart-total-label">Total</span>
+                  <span class="cart-total-amount">{{ formatearPrecio(totalCarrito) }}</span>
+                </div>
+                <button class="btn-checkout" (click)="iniciarPago()" style="width:100%;">
+                  💳 Proceder al pago
+                </button>
+              </div>
+            }
+
+            <!-- MÉTODOS DE PAGO -->
+            @if (mostrarPago) {
+              <div class="payment-section">
+                <span class="payment-title">💳 Selecciona tu método de pago</span>
+
+                <div class="payment-methods">
+                  <div class="payment-method" [class.active]="metodoPago === 'nequi'" (click)="seleccionarMetodo('nequi')">
+                    <input type="radio" id="nequi" name="pago" value="nequi" [(ngModel)]="metodoPago" />
+                    <label for="nequi">
+                      <span class="method-icon">📱</span>
+                      <span class="method-name">Nequi</span>
+                    </label>
+                    <span class="method-check">✓</span>
+                  </div>
+                  <div class="payment-method" [class.active]="metodoPago === 'paypal'" (click)="seleccionarMetodo('paypal')">
+                    <input type="radio" id="paypal" name="pago" value="paypal" [(ngModel)]="metodoPago" />
+                    <label for="paypal">
+                      <span class="method-icon">💳</span>
+                      <span class="method-name">PayPal</span>
+                    </label>
+                    <span class="method-check">✓</span>
+                  </div>
+                  <div class="payment-method" [class.active]="metodoPago === 'tarjeta'" (click)="seleccionarMetodo('tarjeta')">
+                    <input type="radio" id="tarjeta" name="pago" value="tarjeta" [(ngModel)]="metodoPago" />
+                    <label for="tarjeta">
+                      <span class="method-icon">💳</span>
+                      <span class="method-name">Tarjeta</span>
+                    </label>
+                    <span class="method-check">✓</span>
+                  </div>
+                  <div class="payment-method" [class.active]="metodoPago === 'efecty'" (click)="seleccionarMetodo('efecty')">
+                    <input type="radio" id="efecty" name="pago" value="efecty" [(ngModel)]="metodoPago" />
+                    <label for="efecty">
+                      <span class="method-icon">🏦</span>
+                      <span class="method-name">Efecty</span>
+                    </label>
+                    <span class="method-check">✓</span>
+                  </div>
+                  <div class="payment-method" [class.active]="metodoPago === 'pse'" (click)="seleccionarMetodo('pse')">
+                    <input type="radio" id="pse" name="pago" value="pse" [(ngModel)]="metodoPago" />
+                    <label for="pse">
+                      <span class="method-icon">🏛️</span>
+                      <span class="method-name">PSE</span>
+                    </label>
+                    <span class="method-check">✓</span>
+                  </div>
+                  <div class="payment-method" [class.active]="metodoPago === 'daviplata'" (click)="seleccionarMetodo('daviplata')">
+                    <input type="radio" id="daviplata" name="pago" value="daviplata" [(ngModel)]="metodoPago" />
+                    <label for="daviplata">
+                      <span class="method-icon">📱</span>
+                      <span class="method-name">Daviplata</span>
+                    </label>
+                    <span class="method-check">✓</span>
+                  </div>
+                </div>
+
+                <!-- CAMPOS SEGÚN MÉTODO -->
+                <div class="payment-fields">
+                  @if (metodoPago === 'nequi' || metodoPago === 'daviplata') {
+                    <div class="payment-field">
+                      <label>Número de celular ({{ metodoPago === 'nequi' ? 'Nequi' : 'Daviplata' }})</label>
+                      <input
+                        type="tel"
+                        placeholder="3XX XXX XXXX"
+                        [value]="datosPago.telefono"
+                        (input)="formatearTelefono($event)"
+                        maxlength="10"
+                      />
+                      <span class="field-hint">Te enviaremos una notificación push para aprobar el pago.</span>
+                    </div>
+                  }
+
+                  @if (metodoPago === 'paypal') {
+                    <div class="payment-field">
+                      <label>Correo asociado a PayPal</label>
+                      <input
+                        type="email"
+                        placeholder="tucorreo@ejemplo.com"
+                        [(ngModel)]="datosPago.email"
+                        name="paypalEmail"
+                      />
+                      <span class="field-hint">Serás redirigido a PayPal para confirmar el pago.</span>
+                    </div>
+                  }
+
+                  @if (metodoPago === 'tarjeta') {
+                    <div class="payment-field">
+                      <label>Nombre en la tarjeta</label>
+                      <input
+                        type="text"
+                        placeholder="Como aparece en la tarjeta"
+                        [(ngModel)]="datosPago.nombreTarjeta"
+                        name="nombreTarjeta"
+                      />
+                    </div>
+                    <div class="payment-field">
+                      <label>Número de tarjeta</label>
+                      <input
+                        type="text"
+                        placeholder="0000 0000 0000 0000"
+                        [value]="datosPago.numeroTarjeta"
+                        (input)="formatearNumeroTarjeta($event)"
+                        maxlength="19"
+                      />
+                    </div>
+                    <div class="payment-row">
+                      <div class="payment-field">
+                        <label>Vencimiento</label>
+                        <input
+                          type="text"
+                          placeholder="MM/AA"
+                          [value]="datosPago.vencimiento"
+                          (input)="formatearVencimiento($event)"
+                          maxlength="5"
+                        />
+                      </div>
+                      <div class="payment-field">
+                        <label>CVV</label>
+                        <input
+                          type="password"
+                          placeholder="123"
+                          [value]="datosPago.cvv"
+                          (input)="formatearCvv($event)"
+                          maxlength="4"
+                        />
+                      </div>
+                    </div>
+                  }
+
+                  @if (metodoPago === 'pse') {
+                    <div class="payment-field">
+                      <label>Banco</label>
+                      <select [(ngModel)]="datosPago.banco" name="banco">
+                        <option value="">Selecciona tu banco</option>
+                        @for (b of bancosPSE; track b) {
+                          <option [value]="b">{{ b }}</option>
+                        }
+                      </select>
+                    </div>
+                    <div class="payment-row">
+                      <div class="payment-field">
+                        <label>Tipo de documento</label>
+                        <select [(ngModel)]="datosPago.tipoDocumento" name="tipoDoc">
+                          <option value="CC">Cédula de ciudadanía</option>
+                          <option value="CE">Cédula de extranjería</option>
+                          <option value="NIT">NIT</option>
+                        </select>
+                      </div>
+                      <div class="payment-field">
+                        <label>Número de documento</label>
+                        <input
+                          type="text"
+                          placeholder="123456789"
+                          [value]="datosPago.numeroDocumento"
+                          (input)="formatearDocumento($event)"
+                        />
+                      </div>
+                    </div>
+                  }
+
+                  @if (metodoPago === 'efecty') {
+                    <div class="payment-field">
+                      <label>Número de documento (para generar el código de pago)</label>
+                      <input
+                        type="text"
+                        placeholder="123456789"
+                        [value]="datosPago.numeroDocumento"
+                        (input)="formatearDocumento($event)"
+                      />
+                      <span class="field-hint">Con este código podrás pagar en cualquier punto Efecty en efectivo.</span>
+                    </div>
+                  }
+                </div>
+
+                <div class="checkout-bar">
+                  <div class="cart-total-section">
+                    <span class="cart-total-label">Total a pagar</span>
+                    <span class="cart-total-amount">{{ formatearPrecio(totalCarrito) }}</span>
+                  </div>
+
+                  <div class="payment-actions">
+                    <button class="btn-volver" (click)="volverAlCarrito()">↩️</button>
+                    <button
+                      class="btn-checkout"
+                      (click)="procesarPago()"
+                      [disabled]="!pagoValido || procesandoPago"
+                    >
+                      {{ procesandoPago ? '⏳ Procesando...' : '✅ Pagar con ' + (metodoPago | uppercase) }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          }
+
+          <!-- PAGO EXITOSO -->
+          @if (pagoExitoso) {
+            <div class="pago-exitoso">
+              <span class="icon">🎉</span>
+              <h3>¡Pago exitoso!</h3>
+              <span class="orden-numero">Pedido {{ numeroOrden }}</span>
+              <p>Gracias por tu compra. Recibirás un correo con los detalles de tu pedido.</p>
+              <button class="btn-checkout" (click)="toggleCarrito()" style="margin-top:16px; width:100%;">
+                ✅ Cerrar
+              </button>
+            </div>
+          }
+
+          <!-- CARRITO VACÍO -->
+          @if (carritoVacio && !pagoExitoso) {
+            <div class="empty-cart">
+              <span class="empty-icon">🛒</span>
+              <p class="empty-cart-title">Tu carrito está vacío</p>
+              <p class="empty-cart-sub">Explora nuestros productos y añade lo que necesites.</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</section>

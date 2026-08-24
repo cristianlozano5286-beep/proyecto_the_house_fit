@@ -19,9 +19,11 @@ export class LoginComponent {
   // Método que será ejecutado al presionar el botón ingresar (HU10, HU11)
   login(): void {
     const autenticado = this.authService.inciarSesion(this.email, this.password);
+    console.log('Respuesta del AuthService (autenticado):', autenticado);
 
     if (!autenticado) {
       this.mensaje = 'Correo o contraseña incorrectos.';
+      console.error('Error:', this.mensaje);
       return;
     }
     // Redirección al menú principal según el rol tras un inicio de sesión exitoso

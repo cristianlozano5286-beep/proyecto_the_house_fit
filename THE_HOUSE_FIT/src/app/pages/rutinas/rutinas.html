@@ -1,0 +1,122 @@
+<section class="hero-section">
+  <div class="breadcrumb-row">
+    <a routerLink="/">Inicio</a>
+    <span class="sep">›</span>
+    <span class="current">Rutinas</span>
+  </div>
+  <div class="hero-text">
+    <h1>RUTINAS DE ENTRENAMIENTO</h1>
+    <p>Descubre rutinas diseñadas por profesionales para ayudarte a alcanzar tus objetivos.</p>
+  </div>
+  <span class="hero-tag">NO EXCUSES</span>
+</section>
+
+<section class="content-area">
+
+  <!-- FILTROS -->
+  <aside class="filters">
+    <div class="filters-head">
+      <h3>FILTRAR</h3>
+      <span class="filters-icon">☰</span>
+    </div>
+
+    <div class="filter-group">
+      <h4><span class="dot-icon">🎯</span> TIPO DE ENTRENAMIENTO</h4>
+      @for (op of tiposEntrenamiento; track op) {
+        <label class="checkbox-row">
+          <input type="checkbox" [checked]="filtroTipo.includes(op)" (change)="toggleFiltro('tipo', op)">
+          <span>{{ op }}</span>
+        </label>
+      }
+    </div>
+
+    <div class="filter-group">
+      <h4><span class="dot-icon">📊</span> NIVEL</h4>
+      @for (op of niveles; track op) {
+        <label class="checkbox-row">
+          <input type="checkbox" [checked]="filtroNivel.includes(op)" (change)="toggleFiltro('nivel', op)">
+          <span>{{ op }}</span>
+        </label>
+      }
+    </div>
+
+    <div class="filter-group">
+      <h4><span class="dot-icon">⏱️</span> DURACIÓN</h4>
+      @for (op of duraciones; track op) {
+        <label class="checkbox-row">
+          <input type="checkbox" [checked]="filtroDuracion.includes(op)" (change)="toggleFiltro('duracion', op)">
+          <span>{{ op }}</span>
+        </label>
+      }
+    </div>
+
+    <button class="btn-clear" (click)="limpiarFiltros()">LIMPIAR FILTROS</button>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-col">
+
+    <h2 class="section-label">EXPLORA POR CATEGORÍA</h2>
+    <div class="category-grid">
+      @for (cat of categorias; track cat.tipo) {
+        <button class="category-card" (click)="filtrarPorCategoria(cat.tipo)">
+          <img [src]="cat.imagen" [alt]="cat.tipo">
+          <div class="category-overlay">
+            <span class="category-icon">{{ cat.icono }}</span>
+            <strong>{{ cat.tipo }}</strong>
+            <small>{{ cat.total }} rutina{{ cat.total === 1 ? '' : 's' }}</small>
+          </div>
+        </button>
+      }
+    </div>
+
+    <div class="results-head">
+      <span>{{ rutinasFiltradas.length }} rutinas encontradas</span>
+      <div class="sort">
+        <label>Ordenar por:</label>
+        <select [(ngModel)]="orden" (change)="ordenar()">
+          <option value="recientes">Más recientes</option>
+          <option value="duracion">Duración</option>
+          <option value="ejercicios">N.º de ejercicios</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="routine-grid">
+      @for (r of rutinasFiltradas; track r.id) {
+        <article class="routine-card">
+          <div class="routine-image">
+            <img [src]="imagen(r.tipoEntrenamiento)" [alt]="r.nombre">
+            <span class="badge-tipo">{{ r.tipoEntrenamiento }}</span>
+          </div>
+          <div class="routine-body">
+            <h4>{{ r.nombre }}</h4>
+            <p>{{ r.descripcion }}</p>
+            <div class="routine-meta">
+              <span>📅 {{ r.duracionSemanas }} semanas</span>
+              <span>📶 {{ r.nivel }}</span>
+              <span>📋 {{ r.ejercicios.length }} ejercicios</span>
+            </div>
+            <!-- Botón actualizado con routerLink para navegar al detalle de la rutina -->
+            <a [routerLink]="['/rutina', r.id]" class="btn-outline">VER RUTINA</a>
+          </div>
+        </article>
+      }
+      @if (rutinasFiltradas.length === 0) {
+        <p class="no-results">No encontramos rutinas con esos filtros. Prueba quitando alguno.</p>
+      }
+    </div>
+
+    <div class="cta-banner">
+      <div class="cta-left">
+        <span class="cta-icon">📋</span>
+        <div>
+          <strong>¿No sabes por dónde empezar?</strong>
+          <p>Responde algunas preguntas y te recomendaremos la rutina ideal para ti.</p>
+        </div>
+      </div>
+      <a routerLink="/imc" class="btn-primary">ENCONTRAR MI RUTINA</a>
+    </div>
+
+  </div>
+</section>

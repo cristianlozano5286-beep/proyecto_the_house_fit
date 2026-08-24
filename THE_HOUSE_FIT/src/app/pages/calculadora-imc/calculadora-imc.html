@@ -1,39 +1,71 @@
-<section class="dark-page">
-    <div class="page-header text-center">
-        <span class="eyebrow">TU PUNTO DE PARTIDA</span>
-        <h1 class="display-title" style="font-size:clamp(36px,6vw,64px);">CALCULA TU <span class="accent">IMC</span></h1>
-        <p class="page-desc" style="margin:14px auto 0;">Ingresa tu peso y estatura para conocer tu Índice de Masa Corporal y recibir una recomendación nutricional.</p>
+<div class="hero">
+  <h1>CALCULA TU <span>IMC</span></h1>
+  <p>Ingresa tu peso y estatura para conocer tu Índice de Masa Corporal y recibir una recomendación nutricional.</p>
+</div>
+
+<div class="container">
+  <div class="grid-layout">
+    <div class="left-column">
+    <div class="card">
+      <label>Género</label>
+      <div class="toggle-group">
+        <button type="button" [class.selected]="genero === 'masculino'" (click)="genero = 'masculino'">MASCULINO</button>
+        <button type="button" [class.selected]="genero === 'femenino'" (click)="genero = 'femenino'">FEMENINO</button>
+      </div>
+
+      <div class="field">
+        <label>Edad (años)</label>
+        <input type="number" [(ngModel)]="edad" placeholder="Ej. 25" min="1" max="120">
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Peso (kg)</label>
+          <input type="number" [(ngModel)]="peso" placeholder="Ej. 70" min="1" step="0.1">
+        </div>
+        <div class="field">
+          <label>Estatura (m)</label>
+          <input type="number" [(ngModel)]="estatura" placeholder="Ej. 1.70" min="0.5" max="2.5" step="0.01">
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" (click)="calcularIMC()">CALCULAR</button>
+        <button class="btn-secondary" (click)="reiniciar()">REINICIAR</button>
+      </div>
     </div>
 
-    <div class="imc-card">
-        <div class="form-field">
-            <label>PESO (KG)</label>
-            <input type="number" min="1" placeholder="Ej. 70" [(ngModel)]="peso" />
-        </div>
-        <div class="form-field">
-            <label>ESTATURA (M)</label>
-            <input type="number" min="0.5" max="2.5" step="0.01" placeholder="Ej. 1.70" [(ngModel)]="estatura" />
-        </div>
-        <div class="imc-actions">
-            <button class="btn-landing primary" (click)="calcular()" [disabled]="!peso || !estatura">CALCULAR</button>
-            <button class="btn-landing outline" (click)="reiniciar()">REINICIAR</button>
-        </div>
+    <div class="card info-card">
+      <h3 class="info-title">¿Qué significa tu IMC?</h3>
+      <ul class="info-list">
+        <li><span class="dot dot-u"></span><b>Bajo peso</b> — menos de 18.5</li>
+        <li><span class="dot dot-n"></span><b>Normal</b> — entre 18.5 y 24.9</li>
+        <li><span class="dot dot-o"></span><b>Sobre peso</b> — entre 25 y 29.9</li>
+        <li><span class="dot dot-ob"></span><b>Obesidad</b> — 30 o más</li>
+      </ul>
+      <p class="info-note">El IMC es una referencia general y no reemplaza la evaluación de un profesional de la salud.</p>
+    </div>
     </div>
 
-    @if (calculado && resultado !== null) {
-        <div class="imc-result">
-            <span class="eyebrow">TU RESULTADO</span>
-            <p class="imc-valor">{{ resultado }}</p>
-            <span class="tag-outline">{{ categoria.toUpperCase() }}</span>
-
-            @if (guia) {
-                <div class="mt-24">
-                    <h3>{{ guia.titulo.toUpperCase() }}</h3>
-                    <p class="mt-8">{{ guia.recomendaciones }}</p>
-                    <p class="mt-8"><strong>Ejemplo de comidas:</strong> {{ guia.ejemploComidas }}</p>
-                </div>
-            }
-            <a routerLink="/register" class="btn-landing primary mt-24">CREAR CUENTA Y GUARDAR MI PROGRESO</a>
+    <div class="result" [class.show]="mostrarResultado">
+      <h2 class="result-title">TU RESULTADO</h2>
+      <div class="scale-labels">
+        <span class="u">Bajo peso</span>
+        <span class="n">Normal</span>
+        <span class="o">Sobre peso</span>
+        <span class="ob">Obesidad</span>
+      </div>
+      <div class="scale-bar-wrap">
+        <div class="scale-bar">
+          <div class="scale-marker" [style.left.%]="posicionMarcador"></div>
         </div>
-    }
-</section>
+      </div>
+      <div class="imc-value-big">{{ imc !== null ? imc.toFixed(1) : '--' }}</div>
+      <div class="imc-category">{{ categoria }}</div>
+
+      <div class="plan" *ngIf="planActual">
+        <h3>{{ planActual.titulo }}</h3>
+        <p>{{ planActual.desc }}</p>
+        <div class="example"><b>Ejemplo de comidas:</b> {{ planActual.ejemplo }}</div>
+  </div>
+</div>

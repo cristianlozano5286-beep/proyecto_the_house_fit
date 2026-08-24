@@ -1,41 +1,1020 @@
-.dark-page{ background:#0a0a0a; min-height:100vh; padding:140px 24px 80px; }
-.page-header{ max-width:1200px; margin:0 auto 40px; }
-.page-desc{ color:#888; font-family: var(--font-body); font-size:15px; max-width:520px; margin-top:14px; }
-.accent{ color: var(--color-primary); }
+/* ==========================================================================
+   DIRECTORIO DE GIMNASIOS - ESTILOS PRINCIPALES (THE HOUSE FIT)
+   ========================================================================== */
 
-.filter-bar{
-    max-width:1200px; margin:0 auto 8px; display:grid; grid-template-columns:1fr 1fr; gap:16px;
-    background:#111; border:1px solid #1e1e1e; padding:20px;
+/* Contenedor principal */
+.dark-page {
+  background-color: #0a0a0a;
+  color: #e2e8f0;
+  min-height: 100vh;
+  padding: 40px 24px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  box-sizing: border-box;
 }
-@media (max-width:640px){ .filter-bar{ grid-template-columns:1fr; } }
-.filter-field label{ display:block; font-size:11px; letter-spacing:.1em; color:#666; margin-bottom:8px; font-family: var(--font-body); font-weight:600; }
-.filter-field input, .filter-field select{
-    width:100%; padding:11px 12px; background:#0a0a0a; border:1px solid #222; color:#f0f0f0; font-family: var(--font-body); font-size:14px;
+
+*, *::before, *::after {
+  box-sizing: border-box;
 }
-.filter-field input:focus, .filter-field select:focus{ outline:none; border-color: var(--color-primary); }
 
-.result-count{ max-width:1200px; margin:24px auto 20px; color:#666; font-size:13px; font-family: var(--font-body); }
+/* --------------------------------------------------------------------------
+   1. HEADER DE LA PÁGINA
+   -------------------------------------------------------------------------- */
+.page-header {
+  padding-top: 40px;  
+  text-align: left;
+  max-width: 1200px;
+  margin: 0 auto 32px auto;
+}
 
-.services-grid{ max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1px; background:#1e1e1e; }
-.service-card{ background:#0a0a0a; padding:28px; transition:.2s; }
-.service-card.clickable{ cursor:pointer; }
-.service-card:hover{ background:#111; }
-.service-top{ display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:18px; }
-.service-icon{ font-size:34px; }
-.service-title{ font-family: var(--font-display); font-weight:800; text-transform:uppercase; color:#fff; font-size:22px; margin-bottom:8px; }
-.service-desc{ font-size:13px; color:#888; font-family: var(--font-body); margin-top:4px; }
-.service-footer{ margin-top:18px; }
-.service-link{ color:#555; font-size:13px; font-weight:600; font-family: var(--font-body); }
-.stars{ color:#f59e0b; font-size:13px; }
+.eyebrow {
+  color: #ff4500;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 8px;
+}
 
-.empty-state-dark{ grid-column: 1/-1; text-align:center; padding:60px 20px; color:#555; font-family: var(--font-body); background:#0a0a0a; }
+.display-title {
+  color: #ffffff;
+  font-weight: 900;
+  line-height: 1.05;
+  margin: 0 0 16px 0;
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
+}
 
-/* Modal oscuro */
-.modal-dark{ background:#111; border:1px solid #222; max-width:600px; width:100%; max-height:85vh; overflow-y:auto; }
-.modal-dark-header{ display:flex; align-items:center; justify-content:space-between; padding:20px 24px; border-bottom:1px solid #222; }
-.modal-dark-header h2{ font-family: var(--font-display); font-weight:800; text-transform:uppercase; color:#fff; font-size:22px; }
-.modal-dark-header button{ background:none; border:1px solid #333; color:#888; width:32px; height:32px; cursor:pointer; }
-.modal-dark-body{ padding:24px; color:#ccc; font-family: var(--font-body); font-size:14px; line-height:1.6; }
-.modal-dark-body h3{ font-family: var(--font-display); color:#fff; font-size:16px; letter-spacing:.05em; }
-.mini-card{ background:#0a0a0a; border:1px solid #1e1e1e; padding:14px; margin-top:8px; font-size:13px; }
-.muted{ color:#555; font-size:13px; }
+.display-title .accent {
+  color: #ff4500;
+}
+
+.page-desc {
+  color: #94a3b8;
+  font-size: 1.1rem;
+  max-width: 650px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   2. BARRA DE BÚSQUEDA TIPO AIRBNB (ESTRUCTURA & CORRECCIONES)
+   -------------------------------------------------------------------------- */
+.airbnb-search {
+  max-width: 1200px;
+  margin: 0 auto 24px auto;
+  background-color: #161c28;
+  border: 1px solid #232d3f;
+  border-radius: 50px;
+  padding: 8px 12px 8px 28px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  position: relative;
+  z-index: 50;
+}
+
+.airbnb-search-field {
+  position: relative !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4px 12px;
+  cursor: pointer;
+}
+
+.airbnb-search-field.grow {
+  flex: 1;
+}
+
+.airbnb-search-field label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+  pointer-events: none;
+}
+
+.airbnb-search-field input[type="text"] {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 500;
+  width: 100%;
+  padding: 0;
+}
+
+.airbnb-search-field input::placeholder {
+  color: #64748b;
+}
+
+.airbnb-search-divider {
+  width: 1px;
+  height: 36px;
+  background-color: #232d3f;
+  margin: 0 8px;
+}
+
+/* Campo Custom Dropdown (Servicio) */
+.custom-dropdown {
+  min-width: 160px;
+}
+
+.selected-value {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 500;
+  gap: 8px;
+}
+
+.chevron {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  transition: transform 0.2s ease;
+}
+
+.chevron.rotated {
+  transform: rotate(180deg);
+}
+
+/* Campo Precio Máximo (Alineado Horizontalmente) */
+.precio-field {
+  min-width: 140px;
+}
+
+.precio-input-wrapper {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.currency-symbol {
+  color: #ff4500;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.precio-input-wrapper input {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  color: #ffffff !important;
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.precio-input-wrapper input[type="number"]::-webkit-outer-spin-button,
+.precio-input-wrapper input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.precio-input-wrapper input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Botón de búsqueda de la Lupa */
+.airbnb-search-btn {
+  background: linear-gradient(135deg, #ff4500 0%, #e03e00 100%);
+  border: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 69, 0, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  flex-shrink: 0;
+  margin-left: 8px;
+  padding: 0;
+}
+
+.airbnb-search-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(255, 69, 0, 0.6);
+}
+
+/* --------------------------------------------------------------------------
+   3. DESPLEGABLES & SUGERENCIAS (DISEÑO MODERNO Y ELEGANTE)
+   -------------------------------------------------------------------------- */
+.airbnb-suggestions,
+.dropdown-menu-custom {
+  position: absolute !important;
+  top: calc(100% + 12px) !important;
+  left: 0 !important;
+  width: 290px !important;
+  max-width: 90vw !important;
+  max-height: 260px !important;
+  background-color: #121721 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(12px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  z-index: 9999 !important;
+  padding: 8px !important;
+}
+
+/* Ocultar / Quitar los íconos de emoji o imágene dentro de las opciones */
+.airbnb-suggestions button img,
+.airbnb-suggestions button svg,
+.dropdown-option img,
+.dropdown-option svg {
+  display: none !important;
+}
+
+/* Estilo de los ítems */
+.airbnb-suggestions button,
+.dropdown-option {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  padding: 10px 14px !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 10px !important;
+  color: #94a3b8 !important;
+  font-size: 0.9rem !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  line-height: 1.3 !important;
+  margin-bottom: 2px !important;
+}
+
+/* Hover moderno con acento sutil */
+.airbnb-suggestions button:hover,
+.dropdown-option:hover {
+  background-color: rgba(255, 69, 0, 0.12) !important;
+  color: #ffffff !important;
+  padding-left: 18px !important;
+  font-weight: 600 !important;
+}
+
+/* Estado activo o seleccionado */
+.dropdown-option.active {
+  background-color: rgba(255, 69, 0, 0.2) !important;
+  color: #ff4500 !important;
+  font-weight: 700 !important;
+}
+
+/* Scrollbar ultrafino y discreto */
+.airbnb-suggestions::-webkit-scrollbar,
+.dropdown-menu-custom::-webkit-scrollbar {
+  width: 4px;
+}
+
+.airbnb-suggestions::-webkit-scrollbar-track,
+.dropdown-menu-custom::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.airbnb-suggestions::-webkit-scrollbar-thumb,
+.dropdown-menu-custom::-webkit-scrollbar-thumb {
+  background: #232d3f;
+  border-radius: 10px;
+}
+
+.airbnb-suggestions::-webkit-scrollbar-thumb:hover,
+.dropdown-menu-custom::-webkit-scrollbar-thumb:hover {
+  background: #ff4500;
+}
+
+/* --------------------------------------------------------------------------
+   4. CHIPS DE CATEGORÍAS
+   -------------------------------------------------------------------------- */
+.category-chips {
+  max-width: 1200px;
+  margin: 0 auto 28px auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.chip {
+  background-color: #161c28;
+  border: 1px solid #232d3f;
+  color: #94a3b8;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chip:hover {
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+
+.chip-active {
+  background-color: #ff4500 !important;
+  border-color: #ff4500 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(255, 69, 0, 0.3);
+}
+
+.chip-fav {
+  margin-left: auto;
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+}
+
+.chip-fav:hover {
+  background-color: #ef4444;
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   5. BARRA DE RESULTADOS
+   -------------------------------------------------------------------------- */
+.results-bar {
+  max-width: 1200px;
+  margin: 0 auto 24px auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #1e293b;
+}
+
+.result-count {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  margin: 0;
+}
+/* --------------------------------------------------------------------------
+   5. BARRA DE RESULTADOS - SELECT ESTILIZADO
+   -------------------------------------------------------------------------- */
+.order-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.order-field label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.order-field select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #161c28;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 36px 8px 14px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  /* Flex/Flecha customizada en SVG */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%3C94a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.order-field select:hover {
+  border-color: rgba(255, 69, 0, 0.5);
+  background-color: #1c2434;
+}
+
+.order-field select:focus {
+  border-color: #ff4500;
+  box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.25);
+}
+
+/* Estilos de las opciones internas */
+.order-field select option {
+  background-color: #161c28;
+  color: #e2e8f0;
+  padding: 10px;
+}
+.order-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.order-field label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 1px;
+}
+
+.order-field select {
+  background-color: #161c28;
+  border: 1px solid #232d3f;
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.clear-filters {
+  background: transparent;
+  border: none;
+  color: #ff4500;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.clear-filters:hover {
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   6. GRID & TARJETAS AIRBNB DE GIMNASIOS
+   -------------------------------------------------------------------------- */
+.airbnb-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.airbnb-card {
+  background-color: #161c28;
+  border: 1px solid #1e293b;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.airbnb-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  border-color: #334155;
+}
+
+.airbnb-card-image {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background-color: #0f141d;
+}
+
+.airbnb-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heart-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  border: none;
+  color: #ffffff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.heart-btn:hover, .heart-active {
+  color: #ef4444 !important;
+  background: rgba(15, 23, 42, 0.9);
+}
+
+.rating-badge {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  color: #f59e0b;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.airbnb-card-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.airbnb-card-title {
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+}
+
+.airbnb-card-location {
+  color: #cbd5e1;
+  font-size: 0.85rem;
+  margin: 0 0 2px 0;
+}
+
+.airbnb-card-barrio {
+  color: #64748b;
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mt-8 { margin-top: 8px; }
+.mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
+
+.tag-outline {
+  border: 1px solid #334155;
+  color: #94a3b8;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.airbnb-card-price {
+  margin-top: 16px;
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+.airbnb-card-price strong {
+  color: #ffffff;
+  font-size: 1.15rem;
+}
+
+.empty-state-dark {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: #64748b;
+  font-size: 1.1rem;
+  background-color: #161c28;
+  border-radius: 20px;
+  border: 1px dashed #232d3f;
+}
+
+/* --------------------------------------------------------------------------
+   7. MODAL DE DETALLES (SCROLLBAR PREMIUM Y DISEÑO MEJORADO)
+   -------------------------------------------------------------------------- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(5, 8, 14, 0.85);
+  backdrop-filter: blur(10px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-dark {
+  background-color: #161c28;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 650px;
+  max-height: 88vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
+}
+
+/* Scrollbar Personalizada para el Modal (WebKit: Chrome, Edge, Safari) */
+.modal-dark::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-dark::-webkit-scrollbar-track {
+  background: #161c28;
+  border-top-right-radius: 24px;
+  border-bottom-right-radius: 24px;
+}
+
+.modal-dark::-webkit-scrollbar-thumb {
+  background: #2b3548;
+  border-radius: 10px;
+}
+
+.modal-dark::-webkit-scrollbar-thumb:hover {
+  background: #ff4500;
+}
+
+/* Soporte para Firefox */
+.modal-dark {
+  scrollbar-width: thin;
+  scrollbar-color: #2b3548 #161c28;
+}
+
+.modal-dark-header {
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  position: sticky;
+  top: 0;
+  background-color: #161c28;
+  z-index: 10;
+}
+
+.modal-dark-header h2 {
+  color: #ffffff;
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.modal-icon-btn {
+  background: #0f141d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.modal-icon-btn:hover {
+  background-color: #ff4500;
+  border-color: #ff4500;
+}
+
+/* Galería del modal */
+.photo-gallery {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  background-color: #000;
+}
+
+.photo-gallery img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(15, 20, 29, 0.6);
+  backdrop-filter: blur(4px);
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.gallery-nav:hover {
+  background: rgba(255, 69, 0, 0.8);
+}
+
+.gallery-nav.left { left: 12px; }
+.gallery-nav.right { right: 12px; }
+
+.gallery-dots {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  cursor: pointer;
+}
+
+.dot-active {
+  background: #ff4500;
+  width: 16px;
+  border-radius: 10px;
+}
+
+/* Cuerpo del modal */
+.modal-dark-body {
+  padding: 24px;
+}
+
+.modal-info-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.listing-location {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.stars-badge {
+  color: #f59e0b;
+  font-weight: 700;
+}
+
+.price-container {
+  margin-bottom: 20px;
+}
+
+.price-value {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.price-period {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  background-color: #0f141d;
+  padding: 16px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.info-icon { font-size: 1.2rem; }
+.info-label { font-size: 0.75rem; color: #64748b; display: block; }
+.info-val { font-size: 0.85rem; color: #ffffff; font-weight: 600; }
+
+.description-text {
+  color: #cbd5e1;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.block-title {
+  color: #94a3b8 !important; /* Gris claro legible */
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-top: 20px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.empty-state-text, 
+.modal-dark-body p {
+  color: #e2e8f0 !important; /* Blanco suave con excelente contraste */
+  font-size: 0.9rem;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+.tag-pill {
+  background-color: rgba(255, 69, 0, 0.15);
+  color: #ff4500;
+  border: 1px solid rgba(255, 69, 0, 0.3);
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.btn-block {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #ff4500 0%, #e03e00 100%);
+  border: none;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 69, 0, 0.4);
+}
+
+.btn-block:hover {
+  opacity: 0.95;
+}
+
+/* Instructores & Reseñas Cards */
+.cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.instructor-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #0f141d;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.instructor-avatar { font-size: 1.5rem; }
+.instructor-info strong { color: white; display: block; font-size: 0.9rem; }
+.instructor-info p { color: #64748b; margin: 0; font-size: 0.8rem; }
+
+.review-card {
+  background-color: #0f141d;
+  padding: 14px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  color: white;
+}
+
+.stars-rating { color: #f59e0b; }
+.review-body { color: #cbd5e1; font-size: 0.85rem; margin: 0 0 8px 0; }
+.review-meta { color: #64748b; font-size: 0.75rem; }
+
+/* Tarjeta de Ubicación & Reserva Airbnb */
+.airbnb-location-card {
+  background: #0f141d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  margin: 18px 0;
+}
+
+.map-preview-container {
+  height: 120px;
+  width: 100%;
+  background-color: #1e293b;
+  background-image: radial-gradient(#334155 1px, transparent 1px);
+  background-size: 16px 16px;
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.map-preview-container:hover {
+  opacity: 0.9;
+}
+
+.map-badge {
+  background: rgba(15, 20, 29, 0.85);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.action-buttons-row {
+  display: flex;
+  padding: 12px;
+}
+
+.btn-location-full {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #ff4500 0%, #e03e00 100%);
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 69, 0, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-location-full:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 69, 0, 0.45);
+}
+
+.btn-location-full:active {
+  transform: translateY(0);
+}
+
+
+.custom-select-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.custom-select-trigger {
+  background-color: #161c28;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.custom-select-trigger:hover {
+  border-color: rgba(255, 69, 0, 0.5);
+  background-color: #1c2434;
+}
+
+.order-dropdown {
+  right: 0 !important;
+  left: auto !important;
+  width: 210px !important;
+  top: calc(100% + 8px) !important;
+}

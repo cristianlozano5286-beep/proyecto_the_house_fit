@@ -41,6 +41,8 @@ export const routes: Routes = [
     children: [
       { path: '', component: InicioComponent },
       { path: 'gimnasios', component: CatalogoGimnasiosComponent },
+      { path: 'rutinas', component: RutinasComponent },
+      { path: 'rutina/:id', component: DetalleRutinasComponent },
       { path: 'tienda', component: TiendaComponent },
       { path: 'blog', component: BlogPublicoComponent },
       { path: 'imc', component: CalculadoraImcComponent },
