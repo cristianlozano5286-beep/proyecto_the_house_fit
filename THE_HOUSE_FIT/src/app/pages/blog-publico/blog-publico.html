@@ -1,40 +1,186 @@
 <section class="dark-page">
-    <div class="page-header">
-        <span class="eyebrow">NOVEDADES Y COMUNIDAD</span>
-        <h1 class="display-title" style="font-size:clamp(36px,6vw,64px);">BLOG <span class="accent">THE HOUSE FIT</span></h1>
-        <p class="page-desc">Novedades, ofertas y reseñas de la comunidad de gimnasios en Yopal.</p>
+  <!-- HEADER -->
+  <div class="page-header">
+    <span class="eyebrow">📰 NOVEDADES Y COMUNIDAD</span>
+    <h1 class="display-title">BLOG <span class="accent">THE HOUSE FIT</span></h1>
+    <p class="page-desc">Novedades, ofertas y reseñas de la comunidad de gimnasios en Yopal.</p>
+  </div>
+
+  <!-- ESTADÍSTICAS -->
+  <div class="stats-row">
+    <div class="stat-box"><span class="stat-number">{{ totalNoticias }}</span><span class="stat-label">Noticias</span></div>
+    <div class="stat-box"><span class="stat-number">{{ totalResenas }}</span><span class="stat-label">Reseñas</span></div>
+    <div class="stat-box"><span class="stat-number">{{ calificacionPromedio }}</span><span class="stat-label">Calificación</span></div>
+    <div class="stat-box"><span class="stat-number">{{ totalComentarios }}</span><span class="stat-label">Comentarios</span></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="filter-tabs">
+    <button class="tab" [class.active]="vistaActual === 'noticias'" (click)="cambiarVista('noticias')">📰 NOTICIAS</button>
+    <button class="tab" [class.active]="vistaActual === 'resenas'" (click)="cambiarVista('resenas')">⭐ RESEÑAS</button>
+  </div>
+
+  <!-- ===== VISTA NOTICIAS ===== -->
+  <div class="content-grid" *ngIf="vistaActual === 'noticias'">
+    <div class="news-card" *ngFor="let n of noticias; let i = index" [style.animation-delay.ms]="i * 50">
+      <div class="news-top">
+        <span class="badge-categoria">{{ n.categoria }}</span>
+        <span class="news-comment-count" *ngIf="n.comentarios.length > 0">💬 {{ n.comentarios.length }}</span>
+      </div>
+      <div class="news-icon">{{ n.icono }}</div>
+      <h3>{{ n.titulo }}</h3>
+      <p class="news-summary">{{ n.resumen }}</p>
+      <div class="news-meta">
+        <span class="news-fuente">{{ n.fuente }}</span>
+        <span class="news-dot">·</span>
+        <span class="news-fecha">{{ formatearFecha(n.fecha) }}</span>
+      </div>
+      <button class="btn-primary" (click)="verNoticia(n)">📖 Leer noticia completa</button>
+    </div>
+  </div>
+
+  <!-- ===== VISTA RESEÑAS ===== -->
+  <div class="resenas-section" *ngIf="vistaActual === 'resenas'">
+    <div class="resenas-toolbar">
+      <span class="resenas-count"><strong>{{ totalResenas }}</strong> reseñas de la comunidad</span>
+      <button class="btn-primary btn-small" (click)="abrirFormularioResena()">✍️ Escribir una reseña</button>
     </div>
 
-    <div class="filter-tabs">
-        <button class="tab" [class.active]="pestanaActiva==='noticias'" (click)="cambiarPestana('noticias')">📰 NOTICIAS</button>
-        <button class="tab" [class.active]="pestanaActiva==='resenas'" (click)="cambiarPestana('resenas')">⭐ RESEÑAS</button>
+    <div class="content-grid">
+      <div class="review-card" *ngFor="let r of resenas; let i = index" [style.animation-delay.ms]="i * 50">
+        <div class="review-top">
+          <div class="review-avatar">{{ r.avatar }}</div>
+          <div class="review-author-block">
+            <span class="review-author">{{ r.autor }}</span>
+            <span class="review-gym">{{ r.gimnasio }}</span>
+          </div>
+        </div>
+        <div class="review-stars">
+          <span class="star" *ngFor="let llena of getEstrellas(r.calificacion)" [class.filled]="llena">★</span>
+        </div>
+        <p class="review-text">{{ r.texto }}</p>
+        <span class="review-fecha">{{ formatearFecha(r.fecha) }}</span>
+      </div>
     </div>
+  </div>
 
-    @if (pestanaActiva === 'noticias') {
-        <div class="blog-grid">
-            @for (n of noticias; track n.id) {
-                <div class="blog-card">
-                    <span class="tag-outline">{{ n.tipo.toUpperCase() }}</span>
-                    <h3>{{ n.imagen }} {{ n.titulo }}</h3>
-                    <p>{{ n.cuerpo }}</p>
-                    <small>{{ nombreGimnasio(n.gimnasioId) }} · {{ n.fecha }}</small>
-                </div>
-            }
-            @empty { <div class="empty-state-dark">Aún no hay noticias publicadas.</div> }
+  <!-- ===== MODAL: NOTICIA COMPLETA + COMENTARIOS ===== -->
+  <div class="modal-overlay" *ngIf="noticiaSeleccionada" (click)="cerrarNoticia()">
+    <div class="modal article-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <span class="badge-categoria modal-badge">{{ noticiaSeleccionada.categoria }}</span>
+        <button (click)="cerrarNoticia()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="article-icon">{{ noticiaSeleccionada.icono }}</div>
+        <h2 class="article-title">{{ noticiaSeleccionada.titulo }}</h2>
+        <div class="article-meta">
+          <span>{{ noticiaSeleccionada.autor }}</span>
+          <span class="news-dot">·</span>
+          <span>{{ noticiaSeleccionada.fuente }}</span>
+          <span class="news-dot">·</span>
+          <span>{{ formatearFecha(noticiaSeleccionada.fecha) }}</span>
         </div>
-    } @else {
-        <div class="blog-grid">
-            @for (r of resenas; track r.id) {
-                <div class="blog-card">
-                    <div class="flex-between">
-                        <h3 style="margin:0;">{{ r.titulo }}</h3>
-                        <span class="stars">{{ estrellas(r.puntuacion) }}</span>
-                    </div>
-                    <p class="mt-8">{{ r.cuerpo }}</p>
-                    <small>{{ nombreGimnasio(r.gimnasioId) }} · {{ r.usuario }} · {{ r.fecha }}</small>
-                </div>
-            }
-            @empty { <div class="empty-state-dark">Aún no hay reseñas publicadas.</div> }
+
+        <div class="article-content">
+          <p *ngFor="let parrafo of noticiaSeleccionada.contenido">{{ parrafo }}</p>
         </div>
-    }
+
+        <!-- COMENTARIOS -->
+        <div class="comments-section">
+          <h4 class="comments-title">💬 Comentarios ({{ noticiaSeleccionada.comentarios.length }})</h4>
+
+          <div class="comment-item" *ngFor="let c of noticiaSeleccionada.comentarios">
+            <div class="comment-avatar">{{ c.nombre.charAt(0).toUpperCase() }}</div>
+            <div class="comment-body">
+              <div class="comment-head">
+                <span class="comment-name">{{ c.nombre }}</span>
+                <span class="comment-fecha">{{ formatearFecha(c.fecha) }}</span>
+              </div>
+              <p class="comment-text">{{ c.texto }}</p>
+            </div>
+          </div>
+
+          <div class="comments-empty" *ngIf="noticiaSeleccionada.comentarios.length === 0">
+            Sé el primero en comentar esta noticia.
+          </div>
+
+          <!-- FORMULARIO NUEVO COMENTARIO -->
+          <div class="comment-form">
+            <span class="comment-form-title">Deja tu comentario</span>
+            <input
+              type="text"
+              class="comment-input"
+              placeholder="Tu nombre"
+              [(ngModel)]="nuevoComentarioNombre"
+              maxlength="40"
+            />
+            <textarea
+              class="comment-textarea"
+              placeholder="Escribe tu comentario..."
+              [(ngModel)]="nuevoComentarioTexto"
+              rows="3"
+              maxlength="300"
+            ></textarea>
+            <button
+              class="btn-primary btn-small"
+              (click)="agregarComentario()"
+              [disabled]="nuevoComentarioNombre.trim().length < 2 || nuevoComentarioTexto.trim().length < 3"
+            >
+              💬 Publicar comentario
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL: NUEVA RESEÑA ===== -->
+  <div class="modal-overlay" *ngIf="mostrarFormularioResena" (click)="cerrarFormularioResena()">
+    <div class="modal review-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>✍️ Escribe tu reseña</h2>
+        <button (click)="cerrarFormularioResena()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="review-form-field">
+          <label>Gimnasio</label>
+          <select [(ngModel)]="nuevaResena.gimnasio">
+            <option *ngFor="let g of gimnasiosDisponibles" [value]="g">{{ g }}</option>
+          </select>
+        </div>
+
+        <div class="review-form-field">
+          <label>Tu nombre</label>
+          <input type="text" placeholder="Nombre completo" [(ngModel)]="nuevaResena.autor" maxlength="40" />
+        </div>
+
+        <div class="review-form-field">
+          <label>Calificación</label>
+          <div class="star-picker">
+            <span
+              class="star star-picker-item"
+              *ngFor="let n of [1,2,3,4,5]"
+              [class.filled]="n <= nuevaResena.calificacion"
+              (click)="seleccionarCalificacion(n)"
+            >★</span>
+          </div>
+        </div>
+
+        <div class="review-form-field">
+          <label>Tu reseña</label>
+          <textarea
+            placeholder="Cuéntanos tu experiencia..."
+            [(ngModel)]="nuevaResena.texto"
+            rows="4"
+            maxlength="400"
+          ></textarea>
+        </div>
+
+        <button class="btn-primary" style="width:100%;" [disabled]="!resenaValida" (click)="enviarResena()">
+          ✅ Publicar reseña
+        </button>
+      </div>
+    </div>
+  </div>
 </section>
