@@ -7,7 +7,7 @@
     <span class="badge-tipo">{{ rutina.tipoEntrenamiento }}</span>
     <h1>{{ rutina.nombre }}</h1>
     <p class="descripcion">{{ rutina.descripcion }}</p>
-    
+
     <!-- Metadatos transformados en "Píldoras" (Consejo 3) -->
     <div class="meta-info">
       <div class="meta-badge">
@@ -38,19 +38,30 @@
 
   <section class="ejercicios-section">
     <h2>Ejercicios de la rutina</h2>
-    
-    <!-- Cuadrícula / Tarjetas individuales preparadas para imágenes (Consejo 2) -->
+    <p class="hint-hover">Pasa el mouse sobre cada ejercicio para ver cómo realizarlo</p>
+
+    <!-- Cuadrícula / Tarjetas individuales con panel de ayuda al hover -->
     <div class="ejercicios-grid">
       @for (ejercicio of rutina.ejercicios; track ejercicio; let i = $index) {
         <div class="ejercicio-card">
-          <!-- Espacio reservado para la futura imagen -->
-          <div class="ejercicio-img-placeholder">
-            <span>📷</span>
+          <div class="ejercicio-card-top">
+
+
+            <div class="ejercicio-content">
+              <span class="numero-orden">Ejercicio #{{ i + 1 }}</span>
+              <h3>{{ ejercicio }}</h3>
+            </div>
+
+            <span class="hover-indicador">Ver cómo hacerlo ▾</span>
           </div>
 
-          <div class="ejercicio-content">
-            <span class="numero-orden">Ejercicio #{{ i + 1 }}</span>
-            <h3>{{ ejercicio }}</h3>
+          <!-- Panel que se despliega al hacer hover sobre la card -->
+          <div class="ejercicio-detalle">
+            <img [src]="infoEjercicio(ejercicio).imagen" [alt]="ejercicio" class="ejercicio-foto">
+            <div class="ejercicio-instrucciones">
+              <strong>Cómo hacerlo:</strong>
+              <p>{{ infoEjercicio(ejercicio).instrucciones }}</p>
+            </div>
           </div>
         </div>
       }
