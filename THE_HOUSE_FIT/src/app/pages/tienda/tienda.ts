@@ -13,6 +13,7 @@ interface Producto {
   imagen: string;
   imagenAlt: string;
   guiaNutricional?: string;
+  beneficios: string[];
   oferta?: boolean;
   nuevo?: boolean;
   imagenCargada?: boolean;
@@ -24,8 +25,9 @@ interface CarritoItem {
 }
 
 interface DatosPago {
-  telefono: string;
+  nombre: string;
   email: string;
+  telefono: string;
   numeroTarjeta: string;
   nombreTarjeta: string;
   vencimiento: string;
@@ -33,6 +35,12 @@ interface DatosPago {
   tipoDocumento: string;
   numeroDocumento: string;
   banco: string;
+}
+
+interface OpcionOrden {
+  valor: string;
+  etiqueta: string;
+  icono: string;
 }
 
 @Component({
@@ -43,19 +51,27 @@ interface DatosPago {
   styleUrls: ['./tienda.css'],
 })
 export class TiendaComponent implements OnInit {
-  // 📦 PRODUCTOS
+  // 📦 TODA la información de cada producto vive aquí, incluidos sus beneficios.
+  // El HTML solo la muestra, nunca la define.
   productos: Producto[] = [
     {
       id: 1,
       nombre: 'Proteína Whey 2LB',
-      descripcion: 'Proteínas de suero para recuperación muscular.',
+      descripcion: 'Proteínas de suero de alta calidad para recuperación muscular. Ideal para después del entrenamiento.',
       precio: 120000,
       stock: 35,
       stockMaximo: 50,
       categoria: 'Suplemento',
       imagen: 'proteina.png',
       imagenAlt: 'Proteína Whey 2LB',
-      guiaNutricional: 'Tomar 1 porción (30g) después del entrenamiento.',
+      guiaNutricional: 'Tomar 1 porción (30g) después del entrenamiento. Mezclar con 250ml de agua o leche.',
+      beneficios: [
+        'Recuperación muscular acelerada',
+        '30g de proteína por porción',
+        'Ideal para después del entrenamiento',
+        'Mejora el rendimiento deportivo',
+        'Fácil digestión'
+      ],
       oferta: true,
       nuevo: false,
       imagenCargada: true
@@ -63,7 +79,7 @@ export class TiendaComponent implements OnInit {
     {
       id: 2,
       nombre: 'Guantes de Entrenamiento',
-      descripcion: 'Guantes acolchados para levantamiento de pesas.',
+      descripcion: 'Guantes acolchados para levantamiento de pesas. Protegen tus manos y mejoran el agarre.',
       precio: 45000,
       stock: 60,
       stockMaximo: 80,
@@ -71,6 +87,13 @@ export class TiendaComponent implements OnInit {
       imagen: 'guantes.png',
       imagenAlt: 'Guantes de entrenamiento',
       guiaNutricional: '',
+      beneficios: [
+        'Protección para tus manos',
+        'Mejor agarre en pesas',
+        'Material resistente y duradero',
+        'Ajuste cómodo y seguro',
+        'Previene ampollas y callos'
+      ],
       oferta: false,
       nuevo: false,
       imagenCargada: true
@@ -78,14 +101,21 @@ export class TiendaComponent implements OnInit {
     {
       id: 3,
       nombre: 'Creatina Monohidratada 300G',
-      descripcion: 'Suplemento para fuerza y rendimiento.',
+      descripcion: 'Suplemento para fuerza y rendimiento. Aumenta la energía y recuperación muscular.',
       precio: 85000,
       stock: 40,
       stockMaximo: 60,
       categoria: 'Suplemento',
       imagen: 'creatina.png',
       imagenAlt: 'Creatina Monohidratada',
-      guiaNutricional: 'Tomar 5g al día antes del entrenamiento.',
+      guiaNutricional: 'Tomar 5g al día, preferiblemente antes del entrenamiento. Mantener hidratación adecuada.',
+      beneficios: [
+        'Aumenta fuerza y potencia',
+        'Mejora el rendimiento en ejercicios de alta intensidad',
+        'Acelera la recuperación muscular',
+        'Aumenta la masa muscular',
+        '100% monohidratada de alta calidad'
+      ],
       oferta: false,
       nuevo: true,
       imagenCargada: true
@@ -93,7 +123,7 @@ export class TiendaComponent implements OnInit {
     {
       id: 4,
       nombre: 'Camiseta Deportiva Dry-Fit',
-      descripcion: 'Camiseta transpirable para alta intensidad.',
+      descripcion: 'Camiseta transpirable ideal para entrenamiento de alta intensidad. Tecnología Dry-Fit.',
       precio: 55000,
       stock: 80,
       stockMaximo: 100,
@@ -101,6 +131,13 @@ export class TiendaComponent implements OnInit {
       imagen: 'camiseta.png',
       imagenAlt: 'Camiseta deportiva',
       guiaNutricional: '',
+      beneficios: [
+        'Tecnología Dry-Fit que elimina el sudor',
+        'Transpirable y ligera',
+        'Ideal para alta intensidad',
+        'Secado rápido',
+        'Tejido elástico que se adapta al cuerpo'
+      ],
       oferta: false,
       nuevo: false,
       imagenCargada: true
@@ -108,7 +145,7 @@ export class TiendaComponent implements OnInit {
     {
       id: 5,
       nombre: 'Banda Elástica Resistencia',
-      descripcion: 'Set de 3 bandas con diferentes niveles.',
+      descripcion: 'Set de 3 bandas con diferentes niveles de resistencia (Ligera, Media, Fuerte).',
       precio: 38000,
       stock: 3,
       stockMaximo: 30,
@@ -116,6 +153,13 @@ export class TiendaComponent implements OnInit {
       imagen: 'banda.png',
       imagenAlt: 'Bandas elásticas',
       guiaNutricional: '',
+      beneficios: [
+        '3 niveles de resistencia diferentes',
+        'Ideal para entrenamiento en casa',
+        'Versátil para múltiples ejercicios',
+        'Material duradero y resistente',
+        'Portátil y fácil de guardar'
+      ],
       oferta: true,
       nuevo: false,
       imagenCargada: true
@@ -123,7 +167,7 @@ export class TiendaComponent implements OnInit {
     {
       id: 6,
       nombre: 'Mochila Deportiva',
-      descripcion: 'Mochila impermeable con compartimento para zapatos.',
+      descripcion: 'Mochila impermeable con compartimento para zapatos y bolsillo para laptop.',
       precio: 89000,
       stock: 25,
       stockMaximo: 40,
@@ -131,6 +175,13 @@ export class TiendaComponent implements OnInit {
       imagen: 'mochila.png',
       imagenAlt: 'Mochila deportiva',
       guiaNutricional: '',
+      beneficios: [
+        'Impermeable y resistente',
+        'Compartimento para zapatos',
+        'Bolsillo para laptop',
+        'Diseño ergonómico y cómodo',
+        'Ideal para deporte y viajes'
+      ],
       oferta: false,
       nuevo: true,
       imagenCargada: true
@@ -138,14 +189,21 @@ export class TiendaComponent implements OnInit {
     {
       id: 7,
       nombre: 'Barra de Proteína',
-      descripcion: 'Barra energética con 20g de proteína.',
+      descripcion: 'Barra energética con 20g de proteína por porción. Perfecta para antes o después del entrenamiento.',
       precio: 12000,
       stock: 150,
       stockMaximo: 200,
       categoria: 'Suplemento',
       imagen: 'barra-proteina.png',
       imagenAlt: 'Barra de proteína',
-      guiaNutricional: 'Consumir antes o después del entrenamiento.',
+      guiaNutricional: 'Consumir antes o después del entrenamiento. Perfecta para recuperación muscular y energía rápida.',
+      beneficios: [
+        '20g de proteína por porción',
+        'Energía rápida y sostenida',
+        'Perfecta para antes o después del entrenamiento',
+        'Baja en azúcar',
+        'Sabor delicioso'
+      ],
       oferta: false,
       nuevo: false,
       imagenCargada: true
@@ -153,7 +211,7 @@ export class TiendaComponent implements OnInit {
     {
       id: 8,
       nombre: 'Tennis de Entrenamiento',
-      descripcion: 'Calzado ligero con amortiguación avanzada.',
+      descripcion: 'Calzado ligero con amortiguación avanzada y suela antideslizante para máximo rendimiento.',
       precio: 210000,
       stock: 0,
       stockMaximo: 30,
@@ -161,49 +219,62 @@ export class TiendaComponent implements OnInit {
       imagen: 'tennis.png',
       imagenAlt: 'Tennis de entrenamiento',
       guiaNutricional: '',
+      beneficios: [
+        'Amortiguación avanzada',
+        'Suela antideslizante',
+        'Ligero y cómodo',
+        'Ideal para entrenamiento intenso',
+        'Diseño duradero y resistente'
+      ],
       oferta: false,
       nuevo: false,
       imagenCargada: true
     }
   ];
 
-  // Estado
   productosFiltrados: Producto[] = [];
   categoriaFiltro: string = '';
   terminoBusqueda: string = '';
   ordenSeleccionado: string = 'default';
   productoSeleccionado: Producto | null = null;
+  productoDetalle: Producto | null = null;
   carrito: CarritoItem[] = [];
   mostrarCarrito: boolean = false;
   metodoPago: string = 'nequi';
-  mostrarPago: boolean = false;
-  pagoExitoso: boolean = false;
   procesandoPago: boolean = false;
+  pagoExitoso: boolean = false;
   numeroOrden: string = '';
-  categorias = ['Suplemento', 'Implemento', 'Ropa deportiva'];
 
-  bancosPSE: string[] = [
-    'Bancolombia', 'Banco de Bogotá', 'Davivienda', 'BBVA Colombia',
-    'Banco de Occidente', 'Banco Popular', 'Scotiabank Colpatria', 'Banco AV Villas'
+  // Notificación
+  notificacionVisible: boolean = false;
+  notificacionProducto: string = '';
+  private timeoutNotificacion: any = null;
+
+  // Dropdown "Ordenar por" — sus opciones también viven en el TS
+  mostrarOrdenDropdown: boolean = false;
+  opcionesOrden: OpcionOrden[] = [
+    { valor: 'default', etiqueta: 'Ordenar por', icono: '📋' },
+    { valor: 'precio-asc', etiqueta: 'Menor precio', icono: '⬇️' },
+    { valor: 'precio-desc', etiqueta: 'Mayor precio', icono: '⬆️' },
+    { valor: 'nombre', etiqueta: 'Nombre A-Z', icono: '🔤' }
   ];
 
-  datosPago: DatosPago = this.datosPagoVacios();
+  // Datos de pago
+  datosPago: DatosPago = {
+    nombre: '',
+    email: '',
+    telefono: '',
+    numeroTarjeta: '',
+    nombreTarjeta: '',
+    vencimiento: '',
+    cvv: '',
+    tipoDocumento: 'CC',
+    numeroDocumento: '',
+    banco: ''
+  };
 
-  private datosPagoVacios(): DatosPago {
-    return {
-      telefono: '',
-      email: '',
-      numeroTarjeta: '',
-      nombreTarjeta: '',
-      vencimiento: '',
-      cvv: '',
-      tipoDocumento: 'CC',
-      numeroDocumento: '',
-      banco: ''
-    };
-  }
+  categorias = ['Suplemento', 'Implemento', 'Ropa deportiva'];
 
-  // Estadísticas
   get totalProductos(): number {
     return this.productos.length;
   }
@@ -216,11 +287,32 @@ export class TiendaComponent implements OnInit {
     return this.productos.filter(p => p.stock > 0).length;
   }
 
-  get calificacionPromedio(): number {
-    return 4.6; // Simulado
+  get etiquetaOrdenActual(): string {
+    const opcion = this.opcionesOrden.find(o => o.valor === this.ordenSeleccionado);
+    return opcion ? opcion.etiqueta : 'Ordenar por';
+  }
+
+  get iconoOrdenActual(): string {
+    const opcion = this.opcionesOrden.find(o => o.valor === this.ordenSeleccionado);
+    return opcion ? opcion.icono : '📋';
   }
 
   ngOnInit() {
+    this.aplicarFiltros();
+  }
+
+  // ===== DROPDOWN ORDENAR =====
+  toggleOrdenDropdown(): void {
+    this.mostrarOrdenDropdown = !this.mostrarOrdenDropdown;
+  }
+
+  cerrarOrdenDropdown(): void {
+    this.mostrarOrdenDropdown = false;
+  }
+
+  seleccionarOrden(valor: string): void {
+    this.ordenSeleccionado = valor;
+    this.mostrarOrdenDropdown = false;
     this.aplicarFiltros();
   }
 
@@ -249,7 +341,6 @@ export class TiendaComponent implements OnInit {
       case 'precio-asc': filtrados.sort((a, b) => a.precio - b.precio); break;
       case 'precio-desc': filtrados.sort((a, b) => b.precio - a.precio); break;
       case 'nombre': filtrados.sort((a, b) => a.nombre.localeCompare(b.nombre)); break;
-      case 'stock': filtrados.sort((a, b) => b.stock - a.stock); break;
       default: break;
     }
 
@@ -268,6 +359,8 @@ export class TiendaComponent implements OnInit {
     } else {
       this.carrito.push({ producto, cantidad: 1 });
     }
+
+    this.mostrarNotificacion(producto.nombre);
   }
 
   eliminarDelCarrito(productoId: number): void {
@@ -289,93 +382,103 @@ export class TiendaComponent implements OnInit {
   toggleCarrito(): void {
     this.mostrarCarrito = !this.mostrarCarrito;
     if (this.mostrarCarrito) {
-      this.mostrarPago = false;
       this.pagoExitoso = false;
     }
   }
 
-  // ===== PAGO =====
-  iniciarPago(): void {
-    if (this.carrito.length === 0) return;
-    this.mostrarPago = true;
-  }
+  // ===== NOTIFICACIÓN =====
+  mostrarNotificacion(nombre: string): void {
+    this.notificacionProducto = nombre;
+    this.notificacionVisible = true;
 
-  volverAlCarrito(): void {
-    this.mostrarPago = false;
-  }
-
-  seleccionarMetodo(metodo: string): void {
-    this.metodoPago = metodo;
-  }
-
-  // Formateo de campos en vivo
-  formatearNumeroTarjeta(event: any): void {
-    let valor = event.target.value.replace(/\D/g, '').substring(0, 16);
-    valor = valor.replace(/(\d{4})(?=\d)/g, '$1 ');
-    this.datosPago.numeroTarjeta = valor;
-  }
-
-  formatearVencimiento(event: any): void {
-    let valor = event.target.value.replace(/\D/g, '').substring(0, 4);
-    if (valor.length >= 3) {
-      valor = valor.substring(0, 2) + '/' + valor.substring(2);
+    if (this.timeoutNotificacion) {
+      clearTimeout(this.timeoutNotificacion);
     }
-    this.datosPago.vencimiento = valor;
+
+    this.timeoutNotificacion = setTimeout(() => {
+      this.notificacionVisible = false;
+    }, 3000);
   }
 
-  formatearCvv(event: any): void {
-    this.datosPago.cvv = event.target.value.replace(/\D/g, '').substring(0, 4);
+  cerrarNotificacion(): void {
+    this.notificacionVisible = false;
+    if (this.timeoutNotificacion) {
+      clearTimeout(this.timeoutNotificacion);
+    }
   }
 
-  formatearTelefono(event: any): void {
-    this.datosPago.telefono = event.target.value.replace(/\D/g, '').substring(0, 10);
+  // ===== DETALLE PRODUCTO =====
+  verDetalle(producto: Producto): void {
+    this.productoDetalle = producto;
   }
 
-  formatearDocumento(event: any): void {
-    this.datosPago.numeroDocumento = event.target.value.replace(/\D/g, '').substring(0, 15);
+  cerrarDetalle(): void {
+    this.productoDetalle = null;
   }
 
-  // Validación por método de pago
+  // ===== PAGO =====
   get pagoValido(): boolean {
+    const d = this.datosPago;
+
     switch (this.metodoPago) {
       case 'nequi':
       case 'daviplata':
-        return /^3\d{9}$/.test(this.datosPago.telefono);
+        return /^3\d{9}$/.test(d.telefono) && d.nombre.trim().length > 3;
       case 'paypal':
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.datosPago.email);
-      case 'tarjeta': {
-        const numeroLimpio = this.datosPago.numeroTarjeta.replace(/\s/g, '');
-        return numeroLimpio.length === 16 &&
-               /^\d{2}\/\d{2}$/.test(this.datosPago.vencimiento) &&
-               this.datosPago.cvv.length >= 3 &&
-               this.datosPago.nombreTarjeta.trim().length > 3;
-      }
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email) && d.nombre.trim().length > 3;
+      case 'tarjeta':
+        return d.numeroTarjeta.replace(/\s/g, '').length === 16 &&
+               d.nombreTarjeta.trim().length > 3 &&
+               /^\d{2}\/\d{2}$/.test(d.vencimiento) &&
+               d.cvv.length >= 3 &&
+               /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email);
       case 'pse':
-        return this.datosPago.banco !== '' && this.datosPago.numeroDocumento.trim().length >= 6;
+        return d.banco !== '' && d.numeroDocumento.trim().length >= 6 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email);
       case 'efecty':
-        return this.datosPago.numeroDocumento.trim().length >= 6;
+        return d.numeroDocumento.trim().length >= 6 && d.nombre.trim().length > 3 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email);
       default:
         return false;
     }
   }
 
   procesarPago(): void {
-    if (!this.pagoValido || this.procesandoPago) return;
+    if (this.carrito.length === 0 || this.procesandoPago || !this.pagoValido) return;
+
     this.procesandoPago = true;
 
-    // Simulación de pago (aquí iría la llamada real a la pasarela)
     setTimeout(() => {
       this.numeroOrden = 'HF-' + Math.floor(100000 + Math.random() * 900000);
       this.procesandoPago = false;
       this.pagoExitoso = true;
       this.carrito = [];
-      this.mostrarPago = false;
-      this.datosPago = this.datosPagoVacios();
+
+      this.datosPago = {
+        nombre: '',
+        email: '',
+        telefono: '',
+        numeroTarjeta: '',
+        nombreTarjeta: '',
+        vencimiento: '',
+        cvv: '',
+        tipoDocumento: 'CC',
+        numeroDocumento: '',
+        banco: ''
+      };
+
       setTimeout(() => {
         this.pagoExitoso = false;
         this.mostrarCarrito = false;
       }, 4000);
-    }, 1500);
+    }, 2000);
+  }
+
+  // ===== GUÍA =====
+  verGuia(producto: Producto): void {
+    this.productoSeleccionado = producto;
+  }
+
+  cerrarGuia(): void {
+    this.productoSeleccionado = null;
   }
 
   // ===== GETTERS =====
@@ -391,15 +494,6 @@ export class TiendaComponent implements OnInit {
     return this.carrito.length === 0;
   }
 
-  // ===== GUÍA NUTRICIONAL =====
-  verGuia(producto: Producto): void {
-    this.productoSeleccionado = producto;
-  }
-
-  cerrarGuia(): void {
-    this.productoSeleccionado = null;
-  }
-
   // ===== UTILIDADES =====
   formatearPrecio(valor: number): string {
     return valor.toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
@@ -409,16 +503,6 @@ export class TiendaComponent implements OnInit {
     return Math.min((producto.stock / producto.stockMaximo) * 100, 100);
   }
 
-  getIconoCategoria(categoria: string): string {
-    const iconos: { [key: string]: string } = {
-      'Suplemento': '💊',
-      'Implemento': '🏋️',
-      'Ropa deportiva': '👕'
-    };
-    return iconos[categoria] || '📦';
-  }
-
-  // 🔥 IMÁGENES (URLs externas, se mantienen tal cual)
   getImagenUrl(nombreImagen: string): string {
     const imagenes: { [key: string]: string } = {
       'proteina.png': 'https://http2.mlstatic.com/D_NQ_NP_2X_701814-MLC31212027299_062019-F.jpg',
