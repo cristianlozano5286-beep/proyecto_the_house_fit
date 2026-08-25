@@ -1,3 +1,31 @@
+/* ==========================================
+   1. CONTENEDOR PRINCIPAL (Soluciona el Scroll)
+   ========================================== */
+.sidebar {
+  width: 260px;            /* Ajusta este valor según el ancho de tu menú */
+  height: 100vh;           /* Ocupa exactamente la altura de la pantalla */
+  position: fixed;         /* Lo mantiene fijo a la izquierda */
+  top: 0;
+  left: 0;
+  background-color: #000000; /* Fondo oscuro del panel */
+  overflow-y: auto;        /* 👈 ESTO HACE QUE APAREZCA EL SCROLL */
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+/* Opcional: Estilo moderno para la barra de desplazamiento */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+/* ==========================================
+   2. SECCIÓN DEL LOGO Y CABECERA
+   ========================================== */
 .sidebar-logo {
     display: flex;
     flex-direction: column;
@@ -14,9 +42,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #ff4500, #cc3700); /* Cambia aquí los colores de tu círculo */
+    background: linear-gradient(135deg, #ff4500, #cc3700); 
     margin-bottom: 15px;
-    box-shadow: 0 6px 18px rgba(255, 69, 0, .45); /* Cambia aquí el color del brillo exterior */
+    box-shadow: 0 6px 18px rgba(255, 69, 0, .45); 
     transition: .3s;
 }
 
