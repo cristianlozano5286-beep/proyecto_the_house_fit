@@ -12,6 +12,8 @@ import { PublicLayoutComponent } from './layout/public-layout/public-layout';
 // Páginas públicas
 import { InicioComponent } from './pages/inicio/inicio';
 import { CatalogoGimnasiosComponent } from './pages/catalogo-gimnasios/catalogo-gimnasios';
+import { RutinasComponent } from './pages/rutinas/rutinas';
+import { DetalleRutinasComponent } from './pages/detalle-rutinas/detalle-rutinas';
 import { TiendaComponent } from './pages/tienda/tienda';
 import { BlogPublicoComponent } from './pages/blog-publico/blog-publico';
 import { CalculadoraImcComponent } from './pages/calculadora-imc/calculadora-imc';
