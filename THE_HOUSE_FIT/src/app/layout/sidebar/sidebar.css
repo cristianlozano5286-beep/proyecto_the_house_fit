@@ -1,15 +1,4 @@
-.sidebar{
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    background: linear-gradient(180deg,#0f172a, #1e293b);
-    color: white;
-    box-shadow: 3px 0 12px rgba(0, 0, 0, .18);
-}
-
-.sidebar-logo{
+.sidebar-logo {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -17,28 +6,31 @@
     border-bottom: 1px solid rgba(255, 255, 255, .08);
 }
 
-.logo-circle{
+.logo-circle {
     width: 70px;
     height: 70px;
     border-radius: 50%;
+    overflow: hidden; /* Crucial para recortar la imagen en círculo */
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #ff4500, #cc3700);
+    background: linear-gradient(135deg, #ff4500, #cc3700); /* Cambia aquí los colores de tu círculo */
     margin-bottom: 15px;
-    font-size: 22px;
-    font-weight: 900;
-    font-family: 'Barlow Condensed', sans-serif;
-    letter-spacing: -0.02em;
-    box-shadow: 0 6px 18px rgba(255, 69, 0, .45);
+    box-shadow: 0 6px 18px rgba(255, 69, 0, .45); /* Cambia aquí el color del brillo exterior */
     transition: .3s;
 }
 
-.logo-circle:hover{
+.logo-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+}
+
+.logo-circle:hover {
     transform: scale(1.08);
 }
 
-.sidebar-logo h2{
+.sidebar-logo h2 {
     font-size: 18px;
     font-weight: 800;
     color: white;
@@ -47,84 +39,4 @@
     text-align: center;
     line-height: 1.15;
     letter-spacing: .08em;
-}
-.menu{
-    display: flex;
-    flex-direction: column;
-    padding: 25px 15px;
-    gap: 8px;
-    flex: 1;
-    overflow-y: auto;
-}
-.menu::-webkit-scrollbar{
-    width: 6px;
-}
-
-.menu::-webkit-scrollbar-thumb{
-    background: #ff4500;
-    border-radius: 20px;
-}
-.menu::-webkit-scrollbar-track{
-    background: transparent;
-    
-}
-
-.menu a{
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 14px 18px;
-    border-radius: 12px;
-    color: #cdb5e1;
-    text-decoration: none;
-    font-size: 15px;
-    font-weight: 500;
-
-}
-
-.icono{
-    font-size: 20px;
-    width: 28px;
-    text-align: center;
-}
-
-.menu a:hover{
-    background: #ff4500;
-    color: white;
-    transform: translateX(6px);
-}
-
-.menu a.active{
-    background: #ff4500;
-    color: white;
-    font-weight: bold;
-    box-shadow: 0 5px 15px rgba(255, 69, 0, .35);
-}
-
-.sidebar-footer{
-    border-top: 1px solid rgba(255, 255, 255, .08);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-}
-
-.sidebar-footer small{
-    color: #94a3b8;
-    font-size: 12px;
-}
-
-@media(max-width:900px){
-    .sidebar{
-        width: 220px;
-    }
-}
-
-@media(max-width:768px){
-    .sidebar{
-        width: 100%;
-        min-height:auto;
-
-    }
 }

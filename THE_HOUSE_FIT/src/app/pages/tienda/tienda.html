@@ -75,7 +75,7 @@
   <!-- GRID -->
   <div class="product-grid">
     @for (p of productosFiltrados; track p.id; let i = $index) {
-      <div class="product-card" style="animation-delay: {{ i * 40 }}ms;">
+      <div class="product-card" [style.animation-delay.ms]="i * 40">
         <!-- BADGES -->
         <div class="product-badges">
           <span class="product-badge oferta" *ngIf="p.oferta">🔥 OFERTA</span>

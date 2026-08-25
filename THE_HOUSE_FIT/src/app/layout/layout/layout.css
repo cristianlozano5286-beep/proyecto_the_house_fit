@@ -1,51 +1,53 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Segoe UI', sans-serif;
 }
 
-.layout-container{
+.layout-container {
     display: flex;
     flex-direction: column;
-    background: #f1f5f9;
+    background: #0a0a0a; /* Tono oscuro unificado */
     height: 100vh;
     overflow: hidden;
 }
 
-.layout-header{
+.layout-header {
     height: 110px;
     flex-shrink: 0;
+    background: #131212;
+    border-bottom: 1px solid #222222;
 }
 
-.layout-main{
+.layout-main {
     flex: 1;
     overflow: hidden;
     display: flex;
+    background: #0a0a0a; /* Mismo tono unificado */
 }
 
-.layout-sidebar{
+.layout-sidebar {
     width: 260px;
     flex-shrink: 0;
     overflow: hidden;
-    background:#1e293b;
+    background: #0a0a0a; /* Mismo tono unificado */
+    border-right: 1px solid #222222;
     justify-content: center;
     display: flex;
 }
 
-.layout-content{
+.layout-content {
     flex: 1;
     padding: 30px;
-    background: #f8fafc;
+    background: #0a0a0a; /* Mismo tono unificado para evitar bloques */
     overflow-y: auto;
     min-height: 0;
-    display: flex;
-    flex-direction: column;
+    display: block; 
+    color: #ffffff;
 }
 
-.panel-footer{
-    margin-top: auto;
-    padding-top: 24px;
+.panel-footer {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -53,13 +55,15 @@
     font-size: 12px;
     color: #94a3b8;
     font-family: 'Inter', sans-serif;
-    border-top: 1px solid #e2e8f0;
-    margin-top: 40px;
-    padding-top: 16px;
+    border-top: 1px solid #222222;
+    margin-top: 60px; 
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background: #0a0a0a; /* Footer totalmente fusionado al mismo color */
 }
 
-@media(max-width: 700px){
-    .panel-footer{
+@media(max-width: 700px) {
+    .panel-footer {
         flex-direction: column;
         text-align: center;
     }
