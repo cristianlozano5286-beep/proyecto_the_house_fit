@@ -3,120 +3,240 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
 }
 
-/* Contenedor Principal*/
+/* Contenedor Principal */
 .register-container{
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+    position: relative;
+    overflow: hidden;
+    background-color: #0b0f19;
 }
 
-/*Estilo tarjeta*/
+/* Capas del carrusel con transición suave (crossfade) */
+.bg-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    animation: crossfadeAnimation 18s infinite ease-in-out;
+}
+
+.bg-1 {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1920&auto=format&fit=crop');
+    animation-delay: 0s;
+}
+
+.bg-2 {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1920&auto=format&fit=crop');
+    animation-delay: 6s;
+}
+
+.bg-3 {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=1920&auto=format&fit=crop');
+    animation-delay: 12s;
+}
+
+@keyframes crossfadeAnimation {
+    0% { opacity: 0; transform: scale(1); }
+    15% { opacity: 1; }
+    33% { opacity: 1; }
+    48% { opacity: 0; transform: scale(1.04); }
+    100% { opacity: 0; }
+}
+
+/* Estilo Tarjeta Glassmorphism */
 .register-card{
-    width: 500px;
-    background-color: white;
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 10px rgba(0, 0, 0, .3);
+    width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: rgba(18, 18, 18, 0.82);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 35px;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    color: #ffffff;
+    z-index: 2;
+}
+
+/* Scrollbar sutil */
+.register-card::-webkit-scrollbar {
+    width: 5px;
+}
+.register-card::-webkit-scrollbar-track {
+    background: transparent;
+}
+.register-card::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+.register-card::-webkit-scrollbar-thumb:hover {
+    background: #ff4500;
+}
+
+/* Contenedor del Logo */
+.logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.logo-circle {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #ff4500, #cc3700);
+    box-shadow: 0 6px 18px rgba(255, 69, 0, .45);
+}
+
+.logo-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 /*Encabezado*/
 .header{
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
+    background: transparent;
 }
 .header h1{
-    color: #0f172a;
-    margin-bottom: 10px;
+    color: #ffffff;
+    margin-bottom: 6px;
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 800;
+    font-size: 26px;
     text-transform: uppercase;
     letter-spacing: .02em;
+}
+.header p {
+    color: #94a3b8;
+    font-size: 14px;
 }
 
 /*Estilo de formulario*/
 .form-group{
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 .form-group label{
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-weight: 600;
+    font-size: 13px;
+    color: #e2e8f0;
 }
 .form-group input {
     width: 100%;
-    padding: 14px;
-    border: 1px solid #d1d5db;
+    padding: 13px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 8px;
+    color: #ffffff;
+    font-size: 14px;
     transition: .3s;
+}
+
+/* SOLUCIÓN: Evita que el navegador ponga el fondo blanco/azul brillante al autocompletar */
+.form-group input:-webkit-autofill,
+.form-group input:-webkit-autofill:hover,
+.form-group input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #ffffff !important;
+    -webkit-box-shadow: 0 0 0px 1000px rgba(35, 35, 35, 0.95) inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.form-group input::placeholder {
+    color: #94a3b8;
 }
 .form-group input:focus{
     outline: none;
     border-color: #ff4500;
-    box-shadow: 0 0 8px rgba(37, 99, 235, .25);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 10px rgba(255, 69, 0, .3);
 }
 
-/*Estilo de botón*/
+/* SOLUCIÓN: Botón "Registrarme" con tono naranja e integración elegante al estar deshabilitado */
 .button{
     width: 100%;
-    padding: 15px;
+    padding: 14px;
     border: none;
     border-radius: 8px;
-    background: #ff4500;
+    background: linear-gradient(135deg, #ff4500, #e03d00);
     color: white;
-    font-size: 16px;
+    font-size: 15px;
     cursor: pointer;
     transition: .3s;
     font-weight: 600;
     margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(255, 69, 0, 0.3);
 }
 
 button:hover:not(:disabled){
-    background-color: #cc3700;
+    background: linear-gradient(135deg, #ff5722, #cc3700);
     transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(255, 69, 0, 0.5);
 }
 
 button:disabled{
-    background: #94a3b8;
+    background: rgba(255, 69, 0, 0.15);
+    color: rgba(255, 255, 255, 0.45);
+    border: 1px solid rgba(255, 69, 0, 0.3);
     cursor: not-allowed;
+    box-shadow: none;
 }
 
 .error{
     display: block;
-    margin-top: 6px;
-    color: #dc2626;
-    font-size: 13px;
+    margin-top: 4px;
+    color: #f87171;
+    font-size: 12px;
     font-weight: 500;
 }
 
 input.ng-invalid.ng-touched{
-    border: 2px solid #dc2626;
+    border-color: #f87171 !important;
 }
 
 input.ng-valid.ng-touched{
-    border: 2px solid #16a34a;
+    border-color: #4ade80 !important;
 }
-.register-container{
-    background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
-}
-button.button{
-    background:#ff4500;
-}
-button.button:hover:not(:disabled){
-    background:#cc3700;
-}
+
 .volver-inicio{
-    display:block;
-    margin-top:16px;
-    font-size:13px;
-    color:#ff4500;
-    font-weight:600;
-    text-align:center;
+    display: block;
+    margin-top: 18px;
+    font-size: 13px;
+    color: #ff4500;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    transition: color 0.2s;
 }
+.volver-inicio:hover {
+    color: #ff7033;
+    text-decoration: underline;
+}
+
 .alert.info{
-    background:#dbeafe; color:#1e3a8a; border:1px solid #93c5fd;
-    padding:10px; border-radius:8px; font-size:13px; margin-bottom:14px;
+    background: rgba(30, 58, 138, 0.6); 
+    color: #93c5fd; 
+    border: 1px solid #3b82f6;
+    padding: 10px; 
+    border-radius: 8px; 
+    font-size: 13px; 
+    margin-bottom: 14px;
 }

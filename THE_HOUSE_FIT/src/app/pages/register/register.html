@@ -1,5 +1,18 @@
 <div class="register-container">
+    <!-- Capas de fondo para el carrusel con transición suave (crossfade) -->
+    <div class="bg-slide bg-1"></div>
+    <div class="bg-slide bg-2"></div>
+    <div class="bg-slide bg-3"></div>
+
     <div class="register-card">
+        
+        <!-- Logo de la marca centrado -->
+        <div class="logo-container">
+            <div class="logo-circle">
+                <img src="assets/logo.png" alt="The House Fit Logo">
+            </div>
+        </div>
+
         @if (paso === 1) {
             <div class="header">
                 <h1>Registro de usuario</h1>
@@ -47,7 +60,7 @@
 
                 <!--correo-->
                 <div class="form-group">
-                    <label for="correo">Correo Electronico</label>
+                    <label for="correo">Correo Electrónico</label>
                     <input
                         id="correo"
                         type="email"

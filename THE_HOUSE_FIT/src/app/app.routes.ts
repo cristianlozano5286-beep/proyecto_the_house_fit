@@ -80,5 +80,5 @@ export const routes: Routes = [
   },
 
   // ---------- Ruta comodín ----------
-  { path: '**', redirectTo: '' },
+  { path: '**', redirectTo: 'login' },
 ];
