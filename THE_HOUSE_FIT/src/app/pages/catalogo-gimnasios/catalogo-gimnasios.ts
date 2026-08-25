@@ -1,208 +1,96 @@
-import { Component, HostListener } from '@angular/core';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { GimnasiosService } from '../../services/gimnasios';
-import { InstructoresService } from '../../services/instructores';
-import { BlogService } from '../../services/blog';
-import { Gimnasio } from '../../models/catalogo.models';
-
-type Orden = 'relevancia' | 'precio-asc' | 'precio-desc' | 'calificacion';
 
 @Component({
   selector: 'app-catalogo-gimnasios',
-  imports: [FormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './catalogo-gimnasios.html',
-  styleUrl: './catalogo-gimnasios.css',
+  styleUrl: './catalogo-gimnasios.css'
 })
 export class CatalogoGimnasiosComponent {
-  gimnasios: Gimnasio[] = [];
-  gimnasiosFiltrados: Gimnasio[] = [];
-
-  // Barra de búsqueda estilo Airbnb: Dónde / Servicio / Precio
-  destino: string = '';
+  // Variables para filtros y búsqueda
+  textoBusqueda: string = '';
   servicioFiltro: string = '';
-  precioMax: number | null = null;
-  orden: Orden = 'relevancia';
-  soloFavoritos: boolean = false;
 
-  // Estado para el menú desplegable personalizado de SERVICIO
-  dropdownServicioAbierto: boolean = false;
+  // Elemento seleccionado para el modal de detalles
+  gimnasioSeleccionado: any = null;
 
-  gimnasioSeleccionado: Gimnasio | null = null;
-  fotoActiva: number = 0;
+  // Listas de ejemplo (puedes enlazarlas o reemplazarlas con tus servicios de datos)
+  serviciosDisponibles: string[] = ['Pesas', 'Cardio', 'Crossfit', 'Spinning', 'Yoga'];
 
-  destinosDisponibles: string[] = [];
-  serviciosDisponibles: string[] = [];
-  mostrarSugerencias: boolean = false;
-
-  constructor(
-    private gimnasiosService: GimnasiosService,
-    private instructoresService: InstructoresService,
-    private blogService: BlogService,
-  ) {
-    this.gimnasios = this.gimnasiosService.listar().filter((g) => g.activo);
-    this.gimnasiosFiltrados = [...this.gimnasios];
-
-    const servicios = new Set<string>();
-    this.gimnasios.forEach((g) => g.servicios.forEach((s) => servicios.add(s)));
-    this.serviciosDisponibles = Array.from(servicios);
-
-    const destinos = new Set<string>();
-    this.gimnasios.forEach((g) => {
-      destinos.add(g.ciudad);
-      destinos.add(`${g.ciudad}, ${g.pais}`);
-    });
-    this.destinosDisponibles = Array.from(destinos);
-  }
-
-  // Cierra los menús desplegables si se hace clic fuera del componente
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    const target = event.target as HTMLElement;
-    if (!target.closest('.custom-dropdown')) {
-      this.dropdownServicioAbierto = false;
+  gimnasios: any[] = [
+    {
+      id: 1,
+      nombre: 'The House Fit Central',
+      imagen: '🏋️‍♂️',
+      direccion: 'Calle 9 # 20-35',
+      barrio: 'Centro',
+      horario: 'Lunes a Sábado: 5:00 AM - 10:00 PM',
+      telefono: '3101234567',
+      descripcion: 'Gimnasio principal equipado con tecnología de punta y zonas de alta intensidad.',
+      servicios: ['Pesas', 'Cardio', 'Crossfit']
+    },
+    {
+      id: 2,
+      nombre: 'Power Gym Yopal',
+      imagen: '⚡',
+      direccion: 'Carrera 29 # 15-10',
+      barrio: 'La Campiña',
+      horario: 'Lunes a Domingo: 6:00 AM - 9:00 PM',
+      telefono: '3209876543',
+      descripcion: 'Espacio especializado en musculación, acondicionamiento físico y clases grupales.',
+      servicios: ['Pesas', 'Spinning', 'Yoga']
     }
-  }
+  ];
 
-  toggleDropdownServicio(event: Event): void {
-    event.stopPropagation();
-    this.dropdownServicioAbierto = !this.dropdownServicioAbierto;
-  }
+  gimnasiosFiltrados: any[] = [...this.gimnasios];
 
-  seleccionarServicioCustom(servicio: string): void {
-    this.servicioFiltro = servicio;
-    this.dropdownServicioAbierto = false;
-    this.buscar();
-  }
+  // Instructores de ejemplo por gimnasio ID
+  instructores: any[] = [
+    { id: 1, gimnasioId: 1, nombre: 'Carlos Pérez', imagen: '👨‍🏫', especialidad: 'Musculación', experiencia: 5 },
+    { id: 2, gimnasioId: 1, nombre: 'Ana Gómez', imagen: '👩‍🏫', especialidad: 'Crossfit', experiencia: 4 },
+    { id: 3, gimnasioId: 2, nombre: 'Luis Torres', imagen: '👨‍🏫', especialidad: 'Spinning', experiencia: 6 }
+  ];
 
-  cerrarSugerenciasDiferido(): void {
-    // Pequeño retraso para permitir que el (mousedown) de una sugerencia se registre antes del blur.
-    setTimeout(() => (this.mostrarSugerencias = false), 150);
-  }
+  // Reseñas de ejemplo por gimnasio ID
+  resenas: any[] = [
+    { id: 1, gimnasioId: 1, titulo: '¡Excelente ambiente!', puntuacion: 5, cuerpo: 'Las máquinas están nuevas y los entrenadores muy atentos.', usuario: 'Mario R.', fecha: '2026-08-10' }
+  ];
 
-  seleccionarDestino(d: string): void {
-    this.destino = d;
-    this.mostrarSugerencias = false;
-    this.buscar();
-  }
-
-  toggleServicio(servicio: string): void {
-    this.servicioFiltro = this.servicioFiltro === servicio ? '' : servicio;
-    this.buscar();
-  }
-
-  limpiarFiltros(): void {
-    this.destino = '';
-    this.servicioFiltro = '';
-    this.precioMax = null;
-    this.orden = 'relevancia';
-    this.soloFavoritos = false;
-    this.dropdownServicioAbierto = false;
-    this.buscar();
-  }
-
+  // Método de búsqueda y filtrado dinámico
   buscar(): void {
-    const texto = this.destino.trim().toLowerCase();
-
-    let resultado = this.gimnasios.filter((g) => {
-      const coincideDestino =
-        texto === '' ||
-        g.nombre.toLowerCase().includes(texto) ||
-        g.barrio.toLowerCase().includes(texto) ||
-        g.ciudad.toLowerCase().includes(texto) ||
-        g.pais.toLowerCase().includes(texto);
-
+    const texto = this.textoBusqueda.toLowerCase().trim();
+    
+    this.gimnasiosFiltrados = this.gimnasios.filter(g => {
+      const coincideTexto = g.nombre.toLowerCase().includes(texto) || g.barrio.toLowerCase().includes(texto);
       const coincideServicio = this.servicioFiltro === '' || g.servicios.includes(this.servicioFiltro);
-
-      const coincidePrecio = this.precioMax === null || g.precio <= this.precioMax;
-
-      const coincideFavorito = !this.soloFavoritos || this.esFavorito(g.id);
-
-      return coincideDestino && coincideServicio && coincidePrecio && coincideFavorito;
+      return coincideTexto && coincideServicio;
     });
-
-    resultado = this.ordenarLista(resultado);
-    this.gimnasiosFiltrados = resultado;
   }
 
-  private ordenarLista(lista: Gimnasio[]): Gimnasio[] {
-    const copia = [...lista];
-    switch (this.orden) {
-      case 'precio-asc':
-        return copia.sort((a, b) => a.precio - b.precio);
-      case 'precio-desc':
-        return copia.sort((a, b) => b.precio - a.precio);
-      case 'calificacion':
-        return copia.sort((a, b) => this.promedio(b.id) - this.promedio(a.id));
-      default:
-        return copia;
-    }
-  }
-
-  // ----- Favoritos -----
-  esFavorito(id: number): boolean {
-    return this.gimnasiosService.esFavorito(id);
-  }
-
-  alternarFavorito(event: Event, id: number): void {
-    event.stopPropagation();
-    this.gimnasiosService.alternarFavorito(id);
-    if (this.soloFavoritos) this.buscar();
-  }
-
-  // ----- Detalle tipo "listing" de Airbnb -----
-  verDetalle(gimnasio: Gimnasio): void {
+  // Métodos para el manejo del Modal y relaciones
+  verDetalle(gimnasio: any): void {
     this.gimnasioSeleccionado = gimnasio;
-    this.fotoActiva = 0;
-    document.body.style.overflow = 'hidden';
   }
 
   cerrarDetalle(): void {
     this.gimnasioSeleccionado = null;
-    document.body.style.overflow = '';
-  }
-
-  cambiarFoto(index: number): void {
-    this.fotoActiva = index;
-  }
-
-  fotoSiguiente(event: Event): void {
-    event.stopPropagation();
-    if (!this.gimnasioSeleccionado) return;
-    const total = this.gimnasioSeleccionado.fotos.length;
-    this.fotoActiva = (this.fotoActiva + 1) % total;
-  }
-
-  fotoAnterior(event: Event): void {
-    event.stopPropagation();
-    if (!this.gimnasioSeleccionado) return;
-    const total = this.gimnasioSeleccionado.fotos.length;
-    this.fotoActiva = (this.fotoActiva - 1 + total) % total;
   }
 
   instructoresDe(gimnasioId: number) {
-    return this.instructoresService.listar().filter((i) => i.gimnasioId === gimnasioId && i.activo);
+    return this.instructores.filter(i => i.gimnasioId === gimnasioId);
   }
 
   resenasDe(gimnasioId: number) {
-    return this.blogService.resenasPorGimnasio(gimnasioId);
+    return this.resenas.filter(r => r.gimnasioId === gimnasioId);
   }
 
-  promedio(gimnasioId: number): number {
-    return this.blogService.promedioPuntuacion(gimnasioId);
+  promedio(gimnasioId: number): string {
+    const listado = this.resenasDe(gimnasioId);
+    if (listado.length === 0) return '';
+    const suma = listado.reduce((acc, r) => acc + r.puntuacion, 0);
+    return (suma / listado.length).toFixed(1);
   }
-
-  formatoPrecio(g: Gimnasio): string {
-    const valor = g.moneda === 'COP' ? g.precio.toLocaleString('es-CO') : g.precio.toLocaleString('en-US');
-    const simbolo = g.moneda === 'COP' ? '$' : g.moneda === 'EUR' ? '€' : '$';
-    return `${simbolo}${valor} ${g.moneda}`;
-  }
-
-  abrirMapaInteractivo() {
-  // Opción A: Abrir ubicación en Google Maps
-  const direccionEncoded = encodeURIComponent(this.gimnasioSeleccionado.direccion);
-  window.open(`https://www.google.com/maps/search/?api=1&query=${direccionEncoded}`, '_blank');
-  
-  // Opción B: Si manejas un modal secundario con mapa interactivo en Angular, emite el evento aquí
-  // this.mostrarModalMapa = true;
-}
 }

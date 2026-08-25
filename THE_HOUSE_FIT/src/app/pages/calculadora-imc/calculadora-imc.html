@@ -1,71 +1,107 @@
-<div class="hero">
-  <h1>CALCULA TU <span>IMC</span></h1>
-  <p>Ingresa tu peso y estatura para conocer tu Índice de Masa Corporal y recibir una recomendación nutricional.</p>
+<div class="dark-page-wrapper">
+  <div class="page-wrapper">
+    
+    <!-- TÍTULO / HERO -->
+    <div class="text-center mb-24" style="max-width: 640px; margin: 0 auto 32px auto;">
+      <span class="eyebrow">Evaluación Física</span>
+      <h1 class="display-title" style="font-size: clamp(36px, 5vw, 48px);">
+        CALCULA TU <span class="accent">IMC</span>
+      </h1>
+      <p class="section-subtitle mt-8" style="color: var(--color-gray); font-size: 15px;">
+        Ingresa tu peso y estatura para conocer tu Índice de Masa Corporal y recibir una recomendación nutricional.
+      </p>
+    </div>
+
+    <!-- CONTENEDOR DE LA CALCULADORA -->
+    <div class="grid grid-2" style="align-items: start; max-width: 900px; margin: 0 auto;">
+      
+      <!-- COLUMNA IZQUIERDA: FORMULARIO -->
+      <div class="card" style="background: var(--color-card); border: 1px solid var(--color-border-dark);">
+        
+        <!-- Género -->
+        <div class="form-group">
+  <label>GÉNERO</label>
+  <div class="gender-toggle-group">
+    <button type="button" class="btn-gender" [class.active]="genero === 'masculino'" (click)="genero = 'masculino'">
+      MASCULINO
+    </button>
+    <button type="button" class="btn-gender" [class.active]="genero === 'femenino'" (click)="genero = 'femenino'">
+      FEMENINO
+    </button>
+  </div>
 </div>
 
-<div class="container">
-  <div class="grid-layout">
-    <div class="left-column">
-    <div class="card">
-      <label>Género</label>
-      <div class="toggle-group">
-        <button type="button" [class.selected]="genero === 'masculino'" (click)="genero = 'masculino'">MASCULINO</button>
-        <button type="button" [class.selected]="genero === 'femenino'" (click)="genero = 'femenino'">FEMENINO</button>
-      </div>
-
-      <div class="field">
-        <label>Edad (años)</label>
-        <input type="number" [(ngModel)]="edad" placeholder="Ej. 25" min="1" max="120">
-      </div>
-
-      <div class="row">
-        <div class="field">
-          <label>Peso (kg)</label>
-          <input type="number" [(ngModel)]="peso" placeholder="Ej. 70" min="1" step="0.1">
+        <!-- Edad -->
+        <div class="form-group">
+  <label style="color: #aaa; font-size: 11px; letter-spacing: .1em;">EDAD (AÑOS)</label>
+  <input type="number" [(ngModel)]="edad" placeholder="Ej. 25" min="1" max="120" style="background: var(--color-bg); border-color: var(--color-border-dark); color: #fff;">
+</div>
+        <!-- Peso y Estatura -->
+        <div class="form-row">
+          <div class="form-group">
+            <label style="color: #aaa; font-size: 11px; letter-spacing: .1em;">PESO (KG)</label>
+            <input type="number" [(ngModel)]="peso" placeholder="Ej. 70" step="0.1" style="background: var(--color-bg); border-color: var(--color-border-dark); color: #fff;">
+          </div>
+          <div class="form-group">
+            <label style="color: #aaa; font-size: 11px; letter-spacing: .1em;">ESTATURA (M)</label>
+            <input type="number" [(ngModel)]="estatura" placeholder="Ej. 1.70" step="0.01" style="background: var(--color-bg); border-color: var(--color-border-dark); color: #fff;">
+          </div>
         </div>
-        <div class="field">
-          <label>Estatura (m)</label>
-          <input type="number" [(ngModel)]="estatura" placeholder="Ej. 1.70" min="0.5" max="2.5" step="0.01">
+
+        <!-- Botones de Acción -->
+        <div class="flex gap-8 mt-16">
+          <button class="btn btn-landing primary btn-block" (click)="calcularIMC()">CALCULAR</button>
+          <button class="btn btn-landing outline btn-block" (click)="reiniciar()">REINICIAR</button>
         </div>
+
       </div>
 
-      <div class="actions">
-        <button class="btn-primary" (click)="calcularIMC()">CALCULAR</button>
-        <button class="btn-secondary" (click)="reiniciar()">REINICIAR</button>
+      <!-- COLUMNA DERECHA: INFORMACIÓN Y RESULTADOS -->
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        
+        <!-- Tarjeta de Referencia IMC -->
+        <div class="card" style="background: var(--color-card); border: 1px solid var(--color-border-dark);">
+          <h3 style="font-family: var(--font-display); font-size: 16px; text-transform: uppercase; color: #fff; margin-bottom: 12px; letter-spacing: .03em;">
+            ¿Qué significa tu IMC?
+          </h3>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--color-gray);">
+            <li style="border-bottom: 1px dashed var(--color-border-dark); padding-bottom: 6px;"><b style="color: #38bdf8;">Bajo peso</b> — menos de 18.5</li>
+            <li style="border-bottom: 1px dashed var(--color-border-dark); padding-bottom: 6px;"><b style="color: var(--color-secondary);">Normal</b> — entre 18.5 y 24.9</li>
+            <li style="border-bottom: 1px dashed var(--color-border-dark); padding-bottom: 6px;"><b style="color: #fbbf24;">Sobre peso</b> — entre 25 y 29.9</li>
+            <li><b style="color: var(--color-danger);">Obesidad</b> — 30 o más</li>
+          </ul>
+          <p style="font-size: 12px; color: #666; margin-top: 12px; font-style: italic; line-height: 1.4;">
+            El IMC es una referencia general y no reemplaza la evaluación de un profesional de la salud.
+          </p>
+        </div>
+
+        <!-- Tarjeta de Resultado (Se muestra al calcular) -->
+        <div class="card text-center" *ngIf="mostrarResultado" style="background: var(--color-card); border: 1px solid var(--color-border-dark);">
+          <span class="eyebrow">Tu Resultado</span>
+          <div class="display-title accent" style="font-size: 52px; margin: 8px 0;">
+            {{ imc !== null ? imc.toFixed(1) : '--' }}
+          </div>
+          <div class="badge badge-success" style="font-size: 12px; text-transform: uppercase; padding: 6px 14px;">
+            {{ categoria }}
+          </div>
+
+          <!-- Plan nutricional dinámico -->
+          <div class="mt-16" *ngIf="planActual" style="background: var(--color-bg); padding: 16px; border-radius: 8px; text-align: left; border: 1px solid var(--color-border-dark);">
+            <h4 style="font-family: var(--font-display); font-size: 14px; color: var(--color-primary); text-transform: uppercase; margin-bottom: 6px;">
+              {{ planActual.titulo }}
+            </h4>
+            <p style="font-size: 13px; color: #ccc; margin-bottom: 8px; line-height: 1.5;">
+              {{ planActual.desc }}
+            </p>
+            <div style="font-size: 12px; color: var(--color-gray); border-top: 1px solid var(--color-border-dark); pt: 8px;">
+              <b>Ejemplo de comidas:</b> {{ planActual.ejemplo }}
+            </div>
+          </div>
+        </div>
+
       </div>
+
     </div>
 
-    <div class="card info-card">
-      <h3 class="info-title">¿Qué significa tu IMC?</h3>
-      <ul class="info-list">
-        <li><span class="dot dot-u"></span><b>Bajo peso</b> — menos de 18.5</li>
-        <li><span class="dot dot-n"></span><b>Normal</b> — entre 18.5 y 24.9</li>
-        <li><span class="dot dot-o"></span><b>Sobre peso</b> — entre 25 y 29.9</li>
-        <li><span class="dot dot-ob"></span><b>Obesidad</b> — 30 o más</li>
-      </ul>
-      <p class="info-note">El IMC es una referencia general y no reemplaza la evaluación de un profesional de la salud.</p>
-    </div>
-    </div>
-
-    <div class="result" [class.show]="mostrarResultado">
-      <h2 class="result-title">TU RESULTADO</h2>
-      <div class="scale-labels">
-        <span class="u">Bajo peso</span>
-        <span class="n">Normal</span>
-        <span class="o">Sobre peso</span>
-        <span class="ob">Obesidad</span>
-      </div>
-      <div class="scale-bar-wrap">
-        <div class="scale-bar">
-          <div class="scale-marker" [style.left.%]="posicionMarcador"></div>
-        </div>
-      </div>
-      <div class="imc-value-big">{{ imc !== null ? imc.toFixed(1) : '--' }}</div>
-      <div class="imc-category">{{ categoria }}</div>
-
-      <div class="plan" *ngIf="planActual">
-        <h3>{{ planActual.titulo }}</h3>
-        <p>{{ planActual.desc }}</p>
-        <div class="example"><b>Ejemplo de comidas:</b> {{ planActual.ejemplo }}</div>
   </div>
 </div>
