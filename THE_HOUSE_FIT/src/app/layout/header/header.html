@@ -5,16 +5,19 @@
             <h1>{{ nombreSistema }}</h1>
             <span>{{ descripcionSistema }}</span>
         </div>
+        <!-- Botón Volver al sitio modernizado -->
+        <a routerLink="/" class="ver-sitio">
+            <span class="arrow">←</span> Volver al sitio
+        </a>
     </section>
 
     <section class="user">
         <div class="user-data">
             <h3>{{ usuario }}</h3>
             <span class="chip-rol">{{ rol }}</span>
-            <small>📅 {{ fechaActual() }}</small>
-            <small>⌚ {{ horaActual() }}</small>
+            <small>🗓️ {{ fechaActual() }}</small>
+            <small>🕜 {{ horaActual() }}</small>
         </div>
-        <a routerLink="/" class="ver-sitio">Ver sitio</a>
         <button class="logout" (click)="cerrarSesion()">Cerrar sesión</button>
     </section>
 </header>
