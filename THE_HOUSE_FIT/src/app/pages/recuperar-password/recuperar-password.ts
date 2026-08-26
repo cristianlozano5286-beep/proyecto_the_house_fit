@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth';
@@ -9,7 +9,7 @@ import { AuthService } from '../../services/auth';
   templateUrl: './recuperar-password.html',
   styleUrl: './recuperar-password.css',
 })
-export class RecuperarPasswordComponent {
+export class RecuperarPasswordComponent implements OnInit {
   paso: 1 | 2 = 1;
   correo: string = '';
   codigo: string = '';
@@ -19,43 +19,82 @@ export class RecuperarPasswordComponent {
   tipoMensaje: 'success' | 'error' | '' = '';
   codigoSimulado: string | null = null;
 
+  // Propiedades del Captcha visual estilo Apple
+  captchaTexto: string = '';
+  codigoIngresadoCaptcha: string = '';
+
   constructor(private authService: AuthService, private router: Router) {}
 
-  // Paso 1 (HU06, HU07): solicitar el envío del código al correo
-  solicitarCodigo(): void {
-    if (!this.correo.trim()) {
+  ngOnInit(): void {
+    this.generarCaptcha();
+  }
+
+  generarCaptcha(): void {
+    const caracteres = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let resultado = '';
+    for (let i = 0; i < 5; i++) {
+      resultado += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+    }
+    this.captchaTexto = resultado;
+    this.codigoIngresadoCaptcha = '';
+  }
+
+  validarCaptchaYContinuar(): void {
+    const correoLimpio = this.correo.trim();
+    if (!correoLimpio) {
       this.mostrarError('Ingresa tu correo electrónico.');
       return;
     }
-    const enviado = this.authService.solicitarRecuperacion(this.correo);
-    if (!enviado) {
-      this.mostrarError('No encontramos una cuenta con ese correo.');
+
+    if (this.codigoIngresadoCaptcha.toUpperCase() !== this.captchaTexto) {
+      this.mostrarError('El código de seguridad visual no coincide.');
+      this.generarCaptcha();
       return;
     }
+
+    const enviado = this.authService.solicitarRecuperacion(correoLimpio);
+    if (!enviado) {
+      this.mostrarError('No encontramos una cuenta con ese correo en The House Fit.');
+      this.generarCaptcha();
+      return;
+    }
+
     this.codigoSimulado = this.authService.obtenerUltimoCodigo();
-    this.mensaje = 'Hemos enviado un código de verificación a tu correo.';
+    this.mensaje = 'Correo verificado. Hemos generado tu código de recuperación.';
     this.tipoMensaje = 'success';
     this.paso = 2;
   }
 
-  // Paso 2 (HU08): ingresar el código y la nueva contraseña
   restablecer(): void {
-    if (!this.codigo.trim() || !this.nuevaPassword || !this.confirmarPassword) {
+    const codigoLimpio = this.codigo.trim();
+    
+    if (!codigoLimpio || !this.nuevaPassword || !this.confirmarPassword) {
       this.mostrarError('Completa todos los campos.');
       return;
     }
+    
     if (this.nuevaPassword !== this.confirmarPassword) {
       this.mostrarError('Las contraseñas no coinciden.');
       return;
     }
-    const exito = this.authService.restablecerPassword(this.correo, this.codigo, this.nuevaPassword);
+
+    const exito = this.authService.restablecerPassword(
+      this.correo.trim(), 
+      codigoLimpio, 
+      this.nuevaPassword
+    );
+
     if (!exito) {
-      this.mostrarError('El código ingresado no es válido.');
+      this.mostrarError('El código de verificación ingresado no es válido.');
       return;
     }
+
     this.tipoMensaje = 'success';
-    this.mensaje = 'Contraseña actualizada correctamente. Ya puedes iniciar sesión.';
-    setTimeout(() => this.router.navigate(['/login']), 1500);
+    this.mensaje = '¡Contraseña actualizada correctamente! Redirigiendo...';
+    
+    setTimeout(() => {
+      this.router.navigate(['/login']);
+    }, 1500);
   }
 
   private mostrarError(texto: string): void {

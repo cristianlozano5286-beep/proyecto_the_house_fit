@@ -21,7 +21,6 @@ export class AuthService {
   private platformId = inject(PLATFORM_ID);
   private readonly STORAGE_KEY = 'usuarioSesion';
 
-  // Usuarios semilla del sistema (roles del Módulo 7: Administrador, Entrenador, Usuario)
   private usuariosIniciales: UsuarioSistema[] = [
     {
       nombre: 'Administrador The House Fit',
@@ -47,8 +46,6 @@ export class AuthService {
   ];
 
   private usuariosSistema: UsuarioSistema[] = [];
-
-  // Código de verificación / recuperación simulado en memoria (HU04, HU05, HU07, HU08)
   private codigoTemporal: { correo: string; codigo: string } | null = null;
 
   constructor() {
@@ -69,15 +66,12 @@ export class AuthService {
     localStorage.setItem(STORAGE_USUARIOS, JSON.stringify(this.usuariosSistema));
   }
 
-  // ------------------- LOGIN (HU09, HU10, HU11) -------------------
-  inciarSesion(correo: string, password: string): boolean {
-    const usuario = this.usuariosSistema.find((u) => u.correo === correo);
-    if (!usuario) {
-      return false;
-    }
-    if (usuario.password !== password) {
-      return false;
-    }
+  // ------------------- LOGIN -------------------
+  iniciarSesion(correo: string, password: string): boolean {
+    const correoLimpio = correo.trim().toLowerCase();
+    const usuario = this.usuariosSistema.find((u) => u.correo.toLowerCase() === correoLimpio);
+    if (!usuario) return false;
+    if (usuario.password !== password) return false;
 
     const usuarioAuth: UsuarioAuth = {
       nombre: usuario.nombre,
@@ -101,9 +95,7 @@ export class AuthService {
 
   obtenerUsuario(): UsuarioAuth | null {
     const usuario = localStorage.getItem(this.STORAGE_KEY);
-    if (!usuario) {
-      return null;
-    }
+    if (!usuario) return null;
     return JSON.parse(usuario);
   }
 
@@ -115,15 +107,16 @@ export class AuthService {
     return this.obtenerUsuario()?.nombre ?? '';
   }
 
-  // ------------------- REGISTRO (HU01, HU02, HU03) -------------------
+  // ------------------- REGISTRO -------------------
   correoExiste(correo: string): boolean {
-    return this.usuariosSistema.some((u) => u.correo.toLowerCase() === correo.toLowerCase());
+    const correoLimpio = correo.trim().toLowerCase();
+    return this.usuariosSistema.some((u) => u.correo.toLowerCase() === correoLimpio);
   }
 
   registrarUsuario(nombre: string, correo: string, password: string): void {
     const nuevoUsuario: UsuarioSistema = {
       nombre,
-      correo,
+      correo: correo.trim().toLowerCase(),
       password,
       rol: 'Usuario',
       correoVerificado: false,
@@ -132,19 +125,21 @@ export class AuthService {
     this.guardarUsuarios();
   }
 
-  // ------------------- VERIFICACIÓN DE CORREO (HU04, HU05) -------------------
+  // ------------------- VERIFICACIÓN DE CORREO -------------------
   enviarCodigoVerificacion(correo: string): string {
     const codigo = Math.floor(100000 + Math.random() * 900000).toString();
-    this.codigoTemporal = { correo, codigo };
-    // Simulación de envío de correo: en un entorno real esto llamaría a un servicio de backend/SMTP.
+    this.codigoTemporal = { correo: correo.trim().toLowerCase(), codigo };
     return codigo;
   }
 
   verificarCodigo(correo: string, codigo: string): boolean {
     if (!this.codigoTemporal) return false;
-    const valido = this.codigoTemporal.correo === correo && this.codigoTemporal.codigo === codigo;
+    const correoLimpio = correo.trim().toLowerCase();
+    const codigoLimpio = codigo.trim();
+
+    const valido = this.codigoTemporal.correo === correoLimpio && this.codigoTemporal.codigo === codigoLimpio;
     if (valido) {
-      const usuario = this.usuariosSistema.find((u) => u.correo === correo);
+      const usuario = this.usuariosSistema.find((u) => u.correo.toLowerCase() === correoLimpio);
       if (usuario) {
         usuario.correoVerificado = true;
         this.guardarUsuarios();
@@ -154,17 +149,20 @@ export class AuthService {
     return valido;
   }
 
-  // ------------------- RECUPERAR CONTRASEÑA (HU06, HU07, HU08) -------------------
+  // ------------------- RECUPERAR CONTRASEÑA -------------------
   solicitarRecuperacion(correo: string): boolean {
-    if (!this.correoExiste(correo)) return false;
-    this.enviarCodigoVerificacion(correo);
+    const correoLimpio = correo.trim().toLowerCase();
+    if (!this.correoExiste(correoLimpio)) return false;
+    this.enviarCodigoVerificacion(correoLimpio);
     return true;
   }
 
   restablecerPassword(correo: string, codigo: string, nuevaPassword: string): boolean {
-    const valido = this.verificarCodigo(correo, codigo);
+    const correoLimpio = correo.trim().toLowerCase();
+    const valido = this.verificarCodigo(correoLimpio, codigo);
     if (!valido) return false;
-    const usuario = this.usuariosSistema.find((u) => u.correo === correo);
+
+    const usuario = this.usuariosSistema.find((u) => u.correo.toLowerCase() === correoLimpio);
     if (usuario) {
       usuario.password = nuevaPassword;
       this.guardarUsuarios();
@@ -177,19 +175,19 @@ export class AuthService {
     return this.codigoTemporal?.codigo ?? null;
   }
 
-  // ------------------- GESTIÓN DE ROLES (HU44, HU45, HU46, HU47) -------------------
+  // ------------------- GESTIÓN DE ROLES -------------------
   listarUsuariosSistema(): UsuarioSistema[] {
     return this.usuariosSistema;
   }
 
   actualizarRol(correo: string, nuevoRol: string): void {
-    const usuario = this.usuariosSistema.find((u) => u.correo === correo);
+    const correoLimpio = correo.trim().toLowerCase();
+    const usuario = this.usuariosSistema.find((u) => u.correo.toLowerCase() === correoLimpio);
     if (usuario) {
       usuario.rol = nuevoRol;
       this.guardarUsuarios();
-      // Si el usuario con sesión activa es el editado, se refleja el cambio
       const sesion = this.obtenerUsuario();
-      if (sesion && sesion.correo === correo) {
+      if (sesion && sesion.correo.toLowerCase() === correoLimpio) {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify({ ...sesion, rol: nuevoRol }));
       }
     }
