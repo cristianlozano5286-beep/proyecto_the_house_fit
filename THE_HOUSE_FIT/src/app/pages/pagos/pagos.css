@@ -5,3 +5,48 @@
 .metodo-card.seleccionado{ border-color:var(--color-primary); background:#fff7ed; }
 .metodo-icono{ font-size:28px; display:block; margin-bottom:6px; }
 .metodo-card p{ font-size:12px; color:var(--color-gray); margin-top:4px; }
+.metodo-card {
+  background-color: var(--color-bg-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.metodo-card:hover {
+  border-color: var(--color-primary);
+  background-color: #161616;
+  transform: translateY(-2px);
+}
+
+.metodo-card.seleccionado {
+  border-color: var(--color-primary) !important;
+  background: rgba(255, 69, 0, 0.12) !important; /* Sutil tinte naranja oscuro acorde al tema */
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.metodo-card .metodo-icono {
+  font-size: 28px;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.metodo-card strong {
+  color: #ffffff !important;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.metodo-card p {
+  font-size: 12px;
+  color: var(--color-gray) !important;
+  margin-top: 4px;
+  margin-bottom: 0;
+}

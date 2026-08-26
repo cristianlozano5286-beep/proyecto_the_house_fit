@@ -1,13 +1,13 @@
-/*Reset General*/
-*{
+/* Reset General */
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* Contenedor Principal */
-.register-container{
+/* Contenedor Principal con Carrusel */
+.register-container {
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -15,9 +15,10 @@
     position: relative;
     overflow: hidden;
     background-color: #0b0f19;
+    padding: 20px;
 }
 
-/* Capas del carrusel con transición suave (crossfade) */
+/* Capas del carrusel con gradiente más sutil para que se luzca el vidrio */
 .bg-slide {
     position: absolute;
     top: 0;
@@ -31,17 +32,17 @@
 }
 
 .bg-1 {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1920&auto=format&fit=crop');
+    background-image: linear-gradient(rgba(11, 15, 25, 0.55), rgba(11, 15, 25, 0.65)), url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1920&auto=format&fit=crop');
     animation-delay: 0s;
 }
 
 .bg-2 {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1920&auto=format&fit=crop');
+    background-image: linear-gradient(rgba(11, 15, 25, 0.55), rgba(11, 15, 25, 0.65)), url('https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1920&auto=format&fit=crop');
     animation-delay: 6s;
 }
 
 .bg-3 {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=1920&auto=format&fit=crop');
+    background-image: linear-gradient(rgba(11, 15, 25, 0.55), rgba(11, 15, 25, 0.65)), url('https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=1920&auto=format&fit=crop');
     animation-delay: 12s;
 }
 
@@ -49,58 +50,86 @@
     0% { opacity: 0; transform: scale(1); }
     15% { opacity: 1; }
     33% { opacity: 1; }
-    48% { opacity: 0; transform: scale(1.04); }
+    48% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
 }
 
-/* Estilo Tarjeta Glassmorphism */
-.register-card{
-    width: 480px;
-    max-height: 90vh;
+/* Tarjeta con Efecto Vidrio Real (Glassmorphism) */
+.register-card {
+    width: 100%;
+    max-width: 520px;
+    max-height: 92vh;
     overflow-y: auto;
-    background: rgba(18, 18, 18, 0.82);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 35px;
+    
+    /* Fondo translúcido tipo cristal oscuro */
+    background: rgba(103, 105, 112, 0.42);
+    
+    /* Alto nivel de desenfoque para aislar el fondo */
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    
+    /* Bordes sutiles con destello superior simulando luz en el vidrio */
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    
+    padding: 35px 40px;
     border-radius: 24px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    
+    /* Sombra profunda y brillo interno de cristal */
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+                
     color: #ffffff;
     z-index: 2;
+    animation: cardAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes cardAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 /* Scrollbar sutil */
 .register-card::-webkit-scrollbar {
-    width: 5px;
+    width: 6px;
 }
 .register-card::-webkit-scrollbar-track {
     background: transparent;
 }
 .register-card::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.501);
     border-radius: 10px;
 }
 .register-card::-webkit-scrollbar-thumb:hover {
     background: #ff4500;
 }
 
-/* Contenedor del Logo */
+/* Contenedor del Logo con brillo de cristal */
 .logo-container {
     display: flex;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 .logo-circle {
-    width: 70px;
-    height: 70px;
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
     background: linear-gradient(135deg, #ff4500, #cc3700);
-    box-shadow: 0 6px 18px rgba(255, 69, 0, .45);
+    box-shadow: 0 8px 20px rgba(255, 69, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.4);
 }
 
 .logo-circle img {
@@ -109,98 +138,114 @@
     object-fit: cover;
 }
 
-/*Encabezado*/
-.header{
+/* Encabezado */
+.header {
     text-align: center;
-    margin-bottom: 25px;
-    background: transparent;
+    margin-bottom: 24px;
+    background: transparent !important;
+    border-bottom: none !important; /* Esto elimina la línea por completo */
+    box-shadow: none !important;
 }
-.header h1{
+
+.header h1 {
     color: #ffffff;
     margin-bottom: 6px;
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 800;
-    font-size: 26px;
+    font-size: 28px;
     text-transform: uppercase;
-    letter-spacing: .02em;
+    letter-spacing: 0.03em;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
+
 .header p {
-    color: #94a3b8;
+    color: #e0e6ef;
     font-size: 14px;
 }
 
-/*Estilo de formulario*/
-.form-group{
-    margin-bottom: 18px;
+/* Grid para Nombre y Apellido */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
 }
-.form-group label{
+
+/* Estilo de formulario con inputs translúcidos */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
     display: block;
     margin-bottom: 6px;
     font-weight: 600;
     font-size: 13px;
     color: #e2e8f0;
 }
+
 .form-group input {
     width: 100%;
-    padding: 13px;
-    background: rgba(255, 255, 255, 0.06);
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 8px;
+    border-radius: 10px;
     color: #ffffff;
     font-size: 14px;
-    transition: .3s;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(4px);
 }
 
-/* SOLUCIÓN: Evita que el navegador ponga el fondo blanco/azul brillante al autocompletar */
+/* Autocompletar optimizado */
 .form-group input:-webkit-autofill,
 .form-group input:-webkit-autofill:hover,
 .form-group input:-webkit-autofill:focus {
     -webkit-text-fill-color: #ffffff !important;
-    -webkit-box-shadow: 0 0 0px 1000px rgba(35, 35, 35, 0.95) inset !important;
+    -webkit-box-shadow: 0 0 0px 1000px rgba(18, 22, 35, 0.85) inset !important;
     transition: background-color 5000s ease-in-out 0s;
 }
 
 .form-group input::placeholder {
-    color: #94a3b8;
-}
-.form-group input:focus{
-    outline: none;
-    border-color: #ff4500;
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 10px rgba(255, 69, 0, .3);
+    color: #d5d9de;
 }
 
-/* SOLUCIÓN: Botón "Registrarme" con tono naranja e integración elegante al estar deshabilitado */
-.button{
+.form-group input:focus {
+    outline: none;
+    border-color: #ff4500;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 15px rgba(255, 69, 0, 0.3);
+}
+
+/* Botón */
+.button {
     width: 100%;
     padding: 14px;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     background: linear-gradient(135deg, #ff4500, #e03d00);
     color: white;
     font-size: 15px;
     cursor: pointer;
-    transition: .3s;
+    transition: all 0.3s ease;
     font-weight: 600;
-    margin-top: 10px;
-    box-shadow: 0 4px 12px rgba(255, 69, 0, 0.3);
+    margin-top: 8px;
+    box-shadow: 0 4px 15px rgba(255, 69, 0, 0.35);
 }
 
-button:hover:not(:disabled){
+button:hover:not(:disabled) {
     background: linear-gradient(135deg, #ff5722, #cc3700);
     transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(255, 69, 0, 0.5);
+    box-shadow: 0 6px 20px rgba(255, 69, 0, 0.5);
 }
 
-button:disabled{
-    background: rgba(255, 69, 0, 0.15);
-    color: rgba(255, 255, 255, 0.45);
-    border: 1px solid rgba(255, 69, 0, 0.3);
+button:disabled {
+    background: rgba(255, 69, 0, 0.12);
+    color: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 69, 0, 0.2);
     cursor: not-allowed;
     box-shadow: none;
 }
 
-.error{
+.error {
     display: block;
     margin-top: 4px;
     color: #f87171;
@@ -208,35 +253,48 @@ button:disabled{
     font-weight: 500;
 }
 
-input.ng-invalid.ng-touched{
+input.ng-invalid.ng-touched {
     border-color: #f87171 !important;
 }
 
-input.ng-valid.ng-touched{
+input.ng-valid.ng-touched {
     border-color: #4ade80 !important;
 }
 
-.volver-inicio{
+.volver-inicio {
     display: block;
-    margin-top: 18px;
+    margin-top: 20px;
     font-size: 13px;
     color: #ff4500;
     font-weight: 600;
     text-align: center;
     text-decoration: none;
-    transition: color 0.2s;
+    transition: color 0.2s ease;
 }
+
 .volver-inicio:hover {
     color: #ff7033;
     text-decoration: underline;
 }
 
-.alert.info{
-    background: rgba(30, 58, 138, 0.6); 
-    color: #93c5fd; 
-    border: 1px solid #3b82f6;
-    padding: 10px; 
-    border-radius: 8px; 
-    font-size: 13px; 
-    margin-bottom: 14px;
+.alert.info {
+    background: rgba(30, 58, 138, 0.4);
+    color: #93c5fd;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    backdrop-filter: blur(8px);
+}
+
+@media (max-width: 600px) {
+    .register-card {
+        padding: 25px 20px;
+        max-height: 95vh;
+    }
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
 }

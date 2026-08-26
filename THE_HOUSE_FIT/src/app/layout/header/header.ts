@@ -12,7 +12,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   constructor(private router: Router, private authService: AuthService) {}
 
   nombreSistema: string = 'The House Fit';
-  descripcionSistema: string = 'Panel de administración de la plataforma de gimnasios';
+  descripcionSistema: string ='';
   usuario: string = '';
   rol: string = '';
   fechaActual = signal('');

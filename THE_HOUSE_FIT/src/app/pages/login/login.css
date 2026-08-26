@@ -164,16 +164,16 @@ html, body {
   width: 100%;
   padding: 12px 14px 12px 42px;
   border-radius: 12px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #848587;
   font-size: 14px;
   color: #0f172a;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(194, 186, 186, 0.9);
   transition: all 0.25s ease;
 }
 
 .form-group input:focus {
   outline: none;
-  background: #ffffff;
+  background: #fcf7f7;
   border-color: #ff4500;
   box-shadow: 0 0 0 4px rgba(255, 69, 0, 0.18);
 }
@@ -308,7 +308,7 @@ html, body {
   border: none;
   border-radius: 12px;
   background: #ff4500;
-  color: #ffffff;
+  color: #e8e7e7;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -361,6 +361,21 @@ html, body {
   font-size: 13px;
   font-weight: 600;
   text-align: center;
+}
+.form-group input::placeholder {
+  color: #717171; /* <--- Cambia este color por el que desees */
+  opacity: 1;     /* Asegura que tome el color exacto en todos los navegadores */
+}
+
+/* Compatibilidad para navegadores basados en Webkit (Chrome, Safari, Edge) */
+.form-group input::-webkit-input-placeholder {
+  color: #fbfbfb;
+}
+
+/* Compatibilidad para Firefox */
+.form-group input::-moz-placeholder {
+  color: #707070;
+  opacity: 1;
 }
 
 .alert.error, .alert-error {

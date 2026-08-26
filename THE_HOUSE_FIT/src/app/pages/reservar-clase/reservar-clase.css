@@ -1,11 +1,12 @@
+/* ==========================================
+   1. CONTENEDOR PRINCIPAL Y CABECERA
+   ========================================== */
 .reserva-container {
+  padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1.5rem;
-  font-family: 'Inter', sans-serif;
   color: #f3f4f6;
-  background-color: #121212;
-  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
 }
 
 .page-header {
@@ -15,91 +16,136 @@
 .page-header h1 {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 800;
+  font-size: 32px;
   text-transform: uppercase;
-  font-size: 28px;
-  color: #ff6b00; /* Naranja corporativo */
-  letter-spacing: .01em;
-  margin: 0 0 4px;
+  color: #ffffff;
+  margin: 0 0 4px 0;
+  letter-spacing: 0.05em;
 }
 
 .page-header p {
   color: #9ca3af;
   margin: 0;
-  font-size: 0.95rem;
+  font-size: 14px;
 }
 
-/* Tarjetas de Angular Material adaptadas a Modo Oscuro */
-mat-card {
+/* ==========================================
+   2. TARJETAS Y CONTENEDORES GENERALES
+   ========================================== */
+.search-card, .table-card, .loading-card {
   background-color: #1a1a1a !important;
   color: #f3f4f6 !important;
-  border: 1px solid #2a2a2a !important;
-  border-radius: 12px !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
-  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-radius: 14px !important;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
 }
 
 .search-form {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 16px;
-  padding-top: 8px;
+  margin-top: 16px;
 }
 
+/* ==========================================
+   3. ESTILIZACIÓN MODERNA DE INPUTS (MATERIAL MDC)
+   ========================================== */
 .form-field {
   width: 100%;
+  /* Variables oficiales para esquinas, colores de fondo y bordes limpios */
+  --mdc-outlined-text-field-container-shape: 12px;
+  --mdc-outlined-text-field-container-color: #121214;
+  --mdc-outlined-text-field-outline-color: rgba(255, 255, 255, 0.15);
+  --mdc-outlined-text-field-hover-outline-color: rgba(255, 107, 0, 0.5);
+  --mdc-outlined-text-field-focus-outline-color: #ff6b00;
+  --mdc-outlined-text-field-focus-outline-width: 2px;
+  --mdc-outlined-text-field-label-text-color: #9ca3af;
+  --mdc-outlined-text-field-focus-label-text-color: #ff6b00;
+  --mdc-outlined-text-field-input-text-color: #ffffff;
+  --mdc-outlined-text-field-input-placeholder-color: #6b7280;
 }
 
+/* Sincronización de iconos (calendario y flecha del selector) */
+.form-field .mat-datepicker-toggle,
+.form-field .mat-mdc-select-arrow {
+  color: #9ca3af !important;
+  transition: color 0.3s ease;
+}
+
+.form-field.mat-focused .mat-datepicker-toggle,
+.form-field.mat-focused .mat-mdc-select-arrow {
+  color: #ff6b00 !important;
+}
+
+/* ==========================================
+   4. ACCIONES Y BOTONES
+   ========================================== */
 .card-actions {
-  padding: 8px 16px 16px !important;
-}
-
-/* Ajustes de carga */
-.loading-card mat-card-content {
-  padding: 24px;
-}
-
-.loading-content {
+  padding: 16px 24px !important;
   display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 16px;
+  gap: 12px;
 }
 
-.loading-text h3 {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700;
-  margin: 0 0 4px;
-  text-transform: uppercase;
-  color: #ffffff;
+/* Botón secundario (Limpiar) */
+.card-actions button[mat-stroked-button] {
+  border: 1px solid #3a3a3a !important;
+  color: #9ca3af !important;
+  border-radius: 8px !important;
+  padding: 0 20px;
+  height: 42px;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
-.loading-text p {
-  color: #9ca3af;
-  margin: 0;
-  font-size: 13px;
+.card-actions button[mat-stroked-button]:hover {
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
 }
 
-/* Resultados y Sección de Clases */
+/* Botón principal (Buscar clases y Reservar) */
+.card-actions button[mat-raised-button],
+.classes-table button[mat-raised-button] {
+  background-color: #ff6b00 !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  padding: 0 24px;
+  height: 42px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3) !important;
+  transition: all 0.2s ease;
+}
+
+.card-actions button[mat-raised-button]:hover,
+.classes-table button[mat-raised-button]:hover {
+  background-color: #ff8533 !important;
+  box-shadow: 0 6px 16px rgba(255, 107, 0, 0.5) !important;
+  transform: translateY(-1px);
+}
+
+/* ==========================================
+   5. SECCIÓN DE RESULTADOS Y TABLA
+   ========================================== */
 .results-section {
-  margin-bottom: 24px;
+  margin-top: 32px;
 }
 
 .section-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 12px;
+  align-items: center;
+  margin-bottom: 16px;
 }
 
 .section-header h2 {
   font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 800;
+  font-weight: 700;
+  font-size: 24px;
   text-transform: uppercase;
-  font-size: 20px;
+  margin: 0;
   color: #ffffff;
-  margin: 0 0 4px;
+  letter-spacing: 0.05em;
 }
 
 .section-header p {
@@ -109,228 +155,92 @@ mat-card {
 }
 
 .results-count {
-  background: rgba(255, 107, 0, 0.15);
+  background-color: #2a2a2a;
   color: #ff6b00;
-  font-weight: 700;
-  font-size: 12px;
   padding: 6px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 107, 0, 0.3);
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 13px;
+  border: 1px solid rgba(255, 107, 0, 0.2);
 }
 
-/* Tabla de clases personalizada para modo oscuro */
 .table-container {
   overflow-x: auto;
 }
 
 .classes-table {
   width: 100%;
-  background-color: transparent !important;
+  background: transparent !important;
+  color: #f3f4f6 !important;
 }
 
 .classes-table th.mat-header-cell {
   color: #ff6b00 !important;
   font-weight: 700;
-  font-size: 0.85rem;
+  border-bottom: 1px solid #2a2a2a !important;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
   text-transform: uppercase;
-  border-bottom: 2px solid #2a2a2a !important;
-  background-color: transparent !important;
+  letter-spacing: 0.05em;
 }
 
 .classes-table td.mat-cell {
-  color: #e5e7eb !important;
+  color: #f3f4f6 !important;
   border-bottom: 1px solid #222222 !important;
   padding: 14px 8px !important;
 }
 
-.classes-table tr.mat-row:hover td {
-  background-color: #222222 !important;
+.classes-table tr.mat-row:hover {
+  background-color: rgba(255, 107, 0, 0.04);
 }
 
 .empty-table {
+  padding: 32px;
   text-align: center;
-  padding: 30px;
   color: #9ca3af;
   font-style: italic;
 }
 
-/* Panel desplegable de información importante */
+/* ==========================================
+   6. SECCIÓN DE CARGA Y EXPANSION PANEL
+   ========================================== */
+.loading-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 0;
+}
+
+.loading-text h3 {
+  margin: 0 0 4px 0;
+  color: #ffffff;
+  font-size: 18px;
+}
+
+.loading-text p {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
 .informacion-section mat-expansion-panel {
   background-color: #1a1a1a !important;
   color: #f3f4f6 !important;
-  border: 1px solid #2a2a2a !important;
-  border-radius: 12px !important;
-}
-
-::ng-deep .mat-expansion-panel-header {
-  color: #f3f4f6 !important;
-}
-
-::ng-deep .mat-expansion-indicator::after {
-  color: #ff6b00 !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-radius: 14px !important;
+  box-shadow: none !important;
 }
 
 .information-content h3 {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 15px;
-  margin: 12px 0 4px;
-  text-transform: uppercase;
   color: #ff6b00;
+  font-size: 15px;
+  margin-top: 12px;
+  margin-bottom: 4px;
+  font-weight: 700;
 }
 
 .information-content p {
   color: #9ca3af;
-  font-size: 14px;
-  margin: 0 0 8px;
-}
-::ng-deep .mat-mdc-select-panel {
-  background-color: #1a1a1a !important;
-  border: 1px solid #333333 !important;
-  border-radius: 8px !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
-}
-
-/* Color de las opciones del select */
-::ng-deep .mat-mdc-option {
-  color: #f3f4f6 !important;
-}
-
-/* Color al pasar el cursor sobre una opción */
-::ng-deep .mat-mdc-option:hover {
-  background-color: #2a2a2a !important;
-}
-
-/* Color de la opción seleccionada */
-::ng-deep .mat-mdc-option.mdc-list-item--selected {
-  background-color: #ff6b00 !important;
-  color: #ffffff !important;
-}
-.mat-mdc-raised-button.mat-primary {
-  background-color: #ff6b00 !important;
-  color: #ffffff !important;
-  border-radius: 8px !important;
-  font-weight: 600 !important;
-  padding: 0 20px !important;
-  box-shadow: 0 4px 14px rgba(255, 107, 0, 0.4) !important;
-  transition: all 0.2s ease-in-out !important;
-}
-
-.mat-mdc-raised-button.mat-primary:hover {
-  background-color: #e05e00 !important;
-  box-shadow: 0 6px 18px rgba(255, 107, 0, 0.6) !important;
-  transform: translateY(-1px); /* Efecto sutil de elevación */
-}
-
-/* --- Botón Secundario (Limpiar) --- */
-.mat-mdc-stroked-button {
-  border-color: #333333 !important;
-  color: #9ca3af !important;
-  border-radius: 8px !important;
-  font-weight: 600 !important;
-  padding: 0 20px !important;
-  transition: all 0.2s ease-in-out !important;
-  background-color: transparent !important;
-}
-
-.mat-mdc-stroked-button:hover {
-  border-color: #ff6b00 !important;
-  color: #ffffff !important;
-  background-color: rgba(255, 107, 0, 0.08) !important;
-}
-/* --- Fondo y bordes de los inputs y selects --- */
-::ng-deep .mat-mdc-text-field-wrapper {
-  background-color: #242424 !important;
-  border-radius: 8px !important;
-}
-
-/* Color del texto dentro de los inputs, selects y fecha */
-::ng-deep .mat-mdc-input-element,
-::ng-deep .mat-mdc-select-value-text,
-::ng-deep .mat-mdc-select-arrow {
-  color: #ffffff !important;
-}
-
-/* Color de los placeholders o textos flotantes (Gimnasio, Tipo de clase, etc.) */
-::ng-deep .mat-mdc-floating-label,
-::ng-deep .mat-mdc-form-field-label {
-  color: #9ca3af !important;
-}
-
-/* Color del icono del calendario */
-::ng-deep .mat-datepicker-toggle {
-  color: #9ca3af !important;
-}
-
-/* Color de los bordes de la caja (en reposo) */
-::ng-deep .mdc-notched-outline__leading,
-::ng-deep .mdc-notched-outline__notch,
-::ng-deep .mdc-notched-outline__trailing {
-  border-color: #333333 !important;
-}
-
-/* Color de los bordes cuando haces clic (focus) */
-::ng-deep .mat-focused .mdc-notched-outline__leading,
-::ng-deep .mat-focused .mdc-notched-outline__notch,
-::ng-deep .mat-focused .mdc-notched-outline__trailing {
-  border-color: #ff6b00 !important;
-  border-width: 2px !important;
-}
-
-/* Cambiar el color del label flotante cuando el campo está seleccionado */
-::ng-deep .mat-focused .mat-mdc-floating-label {
-  color: #ff6b00 !important;
-}
-/* --- Contenedor principal del calendario --- */
-::ng-deep .mat-datepicker-content {
-  background-color: #1a1a1a !important;
-  color: #f3f4f6 !important;
-  border: 1px solid #333333 !important;
-  border-radius: 12px !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
-}
-
-::ng-deep .mat-calendar {
-  background-color: #1a1a1a !important;
-  color: #f3f4f6 !important;
-}
-
-/* Cabecera del calendario (Mes, año y flechas de navegación) */
-::ng-deep .mat-calendar-header,
-::ng-deep .mat-calendar-arrow,
-::ng-deep .mat-calendar-previous-button,
-::ng-deep .mat-calendar-next-button,
-::ng-deep .mat-calendar-period-button {
-  color: #f3f4f6 !important;
-}
-
-/* Letras de los días de la semana (D, L, M, M, J, V, S) */
-::ng-deep .mat-calendar-table-header th {
-  color: #9ca3af !important;
-}
-
-/* Números de los días del mes */
-::ng-deep .mat-calendar-body-cell-content {
-  color: #f3f4f6 !important;
-}
-
-/* Efecto al pasar el cursor sobre un día */
-::ng-deep .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover>.mat-calendar-body-cell-content {
-  background-color: #2a2a2a !important;
-  color: #ff6b00 !important;
-}
-
-/* Día seleccionado (cambia a tu color naranja corporativo) */
-::ng-deep .mat-calendar-body-selected {
-  background-color: #ff6b00 !important;
-  color: #ffffff !important;
-}
-
-/* Día actual (borde naranja si no está seleccionado) */
-::ng-deep .mat-calendar-body-today:not(.mat-calendar-body-selected) {
-  border-color: #ff6b00 !important;
-}
-
-/* Días deshabilitados o de otros meses */
-::ng-deep .mat-calendar-body-disabled>.mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
-  color: #4b5563 !important;
+  font-size: 13px;
+  margin: 0 0 12px 0;
 }
