@@ -1,0 +1,169 @@
+<div class="dark-page-wrapper">
+    <div class="container-nutricion">
+    
+    <!-- TÍTULO / HERO -->
+    <div class="hero">
+        <span class="eyebrow">Nutrición</span>
+        <h1>PLAN <span>NUTRICIONAL</span></h1>
+        <p>Cuéntanos más sobre ti para generar una dieta personalizada adaptada a tus objetivos y salud.</p>
+    </div>
+
+    <!-- ================= FORMULARIO ================= -->
+    <div class="form-container" [class.blurred]="dietaGenerada">
+
+    <!-- SECCIÓN 1: Información personal (Sin peso, edad ni estatura) -->
+        <div class="card-section">
+        <div class="section-title">👤 Información personal</div>
+        
+        <div class="grid-row-2">
+            <div class="field">
+            <label>Nombre completo</label>
+            <input type="text" [(ngModel)]="nombre" placeholder="Ej. Juan Pérez">
+            </div>
+            <div class="field">
+            <label>Género</label>
+            <select [(ngModel)]="genero">
+                <option value="" disabled selected>Selecciona</option>
+                <option value="masculino">Masculino</option>
+                <option value="femenino">Femenino</option>
+            </select>
+            </div>
+        </div>
+
+        <div class="field mt-16">
+            <label>Nivel de actividad física</label>
+            <select [(ngModel)]="actividad">
+            <option value="" disabled selected>Selecciona tu nivel</option>
+            <option value="sedentario">Sedentario</option>
+            <option value="ligero">Ligero (1-3 días/semana)</option>
+            <option value="moderado">Moderado (3-5 días/semana)</option>
+            <option value="intenso">Intenso (6-7 días/semana)</option>
+            </select>
+        </div>
+
+        <div class="field mt-16">
+            <label>Objetivo principal</label>
+            <div class="goal-grid">
+            <button type="button" class="btn-goal" [class.active]="objetivo === 'perder'" (click)="objetivo = 'perder'">Perder peso</button>
+            <button type="button" class="btn-goal" [class.active]="objetivo === 'ganar'" (click)="objetivo = 'ganar'">Ganar masa muscular</button>
+            <button type="button" class="btn-goal" [class.active]="objetivo === 'mantener'" (click)="objetivo = 'mantener'">Mantener peso</button>
+            <button type="button" class="btn-goal" [class.active]="objetivo === 'rendimiento'" (click)="objetivo = 'rendimiento'">Mejorar rendimiento</button>
+            <button type="button" class="btn-goal" [class.active]="objetivo === 'salud'" (click)="objetivo = 'salud'">Salud general</button>
+            </div>
+        </div>
+        </div>
+
+        <!-- SECCIÓN 2: Información de salud -->
+        <div class="card-section">
+        <div class="section-title">❤️ Información de salud</div>
+        <label class="label-subtitle">¿Tienes alguna condición médica diagnosticada?</label>
+        
+        <div class="checkbox-grid">
+            <label class="checkbox-label"><input type="checkbox" [(ngModel)]="salud.diabetes"> Diabetes</label>
+            <label class="checkbox-label"><input type="checkbox" [(ngModel)]="salud.colesterol"> Colesterol alto</label>
+            <label class="checkbox-label"><input type="checkbox" [(ngModel)]="salud.tiroides"> Tiroides</label>
+            <label class="checkbox-label"><input type="checkbox" [(ngModel)]="salud.hipertension"> Hipertensión</label>
+            <label class="checkbox-label"><input type="checkbox" [(ngModel)]="salud.cardiaca"> Enfermedad cardíaca</label>
+            <label class="checkbox-label"><input type="checkbox" [(ngModel)]="salud.otra"> Otra condición</label>
+        </div>
+        </div>
+
+        <!-- SECCIÓN 3: Alergias e intolerancias -->
+        <div class="card-section">
+        <div class="section-title">🛡️ Alergias e intolerancias</div>
+        <label class="label-subtitle">¿Eres alérgico o intolerante a algún alimento?</label>
+        
+        <div class="checkbox-grid-chips">
+            <button type="button" class="chip-btn" [class.active]="alergias.gluten" (click)="alergias.gluten = !alergias.gluten">Gluten</button>
+            <button type="button" class="chip-btn" [class.active]="alergias.lacteos" (click)="alergias.lacteos = !alergias.lacteos">Lácteos</button>
+            <button type="button" class="chip-btn" [class.active]="alergias.frutosSecos" (click)="alergias.frutosSecos = !alergias.frutosSecos">Frutos secos</button>
+            <button type="button" class="chip-btn" [class.active]="alergias.huevo" (click)="alergias.huevo = !alergias.huevo">Huevo</button>
+            <button type="button" class="chip-btn" [class.active]="alergias.mariscos" (click)="alergias.mariscos = !alergias.mariscos">Mariscos</button>
+            <button type="button" class="chip-btn" [class.active]="alergias.soja" (click)="alergias.soja = !alergias.soja">Soja</button>
+            <button type="button" class="chip-btn" [class.active]="alergias.mani" (click)="alergias.mani = !alergias.mani">Maní</button>
+            <button type="button" class="chip-btn" [class.active]="alergias.pescado" (click)="alergias.pescado = !alergias.pescado">Pescado</button>
+        </div>
+        </div>
+
+        <!-- SECCIÓN 4: Preferencias alimentarias -->
+        <div class="card-section">
+        <div class="section-title">🍽️ Preferencias alimentarias</div>
+        <label class="label-subtitle">Tipo de alimentación que prefieres</label>
+        
+        <div class="goal-grid">
+            <button type="button" class="btn-goal" [class.active]="dieta === 'omnivora'" (click)="dieta = 'omnivora'">Omnívora</button>
+            <button type="button" class="btn-goal" [class.active]="dieta === 'vegetariana'" (click)="dieta = 'vegetariana'">Vegetariana</button>
+            <button type="button" class="btn-goal" [class.active]="dieta === 'vegana'" (click)="dieta = 'vegana'">Vegana</button>
+            <button type="button" class="btn-goal" [class.active]="dieta === 'otra'" (click)="dieta = 'otra'">Otra</button>
+        </div>
+
+        <div class="field mt-16">
+            <label>¿Hay alimentos que no te gusten o que prefieras evitar?</label>
+            <input type="text" [(ngModel)]="evitar" placeholder="Ej. No me gusta el brócoli, evito el picante, etc.">
+        </div>
+        </div>
+
+        <!-- PRIVACIDAD Y BOTÓN -->
+        <div class="privacy-box">
+        <span class="privacy-icon">🔒</span>
+        <div>
+            <strong>Tu información está protegida</strong>
+            <p>Usaremos tus datos únicamente para generar tu dieta personalizada y mejorar tu experiencia.</p>
+        </div>
+        </div>
+
+        <button class="btn-generar-dieta" (click)="generarDieta()">
+        Generar mi dieta personalizada
+        </button>
+
+    </div>
+
+
+    <!-- ================= TARJETA FLOTANTE (MODAL) ================= -->
+    <div class="modal-overlay" *ngIf="dietaGenerada">
+        <div class="resultado-dieta-card">
+        
+        <div class="card-section modal-card-content">
+            <div class="section-title">🥗 Tu Plan Nutricional Personalizado</div>
+        
+            <div class="user-summary-tag">
+            <span>Preparado para: <strong>{{ nombre }}</strong></span>
+            <span>Objetivo: <strong>{{ objetivo | uppercase }}</strong></span>
+            </div>
+
+            <div class="dieta-seccion">
+            <h3>🌅 Desayuno Recomendado</h3>
+            <p>Tostadas integrales con aguacate, huevos revueltos y una porción de fruta fresca (papaya o manzana).</p>
+            </div>
+
+            <div class="dieta-seccion">
+            <h3>☀️ Almuerzo / Mediodía</h3>
+            <p>Pechuga de pollo a la plancha, porción moderada de arroz integral y ensalada verde con aceite de oliva.</p>
+            </div>
+
+            <div class="dieta-seccion">
+            <h3>🌙 Cena Ligera</h3>
+            <p>Pescado blanco al vapor acompañado de vegetales salteados (calabacín y zanahoria).</p>
+            </div>
+
+          <div class="dieta-recomendacion-clinica" *ngIf="salud.diabetes || salud.hipertension || alergias.gluten">
+            <span class="alert-icon">⚠️</span>
+            <p><strong>Nota clínica aplicada:</strong> Se han ajustado los carbohidratos y excluido alérgenos según las condiciones de salud y restricciones que seleccionaste.</p>
+            </div>
+
+            <div class="actions-resultado">
+            <button class="btn-primary-custom" (click)="reiniciarFormulario()">
+                Modificar mis datos / formulario
+            </button>
+            <button class="btn-secondary-custom" routerLink="/imc">
+                Volver a Calculadora IMC
+            </button>
+            </div>
+
+        </div>
+
+        </div>
+    </div>
+
+    </div>
+</div>
