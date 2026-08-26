@@ -15,7 +15,8 @@
             </div>
 
             <h3 class="mt-16">Elige tu método de pago</h3>
-            <div class="grid grid-2 mt-8">
+            <!-- CORREGIDO: Se cambia a grid-3 para alojar los 3 métodos de forma ordenada -->
+            <div class="grid grid-3 mt-8">
                 @for (m of metodos; track m.id) {
                     <div class="metodo-card" [class.seleccionado]="metodoSeleccionado?.id===m.id" (click)="seleccionarMetodo(m)">
                         <span class="metodo-icono">{{ m.icono }}</span>
@@ -30,7 +31,7 @@
             </button>
 
             @if (transaccionExitosa) {
-                <div class="alert success mt-16">
+                <div class="alert-success-box mt-16">
                     ✅ Pago aprobado con {{ nombreMetodo(transaccionExitosa.metodoPagoId) }}. Serás redirigido a la pasarela para confirmar el comprobante.
                 </div>
             }
@@ -49,7 +50,7 @@
                                 <td>{{ t.concepto }}</td>
                                 <td>{{ formatearPrecio(t.monto) }}</td>
                                 <td>{{ nombreMetodo(t.metodoPagoId) }}</td>
-                                <td><span class="badge badge-success">{{ t.estado }}</span></td>
+                                <td><span class="badge">{{ t.estado }}</span></td>
                             </tr>
                         }
                         @empty {

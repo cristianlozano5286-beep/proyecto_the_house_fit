@@ -47,24 +47,74 @@
     color: #ffffff;
 }
 
+/* ==========================================
+   FOOTER MODERNO Y ESTILIZADO
+   ========================================== */
 .panel-footer {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 8px;
-    font-size: 12px;
+    gap: 12px;
+    font-size: 13px;
     color: #94a3b8;
     font-family: 'Inter', sans-serif;
-    border-top: 1px solid #222222;
-    margin-top: 60px; 
-    padding-top: 20px;
-    padding-bottom: 20px;
-    background: #0a0a0a; /* Footer totalmente fusionado al mismo color */
+    margin-top: 50px; 
+    padding: 24px 8px;
+    background: #0a0a0a;
+    position: relative;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+/* Efecto de línea superior con un sutil brillo degradado */
+.panel-footer::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 107, 0, 0.4), transparent);
+}
+
+.footer-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.footer-brand {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.footer-separator {
+    color: #ff6b00;
+    font-weight: bold;
+}
+
+/* Etiqueta flotante moderna para la versión */
+.version-badge {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #ff6b00;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Adaptabilidad para dispositivos móviles */
 @media(max-width: 700px) {
     .panel-footer {
         flex-direction: column;
         text-align: center;
+        justify-content: center;
+    }
+    .footer-left {
+        justify-content: center;
     }
 }
