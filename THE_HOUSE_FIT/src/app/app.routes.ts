@@ -32,6 +32,7 @@ import { NoticiasAdminComponent } from './pages/noticias-admin/noticias-admin';
 import { PagosComponent } from './pages/pagos/pagos';
 import { RolesComponent } from './pages/roles/roles';
 import { ReservarClaseComponent } from './pages/reservar-clase/reservar-clase';
+import { NutricionComponent } from './pages/nutricion/nutricion';
 
 import { authGuard } from './guards/auth-guard';
 
@@ -49,6 +50,7 @@ export const routes: Routes = [
       { path: 'blog', component: BlogPublicoComponent },
       { path: 'imc', component: CalculadoraImcComponent },
       { path: 'destacados', component: ContenidoDestacadoComponent },
+      { path: 'nutricion', component: NutricionComponent }
     ],
   },
 

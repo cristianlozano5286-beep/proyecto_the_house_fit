@@ -19,6 +19,7 @@ export class PublicNavComponent {
     { label: 'Blog', ruta: '/blog' },
     { label: 'IMC', ruta: '/imc' },
     { label: 'Destacados', ruta: '/destacados' },
+    
   ];
 
   constructor(private authService: AuthService, private router: Router) {}

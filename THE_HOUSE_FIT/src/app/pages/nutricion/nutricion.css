@@ -1,0 +1,360 @@
+/* --- CONTENEDOR PRINCIPAL Y TEMA OSCURO --- */
+.dark-page-wrapper {
+    background-color: #0c0c0c;
+    color: #fff;
+    min-height: 100vh;
+    padding: 40px 20px;
+}
+
+.container-nutricion {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* --- HERO / TÍTULO --- */
+.hero {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.hero .eyebrow {
+    color: #ff5722;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.hero h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    margin: 8px 0;
+}
+
+.hero h1 span {
+    color: #ff5722;
+}
+
+.hero p {
+    color: #aaa;
+    font-size: 14px;
+}
+
+/* --- SECCIONES Y TARJETAS DEL FORMULARIO --- */
+.card-section {
+    background: #141414;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.label-subtitle {
+    font-size: 13px;
+    color: #aaa;
+    display: block;
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+/* --- CAMPOS E INPUTS --- */
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.field label {
+    font-size: 12px;
+    color: #aaa;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.field input,
+.field select {
+    background: #1f1f1f;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: #fff;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.field input:focus,
+.field select:focus {
+    border-color: #ff5722;
+    outline: none;
+}
+
+.mt-16 {
+    margin-top: 16px;
+}
+
+/* --- GRID LAYOUTS --- */
+.grid-row-2 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 15px;
+}
+
+.grid-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+}
+
+/* --- BOTONES DE OPCIONES Y OBJETIVOS --- */
+.goal-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.btn-goal,
+.chip-btn {
+    background: #1f1f1f;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ccc;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+
+.btn-goal:hover,
+.chip-btn:hover {
+    border-color: #ff5722;
+    color: #fff;
+}
+
+.btn-goal.active,
+.chip-btn.active {
+    background: #ff5722;
+    color: #fff;
+    border-color: #ff5722;
+    font-weight: 600;
+}
+
+/* --- CHECKBOXES --- */
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.checkbox-grid-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #ddd;
+    cursor: pointer;
+}
+
+.checkbox-label input {
+    accent-color: #ff5722;
+    width: 16px;
+    height: 16px;
+}
+
+/* --- PRIVACIDAD --- */
+.privacy-box {
+    display: flex;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 14px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #aaa;
+    align-items: center;
+}
+
+.privacy-icon {
+    font-size: 20px;
+}
+
+.privacy-box strong {
+    color: #fff;
+}
+
+.privacy-box p {
+    margin: 2px 0 0 0;
+    font-size: 12px;
+}
+
+/* --- BOTÓN PRINCIPAL --- */
+.btn-generar-dieta {
+    width: 100%;
+    background: #ff5722;
+    color: #fff;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 14px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-generar-dieta:hover {
+    opacity: 0.9;
+}
+
+/* --- EFECTO DE DIFUMINADO EN EL FORMULARIO --- */
+.form-container {
+    transition: filter 0.3s ease, opacity 0.3s ease;
+}
+
+.form-container.blurred {
+    filter: blur(6px);
+    opacity: 0.35;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* --- MODAL / TARJETA FLOTANTE DE RESULTADOS --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.resultado-dieta-card {
+    width: 100%;
+    max-width: 650px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: fadeInScale 0.3s ease-in-out;
+}
+
+.modal-card-content {
+    background: #181818;
+    border: 1px solid rgba(255, 87, 34, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+}
+
+.user-summary-tag {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: #ccc;
+}
+
+.dieta-seccion {
+    margin-bottom: 16px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 3px solid #ff5722;
+}
+
+.dieta-seccion h3 {
+    font-size: 14px;
+    color: #fff;
+    margin: 0 0 4px 0;
+}
+
+.dieta-seccion p {
+    font-size: 13px;
+    color: #bbb;
+    margin: 0;
+}
+
+.dieta-recomendacion-clinica {
+    display: flex;
+    gap: 10px;
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #ffd54f;
+    margin-bottom: 16px;
+    align-items: center;
+}
+
+.actions-resultado {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-primary-custom,
+.btn-secondary-custom {
+    flex: 1;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    border: none;
+}
+
+.btn-primary-custom {
+    background: #ff5722;
+    color: #fff;
+}
+
+.btn-secondary-custom {
+    background: #2a2a2a;
+    color: #ddd;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

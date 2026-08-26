@@ -1,20 +1,55 @@
-.dark-page {
-  background: #0a0a0a;
+:host {
+  --bg: #0e0e10;
+  --panel: #17171a;
+  --panel-2: #1e1e22;
+  --border: #2a2a2e;
+  --text: #f5f5f5;
+  --muted: #9a9aa2;
+  --orange: #ff4d1c;
+  --orange-2: #ff7a3d;
+
+  display: block;
+  position: relative;
+  width: 100%;
   min-height: 100vh;
-  padding: 170px 24px 80px; /* <--- Aumentado para bajar todo el contenido y que no choque con el menú */
+  background: 
+    linear-gradient(180deg, rgba(14,14,16,0.3) 0%, rgba(14,14,16,0.6) 100%),
+    url('https://images.unsplash.com/photo-1784798228092-659924b1a15b?fm=jpg&q=80&w=1600&auto=format&fit=crop') center/cover fixed no-repeat;
+  background-attachment: fixed !important;
+  color: var(--text);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding-bottom: 40px;
+}
+
+/* --- FORZAR TRANSPARENCIA ANULANDO CONTENEDORES EXTERNOS --- */
+:host ::ng-deep .dark-page-wrapper,
+:host ::ng-deep .dark-page,
+:host ::ng-deep .container {
+  background: transparent !important;
+  background-color: transparent !important;
+  min-height: 100vh;
+}
+
+.dark-page, .dark-page-wrapper {
+  padding: 170px 24px 80px;
   color: #fff;
 }
 
-/* --- HERO / CABECERA --- */
+/* --- HERO / CABECERA DENTRO DE UN RECUADRO --- */
 .hero {
-  max-width: 700px;
-  margin: 0 auto 40px;
+  max-width: 900px;
+  margin: 0 auto 30px;
   text-align: center;
+  background: rgba(17, 17, 17, 0.88) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 32px 24px;
+  border-radius: 8px;
 }
 
 .hero h1 {
   font-family: var(--font-display, sans-serif);
-  font-size: clamp(28px, 4vw, 38px); /* <--- Tamaño ajustado para evitar solapamientos */
+  font-size: clamp(28px, 4vw, 38px);
   font-weight: 900;
   text-transform: uppercase;
   color: #fff;
@@ -27,7 +62,7 @@
 }
 
 .hero p {
-  color: #888;
+  color: #aaa;
   font-family: var(--font-body, sans-serif);
   font-size: 14px;
   line-height: 1.5;
@@ -59,10 +94,11 @@
   gap: 20px;
 }
 
-/* --- TARJETAS --- */
-.card {
-  background: #111;
-  border: 1px solid #1e1e1e;
+/* --- TARJETAS CON TRANSPARENCIA ELEGANTE PARA LUCIR EL FONDO --- */
+.card, .result {
+  background: rgba(17, 17, 17, 0.88) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   padding: 24px;
   border-radius: 8px;
 }
@@ -71,7 +107,7 @@
   display: block;
   font-size: 11px;
   letter-spacing: 0.1em;
-  color: #666;
+  color: #888;
   margin-bottom: 8px;
   font-family: var(--font-body, sans-serif);
   font-weight: 700;
@@ -88,9 +124,9 @@
   flex: 1;
   padding: 11px 12px;
   border-radius: 8px;
-  border: 1px solid var(--color-border-dark, #242424);
-  background: var(--color-bg, #0a0a0a);
-  color: #888;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(10, 10, 10, 0.6);
+  color: #aaa;
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
@@ -104,7 +140,6 @@
   color: #fff;
 }
 
-/* Estado activo cuando se hace clic */
 .btn-gender.active {
   background: var(--color-primary, #ff4500) !important;
   color: #fff !important;
@@ -119,8 +154,8 @@
 .field input {
   width: 100%;
   padding: 12px;
-  background: #0a0a0a;
-  border: 1px solid #222;
+  background: rgba(10, 10, 10, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: #f0f0f0;
   font-family: var(--font-body, sans-serif);
   font-size: 14px;
@@ -170,13 +205,13 @@
 
 .btn-secondary {
   background: transparent;
-  border: 1px solid #333;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: #ccc;
 }
 
 .btn-secondary:hover {
-  background: #1a1a1a;
-  border-color: #555;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #777;
 }
 
 /* --- TARJETA DE INFORMACIÓN --- */
@@ -197,9 +232,9 @@
 
 .info-list li {
   font-size: 13px;
-  color: #888;
+  color: #aaa;
   padding: 6px 0;
-  border-bottom: 1px dashed #1a1a1a;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -218,7 +253,7 @@
 
 .info-note {
   font-size: 12px;
-  color: #666;
+  color: #888;
   font-style: italic;
   line-height: 1.4;
   margin: 0;
@@ -226,10 +261,6 @@
 
 /* --- SECCIÓN DE RESULTADOS --- */
 .result {
-  background: #111;
-  border: 1px solid #1e1e1e;
-  padding: 24px;
-  border-radius: 8px;
   display: none;
 }
 
@@ -266,7 +297,7 @@
 
 .scale-bar {
   height: 8px;
-  background: #222;
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 4px;
   position: relative;
   overflow: hidden;
@@ -303,8 +334,8 @@
 
 /* --- PLAN NUTRICIONAL --- */
 .plan {
-  background: #1a1a1a;
-  border: 1px solid #333;
+  background: rgba(20, 20, 20, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   padding: 16px;
   border-radius: 6px;
   margin-top: 15px;
@@ -322,30 +353,44 @@
   color: #ccc;
   font-size: 13px;
   line-height: 1.5;
-  margin: 0 0 10px 0;
-}
-.dark-page-wrapper {
-  background: var(--color-bg);
-  min-height: 100vh;
-  /* Espacio superior amplio para que el navbar fijo no tape el título */
-  padding-top: 150px; 
-  padding-bottom: 80px;
+  margin: 0 0 12px 0;
 }
 
-/* Estilos adicionales para inputs dentro de las tarjetas oscuras */
 .card input:focus {
   border-color: var(--color-primary) !important;
   box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.15);
 }
 
-/* Transición suave para la aparición de resultados */
 .card * {
   transition: all 0.2s ease;
 }
 
-.plan .example {
+/* --- NUEVO BOTÓN DE REDIRECCIÓN A NUTRICIÓN --- */
+.btn-nutricion {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 16px;
+  background: var(--color-primary, #ff5722);
+  color: #fff;
+  font-family: var(--font-body, sans-serif);
   font-size: 12px;
-  color: #888;
-  border-top: 1px solid #282828;
-  padding-top: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+  box-sizing: border-box;
+}
+
+.btn-nutricion:hover {
+  opacity: 0.9;
+}
+
+.btn-nutricion:active {
+  transform: scale(0.98);
 }

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router'; 
 
 interface PlanNutricional {
   titulo: string;
@@ -11,11 +12,11 @@ interface PlanNutricional {
 @Component({
   selector: 'app-imc-calculadora',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink], 
   templateUrl: './calculadora-imc.html',
   styleUrl: './calculadora-imc.css'
 })
-export class  CalculadoraImcComponent {
+export class CalculadoraImcComponent {
 
   genero: 'masculino' | 'femenino' = 'femenino';
   edad: number | null = null;
@@ -57,8 +58,6 @@ export class  CalculadoraImcComponent {
       return;
     }
 
-    // Si el usuario escribió la estatura en centímetros (ej. 170) en vez de
-    // metros (1.70), la convertimos automáticamente.
     let estaturaMetros = this.estatura;
     if (estaturaMetros > 3) {
       estaturaMetros = estaturaMetros / 100;
@@ -72,6 +71,7 @@ export class  CalculadoraImcComponent {
       alert('Ingresa una estatura válida en metros (ej. 1.70) o centímetros (ej. 170).');
       return;
     }
+    
 
     const imc = this.peso / (estaturaMetros * estaturaMetros);
     this.imc = imc;
@@ -82,7 +82,6 @@ export class  CalculadoraImcComponent {
     else if (imc < 30) { this.categoria = 'Sobrepeso'; key = 'overweight'; }
     else { this.categoria = 'Obesidad'; key = 'obese'; }
 
-    // Posicionar el marcador en la barra (rango visual 10 a 40)
     const min = 10, max = 40;
     let pos = ((imc - min) / (max - min)) * 100;
     pos = Math.max(0, Math.min(100, pos));
