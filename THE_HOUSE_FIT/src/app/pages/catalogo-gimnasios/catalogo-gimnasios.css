@@ -299,9 +299,6 @@
 /* --------------------------------------------------------------------------
    4. CHIPS DE CATEGORÍAS
    -------------------------------------------------------------------------- */
-/* --------------------------------------------------------------------------
-   4. CHIPS DE CATEGORÍAS (MEJORADOS)
-   -------------------------------------------------------------------------- */
 .category-chips {
   max-width: 1200px;
   margin: 0 auto 28px auto;
@@ -312,46 +309,40 @@
 }
 
 .chip {
-  background-color: #121721;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: #161c28;
+  border: 1px solid #232d3f;
   color: #94a3b8;
-  padding: 8px 18px;
-  border-radius: 12px;
+  padding: 8px 16px;
+  border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
 }
 
 .chip:hover {
-  background-color: #182030;
-  border-color: rgba(255, 69, 0, 0.4);
+  border-color: #3b82f6;
   color: #ffffff;
-  transform: translateY(-1px);
 }
 
 .chip-active {
-  background: linear-gradient(135deg, #ff4500 0%, #e03e00 100%) !important;
+  background-color: #ff4500 !important;
   border-color: #ff4500 !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 15px rgba(255, 69, 0, 0.35);
-  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(255, 69, 0, 0.3);
 }
 
 .chip-fav {
   margin-left: auto;
-  background-color: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.4);
   color: #ef4444;
 }
 
 .chip-fav:hover {
   background-color: #ef4444;
-  border-color: #ef4444;
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
+
 /* --------------------------------------------------------------------------
    5. BARRA DE RESULTADOS
    -------------------------------------------------------------------------- */
