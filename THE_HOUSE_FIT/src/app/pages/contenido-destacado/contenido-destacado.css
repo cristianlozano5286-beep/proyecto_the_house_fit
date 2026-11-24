@@ -1,7 +1,31 @@
+:host {
+  display: block;
+  position: relative;
+  min-height: 100vh;
+  background-color: transparent;
+}
+
+/* Luz atmosférica continua desde y=0 estilo Steam Dark Glass */
+:host::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 95% 420px at 32% 0px, rgba(190, 62, 30, 0.14) 0%, rgba(140, 46, 24, 0.05) 52%, transparent 82%);
+}
+
+:host::before {
+  display: none;
+}
+
 .dark-page {
-  background: #0a0a0a;
+  position: relative;
+  z-index: 1;
+  background: transparent;
   min-height: 60vh;
-  padding: 140px 24px 60px;
+  padding: 36px 24px 60px;
 }
 
 .page-header {

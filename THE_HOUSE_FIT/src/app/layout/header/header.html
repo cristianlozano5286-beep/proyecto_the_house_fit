@@ -1,23 +1,64 @@
-<header class="header">
-    <section class="system">
-        <a routerLink="/" class="logo">🏋️</a>
-        <div class="system-text">
-            <h1>{{ nombreSistema }}</h1>
-            <span>{{ descripcionSistema }}</span>
-        </div>
-        <!-- Botón Volver al sitio modernizado -->
-        <a routerLink="/" class="ver-sitio">
-            <span class="arrow">←</span> Volver al sitio
-        </a>
-    </section>
+<div class="panel-topbar">
+  <!-- IZQUIERDA / CENTRO: BUSCADOR INTEGRADO ESTILO STEAM DARK GLASS -->
+  <div class="topbar-left">
+    <form class="topbar-search-form" (ngSubmit)="buscarEnCatalogo()" role="search">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input
+        type="search"
+        name="busquedaHeader"
+        [(ngModel)]="busquedaHeader"
+        placeholder="Buscar gimnasios, rutinas o entrenadores..."
+        aria-label="Buscar gimnasios, rutinas o entrenadores"
+      />
+    </form>
 
-    <section class="user">
-        <div class="user-data">
-            <h3>{{ usuario }}</h3>
-            <span class="chip-rol">{{ rol }}</span>
-            <small>🗓️ {{ fechaActual() }}</small>
-            <small>🕜 {{ horaActual() }}</small>
-        </div>
-        <button class="logout" (click)="cerrarSesion()">Cerrar sesión</button>
-    </section>
-</header>
+    <nav class="breadcrumb-nav" aria-label="Sección actual">
+      <a routerLink="/panel/dashboard" class="crumb-root">Panel</a>
+      <span class="crumb-sep">/</span>
+      <span class="crumb-current">{{ seccionActual }}</span>
+    </nav>
+  </div>
+
+  <!-- DERECHA: ACCESOS RÁPIDOS, TIENDA, PERFIL CON ARO EMBER Y SALIDA -->
+  <div class="topbar-right">
+    <a routerLink="/mi-espacio/reservar-clase" class="topbar-icon-btn has-indicator" title="Agenda y reservas">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+      </svg>
+    </a>
+
+    <a routerLink="/" class="topbar-icon-btn" title="Ir al sitio público de The House Fit">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+      </svg>
+    </a>
+
+    <!-- Perfil del usuario (estilo Steam top-right avatar + nombre) -->
+    <a routerLink="/mi-perfil" class="user-profile-badge" title="Ir a Mi Perfil y cambiar foto">
+      <div class="user-avatar-circle">
+        @if (fotoPerfil) {
+          <img [src]="fotoPerfil" [alt]="usuario" class="topbar-avatar-img" />
+        } @else {
+          {{ obtenerInicial() }}
+        }
+      </div>
+      <div class="user-meta-col">
+        <span class="user-display-name">{{ usuario }}</span>
+        <span class="user-role-tag" [attr.data-role]="rol">{{ rol }}</span>
+      </div>
+    </a>
+
+    <button type="button" class="logout-btn" (click)="cerrarSesion()" title="Cerrar sesión de forma segura" aria-label="Cerrar sesión">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+        <polyline points="16 17 21 12 16 7"></polyline>
+        <line x1="21" y1="12" x2="9" y2="12"></line>
+      </svg>
+    </button>
+  </div>
+</div>

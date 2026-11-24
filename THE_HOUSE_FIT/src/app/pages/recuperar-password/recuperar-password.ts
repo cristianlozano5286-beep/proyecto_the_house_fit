@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth';
@@ -17,19 +17,35 @@ export class RecuperarPasswordComponent implements OnInit {
   confirmarPassword: string = '';
   mensaje: string = '';
   tipoMensaje: 'success' | 'error' | '' = '';
-  codigoSimulado: string | null = null;
+  cargando: boolean = false;
 
-  // Propiedades del Captcha visual estilo Apple
+  // Visibilidad de contraseñas
+  mostrarPasswordNueva: boolean = false;
+  mostrarPasswordConfirmar: boolean = false;
+
+  // Propiedades del Captcha visual interactivo
   captchaTexto: string = '';
   codigoIngresadoCaptcha: string = '';
+  rotandoCaptcha: boolean = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit(): void {
     this.generarCaptcha();
   }
 
   generarCaptcha(): void {
+    this.rotandoCaptcha = true;
+    this.cdr.markForCheck();
+    setTimeout(() => {
+      this.rotandoCaptcha = false;
+      this.cdr.markForCheck();
+    }, 450);
+
     const caracteres = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     let resultado = '';
     for (let i = 0; i < 5; i++) {
@@ -37,9 +53,10 @@ export class RecuperarPasswordComponent implements OnInit {
     }
     this.captchaTexto = resultado;
     this.codigoIngresadoCaptcha = '';
+    this.cdr.markForCheck();
   }
 
-  validarCaptchaYContinuar(): void {
+  async validarCaptchaYContinuar(): Promise<void> {
     const correoLimpio = this.correo.trim();
     if (!correoLimpio) {
       this.mostrarError('Ingresa tu correo electrónico.');
@@ -47,58 +64,108 @@ export class RecuperarPasswordComponent implements OnInit {
     }
 
     if (this.codigoIngresadoCaptcha.toUpperCase() !== this.captchaTexto) {
-      this.mostrarError('El código de seguridad visual no coincide.');
+      this.mostrarError('El código de seguridad visual no coincide. Intenta con uno nuevo.');
       this.generarCaptcha();
       return;
     }
 
-    const enviado = this.authService.solicitarRecuperacion(correoLimpio);
-    if (!enviado) {
-      this.mostrarError('No encontramos una cuenta con ese correo en The House Fit.');
-      this.generarCaptcha();
-      return;
-    }
+    this.cargando = true;
+    this.mensaje = '';
+    this.cdr.markForCheck();
 
-    this.codigoSimulado = this.authService.obtenerUltimoCodigo();
-    this.mensaje = 'Correo verificado. Hemos generado tu código de recuperación.';
-    this.tipoMensaje = 'success';
-    this.paso = 2;
+    try {
+      // El MID busca la cuenta y genera el código de recuperación
+      const error = await this.authService.solicitarRecuperacion(correoLimpio);
+
+      if (error) {
+        this.mostrarError(error);
+        this.generarCaptcha();
+        return;
+      }
+
+      this.codigo = "";
+      this.mensaje = "Si existe una cuenta con ese correo, recibirás un código de recuperación.";
+
+      this.tipoMensaje = 'success';
+      this.paso = 2;
+    } catch (e: any) {
+      this.mostrarError(e?.message || 'Ocurrió un error inesperado al procesar la solicitud.');
+      this.generarCaptcha();
+    } finally {
+      this.cargando = false;
+      this.cdr.markForCheck();
+    }
   }
 
-  restablecer(): void {
+  async restablecer(): Promise<void> {
     const codigoLimpio = this.codigo.trim();
     
     if (!codigoLimpio || !this.nuevaPassword || !this.confirmarPassword) {
-      this.mostrarError('Completa todos los campos.');
+      this.mostrarError('Completa todos los campos obligatorios.');
       return;
     }
     
+    if (this.nuevaPassword.length < 6) {
+      this.mostrarError('La nueva contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+
     if (this.nuevaPassword !== this.confirmarPassword) {
-      this.mostrarError('Las contraseñas no coinciden.');
+      this.mostrarError('Las contraseñas no coinciden. Verifícalas e intenta nuevamente.');
       return;
     }
 
-    const exito = this.authService.restablecerPassword(
-      this.correo.trim(), 
-      codigoLimpio, 
-      this.nuevaPassword
-    );
+    this.cargando = true;
+    this.mensaje = '';
+    this.cdr.markForCheck();
 
-    if (!exito) {
-      this.mostrarError('El código de verificación ingresado no es válido.');
-      return;
+    try {
+      const error = await this.authService.restablecerPassword(
+        this.correo.trim(),
+        codigoLimpio,
+        this.nuevaPassword
+      );
+
+      if (error) {
+        this.mostrarError(error);
+        return;
+      }
+
+      this.tipoMensaje = 'success';
+      this.mensaje = '¡Contraseña actualizada con éxito! Redirigiendo a inicio de sesión...';
+      this.cdr.markForCheck();
+      
+      setTimeout(() => {
+        this.router.navigate(['/login']);
+      }, 1500);
+    } catch (e: any) {
+      this.mostrarError(e?.message || 'Error al restablecer la contraseña.');
+    } finally {
+      this.cargando = false;
+      this.cdr.markForCheck();
     }
+  }
 
-    this.tipoMensaje = 'success';
-    this.mensaje = '¡Contraseña actualizada correctamente! Redirigiendo...';
-    
-    setTimeout(() => {
-      this.router.navigate(['/login']);
-    }, 1500);
+  cambiarCorreo(): void {
+    this.paso = 1;
+    this.mensaje = '';
+    this.generarCaptcha();
+    this.cdr.markForCheck();
+  }
+
+  toggleMostrarPasswordNueva(): void {
+    this.mostrarPasswordNueva = !this.mostrarPasswordNueva;
+    this.cdr.markForCheck();
+  }
+
+  toggleMostrarPasswordConfirmar(): void {
+    this.mostrarPasswordConfirmar = !this.mostrarPasswordConfirmar;
+    this.cdr.markForCheck();
   }
 
   private mostrarError(texto: string): void {
     this.tipoMensaje = 'error';
     this.mensaje = texto;
+    this.cdr.markForCheck();
   }
 }

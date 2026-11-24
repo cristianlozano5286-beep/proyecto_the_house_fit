@@ -1,396 +1,1333 @@
+/* ==========================================================================
+   THE HOUSE FIT — CALCULADORA DE IMC Y LABORATORIO BIOMÉTRICO
+   Estética: Apple Glassmorphism / Frosted Liquid Glass (macOS & visionOS inspired)
+   Paleta: Obsidian Deep (#000000), Frosted Glass Translucent, Athletic Neon Orange (#FF4500)
+   ========================================================================== */
 :host {
-  --bg: #0e0e10;
-  --panel: #17171a;
-  --panel-2: #1e1e22;
-  --border: #2a2a2e;
-  --text: #f5f5f5;
-  --muted: #9a9aa2;
-  --orange: #ff4d1c;
-  --orange-2: #ff7a3d;
+  --color-primary: #ff4500;
+  --color-primary-light: #ff6b35;
+  --color-primary-hover: #ff571a;
+  --color-primary-gradient: linear-gradient(135deg, #ff4500 0%, #ff6b35 100%);
+  --bg-obsidian: #000000;
+  --text-white: #ffffff;
+  --text-muted: #a1a1aa;
+  --text-dim: #71717a;
+
+  /* Tokens de Vidrio Líquido Apple */
+  --glass-surface: linear-gradient(145deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.012) 100%), rgba(14, 14, 18, 0.68);
+  --glass-surface-elevated: linear-gradient(145deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.018) 100%), rgba(20, 20, 26, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-border-hover: rgba(255, 255, 255, 0.24);
+  --glass-specular: inset 0 1px 1px 0 rgba(255, 255, 255, 0.22);
+  --glass-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(255, 69, 0, 0.04);
+  --glass-blur: blur(16px) saturate(140%);
 
   display: block;
   position: relative;
   width: 100%;
   min-height: 100vh;
-  background: 
-    linear-gradient(180deg, rgba(14,14,16,0.3) 0%, rgba(14,14,16,0.6) 100%),
-    url('https://images.unsplash.com/photo-1784798228092-659924b1a15b?fm=jpg&q=80&w=1600&auto=format&fit=crop') center/cover fixed no-repeat;
-  background-attachment: fixed !important;
-  color: var(--text);
-  font-family: 'Segoe UI', Arial, sans-serif;
-  padding-bottom: 40px;
+  background-color: transparent;
+  color: var(--text-white);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* --- FORZAR TRANSPARENCIA ANULANDO CONTENEDORES EXTERNOS --- */
-:host ::ng-deep .dark-page-wrapper,
-:host ::ng-deep .dark-page,
-:host ::ng-deep .container {
-  background: transparent !important;
-  background-color: transparent !important;
-  min-height: 100vh;
+/* Capa de iluminación ambiental continua estilo Steam Dark Glass */
+:host::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 95% 420px at 32% 0px, rgba(190, 62, 30, 0.14) 0%, rgba(140, 46, 24, 0.05) 52%, transparent 82%);
 }
 
-.dark-page, .dark-page-wrapper {
-  padding: 170px 24px 80px;
-  color: #fff;
-}
-
-/* --- HERO / CABECERA DENTRO DE UN RECUADRO --- */
-.hero {
-  max-width: 900px;
-  margin: 0 auto 30px;
-  text-align: center;
-  background: rgba(17, 17, 17, 0.88) !important;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 32px 24px;
-  border-radius: 8px;
-}
-
-.hero h1 {
-  font-family: var(--font-display, sans-serif);
-  font-size: clamp(28px, 4vw, 38px);
-  font-weight: 900;
-  text-transform: uppercase;
-  color: #fff;
-  margin: 0 0 12px 0;
-  line-height: 1.2;
-}
-
-.hero h1 span {
-  color: var(--color-primary, #ff5722);
-}
-
-.hero p {
-  color: #aaa;
-  font-family: var(--font-body, sans-serif);
-  font-size: 14px;
-  line-height: 1.5;
-  margin: 0;
-}
-
-/* --- CONTENEDOR Y GRILLA --- */
-.container {
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.grid-layout {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
-}
-
-@media (min-width: 768px) {
-  .grid-layout {
-    grid-template-columns: 1fr 1fr;
-    align-items: start;
-  }
-}
-
-.left-column {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* --- TARJETAS CON TRANSPARENCIA ELEGANTE PARA LUCIR EL FONDO --- */
-.card, .result {
-  background: rgba(17, 17, 17, 0.88) !important;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 24px;
-  border-radius: 8px;
-}
-
-.card label, .field label {
-  display: block;
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  color: #888;
-  margin-bottom: 8px;
-  font-family: var(--font-body, sans-serif);
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-/* --- TOGGLE GÉNERO --- */
-.gender-toggle-group {
-  display: flex;
-  gap: 8px;
-}
-
-.btn-gender {
-  flex: 1;
-  padding: 11px 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(10, 10, 10, 0.6);
-  color: #aaa;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: var(--font-body, sans-serif);
-  text-align: center;
-}
-
-.btn-gender:hover {
-  border-color: var(--color-primary, #ff4500);
-  color: #fff;
-}
-
-.btn-gender.active {
-  background: var(--color-primary, #ff4500) !important;
-  color: #fff !important;
-  border-color: var(--color-primary, #ff4500) !important;
-}
-
-/* --- CAMPOS E INPUTS --- */
-.field {
-  margin-bottom: 16px;
-}
-
-.field input {
-  width: 100%;
-  padding: 12px;
-  background: rgba(10, 10, 10, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #f0f0f0;
-  font-family: var(--font-body, sans-serif);
-  font-size: 14px;
-  border-radius: 4px;
-  box-sizing: border-box;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.field input:focus {
-  border-color: var(--color-primary, #ff5722);
-}
-
-.row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-/* --- ACCIONES (BOTONES) --- */
-.actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.btn-primary, .btn-secondary {
-  flex: 1;
-  padding: 12px;
-  border-radius: 4px;
-  font-weight: 700;
-  font-size: 13px;
-  cursor: pointer;
-  border: none;
-  text-transform: uppercase;
-  transition: opacity 0.2s;
-}
-
-.btn-primary {
-  background: var(--color-primary, #ff5722);
-  color: #fff;
-}
-
-.btn-primary:hover {
-  opacity: 0.9;
-}
-
-.btn-secondary {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ccc;
-}
-
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: #777;
-}
-
-/* --- TARJETA DE INFORMACIÓN --- */
-.info-card .info-title {
-  font-family: var(--font-display, sans-serif);
-  color: #fff;
-  font-size: 16px;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-
-.info-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 16px 0;
-}
-
-.info-list li {
-  font-size: 13px;
-  color: #aaa;
-  padding: 6px 0;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  display: inline-block;
-}
-.dot-u { background: #3498db; }
-.dot-n { background: #2ed573; }
-.dot-o { background: #ffa502; }
-.dot-ob { background: #ff4757; }
-
-.info-note {
-  font-size: 12px;
-  color: #888;
-  font-style: italic;
-  line-height: 1.4;
-  margin: 0;
-}
-
-/* --- SECCIÓN DE RESULTADOS --- */
-.result {
+:host::before {
   display: none;
 }
 
-.result.show {
-  display: block;
+.imc-page-shell {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  background: transparent;
+  padding-bottom: 96px;
 }
 
-.result-title {
-  font-family: var(--font-display, sans-serif);
-  color: #fff;
-  font-size: 16px;
-  letter-spacing: 0.05em;
+.text-brand {
+  color: var(--color-primary);
+  background: linear-gradient(135deg, #ff4500 0%, #ff7a45 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ==========================================================================
+   1. CABECERA EDITORIAL (THE HOUSE FIT LAB) CON VIDRIO ESMERILADO
+   ========================================================================== */
+.imc-hero {
+  position: relative;
+  margin-top: calc(-1 * var(--public-nav-height, 152px));
+  padding: calc(var(--public-nav-height, 152px) + 28px) 48px 42px;
+  background:
+    radial-gradient(ellipse 75% 260px at 26% 55%, rgba(255, 69, 0, 0.12) 0%, transparent 75%);
+  border-bottom: none;
+}
+
+.imc-hero-inner {
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.imc-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--text-dim);
+  margin-bottom: 22px;
+}
+
+.imc-breadcrumb a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+
+.imc-breadcrumb a:hover {
+  color: var(--text-white);
+}
+
+.crumb-sep {
+  color: #3f3f46;
+}
+
+.crumb-current {
+  color: var(--text-white);
+  font-weight: 600;
+}
+
+.imc-hero-split {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 40px;
+  align-items: end;
+}
+
+.lab-eyebrow-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 69, 0, 0.1);
+  border: 1px solid rgba(255, 69, 0, 0.3);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #ff6a33;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin-bottom: 16px;
-  text-align: center;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 16px rgba(255, 69, 0, 0.12);
 }
 
-.scale-labels {
+.lab-eyebrow-pill img {
+  width: 15px;
+  height: 15px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.lab-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: 0 0 8px var(--color-primary);
+}
+
+.imc-hero-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(28px, 3.6vw, 44px);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--text-white);
+  margin: 0 0 14px;
+}
+
+.imc-hero-desc {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 620px;
+  margin: 0;
+}
+
+/* TARJETAS KPI DEL HERO EN VIDRIO ESMERILADO */
+.imc-hero-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.hero-kpi-box {
+  background: var(--glass-surface);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  box-shadow: var(--glass-specular), 0 16px 36px rgba(0, 0, 0, 0.45);
+  transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.24s ease, box-shadow 0.24s ease;
+}
+
+.hero-kpi-box:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 69, 0, 0.4);
+  box-shadow: var(--glass-specular), 0 20px 44px rgba(0, 0, 0, 0.6), 0 0 24px rgba(255, 69, 0, 0.15);
+}
+
+.kpi-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.kpi-value {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 23px;
+  font-weight: 800;
+  color: var(--text-white);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi-value small {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.kpi-sub {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   2. WORKSPACE DE 2 COLUMNAS + ORBES DE REFRACCIÓN APPLE GLASS
+   ========================================================================== */
+.imc-main-container {
+  position: relative;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 36px 48px 0;
+  overflow: visible;
+}
+
+/* ORBES DE PROFUNDIDAD ÓPTICA PARA VIDRIO ESMERILADO (0px blur filter para 120fps) */
+.glass-ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.75;
+}
+
+.orb-left {
+  width: 560px;
+  height: 560px;
+  top: 20px;
+  left: -140px;
+  background: radial-gradient(circle, rgba(255, 69, 0, 0.14) 0%, rgba(255, 107, 53, 0.05) 45%, transparent 72%);
+}
+
+.orb-right-top {
+  width: 540px;
+  height: 540px;
+  top: -20px;
+  right: -120px;
+  background: radial-gradient(circle, rgba(255, 87, 34, 0.12) 0%, rgba(245, 158, 11, 0.04) 45%, transparent 72%);
+}
+
+.orb-right-bottom {
+  width: 600px;
+  height: 600px;
+  bottom: 0;
+  right: 6%;
+  background: radial-gradient(circle, rgba(255, 69, 0, 0.1) 0%, rgba(99, 102, 241, 0.04) 45%, transparent 72%);
+}
+
+.imc-workspace-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 440px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+/* CABECERAS DE SECCIÓN CON LÍNEA REFLECTANTE */
+.panel-section-header {
+  margin-bottom: 22px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+}
+
+.step-index {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.panel-section-header h2,
+.gauge-card-header h2,
+.nutrition-header h2 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-white);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+/* ==========================================================================
+   3. COLUMNA IZQUIERDA: FORMULARIO BIOMÉTRICO (PANEL DE VIDRIO APPLE)
+   ========================================================================== */
+.imc-form-card {
+  background: var(--glass-surface);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 30px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  box-shadow: var(--glass-specular), var(--glass-shadow);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.imc-form-card:hover {
+  border-color: var(--glass-border-hover);
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.3), 0 32px 70px rgba(0, 0, 0, 0.65), 0 0 50px rgba(255, 69, 0, 0.06);
+}
+
+.param-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.param-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.param-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #e4e4e7;
+  text-transform: uppercase;
+}
+
+/* SELECTOR DE SEXO BIOLÓGICO ESTILO APPLE GLASS TILES */
+.gender-selector-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.gender-card-btn {
+  background: rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 13px 15px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  color: var(--text-white);
+  font-family: inherit;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.gender-card-btn:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.22);
+  transform: translateY(-2px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.gender-card-btn.active {
+  border-color: var(--color-primary);
+  background: linear-gradient(145deg, rgba(255, 69, 0, 0.2) 0%, rgba(255, 107, 53, 0.07) 100%), rgba(22, 16, 16, 0.7);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), 0 10px 26px rgba(255, 69, 0, 0.24);
+}
+
+.gender-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  color: var(--text-muted);
+}
+
+.gender-card-btn.active .gender-card-top {
+  color: var(--color-primary);
+}
+
+.radio-indicator {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  transition: border-color 0.2s ease;
+}
+
+.gender-card-btn.active .radio-indicator {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 10px rgba(255, 69, 0, 0.6);
+}
+
+.gender-card-btn.active .radio-indicator::after {
+  content: '';
+  position: absolute;
+  inset: 2.5px;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+
+.gender-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-white);
+}
+
+.gender-sub {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+/* STEPPER + INPUT NUMÉRICO CAPSULE (APPLE FROSTED PILL) */
+.stepper-input-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 12px;
+  padding: 3px 4px;
+  box-shadow: inset 0 1.5px 3px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stepper-input-group:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.2), inset 0 1.5px 3px rgba(0, 0, 0, 0.5);
+}
+
+.stepper-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-white);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: inherit;
+}
+
+.stepper-btn:hover {
+  background: var(--color-primary);
+  color: #ffffff;
+  border-color: transparent;
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(255, 69, 0, 0.45);
+}
+
+.stepper-btn:active {
+  transform: scale(0.92);
+}
+
+.stepper-input-group input[type='number'] {
+  width: 66px;
+  background: transparent;
+  border: none;
+  color: var(--text-white);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  text-align: right;
+  outline: none;
+  padding: 0 2px;
+  font-variant-numeric: tabular-nums;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.stepper-input-group input[type='number']::-webkit-outer-spin-button,
+.stepper-input-group input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.unit-tag {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding-right: 6px;
+}
+
+/* SLIDERS TÁCTILES ESTILO APPLE VISION */
+.custom-range-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
+  outline: none;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.custom-range-slider:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.custom-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f1f5f9 100%);
+  border: 2.5px solid var(--color-primary);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.6), 0 0 14px rgba(255, 69, 0, 0.65);
+  cursor: grab;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease;
+}
+
+.custom-range-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.16);
+  box-shadow: 0 4px 16px rgba(255, 69, 0, 0.85), 0 0 20px #ff4500;
+}
+
+.custom-range-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.24);
+  box-shadow: 0 6px 22px rgba(255, 69, 0, 0.95), 0 0 26px #ff4500;
+}
+
+.custom-range-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f1f5f9 100%);
+  border: 2.5px solid var(--color-primary);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.6), 0 0 14px rgba(255, 69, 0, 0.65);
+  cursor: grab;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease;
+}
+
+.range-limits {
   display: flex;
   justify-content: space-between;
   font-size: 11px;
-  text-transform: uppercase;
-  margin-bottom: 6px;
+  color: var(--text-dim);
+  margin-top: -2px;
+  font-weight: 500;
+}
+
+/* NIVEL DE ACTIVIDAD FÍSICA ESTILO TILES APPLE GLASS */
+.activity-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 9px;
+}
+
+.activity-chip {
+  background: rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 13px;
+  padding: 10px 13px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: inherit;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.activity-chip:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 8px 18px rgba(0, 0, 0, 0.38);
+}
+
+.activity-chip.active {
+  border-color: var(--color-primary);
+  background: linear-gradient(145deg, rgba(255, 69, 0, 0.2) 0%, rgba(255, 107, 53, 0.07) 100%), rgba(22, 16, 16, 0.7);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), 0 8px 24px rgba(255, 69, 0, 0.26);
+}
+
+.activity-chip strong {
+  font-size: 13px;
   font-weight: 700;
-}
-.scale-labels .u { color: #3498db; }
-.scale-labels .n { color: #2ed573; }
-.scale-labels .o { color: #ffa502; }
-.scale-labels .ob { color: #ff4757; }
-
-.scale-bar-wrap {
-  margin-bottom: 20px;
+  color: var(--text-white);
 }
 
-.scale-bar {
-  height: 8px;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 4px;
+.activity-chip span {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.activity-chip.active strong {
+  color: #ffffff;
+}
+
+.activity-chip.active span {
+  color: #ffb08a;
+}
+
+.error-banner {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #fca5a5;
+  font-size: 12.5px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.15);
+}
+
+/* BOTONES DE ACCIÓN PRINCIPALES */
+.imc-form-actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.btn-calc-primary {
   position: relative;
   overflow: hidden;
+  background: var(--color-primary-gradient);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 14px;
+  padding: 15px 22px;
+  font-size: 13.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 12px 30px rgba(255, 69, 0, 0.42);
 }
 
-.scale-marker {
+.btn-calc-primary::after {
+  content: '';
   position: absolute;
   top: 0;
-  width: 4px;
+  left: -70%;
+  width: 50%;
   height: 100%;
-  background: #fff;
-  box-shadow: 0 0 6px rgba(255,255,255,0.8);
-  transition: left 0.3s ease;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: skewX(-18deg);
+  transition: left 0.65s ease;
 }
 
-.imc-value-big {
-  font-family: var(--font-display, sans-serif);
-  font-size: 48px;
-  font-weight: 900;
-  color: var(--color-primary, #ff5722);
-  text-align: center;
-  margin: 10px 0;
+.btn-calc-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 18px 42px rgba(255, 69, 0, 0.55);
 }
 
-.imc-category {
-  font-size: 14px;
-  text-transform: uppercase;
-  font-weight: 700;
-  color: #fff;
-  text-align: center;
-  margin-bottom: 20px;
-  letter-spacing: 0.05em;
+.btn-calc-primary:hover::after {
+  left: 130%;
 }
 
-/* --- PLAN NUTRICIONAL --- */
-.plan {
-  background: rgba(20, 20, 20, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 16px;
-  border-radius: 6px;
-  margin-top: 15px;
+.btn-calc-primary:active {
+  transform: translateY(0);
 }
 
-.plan h3 {
-  font-family: var(--font-display, sans-serif);
-  font-size: 14px;
-  color: var(--color-primary, #ff5722);
-  text-transform: uppercase;
-  margin: 0 0 8px 0;
-}
-
-.plan p {
-  color: #ccc;
+.btn-calc-reset {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: var(--text-muted);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 15px 20px;
   font-size: 13px;
-  line-height: 1.5;
-  margin: 0 0 12px 0;
-}
-
-.card input:focus {
-  border-color: var(--color-primary) !important;
-  box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.15);
-}
-
-.card * {
-  transition: all 0.2s ease;
-}
-
-/* --- NUEVO BOTÓN DE REDIRECCIÓN A NUTRICIÓN --- */
-.btn-nutricion {
-  display: block;
-  width: 100%;
-  margin-top: 12px;
-  padding: 10px 16px;
-  background: var(--color-primary, #ff5722);
-  color: #fff;
-  font-family: var(--font-body, sans-serif);
-  font-size: 12px;
   font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.btn-calc-reset:hover {
+  border-color: rgba(255, 255, 255, 0.26);
+  color: var(--text-white);
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   4. COLUMNA DERECHA: ESCALA BIOMÉTRICA OMS (CARD 02)
+   ========================================================================== */
+.imc-results-col {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.imc-gauge-card,
+.imc-nutrition-card {
+  background: var(--glass-surface);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 30px 32px;
+  box-shadow: var(--glass-specular), var(--glass-shadow);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.imc-gauge-card:hover,
+.imc-nutrition-card:hover {
+  border-color: var(--glass-border-hover);
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.3), 0 32px 70px rgba(0, 0, 0, 0.65), 0 0 50px rgba(255, 69, 0, 0.06);
+}
+
+.gauge-card-header,
+.nutrition-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 24px;
+}
+
+.status-category-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+  white-space: nowrap;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.status-category-pill[data-zone='underweight'] {
+  background: rgba(56, 189, 248, 0.14);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.2);
+}
+
+.status-category-pill[data-zone='normal'] {
+  background: rgba(16, 185, 129, 0.14);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #34d399;
+  box-shadow: 0 0 18px rgba(16, 185, 129, 0.2);
+}
+
+.status-category-pill[data-zone='overweight'] {
+  background: rgba(245, 158, 11, 0.14);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+  box-shadow: 0 0 18px rgba(245, 158, 11, 0.2);
+}
+
+.status-category-pill[data-zone='obese'] {
+  background: rgba(239, 68, 68, 0.14);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #f87171;
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.2);
+}
+
+/* LECTURA PRINCIPAL DE IMC + PESO IDEAL */
+.gauge-readout-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 28px;
+  align-items: center;
+  margin-bottom: 26px;
+}
+
+.imc-number-block {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding-right: 28px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.imc-big-number {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 58px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  background: linear-gradient(180deg, #ffffff 40%, rgba(255, 255, 255, 0.75) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-variant-numeric: tabular-nums;
+  filter: drop-shadow(0 4px 16px rgba(255, 255, 255, 0.15));
+}
+
+.imc-unit-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.imc-unit-meta strong {
+  font-size: 13.5px;
+  color: var(--color-primary);
+  font-weight: 800;
+}
+
+.imc-unit-meta span {
+  font-size: 11.5px;
+  color: var(--text-dim);
+}
+
+.ideal-weight-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 12px 18px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.ideal-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.ideal-range {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-white);
+}
+
+.ideal-delta {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #34d399;
+}
+
+.ideal-delta[data-zone='underweight'] {
+  color: #38bdf8;
+}
+
+.ideal-delta[data-zone='overweight'] {
+  color: #fbbf24;
+}
+
+.ideal-delta[data-zone='obese'] {
+  color: #f87171;
+}
+
+/* BARRA DE ESPECTRO DE 4 ZONAS CON BRILLO NEÓN */
+.spectrum-wrapper {
+  margin-bottom: 24px;
+}
+
+.spectrum-labels-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.spectrum-bar-track {
+  position: relative;
+  height: 12px;
+  border-radius: 999px;
+  display: grid;
+  grid-template-columns: 20.5% 29.5% 22.7% 27.3%;
+  gap: 3px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  padding: 2px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.seg {
+  height: 100%;
+  border-radius: 999px;
+  transition: opacity 0.3s ease;
+}
+
+.seg-under {
+  background: linear-gradient(90deg, #0284c7, #38bdf8);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+}
+
+.seg-normal {
+  background: linear-gradient(90deg, #059669, #34d399);
+  box-shadow: 0 0 10px rgba(52, 211, 153, 0.3);
+}
+
+.seg-over {
+  background: linear-gradient(90deg, #d97706, #fbbf24);
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+}
+
+.seg-obese {
+  background: linear-gradient(90deg, #dc2626, #f87171);
+  box-shadow: 0 0 10px rgba(248, 113, 113, 0.3);
+}
+
+.spectrum-pointer {
+  position: absolute;
+  top: -5px;
+  bottom: -5px;
+  width: 4px;
+  background: #ffffff;
+  border-radius: 99px;
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.95), 0 0 6px #000000, 0 0 20px rgba(255, 69, 0, 0.7);
+  transform: translateX(-50%);
+  transition: left 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 2;
+}
+
+.pointer-tag {
+  position: absolute;
+  bottom: calc(100% + 7px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  color: #000000;
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+}
+
+/* TARJETAS DE LAS 4 ZONAS DE LA OMS (VIDRIO FROSTED) */
+.bmi-zones-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.zone-item {
+  background: rgba(255, 255, 255, 0.025);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 11px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.zone-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+}
+
+.zone-item.active-zone {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.32);
+  transform: translateY(-2px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 10px 24px rgba(0, 0, 0, 0.5);
+}
+
+.zone-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-u { background: #38bdf8; box-shadow: 0 0 10px rgba(56, 189, 248, 0.7); }
+.dot-n { background: #34d399; box-shadow: 0 0 10px rgba(52, 211, 153, 0.7); }
+.dot-o { background: #fbbf24; box-shadow: 0 0 10px rgba(251, 191, 36, 0.7); }
+.dot-ob { background: #f87171; box-shadow: 0 0 10px rgba(248, 113, 113, 0.7); }
+
+.zone-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.zone-info strong {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-white);
+  white-space: nowrap;
+}
+
+.zone-info span {
+  font-size: 11px;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   5. TARJETA DE PRESCRIPCIÓN METABÓLICA Y PLAN NUTRICIONAL (CARD 03)
+   ========================================================================== */
+.calorie-strategy-badge {
+  background: rgba(255, 69, 0, 0.14);
+  border: 1px solid rgba(255, 69, 0, 0.36);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #ff6a33;
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 6px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(255, 69, 0, 0.16);
+}
+
+.metabolic-kpis-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.meta-kpi-card {
+  background: rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 20px rgba(0, 0, 0, 0.35);
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.meta-kpi-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 69, 0, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 12px 28px rgba(0, 0, 0, 0.5), 0 0 18px rgba(255, 69, 0, 0.1);
+}
+
+.meta-kpi-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.meta-kpi-val {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 23px;
+  font-weight: 800;
+  color: var(--text-white);
+  font-variant-numeric: tabular-nums;
+}
+
+.meta-kpi-val small {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.meta-kpi-sub {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.plan-description {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #e4e4e7;
+  margin: 0 0 20px;
+}
+
+/* LISTA DE COMIDAS MODELO EN FILAS DE VIDRIO ESMERILADO */
+.meals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.meal-row {
+  background: rgba(255, 255, 255, 0.025);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  padding: 13px 18px;
+  display: grid;
+  grid-template-columns: 185px 1fr;
+  align-items: center;
+  gap: 16px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.meal-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 69, 0, 0.35);
+  transform: translateY(-1.5px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 10px 24px rgba(0, 0, 0, 0.45);
+}
+
+.meal-time-badge {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #ff6b35;
+  background: rgba(255, 69, 0, 0.12);
+  border: 1px solid rgba(255, 69, 0, 0.32);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 6px 14px;
+  border-radius: 999px;
   text-align: center;
-  text-decoration: none;
-  transition: opacity 0.2s ease, transform 0.1s ease;
+  white-space: nowrap;
   box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-shadow: 0 0 14px rgba(255, 69, 0, 0.12);
 }
 
-.btn-nutricion:hover {
-  opacity: 0.9;
+.meal-detail-text {
+  font-size: 13.5px;
+  color: #f4f4f5;
+  line-height: 1.48;
+  margin: 0;
 }
 
-.btn-nutricion:active {
-  transform: scale(0.98);
+/* STRIP DE ENTRENAMIENTO ESMERALDA FROSTED */
+.training-tip-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 18px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(5, 150, 105, 0.04) 100%), rgba(8, 20, 14, 0.45);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 14px;
+  font-size: 13px;
+  color: #d1fae5;
+  margin-bottom: 22px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 6px 20px rgba(16, 185, 129, 0.1);
+}
+
+.training-tip-strip svg {
+  color: #34d399;
+  flex-shrink: 0;
+}
+
+.training-tip-strip strong {
+  color: #34d399;
+}
+
+/* BOTONES DE ACCIÓN HACIA RUTINAS Y TIENDA */
+.nutrition-cta-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.btn-action-primary,
+.btn-action-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
+  font-family: inherit;
+}
+
+.btn-action-primary {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-primary-gradient);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35), 0 10px 26px rgba(255, 69, 0, 0.38);
+}
+
+.btn-action-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.45), 0 14px 34px rgba(255, 69, 0, 0.5);
+}
+
+.btn-action-primary:active {
+  transform: translateY(0);
+}
+
+.btn-action-secondary {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-white);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.btn-action-secondary:hover {
+  border-color: rgba(255, 255, 255, 0.26);
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.medical-disclaimer {
+  font-size: 11.5px;
+  color: var(--text-dim);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ==========================================================================
+   6. RESPONSIVE DESIGN
+   ========================================================================== */
+@media (max-width: 1100px) {
+  .imc-hero {
+    padding: 24px 28px 36px;
+  }
+  .imc-hero-split {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .imc-main-container {
+    padding: 28px 28px 0;
+  }
+  .imc-workspace-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .imc-hero {
+    padding: 20px 18px 28px;
+  }
+  .imc-main-container {
+    padding: 22px 18px 0;
+  }
+  .imc-hero-kpis,
+  .metabolic-kpis-grid {
+    grid-template-columns: 1fr;
+  }
+  .bmi-zones-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .gauge-readout-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .imc-number-block {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-right: 0;
+    padding-bottom: 16px;
+  }
+  .meal-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .meal-time-badge {
+    justify-self: start;
+    width: auto;
+  }
+  .nutrition-cta-row {
+    grid-template-columns: 1fr;
+  }
 }

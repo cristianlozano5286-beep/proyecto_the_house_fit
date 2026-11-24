@@ -8,6 +8,7 @@ import { RecuperarPasswordComponent } from './pages/recuperar-password/recuperar
 // Layouts
 import { LayoutComponent } from './layout/layout/layout';
 import { PublicLayoutComponent } from './layout/public-layout/public-layout';
+import { MiEspacioLayoutComponent } from './layout/mi-espacio-layout/mi-espacio-layout';
 
 // Páginas públicas
 import { InicioComponent } from './pages/inicio/inicio';
@@ -23,6 +24,7 @@ import { ContenidoDestacadoComponent } from './pages/contenido-destacado/conteni
 import { DashboardComponent } from './pages/dashboard/dashboard';
 import { UsersComponent } from './pages/users/users';
 import { GimnasiosAdminComponent } from './pages/gimnasios-admin/gimnasios-admin';
+import { PublicarGimnasioComponent } from './pages/publicar-gimnasio/publicar-gimnasio';
 import { InstructoresAdminComponent } from './pages/instructores-admin/instructores-admin';
 import { ProductosAdminComponent } from './pages/productos-admin/productos-admin';
 import { ContenidoAdminComponent } from './pages/contenido-admin/contenido-admin';
@@ -33,19 +35,52 @@ import { PagosComponent } from './pages/pagos/pagos';
 import { RolesComponent } from './pages/roles/roles';
 import { ReservarClaseComponent } from './pages/reservar-clase/reservar-clase';
 import { NutricionComponent } from './pages/nutricion/nutricion';
+import { PerfilComponent } from './pages/perfil/perfil';
+import { ContabilidadMembresiasComponent } from './pages/contabilidad-membresias/contabilidad-membresias';
 
 import { authGuard } from './guards/auth-guard';
+import { rolGuard } from './guards/rol-guard';
 
 export const routes: Routes = [
-  // ---------- Sitio público (sin autenticación) ----------
+  // ---------- Apartado Dedicado en Pantalla Completa (Mi Perfil · Todos los Roles) ----------
+  { path: 'mi-perfil', component: PerfilComponent, canActivate: [authGuard] },
+
+  // ---------- Apartados Dedicados en Pantalla Completa (Creador Gym / Admin) ----------
+  { path: 'contabilidad-gestion', component: ContabilidadMembresiasComponent, canActivate: [authGuard, rolGuard], data: { roles: ['Administrador', 'Creador gym'] } },
+  { path: 'contabilidad-membresias', component: ContabilidadMembresiasComponent, canActivate: [authGuard, rolGuard], data: { roles: ['Administrador', 'Creador gym'] } },
+  { path: 'publicar-gimnasio', component: PublicarGimnasioComponent, canActivate: [authGuard, rolGuard], data: { roles: ['Administrador', 'Creador gym'] } },
+  { path: 'editar-gimnasio', component: PublicarGimnasioComponent, canActivate: [authGuard, rolGuard], data: { roles: ['Administrador', 'Creador gym'] } },
+  { path: 'instructores-gestion', component: InstructoresAdminComponent, canActivate: [authGuard, rolGuard], data: { roles: ['Administrador', 'Creador gym'] } },
+  { path: 'productos-gestion', component: ProductosAdminComponent, canActivate: [authGuard, rolGuard], data: { roles: ['Administrador', 'Creador gym'] } },
+  { path: 'contenido-gestion', component: ContenidoAdminComponent, canActivate: [authGuard, rolGuard], data: { roles: ['Administrador', 'Creador gym', 'Entrenador'] } },
+  { path: 'noticias-gestion', component: NoticiasAdminComponent, canActivate: [authGuard, rolGuard], data: { roles: ['Administrador', 'Creador gym'] } },
+
+  // ---------- Apartados Dedicados en Pantalla Completa (Usuario) ----------
+  {
+    path: 'mi-espacio',
+    component: MiEspacioLayoutComponent,
+    canActivate: [authGuard],
+    children: [
+      { path: '', redirectTo: 'entrenamiento', pathMatch: 'full' },
+      { path: 'entrenamiento', component: EntrenamientoComponent },
+      { path: 'reservar-clase', component: ReservarClaseComponent },
+      { path: 'resenas', component: ResenasComponent },
+      { path: 'pagos', component: PagosComponent },
+    ],
+  },
+
+  // ---------- Sitio principal (requiere registrarse e iniciar sesión) ----------
   {
     path: '',
     component: PublicLayoutComponent,
+    canActivate: [authGuard],
+    canActivateChild: [authGuard],
     children: [
       { path: '', component: InicioComponent },
       { path: 'gimnasios', component: CatalogoGimnasiosComponent },
       { path: 'rutinas', component: RutinasComponent },
       { path: 'rutina/:id', component: DetalleRutinasComponent },
+      { path: 'rutinas/:id', component: DetalleRutinasComponent },
       { path: 'tienda', component: TiendaComponent },
       { path: 'blog', component: BlogPublicoComponent },
       { path: 'imc', component: CalculadoraImcComponent },
@@ -67,17 +102,21 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
-      { path: 'usuarios', component: UsersComponent },
-      { path: 'gimnasios', component: GimnasiosAdminComponent },
-      { path: 'instructores', component: InstructoresAdminComponent },
-      { path: 'productos', component: ProductosAdminComponent },
-      { path: 'contenido', component: ContenidoAdminComponent },
-      { path: 'entrenamiento', component: EntrenamientoComponent },
-      { path: 'reservar-clase', component: ReservarClaseComponent },
-      { path: 'resenas', component: ResenasComponent },
-      { path: 'noticias', component: NoticiasAdminComponent },
-      { path: 'pagos', component: PagosComponent },
-      { path: 'roles', component: RolesComponent },
+      { path: 'perfil', redirectTo: '/mi-perfil', pathMatch: 'full' },
+      { path: 'contabilidad-membresias', redirectTo: '/contabilidad-gestion', pathMatch: 'full' },
+      { path: 'usuarios', component: UsersComponent, canActivate: [rolGuard], data: { roles: ['Administrador', 'Creador gym'] } },
+      { path: 'gimnasios', redirectTo: '/editar-gimnasio', pathMatch: 'full' },
+      { path: 'mi-gimnasio', redirectTo: '/editar-gimnasio', pathMatch: 'full' },
+      { path: 'gimnasios-admin', redirectTo: '/editar-gimnasio', pathMatch: 'full' },
+      { path: 'instructores', redirectTo: '/instructores-gestion', pathMatch: 'full' },
+      { path: 'productos', redirectTo: '/productos-gestion', pathMatch: 'full' },
+      { path: 'contenido', redirectTo: '/contenido-gestion', pathMatch: 'full' },
+      { path: 'entrenamiento', redirectTo: '/mi-espacio/entrenamiento', pathMatch: 'full' },
+      { path: 'reservar-clase', redirectTo: '/mi-espacio/reservar-clase', pathMatch: 'full' },
+      { path: 'resenas', redirectTo: '/mi-espacio/resenas', pathMatch: 'full' },
+      { path: 'noticias', redirectTo: '/noticias-gestion', pathMatch: 'full' },
+      { path: 'pagos', redirectTo: '/mi-espacio/pagos', pathMatch: 'full' },
+      { path: 'roles', component: RolesComponent, canActivate: [rolGuard], data: { roles: ['Administrador'] } },
     ],
   },
 

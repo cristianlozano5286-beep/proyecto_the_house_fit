@@ -1,0 +1,39 @@
+# Respaldos temporales y archivos comprimidos locales
+*.bak
+*.tmp
+*.zip
+*.tar.gz
+
+# Binarios compilados (Go y Android)
+*.exe
+*.apk
+*.aab
+
+# Archivo Go accidental dentro del proyecto Angular
+THE_HOUSE_FIT/go.mod
+THE_HOUSE_FIT/go.sum
+
+# Configuraciones locales y secretos (usar *.example como plantilla)
+.env
+.env.*
+!.env.example
+thehousefit_crud/conf/app.conf
+thehousefit_mid/conf/app.conf
+thehousefit_mid/credentials/
+thehousefit_mid/token/
+
+# Node / Angular
+**/node_modules/
+**/dist/
+**/.angular/cache/
+npm-debug.log*
+
+# Editores y sistema operativo
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/tasks.json
+!.vscode/launch.json

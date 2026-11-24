@@ -1,0 +1,2 @@
+# no subas la clave de tu base de datos (el modelo esta en conf/app.conf.example)
+conf/app.conf

@@ -1,228 +1,634 @@
-<div class="page-wrapper">
-    <h1 class="section-title">📋 Rutinas y guías</h1>
-    <p class="section-subtitle">Administra rutinas de entrenamiento, manuales físicos y guías nutricionales</p>
-
-    <div class="tag-row mb-16">
-        <button class="pill" [class.active]="pestanaActiva==='rutinas'" (click)="cambiarPestana('rutinas')">🏋️ Rutinas</button>
-        <button class="pill" [class.active]="pestanaActiva==='guias'" (click)="cambiarPestana('guias')">📖 Manuales físicos</button>
-        <button class="pill" [class.active]="pestanaActiva==='nutricion'" (click)="cambiarPestana('nutricion')">🥗 Nutrición</button>
-        <button class="pill" [class.active]="pestanaActiva==='clases'" (click)="cambiarPestana('clases')">📅 Clases reservables</button>
+<div class="wizard-viewport">
+  <!-- CABECERA EN PANTALLA COMPLETA -->
+  <header class="wizard-navbar">
+    <div class="navbar-left">
+      <a routerLink="/panel/dashboard" class="brand-link" title="Volver al Dashboard">
+        <div class="logo-circle">
+          <img src="assets/logo-icon-white.png" alt="The House Fit" />
+        </div>
+        <span class="brand-text">THE HOUSE <strong>FIT</strong></span>
+      </a>
+      <span class="portal-badge">
+        {{ idEditar !== null ? 'CREADOR GYM · EDITANDO CONTENIDO' : 'CREADOR GYM · RUTINAS Y GUÍAS' }}
+      </span>
     </div>
 
-    @if (mensaje) {
-        <div class="alert success">{{ mensaje }}</div>
+    <!-- PESTAÑAS DE PASOS -->
+    @if (pantallaActual !== 'hub') {
+      <nav class="wizard-steps-tabs" aria-label="Pasos de contenido">
+        <button type="button" class="wizard-tab-btn" [class.active]="pantallaActual === 'paso1'" (click)="irAPaso('paso1')">
+          <span class="tab-num" [class.done]="pantallaActual === 'paso2' || pantallaActual === 'paso3'">1</span>
+          <span class="tab-label">Tipo y título</span>
+        </button>
+        <span class="tab-arrow-sep">›</span>
+        <button type="button" class="wizard-tab-btn" [class.active]="pantallaActual === 'paso2'" (click)="irAPaso('paso2')">
+          <span class="tab-num" [class.done]="pantallaActual === 'paso3'">2</span>
+          <span class="tab-label">Estructura técnica</span>
+        </button>
+        <span class="tab-arrow-sep">›</span>
+        <button type="button" class="wizard-tab-btn" [class.active]="pantallaActual === 'paso3'" (click)="irAPaso('paso3')">
+          <span class="tab-num">3</span>
+          <span class="tab-label">Detalles y publicación</span>
+        </button>
+      </nav>
     }
 
-    @if (pestanaActiva === 'rutinas') {
-        <div class="grid grid-2">
-            <section class="card">
-                <h2>Nueva rutina</h2>
-                <div class="form-row mt-16">
-                    <div class="form-group">
-                        <label>Nombre</label>
-                        <input type="text" [(ngModel)]="rNombre" placeholder="Nombre de la rutina" />
-                    </div>
-                    <div class="form-group">
-                        <label>Tipo de entrenamiento</label>
-                        <select [(ngModel)]="rTipo">
-                            @for (t of tiposEntrenamiento; track t) { <option [value]="t">{{ t }}</option> }
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Nivel</label>
-                        <select [(ngModel)]="rNivel">
-                            @for (n of niveles; track n) { <option [value]="n">{{ n }}</option> }
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Duración (semanas)</label>
-                        <input type="number" min="1" [(ngModel)]="rDuracion" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Descripción</label>
-                    <textarea rows="2" [(ngModel)]="rDescripcion"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Ejercicios (separados por coma)</label>
-                    <textarea rows="2" [(ngModel)]="rEjerciciosTexto" placeholder="Sentadilla 4x10, Press banca 4x8..."></textarea>
-                </div>
-                <button class="btn btn-primary" (click)="guardarRutina()">Agregar rutina</button>
-            </section>
+    <div class="navbar-right">
+      @if (pantallaActual !== 'hub') {
+        <button type="button" class="btn-nav-pill-subtle" (click)="volverAlHub()">
+          Volver al catálogo
+        </button>
+        <button type="button" class="btn-nav-outline" (click)="guardarActual()">
+          {{ idEditar !== null ? 'Guardar cambios y salir' : 'Publicar ahora' }}
+        </button>
+      } @else {
+        <button type="button" class="btn-nav-outline" (click)="iniciarNuevo()">
+          + Crear contenido
+        </button>
+        <button type="button" class="btn-nav-pill" (click)="salirAlPanel()">
+          Salir al panel
+        </button>
+      }
+    </div>
+  </header>
 
-            <section class="card">
-                <h2>Rutinas disponibles ({{ rutinas.length }})</h2>
-                <div class="mt-16" style="max-height:480px;overflow-y:auto;">
-                    @for (r of rutinas; track r.id) {
-                        <div class="card" style="padding:12px;margin-bottom:10px;">
-                            <div class="flex-between">
-                                <strong>{{ r.nombre }}</strong>
-                                <button class="btn btn-danger btn-sm" (click)="eliminarRutina(r.id)">🗑️</button>
-                            </div>
-                            <div class="tag-row mt-8">
-                                <span class="badge badge-info">{{ r.tipoEntrenamiento }}</span>
-                                <span class="badge badge-gray">{{ r.nivel }}</span>
-                                <span class="badge badge-warning">{{ r.duracionSemanas }} semanas</span>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </section>
+  <!-- ================================================================= -->
+  <!-- PANTALLA HUB: BIENVENIDA Y GESTIÓN DE RUTINAS, GUÍAS Y CLASES      -->
+  <!-- ================================================================= -->
+  @if (pantallaActual === 'hub') {
+    <main class="hub-container">
+      @if (mensaje) {
+        <div class="studio-toast-alert" [class.error]="tipoMensaje === 'error'">
+          <span>{{ tipoMensaje === 'error' ? '⚠️' : '✓' }} {{ mensaje }}</span>
+          <button type="button" class="btn-nav-pill-subtle" (click)="mensaje = ''">Cerrar</button>
         </div>
-    }
+      }
 
-    @if (pestanaActiva === 'guias') {
-        <div class="grid grid-2">
-            <section class="card">
-                <h2>Nuevo manual de guía física</h2>
-                <div class="form-group mt-16">
-                    <label>Título</label>
-                    <input type="text" [(ngModel)]="gTitulo" placeholder="Ej. Manual de técnica de sentadilla" />
-                </div>
-                <div class="form-group">
-                    <label>Método / categoría</label>
-                    <input type="text" [(ngModel)]="gMetodo" placeholder="Ej. Fuerza, Funcional..." />
-                </div>
-                <div class="form-group">
-                    <label>Contenido</label>
-                    <textarea rows="5" [(ngModel)]="gContenido" placeholder="Describe la técnica o el método de ejercicio..."></textarea>
-                </div>
-                <button class="btn btn-primary" (click)="guardarGuiaFisica()">Publicar manual</button>
-            </section>
-
-            <section class="card">
-                <h2>Manuales publicados ({{ guiasFisicas.length }})</h2>
-                <div class="mt-16" style="max-height:480px;overflow-y:auto;">
-                    @for (g of guiasFisicas; track g.id) {
-                        <div class="card" style="padding:12px;margin-bottom:10px;">
-                            <div class="flex-between">
-                                <strong>{{ g.titulo }}</strong>
-                                <button class="btn btn-danger btn-sm" (click)="eliminarGuiaFisica(g.id)">🗑️</button>
-                            </div>
-                            <span class="badge badge-info mt-8">{{ g.metodo }}</span>
-                            <p class="mt-8" style="font-size:13px;">{{ g.contenido }}</p>
-                        </div>
-                    }
-                </div>
-            </section>
+      <div class="hub-top-row">
+        <div>
+          <div class="hub-header-badge">
+            <span class="pulse-dot"></span>
+            <span>Portal Dedicado de Entrenamiento & Nutrición</span>
+          </div>
+          <h1 class="hub-greeting">Hola de nuevo, {{ nombreUsuario }}</h1>
+          <p class="hub-subtitle">
+            Crea o edita rutinas de entrenamiento, manuales biomecánicos, guías de nutrición por IMC y clases grupales.
+          </p>
         </div>
-    }
 
-    @if (pestanaActiva === 'nutricion') {
-        <div class="grid grid-2">
-            <section class="card">
-                <h2>Nueva guía nutricional</h2>
-                <div class="form-group mt-16">
-                    <label>Categoría de IMC</label>
-                    <select [(ngModel)]="nCategoria">
-                        @for (c of categoriasIMC; track c) { <option [value]="c">{{ c }}</option> }
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Título</label>
-                    <input type="text" [(ngModel)]="nTitulo" placeholder="Ej. Plan de mantenimiento saludable" />
-                </div>
-                <div class="form-group">
-                    <label>Recomendaciones</label>
-                    <textarea rows="3" [(ngModel)]="nRecomendaciones"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Ejemplo de comidas</label>
-                    <textarea rows="3" [(ngModel)]="nEjemploComidas"></textarea>
-                </div>
-                <button class="btn btn-primary" (click)="guardarGuiaNutricional()">Publicar guía</button>
-            </section>
-
-            <section class="card">
-                <h2>Guías publicadas ({{ guiasNutricionales.length }})</h2>
-                <div class="mt-16" style="max-height:480px;overflow-y:auto;">
-                    @for (g of guiasNutricionales; track g.id) {
-                        <div class="card" style="padding:12px;margin-bottom:10px;">
-                            <div class="flex-between">
-                                <strong>{{ g.titulo }}</strong>
-                                <button class="btn btn-danger btn-sm" (click)="eliminarGuiaNutricional(g.id)">🗑️</button>
-                            </div>
-                            <span class="badge badge-info mt-8">{{ g.categoriaIMC }}</span>
-                            <p class="mt-8" style="font-size:13px;">{{ g.recomendaciones }}</p>
-                        </div>
-                    }
-                </div>
-            </section>
+        <div class="hub-kpis-row">
+          <div class="hub-kpi-pill highlight">
+            <span class="kpi-val">{{ rutinas.length }}</span>
+            <span class="kpi-lbl">Rutinas</span>
+          </div>
+          <div class="hub-kpi-pill">
+            <span class="kpi-val">{{ guiasFisicas.length }}</span>
+            <span class="kpi-lbl">Manuales</span>
+          </div>
+          <div class="hub-kpi-pill">
+            <span class="kpi-val">{{ guiasNutricionales.length }}</span>
+            <span class="kpi-lbl">Nutrición</span>
+          </div>
+          <div class="hub-kpi-pill">
+            <span class="kpi-val">{{ clases.length }}</span>
+            <span class="kpi-lbl">Clases</span>
+          </div>
         </div>
-    }
+      </div>
 
-    @if (pestanaActiva === 'clases') {
-        <div class="grid grid-2">
-            <section class="card">
-                <h2>Nueva clase reservable</h2>
-                <div class="form-row mt-16">
-                    <div class="form-group">
-                        <label>Gimnasio</label>
-                        <select [(ngModel)]="cGimnasioId">
-                            <option [ngValue]="null">Selecciona un gimnasio</option>
-                            @for (g of gimnasios; track g.id) {
-                                <option [ngValue]="g.id">{{ g.nombre }}</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Tipo de clase</label>
-                        <select [(ngModel)]="cTipoClase">
-                            @for (t of tiposClase; track t) { <option [value]="t">{{ t }}</option> }
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Instructor</label>
-                        <input type="text" [(ngModel)]="cInstructor" placeholder="Nombre del instructor" />
-                    </div>
-                    <div class="form-group">
-                        <label>Hora</label>
-                        <input type="text" [(ngModel)]="cHora" placeholder="Ej. 6:00 am" />
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Cupos</label>
-                        <input type="number" min="1" [(ngModel)]="cCupos" />
-                    </div>
-                    <div class="form-group">
-                        <label>Duración</label>
-                        <input type="text" [(ngModel)]="cDuracion" placeholder="Ej. 45 min" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Precio</label>
-                    <input type="number" min="0" [(ngModel)]="cPrecio" />
-                </div>
-                <button class="btn btn-primary" (click)="guardarClase()">Agregar clase</button>
-            </section>
-
-            <section class="card">
-                <h2>Clases disponibles ({{ clases.length }})</h2>
-                <div class="mt-16" style="max-height:480px;overflow-y:auto;">
-                    @for (c of clases; track c.id) {
-                        <div class="card" style="padding:12px;margin-bottom:10px;">
-                            <div class="flex-between">
-                                <strong>{{ c.tipoClase }} · {{ nombreGimnasio(c.gimnasioId) }}</strong>
-                                <button class="btn btn-danger btn-sm" (click)="eliminarClase(c.id)">🗑️</button>
-                            </div>
-                            <div class="tag-row mt-8">
-                                <span class="badge badge-info">{{ c.hora }}</span>
-                                <span class="badge badge-gray">{{ c.duracion }}</span>
-                                <span class="badge badge-warning">{{ c.cupos }} cupos</span>
-                            </div>
-                            <p class="mt-8" style="font-size:13px;color:var(--color-gray);">Instructor: {{ c.instructor }}</p>
-                        </div>
-                    }
-                    @empty {
-                        <p class="empty-state">Aún no hay clases registradas.</p>
-                    }
-                </div>
-            </section>
+      <!-- SELECTOR DE MÓDULO CON ANIMACIÓN -->
+      <section class="hub-section">
+        <div class="hub-filter-pills" style="margin-bottom: 18px;">
+          <button
+            type="button"
+            class="filter-pill-btn"
+            [class.active]="pestanaActiva === 'rutinas'"
+            (click)="cambiarPestana('rutinas')">
+            🏋️ Rutinas de Entrenamiento ({{ rutinas.length }})
+          </button>
+          <button
+            type="button"
+            class="filter-pill-btn"
+            [class.active]="pestanaActiva === 'guias'"
+            (click)="cambiarPestana('guias')">
+            📖 Manuales Físicos ({{ guiasFisicas.length }})
+          </button>
+          <button
+            type="button"
+            class="filter-pill-btn"
+            [class.active]="pestanaActiva === 'nutricion'"
+            (click)="cambiarPestana('nutricion')">
+            🥗 Guías Nutricionales ({{ guiasNutricionales.length }})
+          </button>
+          <button
+            type="button"
+            class="filter-pill-btn"
+            [class.active]="pestanaActiva === 'clases'"
+            (click)="cambiarPestana('clases')">
+            📅 Clases Reservables ({{ clases.length }})
+          </button>
         </div>
-    }
+
+        <!-- BOTÓN DE CREAR NUEVO EN LA PESTAÑA ACTIVA -->
+        <div class="options-list">
+          <div class="option-row" (click)="iniciarNuevo(pestanaActiva)" role="button" tabindex="0">
+            <div class="option-left">
+              <div class="option-icon-square">
+                {{ pestanaActiva === 'rutinas' ? '🏋️' : pestanaActiva === 'guias' ? '📖' : pestanaActiva === 'nutricion' ? '🥗' : '📅' }}
+              </div>
+              <div class="option-meta">
+                <span class="option-label">
+                  {{
+                    pestanaActiva === 'rutinas'
+                      ? 'Crear una nueva rutina de entrenamiento paso a paso'
+                      : pestanaActiva === 'guias'
+                        ? 'Publicar un nuevo manual de técnica física'
+                        : pestanaActiva === 'nutricion'
+                          ? 'Crear una nueva guía nutricional por IMC'
+                          : 'Programar una nueva clase grupal reservable'
+                  }}
+                </span>
+                <span class="option-sub">Abre el asistente en pantalla completa para configurar cada detalle</span>
+              </div>
+            </div>
+            <div class="option-chevron">›</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LISTADO SEGÚN LA PESTAÑA ACTIVA -->
+      <section class="hub-section">
+        <div class="hub-section-header">
+          <h2 class="hub-section-title">
+            {{
+              pestanaActiva === 'rutinas'
+                ? 'Selecciona una rutina para editarla'
+                : pestanaActiva === 'guias'
+                  ? 'Selecciona un manual físico para editarlo'
+                  : pestanaActiva === 'nutricion'
+                    ? 'Selecciona una guía nutricional para editarla'
+                    : 'Selecciona una clase programada para editarla'
+            }}
+          </h2>
+        </div>
+
+        @if (pestanaActiva === 'rutinas') {
+          <div class="items-stack-list">
+            @for (r of rutinas; track r.id) {
+              <div class="draft-card" (click)="editarRutina(r)" role="button" tabindex="0">
+                <div class="draft-icon-box">🏋️</div>
+                <div class="draft-info">
+                  <div class="draft-title-row">
+                    <strong class="draft-title">{{ r.nombre }}</strong>
+                    <span class="draft-badge">{{ r.tipoEntrenamiento }}</span>
+                    <span class="draft-badge purple">{{ r.nivel }}</span>
+                    <span class="draft-badge blue">{{ r.duracionSemanas }} semanas</span>
+                  </div>
+                  <p class="draft-text">{{ r.descripcion }}</p>
+                </div>
+                <div class="draft-actions">
+                  <button type="button" class="btn-card-edit" (click)="$event.stopPropagation(); editarRutina(r)">
+                    ✏️ Editar
+                  </button>
+                  <button type="button" class="btn-card-delete" (click)="$event.stopPropagation(); eliminarRutina(r.id)">
+                    🗑️
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        @if (pestanaActiva === 'guias') {
+          <div class="items-stack-list">
+            @for (g of guiasFisicas; track g.id) {
+              <div class="draft-card" (click)="editarGuiaFisica(g)" role="button" tabindex="0">
+                <div class="draft-icon-box">📖</div>
+                <div class="draft-info">
+                  <div class="draft-title-row">
+                    <strong class="draft-title">{{ g.titulo }}</strong>
+                    @if (g.metodo) {
+                      <span class="draft-badge blue">{{ g.metodo }}</span>
+                    }
+                  </div>
+                  <p class="draft-text">{{ g.contenido }}</p>
+                </div>
+                <div class="draft-actions">
+                  <button type="button" class="btn-card-edit" (click)="$event.stopPropagation(); editarGuiaFisica(g)">
+                    ✏️ Editar
+                  </button>
+                  <button type="button" class="btn-card-delete" (click)="$event.stopPropagation(); eliminarGuiaFisica(g.id)">
+                    🗑️
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        @if (pestanaActiva === 'nutricion') {
+          <div class="items-stack-list">
+            @for (n of guiasNutricionales; track n.id) {
+              <div class="draft-card" (click)="editarGuiaNutricional(n)" role="button" tabindex="0">
+                <div class="draft-icon-box">🥗</div>
+                <div class="draft-info">
+                  <div class="draft-title-row">
+                    <strong class="draft-title">{{ n.titulo }}</strong>
+                    <span class="draft-badge green">IMC: {{ n.categoriaIMC }}</span>
+                  </div>
+                  <p class="draft-text">{{ n.recomendaciones }}</p>
+                </div>
+                <div class="draft-actions">
+                  <button type="button" class="btn-card-edit" (click)="$event.stopPropagation(); editarGuiaNutricional(n)">
+                    ✏️ Editar
+                  </button>
+                  <button type="button" class="btn-card-delete" (click)="$event.stopPropagation(); eliminarGuiaNutricional(n.id)">
+                    🗑️
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        @if (pestanaActiva === 'clases') {
+          <div class="items-stack-list">
+            @for (c of clases; track c.id) {
+              <div class="draft-card" (click)="editarClase(c)" role="button" tabindex="0">
+                <div class="draft-icon-box">📅</div>
+                <div class="draft-info">
+                  <div class="draft-title-row">
+                    <strong class="draft-title">{{ c.tipoClase }}</strong>
+                    <span class="draft-badge">{{ nombreGimnasio(c.gimnasioId) }}</span>
+                    <span class="draft-badge green">${{ c.precio.toLocaleString('es-CO') }}</span>
+                  </div>
+                  <p class="draft-text">
+                    🧑‍🏫 {{ c.instructor }} &middot; ⏰ {{ c.hora }} &middot; 👥 {{ c.cupos }} cupos ({{ c.duracion }})
+                  </p>
+                </div>
+                <div class="draft-actions">
+                  <button type="button" class="btn-card-edit" (click)="$event.stopPropagation(); editarClase(c)">
+                    ✏️ Editar
+                  </button>
+                  <button type="button" class="btn-card-delete" (click)="$event.stopPropagation(); eliminarClase(c.id)">
+                    🗑️
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+    </main>
+  }
+
+  <!-- ================================================================= -->
+  <!-- PASO 1: TIPO DE CONTENIDO, TÍTULO Y CLASIFICACIÓN                 -->
+  <!-- ================================================================= -->
+  @if (pantallaActual === 'paso1') {
+    <main class="step-content-container">
+      <span class="step-mini-tag">Paso 1 de 3 &middot; Categoría y Título</span>
+      <h1 class="step-large-heading">
+        {{ idEditar !== null ? 'Edita la clasificación y título' : 'Define el enfoque de tu publicación deportiva' }}
+      </h1>
+      <p class="step-description-text">
+        Selecciona el módulo deportivo y escribe un título claro y motivador para tus atletas.
+      </p>
+
+      <!-- Selector de módulo si está creando uno nuevo -->
+      @if (idEditar === null) {
+        <div class="hub-filter-pills" style="margin-bottom: 24px;">
+          <button type="button" class="filter-pill-btn" [class.active]="pestanaActiva === 'rutinas'" (click)="pestanaActiva = 'rutinas'">
+            🏋️ Rutina
+          </button>
+          <button type="button" class="filter-pill-btn" [class.active]="pestanaActiva === 'guias'" (click)="pestanaActiva = 'guias'">
+            📖 Manual Físico
+          </button>
+          <button type="button" class="filter-pill-btn" [class.active]="pestanaActiva === 'nutricion'" (click)="pestanaActiva = 'nutricion'">
+            🥗 Guía Nutricional
+          </button>
+          <button type="button" class="filter-pill-btn" [class.active]="pestanaActiva === 'clases'" (click)="pestanaActiva = 'clases'">
+            📅 Clase Grupal
+          </button>
+        </div>
+      }
+
+      @if (pestanaActiva === 'rutinas') {
+        <div class="studio-field-box" style="margin-bottom: 24px;">
+          <label class="studio-field-label">Nombre de la rutina *</label>
+          <input type="text" class="studio-input" [(ngModel)]="rNombre" placeholder="Ej: Fuerza e Hipertrofia Tren Superior" />
+        </div>
+
+        <label class="studio-field-label" style="margin-bottom: 10px;">Tipo de entrenamiento</label>
+        <div class="choice-cards-grid">
+          @for (t of tiposEntrenamientoCards; track t.id) {
+            <button
+              type="button"
+              class="choice-card-item"
+              [class.selected]="rTipo === t.id"
+              (click)="rTipo = t.id">
+              <span class="choice-card-emoji">{{ t.icono }}</span>
+              <span class="choice-card-title">{{ t.id }}</span>
+              <span class="choice-card-sub">{{ t.desc }}</span>
+            </button>
+          }
+        </div>
+      }
+
+      @if (pestanaActiva === 'guias') {
+        <div class="studio-fields-stack">
+          <div class="studio-field-box">
+            <label class="studio-field-label">Título del manual físico *</label>
+            <input type="text" class="studio-input" [(ngModel)]="gTitulo" placeholder="Ej: Biomecánica de la Sentadilla Libre" />
+          </div>
+          <div class="studio-field-box">
+            <label class="studio-field-label">Método o disciplina</label>
+            <input type="text" class="studio-input" [(ngModel)]="gMetodo" placeholder="Ej: Powerlifting, Calistenia, Hipertrofia..." />
+          </div>
+        </div>
+      }
+
+      @if (pestanaActiva === 'nutricion') {
+        <div class="studio-field-box" style="margin-bottom: 24px;">
+          <label class="studio-field-label">Título del plan nutricional *</label>
+          <input type="text" class="studio-input" [(ngModel)]="nTitulo" placeholder="Ej: Recomposición Corporal y Definición" />
+        </div>
+
+        <label class="studio-field-label" style="margin-bottom: 10px;">Categoría de IMC objetivo</label>
+        <div class="choice-cards-grid">
+          @for (cat of categoriasIMCCards; track cat.id) {
+            <button
+              type="button"
+              class="choice-card-item"
+              [class.selected]="nCategoria === cat.id"
+              (click)="nCategoria = cat.id">
+              <span class="choice-card-emoji">{{ cat.icono }}</span>
+              <span class="choice-card-title">{{ cat.id }}</span>
+              <span class="choice-card-sub">{{ cat.desc }}</span>
+            </button>
+          }
+        </div>
+      }
+
+      @if (pestanaActiva === 'clases') {
+        <label class="studio-field-label" style="margin-bottom: 10px;">Modalidad de la clase</label>
+        <div class="choice-cards-grid">
+          @for (tc of tiposClaseCards; track tc.id) {
+            <button
+              type="button"
+              class="choice-card-item"
+              [class.selected]="cTipoClase === tc.id"
+              (click)="cTipoClase = tc.id">
+              <span class="choice-card-emoji">{{ tc.icono }}</span>
+              <span class="choice-card-title">{{ tc.id }}</span>
+            </button>
+          }
+        </div>
+
+        <div class="studio-field-box">
+          <label class="studio-field-label">Gimnasio o sede donde se dicta *</label>
+          <select class="studio-select" [(ngModel)]="cGimnasioId">
+            @for (g of gimnasios; track g.id) {
+              <option [ngValue]="g.id">{{ g.nombre }}</option>
+            }
+          </select>
+        </div>
+      }
+    </main>
+  }
+
+  <!-- ================================================================= -->
+  <!-- PASO 2: ESTRUCTURA TÉCNICA Y PARÁMETROS                           -->
+  <!-- ================================================================= -->
+  @if (pantallaActual === 'paso2') {
+    <main class="step-content-container">
+      <span class="step-mini-tag">Paso 2 de 3 &middot; Parámetros Técnicos</span>
+      <h1 class="step-large-heading">Configura la intensidad y contenido principal</h1>
+      <p class="step-description-text">
+        Ajusta la dificultad, duración o explicaciones técnicas para guiar paso a paso a los miembros.
+      </p>
+
+      @if (pestanaActiva === 'rutinas') {
+        <label class="studio-field-label" style="margin-bottom: 10px;">Nivel de exigencia</label>
+        <div class="choice-cards-grid">
+          @for (n of nivelesCards; track n.id) {
+            <button
+              type="button"
+              class="choice-card-item"
+              [class.selected]="rNivel === n.id"
+              (click)="rNivel = n.id">
+              <span class="choice-card-emoji">{{ n.icono }}</span>
+              <span class="choice-card-title">{{ n.id }}</span>
+              <span class="choice-card-sub">{{ n.desc }}</span>
+            </button>
+          }
+        </div>
+
+        <div class="stepper-counter-card">
+          <div class="stepper-info">
+            <strong>Duración del plan (Semanas)</strong>
+            <span>Ciclo recomendado antes de progresar cargas</span>
+          </div>
+          <div class="stepper-controls">
+            <button type="button" class="stepper-circle-btn" (click)="ajustarDuracionRutina(-1)">−</button>
+            <span class="stepper-value">{{ rDuracion }} sem</span>
+            <button type="button" class="stepper-circle-btn" (click)="ajustarDuracionRutina(1)">+</button>
+          </div>
+        </div>
+      }
+
+      @if (pestanaActiva === 'guias') {
+        <div class="studio-field-box">
+          <label class="studio-field-label">Explicación técnica y biomecánica *</label>
+          <textarea
+            rows="6"
+            class="studio-textarea"
+            [(ngModel)]="gContenido"
+            placeholder="Describe la postura inicial, activación del core, rango de movimiento y prevención de lesiones..."></textarea>
+        </div>
+      }
+
+      @if (pestanaActiva === 'nutricion') {
+        <div class="studio-field-box">
+          <label class="studio-field-label">Recomendaciones nutricionales *</label>
+          <textarea
+            rows="5"
+            class="studio-textarea"
+            [(ngModel)]="nRecomendaciones"
+            placeholder="Detalla el aporte proteico, distribución calórica, hidratación y suplementación sugerida..."></textarea>
+        </div>
+      }
+
+      @if (pestanaActiva === 'clases') {
+        <div class="studio-fields-stack">
+          <div class="studio-row-2">
+            <div class="studio-field-box">
+              <label class="studio-field-label">Instructor titular *</label>
+              <input type="text" class="studio-input" [(ngModel)]="cInstructor" placeholder="Ej: Marlon Monsalve" />
+            </div>
+            <div class="studio-field-box">
+              <label class="studio-field-label">Horario de la sesión *</label>
+              <input type="text" class="studio-input" [(ngModel)]="cHora" placeholder="Ej: Lun, Mié y Vie 6:00 am" />
+            </div>
+          </div>
+
+          <div class="stepper-counter-card">
+            <div class="stepper-info">
+              <strong>Cupos máximos por sesión</strong>
+              <span>Aforo permitido para garantizar atención personalizada</span>
+            </div>
+            <div class="stepper-controls">
+              <button type="button" class="stepper-circle-btn" (click)="ajustarCuposClase(-1)">−</button>
+              <span class="stepper-value">{{ cCupos }}</span>
+              <button type="button" class="stepper-circle-btn" (click)="ajustarCuposClase(1)">+</button>
+            </div>
+          </div>
+        </div>
+      }
+    </main>
+  }
+
+  <!-- ================================================================= -->
+  <!-- PASO 3: EJERCICIOS / MENÚ Y VISTA PREVIA                          -->
+  <!-- ================================================================= -->
+  @if (pantallaActual === 'paso3') {
+    <main class="step-content-container">
+      <span class="step-mini-tag">Paso 3 de 3 &middot; Detalles Finales y Vista Previa</span>
+      <h1 class="step-large-heading">Revisa y publica tu contenido</h1>
+      <p class="step-description-text">
+        Completa los últimos detalles prácticos y verifica cómo se verá publicado en la plataforma.
+      </p>
+
+      @if (pestanaActiva === 'rutinas') {
+        <div class="studio-fields-stack">
+          <div class="studio-field-box">
+            <label class="studio-field-label">Descripción del objetivo</label>
+            <textarea
+              rows="2"
+              class="studio-textarea"
+              [(ngModel)]="rDescripcion"
+              placeholder="Describe los beneficios principales de esta rutina..."></textarea>
+          </div>
+
+          <div class="studio-field-box">
+            <label class="studio-field-label">Ejercicios incluidos (separados por coma)</label>
+            <textarea
+              rows="3"
+              class="studio-textarea"
+              [(ngModel)]="rEjerciciosTexto"
+              placeholder="Sentadilla 4x10, Press de banca 4x8, Dominadas 3x10..."></textarea>
+
+            <div class="quick-suggestions-row">
+              @for (ej of ejerciciosSugeridos; track ej) {
+                <button type="button" class="quick-chip-btn" (click)="agregarChipEjercicio(ej)">
+                  + {{ ej }}
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (pestanaActiva === 'nutricion') {
+        <div class="studio-field-box">
+          <label class="studio-field-label">Ejemplo de menú diario (Desayuno, Almuerzo, Cena)</label>
+          <textarea
+            rows="4"
+            class="studio-textarea"
+            [(ngModel)]="nEjemploComidas"
+            placeholder="Desayuno: Omelette con avena. Almuerzo: Pechuga a la plancha con arroz integral y aguacate..."></textarea>
+        </div>
+      }
+
+      @if (pestanaActiva === 'clases') {
+        <div class="studio-row-2">
+          <div class="studio-field-box">
+            <label class="studio-field-label">Duración de la sesión</label>
+            <input type="text" class="studio-input" [(ngModel)]="cDuracion" placeholder="Ej: 50 min" />
+          </div>
+          <div class="studio-field-box">
+            <label class="studio-field-label">Precio por sesión (COP)</label>
+            <input type="number" min="0" class="studio-input" [(ngModel)]="cPrecio" />
+          </div>
+        </div>
+      }
+
+      <!-- VISTA PREVIA EN TIEMPO REAL -->
+      <div class="live-preview-box">
+        <span class="preview-header-tag">● Vista previa oficial</span>
+        <div class="draft-card" style="cursor: default;">
+          <div class="draft-icon-box">
+            {{ pestanaActiva === 'rutinas' ? '🏋️' : pestanaActiva === 'guias' ? '📖' : pestanaActiva === 'nutricion' ? '🥗' : '📅' }}
+          </div>
+          <div class="draft-info">
+            @if (pestanaActiva === 'rutinas') {
+              <div class="draft-title-row">
+                <strong class="draft-title">{{ rNombre || 'Nueva Rutina' }}</strong>
+                <span class="draft-badge">{{ rTipo }}</span>
+                <span class="draft-badge purple">{{ rNivel }}</span>
+                <span class="draft-badge blue">{{ rDuracion }} semanas</span>
+              </div>
+              <p class="draft-text">{{ rDescripcion || 'Rutina estructurada para atletas The House Fit.' }}</p>
+            }
+            @if (pestanaActiva === 'guias') {
+              <div class="draft-title-row">
+                <strong class="draft-title">{{ gTitulo || 'Nuevo Manual Físico' }}</strong>
+                <span class="draft-badge blue">{{ gMetodo }}</span>
+              </div>
+              <p class="draft-text">{{ gContenido || 'Manual biomecánico de técnica y ejecución.' }}</p>
+            }
+            @if (pestanaActiva === 'nutricion') {
+              <div class="draft-title-row">
+                <strong class="draft-title">{{ nTitulo || 'Nueva Guía Nutricional' }}</strong>
+                <span class="draft-badge green">IMC: {{ nCategoria }}</span>
+              </div>
+              <p class="draft-text">{{ nRecomendaciones || 'Pautas nutricionales personalizadas.' }}</p>
+            }
+            @if (pestanaActiva === 'clases') {
+              <div class="draft-title-row">
+                <strong class="draft-title">{{ cTipoClase }}</strong>
+                <span class="draft-badge green">${{ (cPrecio || 0).toLocaleString('es-CO') }}</span>
+              </div>
+              <p class="draft-text">
+                🧑‍🏫 {{ cInstructor || 'Coach titular' }} &middot; ⏰ {{ cHora }} &middot; 👥 {{ cCupos }} cupos
+              </p>
+            }
+          </div>
+        </div>
+      </div>
+    </main>
+  }
+
+  <!-- ================================================================= -->
+  <!-- FOOTER STICKY CON BARRA DE PROGRESO                               -->
+  <!-- ================================================================= -->
+  @if (pantallaActual !== 'hub') {
+    <footer class="wizard-sticky-footer">
+      <div class="footer-progress-bar">
+        <div class="progress-segment-wrap">
+          <div class="progress-segment-fill" [style.width.%]="100"></div>
+        </div>
+        <div class="progress-segment-wrap">
+          <div class="progress-segment-fill" [style.width.%]="pantallaActual === 'paso2' || pantallaActual === 'paso3' ? 100 : 0"></div>
+        </div>
+        <div class="progress-segment-wrap">
+          <div class="progress-segment-fill" [style.width.%]="pantallaActual === 'paso3' ? 100 : 0"></div>
+        </div>
+      </div>
+
+      <div class="footer-buttons-bar">
+        <button type="button" class="btn-footer-back" (click)="irPasoAnterior()">
+          Atrás
+        </button>
+
+        <button type="button" class="btn-footer-next" (click)="irPasoSiguiente()">
+          @if (pantallaActual === 'paso3') {
+            {{ idEditar !== null ? 'Guardar cambios' : 'Publicar contenido' }}
+          } @else {
+            Siguiente
+          }
+        </button>
+      </div>
+    </footer>
+  }
 </div>

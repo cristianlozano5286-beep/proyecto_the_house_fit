@@ -1,0 +1,59 @@
+{
+  "name": "The House Fit — Beyond Limits",
+  "short_name": "House Fit",
+  "description": "Ecosistema deportivo élite: sedes verificadas, rutinas Pro biomecánicas, tienda oficial y laboratorio clínico IMC.",
+  "lang": "es-CO",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "categories": ["fitness", "health", "lifestyle", "sports"],
+  "icons": [
+    {
+      "src": "assets/logo-icon-orange.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logo-icon-orange.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Explorar Gimnasios",
+      "short_name": "Sedes",
+      "description": "Reserva en gimnasios y templos verificados",
+      "url": "/gimnasios",
+      "icons": [{ "src": "assets/logo-icon-orange.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Rutinas Pro",
+      "short_name": "Rutinas",
+      "description": "Planes de hipertrofia y fuerza biomecánica",
+      "url": "/rutinas",
+      "icons": [{ "src": "assets/logo-icon-orange.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Tienda Deportiva",
+      "short_name": "Tienda",
+      "description": "Suplementación y equipamiento oficial",
+      "url": "/tienda",
+      "icons": [{ "src": "assets/logo-icon-orange.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Laboratorio IMC",
+      "short_name": "Lab IMC",
+      "description": "Cálculo biométrico y guía nutricional",
+      "url": "/imc",
+      "icons": [{ "src": "assets/logo-icon-orange.png", "sizes": "192x192" }]
+    }
+  ]
+}
+

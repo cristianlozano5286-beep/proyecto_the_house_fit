@@ -1,107 +1,421 @@
-<div class="dark-page-wrapper">
-  <div class="container">
-    
-    <!-- TÍTULO / HERO -->
-    <div class="hero">
-      <span class="eyebrow">Evaluación Física</span>
-      <h1>
-        CALCULA TU <span>IMC</span>
-      </h1>
-      <p>
-        Ingresa tu peso y estatura para conocer tu Índice de Masa Corporal y recibir una recomendación nutricional.
-      </p>
-    </div>
+<div class="imc-page-shell">
+  <!-- =====================================================================
+       1. CABECERA EDITORIAL (THE HOUSE FIT LAB)
+       ===================================================================== -->
+  <section class="imc-hero">
+    <div class="imc-hero-inner">
+      <nav class="imc-breadcrumb" aria-label="Ruta de navegación">
+        <a routerLink="/">Inicio</a>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-current">Calculadora IMC</span>
+      </nav>
 
-    <!-- CONTENEDOR Y GRILLA -->
-    <div class="grid-layout">
-      
-      <!-- COLUMNA IZQUIERDA: FORMULARIO -->
-      <div class="left-column">
-        <div class="card">
-          
-          <!-- Género -->
-          <div class="gender-toggle-group-wrapper">
-            <label>GÉNERO</label>
-            <div class="gender-toggle-group">
-              <button type="button" class="btn-gender" [class.active]="genero === 'masculino'" (click)="genero = 'masculino'">
-                MASCULINO
-              </button>
-              <button type="button" class="btn-gender" [class.active]="genero === 'femenino'" (click)="genero = 'femenino'">
-                FEMENINO
-              </button>
-            </div>
+      <div class="imc-hero-split">
+        <div class="imc-hero-copy">
+          <div class="lab-eyebrow-pill">
+            <img src="assets/logo-icon-orange.png" alt="The House Fit" />
+            <span class="lab-dot"></span>
+            <span>THE HOUSE FIT LAB · EVALUACIÓN BIOMÉTRICA</span>
           </div>
-
-          <!-- Edad -->
-          <div class="field">
-            <label>EDAD (AÑOS)</label>
-            <input type="number" [(ngModel)]="edad" placeholder="Ej. 25" min="1" max="120">
-          </div>
-
-          <!-- Peso y Estatura -->
-          <div class="row">
-            <div class="field">
-              <label>PESO (KG)</label>
-              <input type="number" [(ngModel)]="peso" placeholder="Ej. 70" step="0.1">
-            </div>
-            <div class="field">
-              <label>ESTATURA (M)</label>
-              <input type="number" [(ngModel)]="estatura" placeholder="Ej. 1.70" step="0.01">
-            </div>
-          </div>
-
-          <!-- Acciones (Botones) -->
-          <div class="actions">
-            <button class="btn-primary" (click)="calcularIMC()">CALCULAR</button>
-            <button class="btn-secondary" (click)="reiniciar()">REINICIAR</button>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- COLUMNA DERECHA: INFORMACIÓN Y RESULTADOS -->
-      <div class="left-column">
-        
-        <!-- Tarjeta de Referencia IMC -->
-        <div class="card info-card">
-          <div class="info-title">¿Qué significa tu IMC?</div>
-          <ul class="info-list">
-            <li><span class="dot dot-u"></span> <b>Bajo peso</b> — menos de 18.5</li>
-            <li><span class="dot dot-n"></span> <b>Normal</b> — entre 18.5 y 24.9</li>
-            <li><span class="dot dot-o"></span> <b>Sobre peso</b> — entre 25 y 29.9</li>
-            <li class="last-item"><span class="dot dot-ob"></span> <b>Obesidad</b> — 30 o más</li>
-          </ul>
-          <p class="info-note">
-            El IMC es una referencia general y no reemplaza la evaluación de un profesional de la salud.
+          <h1 class="imc-hero-title">
+            DIAGNÓSTICO DE <span class="text-brand">IMC Y METABOLISMO</span>
+          </h1>
+          <p class="imc-hero-desc">
+            Calcula tu Índice de Masa Corporal, descubre tu rango de peso óptimo según tu estatura y obtén al instante tu requerimiento calórico, proteico y guía de alimentación deportiva.
           </p>
         </div>
 
-        <!-- Tarjeta de Resultado (Se muestra al calcular) -->
-        <div class="card result" [class.show]="mostrarResultado" *ngIf="mostrarResultado">
-          <div class="result-title">Tu Resultado</div>
-          
-          <div class="imc-value-big">
-            {{ imc !== null ? imc.toFixed(1) : '--' }}
+        <div class="imc-hero-kpis" *ngIf="imc !== null">
+          <div class="hero-kpi-box">
+            <span class="kpi-label">TU IMC ACTUAL</span>
+            <strong class="kpi-value text-brand">{{ imc.toFixed(1) }}</strong>
+            <span class="kpi-sub">{{ categoria }}</span>
           </div>
-          
-          <div class="imc-category">
-            {{ categoria }}
+          <div class="hero-kpi-box">
+            <span class="kpi-label">PESO SALUDABLE</span>
+            <strong class="kpi-value">{{ pesoMinSaludable }}–{{ pesoMaxSaludable }} <small>kg</small></strong>
+            <span class="kpi-sub">Según tu estatura</span>
           </div>
+          <div class="hero-kpi-box">
+            <span class="kpi-label">OBJETIVO DIARIO</span>
+            <strong class="kpi-value">{{ caloriasObjetivo }} <small>kcal</small></strong>
+            <span class="kpi-sub">{{ proteinaDiaria }}g proteína / día</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-          <!-- Plan nutricional dinámico con botón de redirección -->
-          <div class="plan" *ngIf="planActual">
-            <h3>{{ planActual.titulo }}</h3>
-            <p>{{ planActual.desc }}</p>
-            
-            <button class="btn-nutricion" routerLink="/nutricion">
-              VER PLAN NUTRICIONAL COMPLETO
+  <!-- =====================================================================
+       2. WORKSPACE DE 2 COLUMNAS: PARÁMETROS + DIAGNÓSTICO EN TIEMPO REAL
+       ===================================================================== -->
+  <main class="imc-main-container">
+    <!-- Orbes de luz ambiental para profundidad óptica del vidrio esmerilado Apple -->
+    <div class="glass-ambient-orb orb-left" aria-hidden="true"></div>
+    <div class="glass-ambient-orb orb-right-top" aria-hidden="true"></div>
+    <div class="glass-ambient-orb orb-right-bottom" aria-hidden="true"></div>
+
+    <div class="imc-workspace-grid">
+
+      <!-- COLUMNA IZQUIERDA: FORMULARIO BIOMÉTRICO INTERACTIVO -->
+      <section class="imc-form-card" aria-label="Parámetros físicos">
+        <div class="panel-section-header">
+          <span class="step-index">01 · PARÁMETROS ANTROPOMÉTRICOS</span>
+          <h2>Configura tus medidas</h2>
+        </div>
+
+        <!-- SEXO BIOLÓGICO -->
+        <div class="param-block">
+          <span class="param-label">SEXO BIOLÓGICO</span>
+          <div class="gender-selector-grid">
+            <button
+              type="button"
+              class="gender-card-btn"
+              [class.active]="genero === 'masculino'"
+              (click)="cambiarGenero('masculino')"
+            >
+              <div class="gender-card-top">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="14" r="5"/><line x1="19" y1="5" x2="13.6" y2="10.4"/><polyline points="19 5 19 10"/><polyline points="19 5 14 5"/></svg>
+                <span class="radio-indicator"></span>
+              </div>
+              <span class="gender-name">Masculino</span>
+              <span class="gender-sub">Fórmula metabólica H</span>
+            </button>
+
+            <button
+              type="button"
+              class="gender-card-btn"
+              [class.active]="genero === 'femenino'"
+              (click)="cambiarGenero('femenino')"
+            >
+              <div class="gender-card-top">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5"/><line x1="12" y1="14" x2="12" y2="21"/><line x1="9" y1="18" x2="15" y2="18"/></svg>
+                <span class="radio-indicator"></span>
+              </div>
+              <span class="gender-name">Femenino</span>
+              <span class="gender-sub">Fórmula metabólica M</span>
             </button>
           </div>
         </div>
 
+        <!-- EDAD -->
+        <div class="param-block">
+          <div class="param-header-row">
+            <label for="input-edad" class="param-label">EDAD</label>
+            <div class="stepper-input-group">
+              <button type="button" class="stepper-btn" (click)="ajustarEdad(-1)" aria-label="Restar un año">−</button>
+              <input
+                id="input-edad"
+                type="number"
+                [(ngModel)]="edad"
+                (ngModelChange)="calcularIMC(true)"
+                min="12"
+                max="100"
+                placeholder="26"
+              />
+              <span class="unit-tag">años</span>
+              <button type="button" class="stepper-btn" (click)="ajustarEdad(1)" aria-label="Sumar un año">+</button>
+            </div>
+          </div>
+          <input
+            type="range"
+            class="custom-range-slider"
+            [(ngModel)]="edad"
+            (ngModelChange)="calcularIMC(true)"
+            min="14"
+            max="85"
+            step="1"
+          />
+          <div class="range-limits">
+            <span>14 años</span>
+            <span>85 años</span>
+          </div>
+        </div>
+
+        <!-- PESO Y ESTATURA -->
+        <div class="param-block">
+          <div class="param-header-row">
+            <label for="input-peso" class="param-label">PESO CORPORAL</label>
+            <div class="stepper-input-group">
+              <button type="button" class="stepper-btn" (click)="ajustarPeso(-0.5)" aria-label="Restar peso">−</button>
+              <input
+                id="input-peso"
+                type="number"
+                [(ngModel)]="peso"
+                (ngModelChange)="calcularIMC(true)"
+                min="30"
+                max="220"
+                step="0.5"
+                placeholder="72"
+              />
+              <span class="unit-tag">kg</span>
+              <button type="button" class="stepper-btn" (click)="ajustarPeso(0.5)" aria-label="Sumar peso">+</button>
+            </div>
+          </div>
+          <input
+            type="range"
+            class="custom-range-slider"
+            [(ngModel)]="peso"
+            (ngModelChange)="calcularIMC(true)"
+            min="40"
+            max="160"
+            step="0.5"
+          />
+          <div class="range-limits">
+            <span>40 kg</span>
+            <span>100 kg</span>
+            <span>160 kg</span>
+          </div>
+        </div>
+
+        <div class="param-block">
+          <div class="param-header-row">
+            <label for="input-estatura" class="param-label">ESTATURA</label>
+            <div class="stepper-input-group">
+              <button type="button" class="stepper-btn" (click)="ajustarEstatura(-0.01)" aria-label="Restar estatura">−</button>
+              <input
+                id="input-estatura"
+                type="number"
+                [(ngModel)]="estatura"
+                (ngModelChange)="calcularIMC(true)"
+                min="1.20"
+                max="2.30"
+                step="0.01"
+                placeholder="1.75"
+              />
+              <span class="unit-tag">m</span>
+              <button type="button" class="stepper-btn" (click)="ajustarEstatura(0.01)" aria-label="Sumar estatura">+</button>
+            </div>
+          </div>
+          <input
+            type="range"
+            class="custom-range-slider"
+            [(ngModel)]="estatura"
+            (ngModelChange)="calcularIMC(true)"
+            min="1.40"
+            max="2.10"
+            step="0.01"
+          />
+          <div class="range-limits">
+            <span>1.40 m</span>
+            <span>1.75 m</span>
+            <span>2.10 m</span>
+          </div>
+        </div>
+
+        <!-- NIVEL DE ACTIVIDAD FÍSICA -->
+        <div class="param-block">
+          <span class="param-label">NIVEL DE ACTIVIDAD SEMANAL</span>
+          <div class="activity-selector-grid">
+            <button
+              type="button"
+              class="activity-chip"
+              [class.active]="nivelActividad === 'sedentario'"
+              (click)="cambiarActividad('sedentario')"
+            >
+              <strong>Sedentario</strong>
+              <span>0–1 días/sem</span>
+            </button>
+            <button
+              type="button"
+              class="activity-chip"
+              [class.active]="nivelActividad === 'ligero'"
+              (click)="cambiarActividad('ligero')"
+            >
+              <strong>Ligero</strong>
+              <span>2–3 días/sem</span>
+            </button>
+            <button
+              type="button"
+              class="activity-chip"
+              [class.active]="nivelActividad === 'moderado'"
+              (click)="cambiarActividad('moderado')"
+            >
+              <strong>Moderado</strong>
+              <span>4–5 días/sem</span>
+            </button>
+            <button
+              type="button"
+              class="activity-chip"
+              [class.active]="nivelActividad === 'intenso'"
+              (click)="cambiarActividad('intenso')"
+            >
+              <strong>Atleta / Intenso</strong>
+              <span>6–7 días/sem</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="error-banner" *ngIf="mensajeError">
+          {{ mensajeError }}
+        </div>
+
+        <!-- BOTONES DE ACCIÓN -->
+        <div class="imc-form-actions">
+          <button type="button" class="btn-calc-primary" (click)="calcularIMC()">
+            <span>Calcular Diagnóstico</span>
+          </button>
+          <button type="button" class="btn-calc-reset" (click)="reiniciar()">
+            Restablecer
+          </button>
+        </div>
+      </section>
+
+      <!-- COLUMNA DERECHA: ESCALA BIOMÉTRICA + PLAN NUTRICIONAL -->
+      <div class="imc-results-col">
+
+        <!-- TARJETA 1: LECTURA DE IMC Y ESPECTRO CORPORAL -->
+        <section class="imc-gauge-card" aria-label="Resultado de Índice de Masa Corporal">
+          <div class="gauge-card-header">
+            <div>
+              <span class="step-index">02 · ESCALA BIOMÉTRICA OMS</span>
+              <h2>Resultado de tu Evaluación</h2>
+            </div>
+            <span class="status-category-pill" [attr.data-zone]="categoriaKey">
+              <span class="status-dot"></span>
+              {{ categoria || 'Peso saludable' }}
+            </span>
+          </div>
+
+          <div class="gauge-readout-row">
+            <div class="imc-number-block">
+              <span class="imc-big-number">{{ imc !== null ? imc.toFixed(1) : '--' }}</span>
+              <div class="imc-unit-meta">
+                <strong>kg / m²</strong>
+                <span>Índice Corporal</span>
+              </div>
+            </div>
+
+            <div class="ideal-weight-box">
+              <span class="ideal-label">RANGO DE PESO IDEAL ESTIMADO</span>
+              <strong class="ideal-range">{{ pesoMinSaludable }} kg — {{ pesoMaxSaludable }} kg</strong>
+              <span class="ideal-delta" [attr.data-zone]="categoriaKey">{{ diferenciaPesoTexto }}</span>
+            </div>
+          </div>
+
+          <!-- BARRA DE ESPECTRO CON MARCADOR DINÁMICO -->
+          <div class="spectrum-wrapper">
+            <div class="spectrum-labels-top">
+              <span>14.0</span>
+              <span>18.5</span>
+              <span>25.0</span>
+              <span>30.0</span>
+              <span>36.0+</span>
+            </div>
+            <div class="spectrum-bar-track">
+              <div class="seg seg-under"></div>
+              <div class="seg seg-normal"></div>
+              <div class="seg seg-over"></div>
+              <div class="seg seg-obese"></div>
+              <div
+                class="spectrum-pointer"
+                [style.left.%]="posicionMarcador"
+                [title]="'Tu IMC: ' + (imc !== null ? imc.toFixed(1) : '')"
+              >
+                <span class="pointer-tag">{{ imc !== null ? imc.toFixed(1) : '' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- TABLA INTERACTIVA DE LAS 4 ZONAS -->
+          <div class="bmi-zones-grid">
+            <div class="zone-item" [class.active-zone]="categoriaKey === 'underweight'">
+              <span class="zone-dot dot-u"></span>
+              <div class="zone-info">
+                <strong>Bajo peso</strong>
+                <span>Menos de 18.5</span>
+              </div>
+            </div>
+
+            <div class="zone-item" [class.active-zone]="categoriaKey === 'normal'">
+              <span class="zone-dot dot-n"></span>
+              <div class="zone-info">
+                <strong>Peso saludable</strong>
+                <span>18.5 a 24.9</span>
+              </div>
+            </div>
+
+            <div class="zone-item" [class.active-zone]="categoriaKey === 'overweight'">
+              <span class="zone-dot dot-o"></span>
+              <div class="zone-info">
+                <strong>Sobrepeso</strong>
+                <span>25.0 a 29.9</span>
+              </div>
+            </div>
+
+            <div class="zone-item" [class.active-zone]="categoriaKey === 'obese'">
+              <span class="zone-dot dot-ob"></span>
+              <div class="zone-info">
+                <strong>Obesidad</strong>
+                <span>30.0 o más</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TARJETA 2: PRESCRIPCIÓN METABÓLICA Y PLAN NUTRICIONAL -->
+        <section class="imc-nutrition-card" *ngIf="planActual" aria-label="Recomendación nutricional">
+          <div class="nutrition-header">
+            <div>
+              <span class="step-index">03 · PRESCRIPCIÓN METABÓLICA Y NUTRICIÓN</span>
+              <h2>{{ planActual.titulo }}</h2>
+            </div>
+            <span class="calorie-strategy-badge">{{ planActual.enfoque }}</span>
+          </div>
+
+          <!-- 3 INDICADORES METABÓLICOS -->
+          <div class="metabolic-kpis-grid">
+            <div class="meta-kpi-card">
+              <span class="meta-kpi-label">INGESTA OBJETIVO</span>
+              <strong class="meta-kpi-val">{{ caloriasObjetivo }} <small>kcal/día</small></strong>
+              <span class="meta-kpi-sub">Mantenimiento: {{ caloriasMantenimiento }} kcal</span>
+            </div>
+            <div class="meta-kpi-card">
+              <span class="meta-kpi-label">PROTEÍNA DIARIA</span>
+              <strong class="meta-kpi-val">{{ proteinaDiaria }} <small>g/día</small></strong>
+              <span class="meta-kpi-sub">Síntesis y soporte muscular</span>
+            </div>
+            <div class="meta-kpi-card">
+              <span class="meta-kpi-label">HIDRATACIÓN BASE</span>
+              <strong class="meta-kpi-val">{{ aguaDiaria }} <small>L/día</small></strong>
+              <span class="meta-kpi-sub">+500 ml en días de entreno</span>
+            </div>
+          </div>
+
+          <p class="plan-description">{{ planActual.desc }}</p>
+
+          <!-- MENÚ MODELO DE 3 TIEMPOS -->
+          <div class="meals-list">
+            <div class="meal-row" *ngFor="let comida of planActual.comidas">
+              <span class="meal-time-badge">{{ comida.momento }}</span>
+              <p class="meal-detail-text">{{ comida.detalle }}</p>
+            </div>
+          </div>
+
+          <!-- RECOMENDACIÓN DE ENTRENAMIENTO -->
+          <div class="training-tip-strip">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span><strong>Enfoque de entrenamiento:</strong> {{ planActual.enfoqueEntrenamiento }}</span>
+          </div>
+
+          <!-- ACCIONES HACIA RUTINAS Y TIENDA -->
+          <div class="nutrition-cta-row">
+            <a routerLink="/rutinas" class="btn-action-primary">
+              <span>Explorar Rutinas Recomendadas</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+            <a routerLink="/tienda" class="btn-action-secondary">
+              <span>Ir a Tienda de Suplementos</span>
+            </a>
+          </div>
+
+          <p class="medical-disclaimer">
+            * El IMC y la tasa metabólica (fórmula Mifflin-St Jeor) son estimaciones de referencia deportiva y no sustituyen el diagnóstico clínico de un nutricionista o médico deportólogo.
+          </p>
+        </section>
+
       </div>
 
     </div>
-
-  </div>
+  </main>
 </div>

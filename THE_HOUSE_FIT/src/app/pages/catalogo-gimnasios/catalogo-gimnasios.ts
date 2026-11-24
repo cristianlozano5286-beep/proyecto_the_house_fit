@@ -1,19 +1,27 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GimnasiosService } from '../../services/gimnasios';
 import { InstructoresService } from '../../services/instructores';
 import { BlogService } from '../../services/blog';
-import { Gimnasio } from '../../models/catalogo.models';
+import { MembresiasContabilidadService } from '../../services/membresias-contabilidad';
+import { AuthService } from '../../services/auth';
+import { Gimnasio, Instructor } from '../../models/catalogo.models';
+import { Resena } from '../../models/blog.models';
+import { GymDetailModalComponent } from '../../shared/gym-detail-modal/gym-detail-modal';
 
 type Orden = 'relevancia' | 'precio-asc' | 'precio-desc' | 'calificacion';
 
 @Component({
   selector: 'app-catalogo-gimnasios',
-  imports: [FormsModule],
+  imports: [FormsModule, GymDetailModalComponent],
   templateUrl: './catalogo-gimnasios.html',
   styleUrl: './catalogo-gimnasios.css',
 })
-export class CatalogoGimnasiosComponent {
+export class CatalogoGimnasiosComponent implements OnInit {
+  @ViewChild('inputDestino') inputDestino?: ElementRef<HTMLInputElement>;
+  @ViewChild('inputPrecio') inputPrecio?: ElementRef<HTMLInputElement>;
+
   gimnasios: Gimnasio[] = [];
   gimnasiosFiltrados: Gimnasio[] = [];
 
@@ -23,6 +31,7 @@ export class CatalogoGimnasiosComponent {
   precioMax: number | null = null;
   orden: Orden = 'relevancia';
   soloFavoritos: boolean = false;
+  campoActivo: 'donde' | 'servicio' | 'precio' | null = null;
 
   // Estados para los menús desplegables personalizados
   dropdownServicioAbierto: boolean = false;
@@ -30,16 +39,65 @@ export class CatalogoGimnasiosComponent {
   ordenSeleccionadoTexto: string = 'Relevancia';
 
   gimnasioSeleccionado: Gimnasio | null = null;
-  fotoActiva: number = 0;
 
   destinosDisponibles: string[] = [];
   serviciosDisponibles: string[] = [];
   mostrarSugerencias: boolean = false;
 
+  // Fotos de tarjetas
+  fotosPorTarjeta: { [gymId: number]: number } = {};
+
+  // Feedback Toast
+  mensajeToast: string = '';
+  mostrarToast: boolean = false;
+  toastTimer: any;
+
+  obtenerIconoServicio(s: string): string {
+    const lower = s.toLowerCase();
+    if (lower.includes('muscul') || lower.includes('pesa')) return '🏋️';
+    if (lower.includes('cross')) return '🔥';
+    if (lower.includes('yoga')) return '🧘';
+    if (lower.includes('spin') || lower.includes('bici')) return '🚴';
+    if (lower.includes('cardio') || lower.includes('correr')) return '🏃';
+    if (lower.includes('funcional')) return '🎯';
+    if (lower.includes('calistenia')) return '🤸';
+    if (lower.includes('box')) return '🥊';
+    if (lower.includes('power')) return '🏆';
+    if (lower.includes('pilates')) return '🌿';
+    if (lower.includes('zumba') || lower.includes('baile')) return '💃';
+    if (lower.includes('nutric') || lower.includes('asesor')) return '🥗';
+    if (lower.includes('aire') || lower.includes('clima')) return '❄️';
+    if (lower.includes('spa') || lower.includes('sauna') || lower.includes('turco')) return '💆';
+    if (lower.includes('wi-fi') || lower.includes('wifi') || lower.includes('internet')) return '📶';
+    if (lower.includes('ducha')) return '🚿';
+    if (lower.includes('casillero') || lower.includes('locker')) return '🔐';
+    if (lower.includes('hidrat') || lower.includes('agua')) return '💧';
+    if (lower.includes('peso libre') || lower.includes('mancuerna')) return '🏋️';
+    if (lower.includes('maquina') || lower.includes('máquina')) return '⚙️';
+    if (lower.includes('toalla')) return '🧺';
+    if (lower.includes('parque') || lower.includes('estacion')) return '🅿️';
+    if (lower.includes('piscina') || lower.includes('nata')) return '🏊';
+    if (lower.includes('entrenador') || lower.includes('personal')) return '🧑‍🏫';
+    if (lower.includes('24')) return '🕒';
+    return '✨';
+  }
+
+  indiceFotoActual(gym: Gimnasio): number {
+    return this.fotosPorTarjeta[gym.id] || 0;
+  }
+
+  esFavoritoAtletas(gymId: number): boolean {
+    return this.promedio(gymId) >= 4.7;
+  }
+
   constructor(
     private gimnasiosService: GimnasiosService,
     private instructoresService: InstructoresService,
     private blogService: BlogService,
+    private contabilidadService: MembresiasContabilidadService,
+    private authService: AuthService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.gimnasios = this.gimnasiosService.listar().filter((g) => g.activo);
     this.gimnasiosFiltrados = [...this.gimnasios];
@@ -56,40 +114,146 @@ export class CatalogoGimnasiosComponent {
     this.destinosDisponibles = Array.from(destinos);
   }
 
-  // Cierra cualquier menú o sugerencia si el usuario hace clic fuera de sus contenedores
+  async ngOnInit(): Promise<void> {
+    this.route.queryParams.subscribe((params) => {
+      if (params['fav'] === 'true') {
+        this.soloFavoritos = true;
+      }
+      if (params['q']) {
+        this.destino = params['q'];
+      }
+      if (params['servicio']) {
+        this.servicioFiltro = params['servicio'];
+      }
+      if (params['precioMax']) {
+        const p = Number(params['precioMax']);
+        this.precioMax = !isNaN(p) && p > 0 ? p : null;
+      }
+      this.buscar();
+    });
+
+    if (this.gimnasios.length === 0) {
+      await this.gimnasiosService.cargar();
+      this.gimnasios = this.gimnasiosService.listar().filter((g) => g.activo);
+      this.actualizarDestinosYServicios();
+      this.buscar();
+    }
+  }
+
+  private actualizarDestinosYServicios(): void {
+    const servicios = new Set<string>();
+    this.gimnasios.forEach((g) => g.servicios.forEach((s) => servicios.add(s)));
+    this.serviciosDisponibles = Array.from(servicios);
+
+    const destinos = new Set<string>();
+    this.gimnasios.forEach((g) => {
+      destinos.add(g.ciudad);
+      destinos.add(`${g.ciudad}, ${g.pais}`);
+    });
+    this.destinosDisponibles = Array.from(destinos);
+  }
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
 
     if (!target.closest('.custom-dropdown')) {
       this.dropdownServicioAbierto = false;
+      if (this.campoActivo === 'servicio') {
+        this.campoActivo = null;
+      }
     }
     if (!target.closest('.custom-select-wrapper')) {
       this.dropdownOrdenAbierto = false;
     }
-    if (!target.closest('.airbnb-search-field.grow')) {
+    if (!target.closest('.search-field.grow')) {
       this.mostrarSugerencias = false;
+      if (this.campoActivo === 'donde') {
+        this.campoActivo = null;
+      }
+    }
+    if (!target.closest('.precio-field') && this.campoActivo === 'precio') {
+      this.campoActivo = null;
     }
   }
 
-  // ----- Custom Dropdown: Servicio -----
+  enfocarDestino(event?: Event): void {
+    if (event) {
+      // No detener la propagación a menos que sea un botón de limpieza
+      const target = event.target as HTMLElement;
+      if (target.classList.contains('btn-clear-input')) {
+        return;
+      }
+    }
+    this.campoActivo = 'donde';
+    this.mostrarSugerencias = true;
+    this.dropdownServicioAbierto = false;
+    this.dropdownOrdenAbierto = false;
+    setTimeout(() => {
+      this.inputDestino?.nativeElement?.focus();
+    }, 10);
+  }
+
+  enfocarPrecio(event?: Event): void {
+    if (event) {
+      const target = event.target as HTMLElement;
+      if (target.classList.contains('btn-clear-input')) {
+        return;
+      }
+    }
+    this.campoActivo = 'precio';
+    this.mostrarSugerencias = false;
+    this.dropdownServicioAbierto = false;
+    this.dropdownOrdenAbierto = false;
+    setTimeout(() => {
+      this.inputPrecio?.nativeElement?.focus();
+    }, 10);
+  }
+
+  // Carrusel por tarjeta
+  fotoActualDe(gym: Gimnasio): string {
+    const idx = this.fotosPorTarjeta[gym.id] || 0;
+    return gym.fotos[idx] || gym.fotos[0];
+  }
+
+  siguienteFotoTarjeta(event: Event, gym: Gimnasio): void {
+    event.stopPropagation();
+    const actual = this.fotosPorTarjeta[gym.id] || 0;
+    this.fotosPorTarjeta[gym.id] = (actual + 1) % gym.fotos.length;
+  }
+
+  anteriorFotoTarjeta(event: Event, gym: Gimnasio): void {
+    event.stopPropagation();
+    const actual = this.fotosPorTarjeta[gym.id] || 0;
+    this.fotosPorTarjeta[gym.id] = (actual - 1 + gym.fotos.length) % gym.fotos.length;
+  }
+
+  // Dropdown Servicio
   toggleDropdownServicio(event: Event): void {
     event.stopPropagation();
     this.dropdownServicioAbierto = !this.dropdownServicioAbierto;
-    this.dropdownOrdenAbierto = false; // Cierra el otro dropdown si está abierto
+    this.dropdownOrdenAbierto = false;
+    this.mostrarSugerencias = false;
+    // Solo un segmento resaltado a la vez
+    this.campoActivo = this.dropdownServicioAbierto ? 'servicio' : null;
+  }
+
+  contarGimnasiosCon(servicio: string): number {
+    return this.gimnasios.filter((g) => g.servicios.includes(servicio)).length;
   }
 
   seleccionarServicioCustom(servicio: string): void {
     this.servicioFiltro = servicio;
     this.dropdownServicioAbierto = false;
+    this.campoActivo = null;
     this.buscar();
   }
 
-  // ----- Custom Dropdown: Ordenamiento -----
+  // Dropdown Ordenamiento
   toggleDropdownOrden(event: Event): void {
     event.stopPropagation();
     this.dropdownOrdenAbierto = !this.dropdownOrdenAbierto;
-    this.dropdownServicioAbierto = false; // Cierra el otro dropdown si está abierto
+    this.dropdownServicioAbierto = false;
   }
 
   seleccionarOrden(valor: Orden, texto: string): void {
@@ -99,7 +263,6 @@ export class CatalogoGimnasiosComponent {
     this.buscar();
   }
 
-  // ----- Sugerencias y Filtros Básicos -----
   cerrarSugerenciasDiferido(): void {
     setTimeout(() => (this.mostrarSugerencias = false), 150);
   }
@@ -138,7 +301,7 @@ export class CatalogoGimnasiosComponent {
         g.ciudad.toLowerCase().includes(texto) ||
         g.pais.toLowerCase().includes(texto);
 
-      const coincideServicio = this.servicioFiltro === '' || g.servicios.includes(this.servicioFiltro);
+      const coincideServicio = this.servicioFiltro === '' || g.servicios.some((s) => s.toLowerCase() === this.servicioFiltro.toLowerCase());
       const coincidePrecio = this.precioMax === null || g.precio <= this.precioMax;
       const coincideFavorito = !this.soloFavoritos || this.esFavorito(g.id);
 
@@ -163,7 +326,7 @@ export class CatalogoGimnasiosComponent {
     }
   }
 
-  // ----- Favoritos -----
+  // Favoritos
   esFavorito(id: number): boolean {
     return this.gimnasiosService.esFavorito(id);
   }
@@ -171,44 +334,33 @@ export class CatalogoGimnasiosComponent {
   alternarFavorito(event: Event, id: number): void {
     event.stopPropagation();
     this.gimnasiosService.alternarFavorito(id);
+    const gym = this.gimnasios.find((g) => g.id === id);
+    const estado = this.esFavorito(id);
+    this.dispararToast(
+      estado
+        ? `Guardado en tus favoritos ♥ (${gym?.nombre || 'Gimnasio'})`
+        : `Eliminado de tus favoritos (${gym?.nombre || 'Gimnasio'})`
+    );
     if (this.soloFavoritos) this.buscar();
   }
 
-  // ----- Detalle tipo Modal -----
   verDetalle(gimnasio: Gimnasio): void {
     this.gimnasioSeleccionado = gimnasio;
-    this.fotoActiva = 0;
-    document.body.style.overflow = 'hidden';
   }
 
   cerrarDetalle(): void {
     this.gimnasioSeleccionado = null;
-    document.body.style.overflow = '';
   }
 
-  cambiarFoto(index: number): void {
-    this.fotoActiva = index;
+  onModalToast(mensaje: string): void {
+    this.dispararToast(mensaje);
   }
 
-  fotoSiguiente(event: Event): void {
-    event.stopPropagation();
-    if (!this.gimnasioSeleccionado) return;
-    const total = this.gimnasioSeleccionado.fotos.length;
-    this.fotoActiva = (this.fotoActiva + 1) % total;
-  }
-
-  fotoAnterior(event: Event): void {
-    event.stopPropagation();
-    if (!this.gimnasioSeleccionado) return;
-    const total = this.gimnasioSeleccionado.fotos.length;
-    this.fotoActiva = (this.fotoActiva - 1 + total) % total;
-  }
-
-  instructoresDe(gimnasioId: number) {
+  instructoresDe(gimnasioId: number): Instructor[] {
     return this.instructoresService.listar().filter((i) => i.gimnasioId === gimnasioId && i.activo);
   }
 
-  resenasDe(gimnasioId: number) {
+  resenasDe(gimnasioId: number): Resena[] {
     return this.blogService.resenasPorGimnasio(gimnasioId);
   }
 
@@ -222,11 +374,12 @@ export class CatalogoGimnasiosComponent {
     return `${simbolo}${valor} ${g.moneda}`;
   }
 
-  abrirMapaInteractivo(): void {
-    if (!this.gimnasioSeleccionado) return;
-    const direccionEncoded = encodeURIComponent(
-      `${this.gimnasioSeleccionado.nombre}, ${this.gimnasioSeleccionado.direccion}, ${this.gimnasioSeleccionado.ciudad}`
-    );
-    window.open(`https://www.google.com/maps/search/?api=1&query=${direccionEncoded}`, '_blank');
+  private dispararToast(msg: string): void {
+    this.mensajeToast = msg;
+    this.mostrarToast = true;
+    clearTimeout(this.toastTimer);
+    this.toastTimer = setTimeout(() => {
+      this.mostrarToast = false;
+    }, 3200);
   }
 }

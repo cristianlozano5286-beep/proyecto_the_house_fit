@@ -1,66 +1,347 @@
-<div class="page-wrapper">
-    <h1 class="section-title">📰 Gestión de noticias y ofertas</h1>
-    <p class="section-subtitle">Publica novedades, ofertas y promociones visibles en el blog público</p>
+<div class="wizard-viewport">
+  <!-- CABECERA EN PANTALLA COMPLETA -->
+  <header class="wizard-navbar">
+    <div class="navbar-left">
+      <a routerLink="/panel/dashboard" class="brand-link" title="Volver al Dashboard">
+        <div class="logo-circle">
+          <img src="assets/logo-icon-white.png" alt="The House Fit" />
+        </div>
+        <span class="brand-text">THE HOUSE <strong>FIT</strong></span>
+      </a>
+      <span class="portal-badge">
+        {{ idEditar !== null ? 'CREADOR GYM · EDITANDO NOTICIA' : 'CREADOR GYM · NOTICIAS Y OFERTAS' }}
+      </span>
+    </div>
 
-    @if (mensaje) {
-        <div class="alert success">{{ mensaje }}</div>
+    <!-- PESTAÑAS DE PASOS -->
+    @if (pantallaActual !== 'hub') {
+      <nav class="wizard-steps-tabs" aria-label="Pasos de noticia">
+        <button type="button" class="wizard-tab-btn" [class.active]="pantallaActual === 'paso1'" (click)="irAPaso('paso1')">
+          <span class="tab-num" [class.done]="pantallaActual === 'paso2' || pantallaActual === 'paso3'">1</span>
+          <span class="tab-label">Tipo y alcance</span>
+        </button>
+        <span class="tab-arrow-sep">›</span>
+        <button type="button" class="wizard-tab-btn" [class.active]="pantallaActual === 'paso2'" (click)="irAPaso('paso2')">
+          <span class="tab-num" [class.done]="pantallaActual === 'paso3'">2</span>
+          <span class="tab-label">Titular y redacción</span>
+        </button>
+        <span class="tab-arrow-sep">›</span>
+        <button type="button" class="wizard-tab-btn" [class.active]="pantallaActual === 'paso3'" (click)="irAPaso('paso3')">
+          <span class="tab-num">3</span>
+          <span class="tab-label">Vista previa y publicación</span>
+        </button>
+      </nav>
     }
 
-    <div class="grid grid-2">
-        <section class="card">
-            <h2>Nueva noticia</h2>
-            <div class="form-row mt-16">
-                <div class="form-group">
-                    <label>Título</label>
-                    <input type="text" [(ngModel)]="titulo" placeholder="Ej. Promoción de matrícula" />
-                </div>
-                <div class="form-group">
-                    <label>Tipo</label>
-                    <select [(ngModel)]="tipo">
-                        @for (t of tipos; track t) { <option [value]="t">{{ t }}</option> }
-                    </select>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Gimnasio (opcional)</label>
-                    <select [(ngModel)]="gimnasioId">
-                        <option [ngValue]="null">General (todos)</option>
-                        @for (g of gimnasios; track g.id) {
-                            <option [ngValue]="g.id">{{ g.nombre }}</option>
-                        }
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Ícono</label>
-                    <input type="text" [(ngModel)]="imagen" placeholder="📰" />
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Contenido</label>
-                <textarea rows="4" [(ngModel)]="cuerpo" placeholder="Describe la novedad u oferta..."></textarea>
-            </div>
-            <button class="btn btn-primary" (click)="agregarNoticia()">Publicar noticia</button>
-        </section>
-
-        <section class="card">
-            <h2>Noticias publicadas ({{ noticias.length }})</h2>
-            <div class="mt-16" style="max-height:520px;overflow-y:auto;">
-                @for (n of noticias; track n.id) {
-                    <div class="card" style="padding:14px;margin-bottom:10px;">
-                        <div class="flex-between">
-                            <span class="badge badge-warning">{{ n.tipo }}</span>
-                            <button class="btn btn-danger btn-sm" (click)="eliminarNoticia(n.id)">🗑️</button>
-                        </div>
-                        <h3 class="mt-8">{{ n.imagen }} {{ n.titulo }}</h3>
-                        <p class="mt-8" style="font-size:14px;">{{ n.cuerpo }}</p>
-                        <small style="color:var(--color-gray);">{{ nombreGimnasio(n.gimnasioId) }} · {{ n.fecha }}</small>
-                    </div>
-                }
-                @empty {
-                    <p class="empty-state">Aún no hay noticias publicadas.</p>
-                }
-            </div>
-        </section>
+    <div class="navbar-right">
+      @if (pantallaActual !== 'hub') {
+        <button type="button" class="btn-nav-pill-subtle" (click)="volverAlHub()">
+          Ver noticias publicadas
+        </button>
+        <button type="button" class="btn-nav-outline" (click)="guardarNoticia()">
+          {{ idEditar !== null ? 'Guardar cambios y salir' : 'Publicar noticia' }}
+        </button>
+      } @else {
+        <button type="button" class="btn-nav-outline" (click)="iniciarNuevo()">
+          + Nueva noticia
+        </button>
+        <button type="button" class="btn-nav-pill" (click)="salirAlPanel()">
+          Salir al panel
+        </button>
+      }
     </div>
+  </header>
+
+  <!-- ================================================================= -->
+  <!-- PANTALLA HUB: BIENVENIDA Y LISTADO DE NOTICIAS                    -->
+  <!-- ================================================================= -->
+  @if (pantallaActual === 'hub') {
+    <main class="hub-container">
+      @if (mensaje) {
+        <div class="studio-toast-alert" [class.error]="tipoMensaje === 'error'">
+          <span>{{ tipoMensaje === 'error' ? '⚠️' : '✓' }} {{ mensaje }}</span>
+          <button type="button" class="btn-nav-pill-subtle" (click)="mensaje = ''">Cerrar</button>
+        </div>
+      }
+
+      <div class="hub-top-row">
+        <div>
+          <div class="hub-header-badge">
+            <span class="pulse-dot"></span>
+            <span>Portal Dedicado de Noticias & Ofertas</span>
+          </div>
+          <h1 class="hub-greeting">Hola de nuevo, {{ nombreUsuario }}</h1>
+          <p class="hub-subtitle">
+            Comunica promociones de matrícula, nuevos equipos o eventos especiales a todos los atletas de tu comunidad.
+          </p>
+        </div>
+
+        <div class="hub-kpis-row">
+          <div class="hub-kpi-pill highlight">
+            <span class="kpi-val">{{ noticias.length }}</span>
+            <span class="kpi-lbl">Publicadas</span>
+          </div>
+          <div class="hub-kpi-pill">
+            <span class="kpi-val">{{ gimnasios.length }}</span>
+            <span class="kpi-lbl">Sedes Activas</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACCIÓN PRINCIPAL -->
+      <section class="hub-section">
+        <h2 class="hub-section-title">Crear anuncio para la comunidad</h2>
+        <div class="options-list" style="margin-top: 12px;">
+          <div class="option-row" (click)="iniciarNuevo()" role="button" tabindex="0">
+            <div class="option-left">
+              <div class="option-icon-square">📰</div>
+              <div class="option-meta">
+                <span class="option-label">Redactar una nueva noticia, oferta o promoción</span>
+                <span class="option-sub">Elige el tipo de anuncio, la sede destinataria y previsualiza antes de publicar</span>
+              </div>
+            </div>
+            <div class="option-chevron">›</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LISTADO DE NOTICIAS PARA EDITAR -->
+      <section class="hub-section">
+        <div class="hub-section-header">
+          <h2 class="hub-section-title">Selecciona una noticia para editarla ({{ noticiasFiltradas.length }})</h2>
+        </div>
+
+        <div class="hub-controls-bar">
+          <div class="hub-search-box">
+            <span>🔍</span>
+            <input
+              type="text"
+              [(ngModel)]="busqueda"
+              placeholder="Buscar noticia por título, contenido o sede..." />
+          </div>
+
+          <div class="hub-filter-pills">
+            @for (t of ['Todas', 'Novedad', 'Oferta', 'Promoción']; track t) {
+              <button
+                type="button"
+                class="filter-pill-btn"
+                [class.active]="filtroTipo === t"
+                (click)="filtroTipo = t">
+                {{ t }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="items-stack-list">
+          @for (n of noticiasFiltradas; track n.id) {
+            <div class="draft-card" (click)="iniciarEdicion(n)" role="button" tabindex="0">
+              <div class="draft-icon-box">
+                <span>{{ n.imagen || '📰' }}</span>
+              </div>
+              <div class="draft-info">
+                <div class="draft-title-row">
+                  <strong class="draft-title">{{ n.titulo }}</strong>
+                  <span class="draft-badge">{{ n.tipo }}</span>
+                  <span class="draft-badge blue">📍 {{ nombreGimnasio(n.gimnasioId) }}</span>
+                </div>
+                <p class="draft-text">{{ n.cuerpo }}</p>
+              </div>
+              <div class="draft-actions">
+                <button type="button" class="btn-card-edit" (click)="$event.stopPropagation(); iniciarEdicion(n)">
+                  ✏️ Editar
+                </button>
+                <button
+                  type="button"
+                  class="btn-card-delete"
+                  (click)="$event.stopPropagation(); eliminarNoticia(n.id)"
+                  title="Eliminar noticia">
+                  🗑️
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    </main>
+  }
+
+  <!-- ================================================================= -->
+  <!-- PASO 1: TIPO DE PUBLICACIÓN, ICONO Y SEDE                         -->
+  <!-- ================================================================= -->
+  @if (pantallaActual === 'paso1') {
+    <main class="step-content-container">
+      <span class="step-mini-tag">Paso 1 de 3 &middot; Categoría y Alcance</span>
+      <h1 class="step-large-heading">
+        {{ idEditar !== null ? 'Edita el tipo y alcance de tu publicación' : '¿Qué tipo de comunicado vas a lanzar?' }}
+      </h1>
+      <p class="step-description-text">
+        Selecciona si se trata de una novedad informativa, una oferta relámpago o una promoción de membresía.
+      </p>
+
+      <div class="choice-cards-grid">
+        @for (tc of tiposCards; track tc.id) {
+          <button
+            type="button"
+            class="choice-card-item"
+            [class.selected]="tipo === tc.id"
+            (click)="seleccionarTipo(tc.id, tc.icono)">
+            <span class="choice-card-emoji">{{ tc.icono }}</span>
+            <span class="choice-card-title">{{ tc.id }}</span>
+            <span class="choice-card-sub">{{ tc.desc }}</span>
+          </button>
+        }
+      </div>
+
+      <label class="studio-field-label" style="margin-bottom: 10px;">Icono destacado del anuncio</label>
+      <div class="emoji-selector-grid">
+        @for (ic of iconosSugeridos; track ic) {
+          <button
+            type="button"
+            class="emoji-tile-btn"
+            [class.selected]="imagen === ic"
+            (click)="imagen = ic">
+            {{ ic }}
+          </button>
+        }
+      </div>
+
+      <label class="studio-field-label" style="margin-bottom: 10px;">Sede deportiva destinataria</label>
+      <div class="choice-cards-grid">
+        <button
+          type="button"
+          class="choice-card-item"
+          [class.selected]="gimnasioId === null"
+          (click)="gimnasioId = null">
+          <span class="choice-card-emoji">🌐</span>
+          <span class="choice-card-title">Todas las sedes</span>
+          <span class="choice-card-sub">Comunicado general visible para toda la comunidad</span>
+        </button>
+
+        @for (g of gimnasios; track g.id) {
+          <button
+            type="button"
+            class="choice-card-item"
+            [class.selected]="gimnasioId === g.id"
+            (click)="gimnasioId = g.id">
+            <span class="choice-card-emoji">🏋️</span>
+            <span class="choice-card-title">{{ g.nombre }}</span>
+            <span class="choice-card-sub">{{ g.ciudad || 'Sede oficial' }}</span>
+          </button>
+        }
+      </div>
+    </main>
+  }
+
+  <!-- ================================================================= -->
+  <!-- PASO 2: TITULAR Y REDACCIÓN DEL CONTENIDO                         -->
+  <!-- ================================================================= -->
+  @if (pantallaActual === 'paso2') {
+    <main class="step-content-container">
+      @if (mensaje) {
+        <div class="studio-toast-alert" [class.error]="tipoMensaje === 'error'">
+          <span>{{ mensaje }}</span>
+        </div>
+      }
+
+      <span class="step-mini-tag">Paso 2 de 3 &middot; Redacción del Comunicado</span>
+      <h1 class="step-large-heading">Escribe el titular y el mensaje completo</h1>
+      <p class="step-description-text">
+        Un buen titular capta la atención inmediatamente en el mural de noticias de The House Fit.
+      </p>
+
+      <div class="studio-fields-stack">
+        <div class="studio-field-box">
+          <label class="studio-field-label">Título de la noticia u oferta *</label>
+          <input
+            type="text"
+            class="studio-input"
+            [(ngModel)]="titulo"
+            placeholder="Ej: ¡Gran Promoción 2x1 en Membresía Mensual!" />
+
+          <div class="quick-suggestions-row">
+            @for (sug of titularesSugeridos; track sug) {
+              <button type="button" class="quick-chip-btn" (click)="titulo = sug">
+                ✨ {{ sug }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="studio-field-box">
+          <label class="studio-field-label">Contenido detallado del anuncio *</label>
+          <textarea
+            rows="5"
+            class="studio-textarea"
+            [(ngModel)]="cuerpo"
+            placeholder="Describe las fechas válidas, beneficios para los atletas, condiciones de la promoción o detalles del evento..."></textarea>
+        </div>
+      </div>
+    </main>
+  }
+
+  <!-- ================================================================= -->
+  <!-- PASO 3: VISTA PREVIA Y PUBLICACIÓN                                -->
+  <!-- ================================================================= -->
+  @if (pantallaActual === 'paso3') {
+    <main class="step-content-container">
+      <span class="step-mini-tag">Paso 3 de 3 &middot; Confirmación Final</span>
+      <h1 class="step-large-heading">Así se verá tu publicación en el portal</h1>
+      <p class="step-description-text">
+        Revisa que el titular, el icono y la sede asignada sean correctos antes de publicar.
+      </p>
+
+      <div class="live-preview-box">
+        <span class="preview-header-tag">● Vista previa en Blog y Comunidad Fit</span>
+        <div class="draft-card" style="cursor: default;">
+          <div class="draft-icon-box">
+            <span>{{ imagen }}</span>
+          </div>
+          <div class="draft-info">
+            <div class="draft-title-row">
+              <strong class="draft-title">{{ titulo || 'Titular de la noticia' }}</strong>
+              <span class="draft-badge">{{ tipo }}</span>
+              <span class="draft-badge blue">📍 {{ nombreGimnasio(gimnasioId) }}</span>
+            </div>
+            <p class="draft-text" style="margin-top: 6px; color: #e2e8f0;">
+              {{ cuerpo || 'Contenido informativo para los miembros de The House Fit.' }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+  }
+
+  <!-- ================================================================= -->
+  <!-- FOOTER STICKY CON BARRA DE PROGRESO                               -->
+  <!-- ================================================================= -->
+  @if (pantallaActual !== 'hub') {
+    <footer class="wizard-sticky-footer">
+      <div class="footer-progress-bar">
+        <div class="progress-segment-wrap">
+          <div class="progress-segment-fill" [style.width.%]="100"></div>
+        </div>
+        <div class="progress-segment-wrap">
+          <div class="progress-segment-fill" [style.width.%]="pantallaActual === 'paso2' || pantallaActual === 'paso3' ? 100 : 0"></div>
+        </div>
+        <div class="progress-segment-wrap">
+          <div class="progress-segment-fill" [style.width.%]="pantallaActual === 'paso3' ? 100 : 0"></div>
+        </div>
+      </div>
+
+      <div class="footer-buttons-bar">
+        <button type="button" class="btn-footer-back" (click)="irPasoAnterior()">
+          Atrás
+        </button>
+
+        <button type="button" class="btn-footer-next" (click)="irPasoSiguiente()">
+          @if (pantallaActual === 'paso3') {
+            {{ idEditar !== null ? 'Guardar cambios de la noticia' : 'Publicar noticia ahora' }}
+          } @else {
+            Siguiente
+          }
+        </button>
+      </div>
+    </footer>
+  }
 </div>

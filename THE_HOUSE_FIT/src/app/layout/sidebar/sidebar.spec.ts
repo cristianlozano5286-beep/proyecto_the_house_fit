@@ -1,3 +1,6 @@
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SidebarComponent } from './sidebar';
@@ -8,6 +11,7 @@ describe('SidebarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
       imports: [SidebarComponent]
     })
     .compileComponents();
@@ -18,6 +22,6 @@ describe('SidebarComponent', () => {
   });
 
   it('should create', () => {
-    expect(SidebarComponent).toBeTruthy();
+    expect(component).toBeTruthy();
   });
 });

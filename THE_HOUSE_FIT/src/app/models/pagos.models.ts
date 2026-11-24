@@ -14,6 +14,12 @@ export interface Transaccion {
   concepto: string;
   monto: number;
   metodoPagoId: number;
-  estado: 'Pendiente' | 'Aprobado' | 'Rechazado';
+  metodoNombre?: string;
+  pasarela?: string;
+  referencia?: string;
+  cedula?: string;
+  estado: 'Pendiente' | 'Aprobado' | 'Aprobada y pagada' | 'Rechazado';
+  pagado?: boolean;
   fecha: string;
+  fechaHora?: string;
 }

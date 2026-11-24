@@ -1,27 +1,85 @@
-<footer class="site-footer">
-    <div class="footer-inner">
-        <div class="footer-top">
-            <a routerLink="/" class="brand">
-                <span class="brand-mark">TH</span>
-                <span class="brand-text">The House <span class="accent">Fit</span></span>
-            </a>
+<footer class="airbnb-site-footer">
+  <div class="footer-container">
+    <div class="footer-columns-grid">
+      <div class="footer-col">
+        <h4 class="col-title">Asistencia & Soporte</h4>
+        <ul class="col-links">
+          <li><a routerLink="/imc">Calculadora de IMC y salud</a></li>
+          <li><a routerLink="/rutinas">Planes de entrenamiento</a></li>
+          <li><a routerLink="/nutricion">Guías nutricionales</a></li>
+          <li><a routerLink="/login">Centro de ayuda y acceso</a></li>
+        </ul>
+      </div>
 
-            <nav class="footer-links">
-                @for (link of navLinks; track link.ruta) {
-                    <a [routerLink]="link.ruta">{{ link.label.toUpperCase() }}</a>
-                }
-            </nav>
+      <div class="footer-col">
+        <h4 class="col-title">Comunidad The House Fit</h4>
+        <ul class="col-links">
+          <li><a routerLink="/gimnasios">Gimnasios afiliados en Yopal</a></li>
+          <li><a routerLink="/gimnasios">Sedes en Casanare y Colombia</a></li>
+          <li><a routerLink="/blog">Historias y consejos fitness</a></li>
+          <li><a routerLink="/tienda">Tienda oficial de suplementos</a></li>
+        </ul>
+      </div>
 
-            <div class="socials">
-                @for (r of redes; track r) {
-                    <span class="social-box">{{ r }}</span>
-                }
-            </div>
+      <div class="footer-col">
+        <h4 class="col-title">Para Dueños de Gimnasios</h4>
+        <ul class="col-links">
+          <li><a routerLink="/register">Afiliar mi centro de entrenamiento</a></li>
+          <li><a routerLink="/login">Portal de administración</a></li>
+          <li><a routerLink="/panel/instructores">Gestión de entrenadores</a></li>
+          <li><a routerLink="/mi-espacio/pagos">Sistema de reservas e ingresos</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-brand-col">
+        <div class="brand-badge-row">
+          <div class="brand-mini-icon">
+            <img src="assets/logo-icon-orange.png" alt="The House Fit" class="footer-brand-img">
+          </div>
+          <span class="brand-title">The House <span class="brand-accent">Fit</span></span>
         </div>
-
-        <div class="footer-bottom">
-            <span>© {{ anio }} The House Fit · Todos los derechos reservados</span>
-            <span>Directorio de gimnasios de Yopal, Casanare.</span>
+        <p class="brand-desc">
+          El marketplace líder para descubrir, comparar y reservar en los mejores gimnasios, estudios y centros deportivos.
+        </p>
+        <div class="currency-locale-pill">
+          <span>🌐 Español (CO)</span>
+          <span>·</span>
+          <span>$ COP</span>
         </div>
+      </div>
     </div>
+
+    <div class="footer-bottom-bar">
+      <div class="bottom-legal">
+        <span>© {{ anio }} The House Fit, Inc.</span>
+        <span>·</span>
+        <a routerLink="/blog">Privacidad</a>
+        <span>·</span>
+        <a routerLink="/blog">Términos</a>
+        <span>·</span>
+        <a routerLink="/gimnasios">Mapa del sitio</a>
+      </div>
+
+      <div class="bottom-socials">
+        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="social-icon-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+          </svg>
+        </a>
+        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="social-icon-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+          </svg>
+        </a>
+        <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="social-icon-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path>
+            <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
 </footer>

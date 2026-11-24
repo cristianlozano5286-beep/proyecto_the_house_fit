@@ -1,102 +1,101 @@
-import { Injectable, inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { Injectable } from '@angular/core';
+import { ApiService, mensajeDeError, reemplazarLista } from './api';
 
 export interface UsuarioAuth {
+  id: number;
   nombre: string;
   correo: string;
   rol: string;
+  fotoPerfil?: string;
 }
 
 export interface UsuarioSistema extends UsuarioAuth {
-  password: string;
   correoVerificado: boolean;
 }
 
-const STORAGE_USUARIOS = 'fitzone_usuariosSistema';
+// lo que responde el MID cuando alguien inicia sesión
+interface RespuestaSesion {
+  token: string;
+  usuario: UsuarioAuth;
+}
 
+/*
+  Ahora el login, el registro, el código de verificación y la
+  recuperación de contraseña los hace el MID (que guarda en PostgreSQL).
+  Acá solo se guarda en el navegador el token y los datos de la sesión.
+  Las funciones que hablan con el MID devuelven null si salió bien,
+  o el mensaje de error si algo falló.
+*/
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private platformId = inject(PLATFORM_ID);
   private readonly STORAGE_KEY = 'usuarioSesion';
+  private readonly STORAGE_TOKEN = 'tokenSesion';
 
-  private usuariosIniciales: UsuarioSistema[] = [
-    {
-      nombre: 'Administrador The House Fit',
-      correo: 'admin@thehousefit.com',
-      password: '123456',
-      rol: 'Administrador',
-      correoVerificado: true,
-    },
-    {
-      nombre: 'Marlon Monsalve',
-      correo: 'entrenador@thehousefit.com',
-      password: '123456',
-      rol: 'Entrenador',
-      correoVerificado: true,
-    },
-    {
-      nombre: 'Andrés Torres',
-      correo: 'usuario@thehousefit.com',
-      password: '123456',
-      rol: 'Usuario',
-      correoVerificado: true,
-    },
-  ];
-
+  // lista de usuarios, solo la puede traer el Administrador
   private usuariosSistema: UsuarioSistema[] = [];
-  private codigoTemporal: { correo: string; codigo: string } | null = null;
 
-  constructor() {
-    this.cargarUsuarios();
-  }
+  constructor(private api: ApiService) {}
 
-  private cargarUsuarios(): void {
-    const datos = localStorage.getItem(STORAGE_USUARIOS);
-    if (datos) {
-      this.usuariosSistema = JSON.parse(datos);
-    } else {
-      this.usuariosSistema = [...this.usuariosIniciales];
-      this.guardarUsuarios();
+  // ------------------- LOGIN -------------------
+  async iniciarSesion(correo: string, password: string): Promise<string | null> {
+    try {
+      const respuesta = await this.api.crear<RespuestaSesion>('/auth/login', {
+        correo: correo.trim().toLowerCase(),
+        password,
+      });
+      this.guardarSesion(respuesta);
+      return null;
+    } catch (error) {
+      return mensajeDeError(error);
     }
   }
 
-  private guardarUsuarios(): void {
-    localStorage.setItem(STORAGE_USUARIOS, JSON.stringify(this.usuariosSistema));
-  }
-
-  // ------------------- LOGIN -------------------
-  iniciarSesion(correo: string, password: string): boolean {
-    const correoLimpio = correo.trim().toLowerCase();
-    const usuario = this.usuariosSistema.find((u) => u.correo.toLowerCase() === correoLimpio);
-    if (!usuario) return false;
-    if (usuario.password !== password) return false;
-
-    const usuarioAuth: UsuarioAuth = {
-      nombre: usuario.nombre,
-      correo: usuario.correo,
-      rol: usuario.rol,
+  guardarSesion(respuesta: RespuestaSesion): void {
+    const correoKey = respuesta.usuario?.correo?.trim().toLowerCase() ?? '';
+    const fotoGuardadaLocal = correoKey
+      ? localStorage.getItem('thehousefit_foto_' + correoKey) ?? ''
+      : '';
+    const usuarioFinal: UsuarioAuth = {
+      ...respuesta.usuario,
+      fotoPerfil: respuesta.usuario.fotoPerfil || fotoGuardadaLocal || '',
     };
-
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(usuarioAuth));
+    if (correoKey && usuarioFinal.fotoPerfil) {
+      localStorage.setItem('thehousefit_foto_' + correoKey, usuarioFinal.fotoPerfil);
+    }
+    localStorage.setItem(this.STORAGE_TOKEN, respuesta.token);
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(usuarioFinal));
     localStorage.setItem('usuarioLogueado', 'true');
-    return true;
   }
 
   cerrarSesion(): void {
     localStorage.removeItem(this.STORAGE_KEY);
+    localStorage.removeItem(this.STORAGE_TOKEN);
     localStorage.removeItem('usuarioLogueado');
+    reemplazarLista(this.usuariosSistema, []);
   }
 
   estaAutenticado(): boolean {
-    return localStorage.getItem(this.STORAGE_KEY) != null;
+    return (
+      localStorage.getItem('usuarioLogueado') === 'true' &&
+      Boolean(localStorage.getItem(this.STORAGE_TOKEN)) &&
+      Boolean(localStorage.getItem(this.STORAGE_KEY))
+    );
+  }
+
+  obtenerToken(): string {
+    return localStorage.getItem(this.STORAGE_TOKEN) ?? '';
   }
 
   obtenerUsuario(): UsuarioAuth | null {
     const usuario = localStorage.getItem(this.STORAGE_KEY);
     if (!usuario) return null;
-    return JSON.parse(usuario);
+    try {
+      return JSON.parse(usuario) as UsuarioAuth;
+    } catch {
+      return null;
+    }
   }
 
   obtenerRol(): string {
@@ -107,89 +106,158 @@ export class AuthService {
     return this.obtenerUsuario()?.nombre ?? '';
   }
 
-  // ------------------- REGISTRO -------------------
-  correoExiste(correo: string): boolean {
-    const correoLimpio = correo.trim().toLowerCase();
-    return this.usuariosSistema.some((u) => u.correo.toLowerCase() === correoLimpio);
+  obtenerCorreo(): string {
+    return this.obtenerUsuario()?.correo ?? '';
   }
 
-  registrarUsuario(nombre: string, correo: string, password: string): void {
-    const nuevoUsuario: UsuarioSistema = {
-      nombre,
-      correo: correo.trim().toLowerCase(),
-      password,
-      rol: 'Usuario',
-      correoVerificado: false,
-    };
-    this.usuariosSistema.push(nuevoUsuario);
-    this.guardarUsuarios();
+  obtenerFotoPerfil(): string {
+    const u = this.obtenerUsuario();
+    if (!u) return '';
+    if (u.fotoPerfil) return u.fotoPerfil;
+    const correoKey = u.correo?.trim().toLowerCase() ?? '';
+    return correoKey ? localStorage.getItem('thehousefit_foto_' + correoKey) ?? '' : '';
   }
 
-  // ------------------- VERIFICACIÓN DE CORREO -------------------
-  enviarCodigoVerificacion(correo: string): string {
-    const codigo = Math.floor(100000 + Math.random() * 900000).toString();
-    this.codigoTemporal = { correo: correo.trim().toLowerCase(), codigo };
-    return codigo;
-  }
-
-  verificarCodigo(correo: string, codigo: string): boolean {
-    if (!this.codigoTemporal) return false;
-    const correoLimpio = correo.trim().toLowerCase();
-    const codigoLimpio = codigo.trim();
-
-    const valido = this.codigoTemporal.correo === correoLimpio && this.codigoTemporal.codigo === codigoLimpio;
-    if (valido) {
-      const usuario = this.usuariosSistema.find((u) => u.correo.toLowerCase() === correoLimpio);
-      if (usuario) {
-        usuario.correoVerificado = true;
-        this.guardarUsuarios();
+  async sincronizarPerfil(): Promise<UsuarioAuth | null> {
+    if (!this.estaAutenticado()) return null;
+    try {
+      const perfil = await this.api.obtener<UsuarioAuth>('/auth/perfil');
+      if (perfil && perfil.id) {
+        const correoKey = perfil.correo?.trim().toLowerCase() ?? '';
+        const fotoFinal =
+          perfil.fotoPerfil ||
+          (correoKey ? localStorage.getItem('thehousefit_foto_' + correoKey) ?? '' : '');
+        const fusionado: UsuarioAuth = { ...perfil, fotoPerfil: fotoFinal };
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(fusionado));
+        if (correoKey && fotoFinal) {
+          localStorage.setItem('thehousefit_foto_' + correoKey, fotoFinal);
+        }
+        return fusionado;
       }
-      this.codigoTemporal = null;
+      return this.obtenerUsuario();
+    } catch {
+      return this.obtenerUsuario();
     }
-    return valido;
+  }
+
+  async actualizarPerfil(cambios: {
+    nombre?: string;
+    fotoPerfil?: string;
+  }): Promise<{ error: string | null; usuario?: UsuarioAuth }> {
+    const actual = this.obtenerUsuario();
+    if (!actual) {
+      return { error: 'Debes iniciar sesión para editar tu perfil.' };
+    }
+    try {
+      const actualizado = await this.api.actualizar<UsuarioAuth>('/auth/perfil', cambios);
+      const fusionado: UsuarioAuth = {
+        ...actual,
+        ...actualizado,
+        nombre: cambios.nombre !== undefined ? cambios.nombre.trim() : actualizado?.nombre || actual.nombre,
+        fotoPerfil:
+          cambios.fotoPerfil !== undefined
+            ? cambios.fotoPerfil
+            : actualizado?.fotoPerfil ?? actual.fotoPerfil ?? '',
+      };
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(fusionado));
+      const correoKey = fusionado.correo?.trim().toLowerCase() ?? '';
+      if (correoKey) {
+        if (fusionado.fotoPerfil) {
+          localStorage.setItem('thehousefit_foto_' + correoKey, fusionado.fotoPerfil);
+        } else {
+          localStorage.removeItem('thehousefit_foto_' + correoKey);
+        }
+      }
+      return { error: null, usuario: fusionado };
+    } catch (error) {
+      return { error: mensajeDeError(error) };
+    }
+  }
+
+  async registrarUsuario(
+    nombre: string,
+    correo: string,
+    password: string,
+    rol: 'Usuario' | 'Creador gym' = 'Usuario',
+  ): Promise<{ error: string | null; mensaje?: string }> {
+    try {
+      const respuesta = await this.api.crear<{ mensaje: string }>('/auth/registro', {
+        nombre, correo: correo.trim().toLowerCase(), password, rol,
+      });
+      return { error: null, mensaje: respuesta.mensaje };
+    } catch (error) {
+      return { error: mensajeDeError(error) };
+    }
+  }
+
+  async enviarCodigoVerificacion(correo: string): Promise<string | null> {
+    try {
+      await this.api.crear('/auth/codigo', { correo: correo.trim().toLowerCase() });
+      return null;
+    } catch (error) {
+      return mensajeDeError(error);
+    }
+  }
+
+  async verificarCodigo(correo: string, codigo: string): Promise<string | null> {
+    try {
+      const respuesta = await this.api.crear<RespuestaSesion>('/auth/verificar', {
+        correo: correo.trim().toLowerCase(),
+        codigo: codigo.trim(),
+      });
+      if (respuesta && respuesta.token) {
+        this.guardarSesion(respuesta);
+      }
+      return null;
+    } catch (error) {
+      return mensajeDeError(error);
+    }
   }
 
   // ------------------- RECUPERAR CONTRASEÑA -------------------
-  solicitarRecuperacion(correo: string): boolean {
-    const correoLimpio = correo.trim().toLowerCase();
-    if (!this.correoExiste(correoLimpio)) return false;
-    this.enviarCodigoVerificacion(correoLimpio);
-    return true;
-  }
-
-  restablecerPassword(correo: string, codigo: string, nuevaPassword: string): boolean {
-    const correoLimpio = correo.trim().toLowerCase();
-    const valido = this.verificarCodigo(correoLimpio, codigo);
-    if (!valido) return false;
-
-    const usuario = this.usuariosSistema.find((u) => u.correo.toLowerCase() === correoLimpio);
-    if (usuario) {
-      usuario.password = nuevaPassword;
-      this.guardarUsuarios();
-      return true;
+  async solicitarRecuperacion(correo: string): Promise<string | null> {
+    try {
+      await this.api.crear('/auth/recuperar', { correo: correo.trim().toLowerCase() });
+      return null;
+    } catch (error) {
+      return mensajeDeError(error);
     }
-    return false;
   }
 
-  obtenerUltimoCodigo(): string | null {
-    return this.codigoTemporal?.codigo ?? null;
+  async restablecerPassword(correo: string, codigo: string, nuevaPassword: string): Promise<string | null> {
+    try {
+      await this.api.crear('/auth/restablecer', {
+        correo: correo.trim().toLowerCase(),
+        codigo: codigo.trim(),
+        nuevaPassword,
+      });
+      return null;
+    } catch (error) {
+      return mensajeDeError(error);
+    }
   }
 
   // ------------------- GESTIÓN DE ROLES -------------------
+  async cargarUsuarios(): Promise<void> {
+    const lista = await this.api.obtener<UsuarioSistema[]>('/usuarios');
+    reemplazarLista(this.usuariosSistema, lista);
+  }
+
   listarUsuariosSistema(): UsuarioSistema[] {
     return this.usuariosSistema;
   }
 
-  actualizarRol(correo: string, nuevoRol: string): void {
+  async actualizarRol(correo: string, nuevoRol: string): Promise<string | null> {
     const correoLimpio = correo.trim().toLowerCase();
     const usuario = this.usuariosSistema.find((u) => u.correo.toLowerCase() === correoLimpio);
-    if (usuario) {
+    if (!usuario) return 'No se encontró el usuario.';
+
+    try {
+      await this.api.actualizar('/usuarios/' + usuario.id + '/rol', { rol: nuevoRol });
       usuario.rol = nuevoRol;
-      this.guardarUsuarios();
-      const sesion = this.obtenerUsuario();
-      if (sesion && sesion.correo.toLowerCase() === correoLimpio) {
-        localStorage.setItem(this.STORAGE_KEY, JSON.stringify({ ...sesion, rol: nuevoRol }));
-      }
+      return null;
+    } catch (error) {
+      return mensajeDeError(error);
     }
   }
 }

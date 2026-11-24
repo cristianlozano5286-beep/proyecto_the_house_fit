@@ -1,0 +1,14 @@
+# Go
+*.exe
+
+# Editor / sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Gmail (nunca subir estos archivos)
+credentials/
+token/
+
+conf/app.conf

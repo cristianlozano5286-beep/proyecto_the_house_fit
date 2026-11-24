@@ -1,0 +1,197 @@
+<dialog
+  #wompiDialog
+  class="wmp-dialog"
+  closedby="any"
+  aria-labelledby="wmp-checkout-title"
+  (cancel)="onDialogCancel($event)"
+  (close)="onDialogNativeClose()"
+>
+  @if (wompiService.sesionCheckout(); as sesion) {
+    <div class="wmp-shell">
+      <!-- Encabezado Pasarela Wompi Sandbox -->
+      <header class="wmp-header">
+        <div class="wmp-brand">
+          <span class="wmp-logo-mark" aria-hidden="true">W</span>
+          <div>
+            <div class="wmp-title-row">
+              <strong id="wmp-checkout-title">Wompi Checkout</strong>
+              <span class="wmp-sandbox-pill">SANDBOX · PRUEBAS</span>
+            </div>
+            <span class="wmp-sub">Pasarela simulada gratuita · Sin cobro real</span>
+          </div>
+        </div>
+
+        <button type="button" class="wmp-close-btn" (click)="cancelar()" aria-label="Cerrar pasarela Wompi">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </header>
+
+      <!-- Resumen de compra -->
+      <div class="wmp-summary-box">
+        <div class="wmp-summary-copy">
+          <span class="wmp-kicker">{{ sesion.solicitud.gimnasioNombre || 'The House Fit' }}</span>
+          <strong>{{ sesion.solicitud.concepto }}</strong>
+          <small>Ref: {{ sesion.referencia }}</small>
+        </div>
+        <div class="wmp-summary-price">
+          <span>Total a pagar</span>
+          <strong>{{ formatoCop(sesion.solicitud.monto, sesion.solicitud.moneda || 'COP') }}</strong>
+        </div>
+      </div>
+
+      @if (paso() === 'seleccion') {
+        <!-- Selector de método de pago Wompi -->
+        <div class="wmp-methods-grid" role="tablist" aria-label="Métodos de pago en Wompi Sandbox">
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="metodo() === 'NEQUI'"
+            class="wmp-method-btn"
+            [class.active]="metodo() === 'NEQUI'"
+            (click)="metodo.set('NEQUI')"
+          >
+            <strong>Nequi</strong>
+            <span>Aprobación instantánea</span>
+          </button>
+
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="metodo() === 'PSE'"
+            class="wmp-method-btn"
+            [class.active]="metodo() === 'PSE'"
+            (click)="metodo.set('PSE')"
+          >
+            <strong>PSE</strong>
+            <span>Transferencia bancaria</span>
+          </button>
+
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="metodo() === 'CARD'"
+            class="wmp-method-btn"
+            [class.active]="metodo() === 'CARD'"
+            (click)="metodo.set('CARD')"
+          >
+            <strong>Tarjeta</strong>
+            <span>Visa / Mastercard test</span>
+          </button>
+
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="metodo() === 'BANCOLOMBIA'"
+            class="wmp-method-btn"
+            [class.active]="metodo() === 'BANCOLOMBIA'"
+            (click)="metodo.set('BANCOLOMBIA')"
+          >
+            <strong>Bancolombia</strong>
+            <span>Botón de transferencia</span>
+          </button>
+        </div>
+
+        <!-- Formulario Sandbox por método -->
+        <div class="wmp-form-panel">
+          @switch (metodo()) {
+            @case ('NEQUI') {
+              <div class="wmp-field">
+                <label for="wmp-nequi-tel">Número Nequi de prueba (Sandbox)</label>
+                <input id="wmp-nequi-tel" name="celularNequi" type="tel" [(ngModel)]="celularNequi" />
+                <small>Usa cualquier número o el predeterminado 399 111 1111 para aprobar al instante.</small>
+              </div>
+            }
+            @case ('PSE') {
+              <div class="wmp-field">
+                <label for="wmp-pse-banco">Banco simulado PSE</label>
+                <select id="wmp-pse-banco" name="bancoPse" [(ngModel)]="bancoPse">
+                  <option value="Bancolombia">Bancolombia (Sandbox)</option>
+                  <option value="Nequi">Nequi (Sandbox)</option>
+                  <option value="Davivienda">Davivienda (Sandbox)</option>
+                  <option value="Banco de Bogotá">Banco de Bogotá (Sandbox)</option>
+                </select>
+                <small>Simula la transferencia aprobada en PostgreSQL sin salir del entorno local.</small>
+              </div>
+            }
+            @case ('CARD') {
+              <div class="wmp-card-grid">
+                <div class="wmp-field full">
+                  <label for="wmp-card-num">Tarjeta de prueba Visa Sandbox</label>
+                  <input id="wmp-card-num" name="tarjetaNumero" type="text" [(ngModel)]="tarjetaNumero" />
+                </div>
+                <div class="wmp-field">
+                  <label for="wmp-card-exp">Vence</label>
+                  <input id="wmp-card-exp" name="tarjetaExp" type="text" [(ngModel)]="tarjetaExp" />
+                </div>
+                <div class="wmp-field">
+                  <label for="wmp-card-cvc">CVC</label>
+                  <input id="wmp-card-cvc" name="tarjetaCvc" type="text" [(ngModel)]="tarjetaCvc" />
+                </div>
+              </div>
+            }
+            @case ('BANCOLOMBIA') {
+              <div class="wmp-info-note">
+                <strong>Botón Transferencia Bancolombia Sandbox</strong>
+                <p>Al confirmar, se emitirá un comprobante ficticio aprobado y se guardará con fecha y hora en PostgreSQL.</p>
+              </div>
+            }
+          }
+        </div>
+
+        <div class="wmp-actions">
+          <button type="button" class="wmp-pay-btn" (click)="confirmarPagoSandbox()">
+            Pagar {{ formatoCop(sesion.solicitud.monto, sesion.solicitud.moneda || 'COP') }} con Wompi Sandbox
+          </button>
+          <button type="button" class="wmp-cancel-link" (click)="cancelar()">
+            Cancelar y volver
+          </button>
+        </div>
+      }
+
+      @if (paso() === 'procesando') {
+        <div class="wmp-status-box">
+          <span class="wmp-spinner" aria-hidden="true"></span>
+          <strong>Verificando transferencia en Wompi Sandbox...</strong>
+          <p>Aprobando transacción y guardando comprobante en base de datos.</p>
+        </div>
+      }
+
+      @if (paso() === 'aprobado' && resultado(); as res) {
+        <div class="wmp-approved-box">
+          <div class="wmp-approved-icon" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
+          <h4>Transferencia Aprobada y Pagada</h4>
+          <p>El registro ya quedó guardado en PostgreSQL con fecha y comprobante oficial de prueba.</p>
+
+          <dl class="wmp-receipt-list">
+            <div>
+              <dt>Estado</dt>
+              <dd class="ok">{{ res.estadoPago }}</dd>
+            </div>
+            <div>
+              <dt>Referencia</dt>
+              <dd>{{ res.referencia }}</dd>
+            </div>
+            <div>
+              <dt>Método</dt>
+              <dd>{{ res.metodoNombre }}</dd>
+            </div>
+            <div>
+              <dt>Fecha y hora</dt>
+              <dd>{{ res.fechaHora }}</dd>
+            </div>
+          </dl>
+
+          <button type="button" class="wmp-pay-btn" (click)="finalizarYAceptar()">
+            Continuar y activar membresía
+          </button>
+        </div>
+      }
+    </div>
+  }
+</dialog>

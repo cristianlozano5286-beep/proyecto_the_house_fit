@@ -1,0 +1,11 @@
+appname=thehousefit_crud
+httpport=3000
+runmode=dev
+copyrequestbody=true
+
+# datos de conexion a PostgreSQL (cambia la clave por la tuya)
+bd_host=localhost
+bd_puerto=5432
+bd_nombre=db_thehousefit
+bd_usuario=postgres
+bd_clave=tu_clave

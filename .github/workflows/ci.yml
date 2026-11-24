@@ -1,0 +1,81 @@
+name: CI - Verificacion de compilacion
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - "feature_*"
+      - "feat/**"
+      - "fix/**"
+  pull_request:
+    branches:
+      - main
+      - develop
+      - release
+
+jobs:
+  build-angular:
+    name: Build Angular
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: THE_HOUSE_FIT
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: THE_HOUSE_FIT/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Angular
+        run: npx ng build
+
+  build-go-mid:
+    name: Build Go MID
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: thehousefit_mid
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: thehousefit_mid/go.mod
+          cache-dependency-path: thehousefit_mid/go.sum
+
+      - name: Vet and build MID
+        run: |
+          go vet ./...
+          go build ./...
+
+  build-go-crud:
+    name: Build Go CRUD
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: thehousefit_crud
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: thehousefit_crud/go.mod
+          cache-dependency-path: thehousefit_crud/go.sum
+
+      - name: Vet and build CRUD
+        run: |
+          go vet ./...
+          go build ./...

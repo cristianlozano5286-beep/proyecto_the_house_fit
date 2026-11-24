@@ -16,7 +16,7 @@ interface DescripcionRol {
 })
 export class RolesComponent implements OnInit {
   usuarios: UsuarioSistema[] = [];
-  rolesDisponibles = ['Administrador', 'Entrenador', 'Usuario'];
+  rolesDisponibles = ['Administrador', 'Creador gym', 'Entrenador', 'Usuario'];
 
   // HU44, HU45, HU46: descripción de permisos por rol
   descripciones: DescripcionRol[] = [
@@ -28,6 +28,15 @@ export class RolesComponent implements OnInit {
         'Publicar rutinas, manuales físicos y guías nutricionales',
         'Publicar y moderar noticias y reseñas',
         'Gestionar usuarios y asignar roles',
+      ],
+    },
+    {
+      rol: 'Creador gym',
+      icono: '🏋️',
+      permisos: [
+        'Publicar y editar sus propios gimnasios y sedes',
+        'Gestionar instructores, productos, rutinas y noticias',
+        'Administrar reservas y reseñas de sus sedes',
       ],
     },
     {
@@ -51,6 +60,7 @@ export class RolesComponent implements OnInit {
   ];
 
   mensaje = '';
+  mensajeError = '';
 
   constructor(private authService: AuthService) {}
 
@@ -63,9 +73,17 @@ export class RolesComponent implements OnInit {
   }
 
   // HU47: interfaz para que el administrador gestione/asigne roles
-  cambiarRol(usuario: UsuarioSistema, nuevoRol: string): void {
-    this.authService.actualizarRol(usuario.correo, nuevoRol);
-    this.mensaje = `Rol de ${usuario.nombre} actualizado a "${nuevoRol}".`;
+  async cambiarRol(usuario: UsuarioSistema, nuevoRol: string): Promise<void> {
+    const error = await this.authService.actualizarRol(usuario.correo, nuevoRol);
+
+    if (error) {
+      this.mensaje = '';
+      this.mensajeError = error;
+    } else {
+      this.mensajeError = '';
+      this.mensaje = `Rol de ${usuario.nombre} actualizado a "${nuevoRol}".`;
+    }
+
     this.cargar();
   }
 }

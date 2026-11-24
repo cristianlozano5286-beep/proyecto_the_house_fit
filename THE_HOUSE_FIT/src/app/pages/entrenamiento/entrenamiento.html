@@ -1,170 +1,434 @@
-<div class="page-wrapper">
-    <!-- Encabezado Principal -->
-    <header class="section-header">
-        <span class="badge-tag">🥗 Plan de Vida Saludable</span>
-        <h1 class="section-title">Mi Entrenamiento y Nutrición</h1>
-        <p class="section-subtitle">
-            Hola <span class="highlight-user">{{ nombreUsuario }}</span>, elige tu tipo de entrenamiento y descubre tu plan ideal.
-        </p>
-    </header>
+<div class="steam-page-shell">
+  <!-- 1. ESCAPARATE HERO SPLIT DE ENTRENAMIENTO & NUTRICIÓN -->
+  <section class="steam-hero-split" aria-label="Resumen de entrenamiento y nutrición">
+    <article class="steam-hero-banner">
+      <img
+        class="steam-hero-bg"
+        src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80"
+        alt="Zona de entrenamiento The House Fit"
+      />
+      <div class="steam-hero-scrim" aria-hidden="true"></div>
 
-    <!-- HU27, HU28, HU33: Elegir tipo de entrenamiento -->
-    <section class="card mb-24">
-        <div class="card-header">
-            <div class="step-badge">1</div>
-            <h2>Elige tu tipo de entrenamiento</h2>
-        </div>
-
-        <!-- Filtros / Pills -->
-        <div class="tag-row mt-16">
-            @for (t of tiposEntrenamiento; track t) {
-                <button 
-                    class="pill" 
-                    [class.active]="tipoSeleccionado === t" 
-                    (click)="seleccionarTipo(t)">
-                    <span>⚡</span> {{ t }}
-                </button>
-            }
-        </div>
-
-        <!-- Listado de Rutinas Filtradas -->
-        @if (tipoSeleccionado) {
-            <div class="grid grid-2 mt-20">
-                @for (r of rutinasFiltradas; track r.id) {
-                    <div 
-                        class="routine-card" 
-                        [class.selected]="rutinaSeleccionada?.id === r.id"
-                        (click)="verRutina(r)">
-                        <div class="flex-between">
-                            <strong class="routine-title">{{ r.nombre }}</strong>
-                            <span class="badge badge-level">{{ r.nivel }}</span>
-                        </div>
-                        <p class="routine-desc">{{ r.descripcion }}</p>
-                        <div class="routine-footer">
-                            <small class="duration-tag">⏱️ {{ r.duracionSemanas }} semanas</small>
-                            <span class="action-arrow">Ver detalles →</span>
-                        </div>
-                    </div>
-                }
-                @empty {
-                    <div class="empty-state">
-                        <span class="empty-icon">🏋️‍♂️</span>
-                        <p>Aún no hay rutinas disponibles para este tipo de entrenamiento.</p>
-                    </div>
-                }
-            </div>
-        }
-
-        <!-- Detalle de la Rutina Seleccionada -->
-        @if (rutinaSeleccionada) {
-            <div class="selected-routine-box mt-20">
-                <div class="box-header">
-                    <h3>📋 Plan seleccionado: {{ rutinaSeleccionada.nombre }}</h3>
-                    <span class="badge badge-success">Activo</span>
-                </div>
-                <p class="box-subtitle">Ejercicios recomendados para tu rutina:</p>
-                <ul class="exercise-list">
-                    @for (e of rutinaSeleccionada.ejercicios; track e) {
-                        <li>
-                            <span class="check-icon">✓</span>
-                            <span>{{ e }}</span>
-                        </li>
-                    }
-                </ul>
-            </div>
-        }
-    </section>
-
-    <!-- HU29, HU31: Manuales / Guías físicas -->
-    <section class="card mb-24">
-        <div class="card-header">
-            <div class="step-badge">2</div>
-            <h2>Manuales y guías físicas</h2>
-        </div>
-
-        <div class="guides-container mt-16">
-            @for (g of guiasFisicas; track g.id) {
-                <div 
-                    class="guide-card" 
-                    [class.expanded]="guiaSeleccionada?.id === g.id"
-                    (click)="verGuiaFisica(g)">
-                    <div class="flex-between align-center">
-                        <div class="guide-title">
-                            <span class="book-icon">📖</span>
-                            <strong>{{ g.titulo }}</strong>
-                        </div>
-                        <span class="badge badge-info">{{ g.metodo }}</span>
-                    </div>
-
-                    @if (guiaSeleccionada?.id === g.id) {
-                        <div class="guide-content mt-12">
-                            <p>{{ g.contenido }}</p>
-                        </div>
-                    }
-                </div>
-            }
-            @empty {
-                <div class="empty-state">
-                    <span class="empty-icon">📚</span>
-                    <p>Aún no hay manuales publicados.</p>
-                </div>
-            }
-        </div>
-    </section>
-
-    <!-- HU30, HU32, HU34: Calculadora de IMC + Plan nutricional -->
-    <section class="card">
-        <div class="card-header">
-            <div class="step-badge">3</div>
-            <h2>Calcula tu IMC y obtén tu plan nutricional</h2>
-        </div>
-
-        <div class="calculator-box mt-16">
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Peso actual (kg)</label>
-                    <div class="input-wrapper">
-                        <input type="number" [(ngModel)]="peso" placeholder="Ej. 70" />
-                        <span class="unit">kg</span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Estatura (metros)</label>
-                    <div class="input-wrapper">
-                        <input type="number" step="0.01" [(ngModel)]="estatura" placeholder="Ej. 1.70" />
-                        <span class="unit">m</span>
-                    </div>
-                </div>
-            </div>
-
-            <button class="btn btn-primary mt-16" (click)="calcularImc()">
-                📊 Calcular Mi Plan Nutricional
+      <div class="steam-hero-top">
+        <div class="steam-hero-tags">
+          @for (t of tiposEntrenamiento; track t) {
+            <button
+              type="button"
+              class="steam-tag-pill"
+              [class.is-active]="tipoSeleccionado === t"
+              (click)="seleccionarTipo(t)"
+            >
+              {{ t }}
             </button>
+          }
+        </div>
+      </div>
+
+      <div class="steam-hero-bottom">
+        <h1 class="steam-hero-title">Mi Entrenamiento y Nutrición</h1>
+        <p class="steam-hero-sub">
+          Hola <strong class="highlight-user">{{ nombreUsuario }}</strong>, explora rutinas por disciplina, manuales técnicos y tu diagnóstico nutricional personalizado.
+        </p>
+        <span class="steam-members-pill">
+          <span class="steam-dot-ember" aria-hidden="true"></span>
+          {{ guiasFisicas.length }} manuales técnicos · {{ imc ? 'IMC ' + imc + ' kg/m² (' + categoriaIMC + ')' : 'Calculadora IMC activa' }}
+        </span>
+      </div>
+    </article>
+
+    <div class="steam-hero-aside">
+      <article class="steam-featured-card">
+        <div class="steam-featured-body">
+          <div class="steam-featured-eyebrow">{{ rutinaSeleccionada ? 'RUTINA ACTIVA' : 'DIAGNÓSTICO NUTRICIONAL' }}</div>
+          <h2>
+            {{ rutinaSeleccionada ? rutinaSeleccionada.nombre : (guiaNutricional?.titulo || 'Plan Atlético Personalizado') }}
+          </h2>
+          <p class="steam-featured-desc">
+            {{ rutinaSeleccionada ? rutinaSeleccionada.descripcion : getCategoriaInfo().resumen }}
+          </p>
         </div>
 
-        <!-- Resultado del IMC -->
-        @if (imc !== null) {
-            <div class="imc-result-card mt-24">
-                <div class="imc-header">
-                    <span>Resultado de tu IMC:</span>
-                    <div class="imc-valor">
-                        <span class="number">{{ imc }}</span>
-                        <span class="badge badge-category">{{ categoriaIMC }}</span>
-                    </div>
-                </div>
+        <div class="steam-featured-meta">
+          <div class="steam-featured-price">
+            {{ rutinaSeleccionada ? (rutinaSeleccionada.duracionSemanas + ' semanas · ' + rutinaSeleccionada.nivel) : getCategoriaInfo().calorias }}
+          </div>
+          <div class="steam-featured-foot">
+            <button
+              type="button"
+              class="steam-featured-btn"
+              (click)="scrollA(rutinaSeleccionada ? 'seccion-rutinas' : 'seccion-imc')"
+            >
+              <span>{{ rutinaSeleccionada ? 'Ver ejercicios' : 'Calcular mi IMC' }}</span>
+            </button>
+            <span class="steam-featured-mark" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+            </span>
+          </div>
+        </div>
+      </article>
 
-                @if (guiaNutricional) {
-                    <div class="nutrition-plan mt-16">
-                        <h3>🥗 {{ guiaNutricional.titulo }}</h3>
-                        <p class="nutrition-text">{{ guiaNutricional.recomendaciones }}</p>
-                        
-                        <div class="meals-example mt-12">
-                            <strong>💡 Ejemplo de comidas del día:</strong>
-                            <p>{{ guiaNutricional.ejemploComidas }}</p>
-                        </div>
-                    </div>
-                }
+      <div class="steam-aside-tiles">
+        <button type="button" class="steam-mini-glass-tile" (click)="scrollA('seccion-guias')">
+          <span class="steam-mini-tile-label">Manuales técnicos</span>
+          <strong class="steam-mini-tile-val">{{ guiasFisicas.length }} guías activas</strong>
+        </button>
+        <button type="button" class="steam-mini-glass-tile" (click)="scrollA('seccion-imc')">
+          <span class="steam-mini-tile-label">Tu diagnóstico</span>
+          <strong class="steam-mini-tile-val">{{ imc ? 'IMC ' + imc : 'Evaluar IMC' }}</strong>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. FILA VISUAL DE DISCIPLINAS DESTACADAS -->
+  <section class="steam-offers-section" aria-label="Disciplinas principales">
+    <div class="steam-section-head">
+      <h3>Disciplinas de entrenamiento</h3>
+      <button type="button" class="steam-section-sublink" (click)="scrollA('seccion-rutinas')">
+        Ver todas las rutinas →
+      </button>
+    </div>
+
+    <div class="steam-offers-grid">
+      @for (cat of categoriasVisuales; track cat.tipo) {
+        <button
+          type="button"
+          class="steam-offer-card"
+          [class.is-active]="tipoSeleccionado === cat.tipo"
+          (click)="seleccionarTipo(cat.tipo); scrollA('seccion-rutinas')"
+        >
+          <img [src]="cat.imagen" [alt]="cat.tipo" loading="lazy" />
+          <div class="steam-offer-scrim" aria-hidden="true"></div>
+          <span class="steam-offer-badge">{{ cat.tag }}</span>
+          <div class="steam-offer-caption">
+            <strong>{{ cat.tipo }}</strong>
+            <span>{{ cat.subtitulo }}</span>
+          </div>
+        </button>
+      }
+    </div>
+  </section>
+
+  <!-- 3. RUTINAS POR TIPO DE ENTRENAMIENTO -->
+  <section class="steam-glass-panel card" id="seccion-rutinas">
+    <div class="card-header">
+      <div class="step-badge">1</div>
+      <h2>Elige tu tipo de entrenamiento</h2>
+    </div>
+
+    <div class="tag-row mt-16">
+      @for (t of tiposEntrenamiento; track t) {
+        <button
+          type="button"
+          class="pill"
+          [class.active]="tipoSeleccionado === t"
+          (click)="seleccionarTipo(t)"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          <span>{{ t }}</span>
+        </button>
+      }
+    </div>
+
+    @if (tipoSeleccionado) {
+      <div class="grid grid-2 mt-20">
+        @for (r of rutinasFiltradas; track r.id) {
+          <div
+            class="routine-card"
+            [class.selected]="rutinaSeleccionada?.id === r.id"
+            (click)="verRutina(r)"
+          >
+            <div class="flex-between">
+              <strong class="routine-title">{{ r.nombre }}</strong>
+              <span class="badge badge-level">{{ r.nivel }}</span>
             </div>
+            <p class="routine-desc">{{ r.descripcion }}</p>
+            <div class="routine-footer">
+              <small class="duration-tag">{{ r.duracionSemanas }} semanas</small>
+              <span class="action-arrow">Ver detalles →</span>
+            </div>
+          </div>
+        } @empty {
+          <div class="empty-state">
+            <p>Aún no hay rutinas disponibles para esta categoría.</p>
+          </div>
         }
-    </section>
+      </div>
+    }
+
+    @if (rutinaSeleccionada) {
+      <div class="selected-routine-box mt-20">
+        <div class="box-header">
+          <h3>Plan seleccionado: {{ rutinaSeleccionada.nombre }}</h3>
+          <span class="badge badge-success">Activo</span>
+        </div>
+        <p class="box-subtitle">Ejercicios recomendados para tu rutina:</p>
+        <ul class="exercise-list">
+          @for (e of rutinaSeleccionada.ejercicios; track e) {
+            <li>
+              <span class="check-icon" aria-hidden="true">✓</span>
+              <span>{{ e }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </section>
+
+  <!-- 4. MANUALES Y GUÍAS FÍSICAS -->
+  <section class="steam-glass-panel card" id="seccion-guias">
+    <div class="card-header">
+      <div class="step-badge">2</div>
+      <h2>Manuales y guías físicas</h2>
+    </div>
+
+    <div class="guides-container mt-16">
+      @for (g of guiasFisicas; track g.id) {
+        <div
+          class="guide-card"
+          [class.expanded]="guiaSeleccionada?.id === g.id"
+          (click)="verGuiaFisica(g)"
+        >
+          <div class="flex-between align-center">
+            <div class="guide-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff7745" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+              <strong>{{ g.titulo }}</strong>
+            </div>
+            <span class="badge badge-info">{{ g.metodo }}</span>
+          </div>
+
+          @if (guiaSeleccionada?.id === g.id) {
+            <div class="guide-content mt-12">
+              <p>{{ g.contenido }}</p>
+            </div>
+          }
+        </div>
+      } @empty {
+        <div class="empty-state">
+          <p>Aún no hay manuales publicados.</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- 5. CALCULADORA IMC & PLAN NUTRICIONAL -->
+  <section class="steam-glass-panel card" id="seccion-imc">
+    <div class="card-header">
+      <div class="step-badge">3</div>
+      <h2>Calcula tu IMC y obtén tu plan nutricional</h2>
+    </div>
+
+    <div class="calculator-box mt-16">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="imc-peso">Peso actual (kg)</label>
+          <div class="input-wrapper">
+            <span class="input-icon" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3v18"></path>
+                <path d="M5 7h14"></path>
+                <path d="M4 17h16"></path>
+              </svg>
+            </span>
+            <input id="imc-peso" type="number" [(ngModel)]="peso" placeholder="Ej. 70" />
+            <span class="unit">kg</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="imc-estatura">Estatura (metros)</label>
+          <div class="input-wrapper">
+            <span class="input-icon" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 6H3"></path>
+                <path d="M10 12H3"></path>
+                <path d="M10 18H3"></path>
+                <line x1="17" y1="10" x2="17" y2="20"></line>
+              </svg>
+            </span>
+            <input id="imc-estatura" type="number" step="0.01" [(ngModel)]="estatura" placeholder="Ej. 1.74" />
+            <span class="unit">m</span>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary mt-16" (click)="calcularImc()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
+        <span>Calcular Mi Plan Nutricional</span>
+      </button>
+    </div>
+
+    @if (imc !== null) {
+      <div class="imc-diagnostic-container mt-24">
+        <div class="diagnostic-hero-card" [class]="'theme-' + getSlugCategoria()">
+          <div class="hero-top-bar">
+            <div class="hero-info">
+              <div class="category-pill" [class]="'pill-' + getSlugCategoria()">
+                <span class="pulse-indicator"></span>
+                <span class="category-name">{{ categoriaIMC }}</span>
+              </div>
+              <h3 class="diagnostic-title">{{ guiaNutricional?.titulo }}</h3>
+              <p class="diagnostic-summary">{{ getCategoriaInfo().resumen }}</p>
+            </div>
+
+            <div class="score-display-box" [class]="'score-' + getSlugCategoria()">
+              <span class="score-caption">Índice IMC</span>
+              <div class="score-val-row">
+                <span class="score-big">{{ imc }}</span>
+                <span class="score-unit">kg/m²</span>
+              </div>
+              <span class="score-badge">{{ categoriaIMC }}</span>
+            </div>
+          </div>
+
+          <div class="gauge-section">
+            <div class="gauge-header">
+              <span class="gauge-label">Escala de Clasificación OMS</span>
+              <span class="gauge-target">Tu posición: <strong>{{ imc }} ({{ categoriaIMC }})</strong></span>
+            </div>
+
+            <div class="spectrum-track">
+              <div class="spectrum-segment seg-under" title="Bajo peso (< 18.5)"></div>
+              <div class="spectrum-segment seg-normal" title="Peso normal (18.5 - 24.9)"></div>
+              <div class="spectrum-segment seg-over" title="Sobrepeso (25.0 - 29.9)"></div>
+              <div class="spectrum-segment seg-obese" title="Obesidad (≥ 30.0)"></div>
+
+              <div class="spectrum-pin" [style.left.%]="getPorcentajeGauge()" [class]="'pin-' + getSlugCategoria()">
+                <div class="pin-bubble">
+                  <span class="pin-tag">{{ imc }}</span>
+                </div>
+                <div class="pin-pointer"></div>
+              </div>
+            </div>
+
+            <div class="spectrum-labels">
+              <div class="scale-item" [class.active-scale]="categoriaIMC === 'Bajo peso'">
+                <span class="scale-dot dot-under"></span>
+                <div class="scale-text">
+                  <strong>Bajo Peso</strong>
+                  <small>&lt; 18.5</small>
+                </div>
+              </div>
+              <div class="scale-item" [class.active-scale]="categoriaIMC === 'Peso normal'">
+                <span class="scale-dot dot-normal"></span>
+                <div class="scale-text">
+                  <strong>Normal</strong>
+                  <small>18.5 - 24.9</small>
+                </div>
+              </div>
+              <div class="scale-item" [class.active-scale]="categoriaIMC === 'Sobrepeso'">
+                <span class="scale-dot dot-over"></span>
+                <div class="scale-text">
+                  <strong>Sobrepeso</strong>
+                  <small>25.0 - 29.9</small>
+                </div>
+              </div>
+              <div class="scale-item" [class.active-scale]="categoriaIMC === 'Obesidad'">
+                <span class="scale-dot dot-obese"></span>
+                <div class="scale-text">
+                  <strong>Obesidad</strong>
+                  <small>≥ 30.0</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="vitals-grid mt-20">
+            <div class="vital-card">
+              <div class="vital-icon-box icon-scale" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 20V10"></path>
+                  <path d="M18 20V4"></path>
+                  <path d="M6 20v-4"></path>
+                </svg>
+              </div>
+              <div class="vital-content">
+                <span class="vital-label">Rango Peso Saludable</span>
+                <span class="vital-value">{{ getRangoPesoIdeal().min }} - {{ getRangoPesoIdeal().max }} kg</span>
+                <span class="vital-status" [class]="'status-' + getRangoPesoIdeal().estado">
+                  {{ getRangoPesoIdeal().diferenciaTexto }}
+                </span>
+              </div>
+            </div>
+
+            <div class="vital-card">
+              <div class="vital-icon-box icon-fire" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff7745" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+              </div>
+              <div class="vital-content">
+                <span class="vital-label">Estrategia Calórica</span>
+                <span class="vital-value">{{ getCategoriaInfo().calorias }}</span>
+                <span class="vital-status status-info">Adaptado a tu tasa metabólica</span>
+              </div>
+            </div>
+
+            <div class="vital-card">
+              <div class="vital-icon-box icon-water" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                </svg>
+              </div>
+              <div class="vital-content">
+                <span class="vital-label">Proteína & Hidratación</span>
+                <span class="vital-value">{{ getGramosProteina() }}g prot · {{ getLitrosAgua() }}L agua</span>
+                <span class="vital-status status-info">Meta diaria recomendada</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="nutrition-breakdown-card mt-20">
+          <div class="breakdown-header">
+            <div class="header-left">
+              <div class="sub-badge">Guía Nutricional Estructurada</div>
+              <h4 class="sub-title">Recomendaciones & Menú Diario Sugerido</h4>
+              <p class="sub-text">{{ guiaNutricional?.recomendaciones }}</p>
+            </div>
+            <button type="button" class="btn-copy-plan" (click)="copiarPlan()" [class.copied]="copiadoExitoso">
+              <span>{{ copiadoExitoso ? 'Copiado con éxito' : 'Copiar plan completo' }}</span>
+            </button>
+          </div>
+
+          <div class="meals-cards-grid mt-16">
+            @for (comida of getComidasDesglosadas(); track comida.momento) {
+              <div class="meal-item-card">
+                <div class="meal-item-header">
+                  <div class="meal-title-group">
+                    <span class="meal-dot" aria-hidden="true"></span>
+                    <strong class="meal-name">{{ comida.momento }}</strong>
+                  </div>
+                  <span class="meal-tag">{{ comida.etiqueta }}</span>
+                </div>
+                <p class="meal-desc">{{ comida.detalle }}</p>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="gym-bridge-card mt-20">
+          <div class="bridge-info">
+            <div class="bridge-badge">Enfoque de gimnasio recomendado</div>
+            <h4 class="bridge-title">{{ getCategoriaInfo().enfoque }}</h4>
+            <p class="bridge-text">{{ getCategoriaInfo().estrategiaEntrenamiento }}</p>
+          </div>
+          <button type="button" class="btn-bridge-action" (click)="irARutinasSugeridas(getCategoriaInfo().rutinaSugerida)">
+            <span>Ver Rutinas de {{ getCategoriaInfo().rutinaSugerida }}</span>
+            <span class="arrow-symbol" aria-hidden="true">→</span>
+          </button>
+        </div>
+      </div>
+    }
+  </section>
 </div>

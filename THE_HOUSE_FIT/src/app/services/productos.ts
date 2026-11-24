@@ -1,71 +1,65 @@
 import { Injectable } from '@angular/core';
 import { Producto } from '../models/catalogo.models';
+import { ApiService, mensajeDeError, reemplazarLista } from './api';
 
-const STORAGE_KEY = 'thehousefit_productos';
+const PRODUCTOS_INICIALES: Producto[] = [
+  {
+    id: 1,
+    nombre: 'Proteína Whey Isolate Gold 2Lb',
+    categoria: 'Suplemento',
+    precio: 165000,
+    stock: 28,
+    descripcion: 'Proteína aislada de suero de rápida absorción con 25g de proteína y 5.5g de BCAA por servicio.',
+    guiaNutricional: 'Mezclar 1 scoop en 250ml de agua fría o leche vegetal inmediatamente después de entrenar.',
+    imagen: '🥤',
+  },
+  {
+    id: 2,
+    nombre: 'Creatina Monohidratada Micronizada 300g',
+    categoria: 'Suplemento',
+    precio: 95000,
+    stock: 42,
+    descripcion: 'Creatina 100% pura grado farmacéutico para incrementar fuerza explosiva, potencia y recuperación.',
+    guiaNutricional: 'Consumir 5g diarios todos los días con agua o jugo, preferiblemente cerca del entrenamiento.',
+    imagen: '⚡',
+  },
+  {
+    id: 3,
+    nombre: 'Cinturón Lumbar de Levantamiento en Cuero',
+    categoria: 'Implemento',
+    precio: 120000,
+    stock: 14,
+    descripcion: 'Cinturón ergonómico de doble hebilla para sentadilla pesada, peso muerto y press militar.',
+    guiaNutricional: 'Ajustar firme en la zona media durante series de alta carga superior al 80% de tu 1RM.',
+    imagen: '🏋️',
+  },
+  {
+    id: 4,
+    nombre: 'Camiseta Dry-Fit Compresión The House Fit',
+    categoria: 'Ropa deportiva',
+    precio: 68000,
+    stock: 35,
+    descripcion: 'Tejido transpirable de secado ultrarrápido con costuras planas anti-fricción para alto rendimiento.',
+    guiaNutricional: 'Lavar en frío y secar a la sombra para conservar la elasticidad técnica de la fibra.',
+    imagen: '👕',
+  },
+];
 
 @Injectable({ providedIn: 'root' })
 export class ProductosService {
-  private datosIniciales: Producto[] = [
-    {
-      id: 1,
-      nombre: 'Proteína Whey 2Lb',
-      categoria: 'Suplemento',
-      precio: 120000,
-      stock: 35,
-      descripcion: 'Proteína de suero para recuperación muscular.',
-      guiaNutricional: 'Consumir 1 scoop (30g) después del entrenamiento junto con agua o leche.',
-      imagen: '🥤',
-    },
-    {
-      id: 2,
-      nombre: 'Guantes de entrenamiento',
-      categoria: 'Implemento',
-      precio: 45000,
-      stock: 60,
-      descripcion: 'Guantes acolchados para levantamiento de pesas.',
-      guiaNutricional: '',
-      imagen: '🧤',
-    },
-    {
-      id: 3,
-      nombre: 'Creatina Monohidratada 300g',
-      categoria: 'Suplemento',
-      precio: 85000,
-      stock: 40,
-      descripcion: 'Suplemento para fuerza y rendimiento.',
-      guiaNutricional: 'Dosis diaria de 5g, preferiblemente después de entrenar.',
-      imagen: '💊',
-    },
-    {
-      id: 4,
-      nombre: 'Camiseta deportiva dry-fit',
-      categoria: 'Ropa deportiva',
-      precio: 55000,
-      stock: 80,
-      descripcion: 'Camiseta transpirable ideal para entrenamiento de alta intensidad.',
-      guiaNutricional: '',
-      imagen: '👕',
-    },
-  ];
+  private productos: Producto[] = [...PRODUCTOS_INICIALES];
 
-  private productos: Producto[] = [];
+  constructor(private api: ApiService) {}
 
-  constructor() {
-    this.cargar();
-  }
-
-  private cargar(): void {
-    const datos = localStorage.getItem(STORAGE_KEY);
-    if (datos) {
-      this.productos = JSON.parse(datos);
-    } else {
-      this.productos = [...this.datosIniciales];
-      this.guardar();
+  async cargar(): Promise<void> {
+    try {
+      const lista = await this.api.obtener<Producto[]>('/productos');
+      if (lista && lista.length > 0) {
+        reemplazarLista(this.productos, lista);
+      }
+    } catch {
+      // Mantiene los productos iniciales si no responde el backend
     }
-  }
-
-  private guardar(): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.productos));
   }
 
   listar(): Producto[] {
@@ -73,21 +67,28 @@ export class ProductosService {
   }
 
   crear(producto: Omit<Producto, 'id'>): void {
-    const nuevoId = this.productos.length ? Math.max(...this.productos.map((p) => p.id)) + 1 : 1;
-    this.productos.push({ ...producto, id: nuevoId });
-    this.guardar();
+    const nuevo: Producto = { ...producto, id: Date.now() };
+    this.productos.push(nuevo);
+
+    this.api
+      .crear<Producto>('/productos', producto)
+      .then((creado) => Object.assign(nuevo, creado))
+      .catch((error) => console.warn(error));
   }
 
   actualizar(id: number, cambios: Partial<Producto>): void {
     const producto = this.productos.find((p) => p.id === id);
     if (producto) {
       Object.assign(producto, cambios);
-      this.guardar();
+      this.api.actualizar('/productos/' + id, cambios).catch((error) => console.warn(error));
     }
   }
 
   eliminar(id: number): void {
-    this.productos = this.productos.filter((p) => p.id !== id);
-    this.guardar();
+    reemplazarLista(
+      this.productos,
+      this.productos.filter((p) => p.id !== id),
+    );
+    this.api.borrar('/productos/' + id).catch((error) => console.warn(error));
   }
 }

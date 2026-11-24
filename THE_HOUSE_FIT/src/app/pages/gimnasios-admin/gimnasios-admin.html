@@ -1,116 +1,1410 @@
-<div class="page-wrapper">
-    <div class="flex-between mb-16">
-        <div>
-            <h1 class="section-title">🏋️ Gestión de gimnasios</h1>
-            <p class="section-subtitle">Registra y administra la información de los gimnasios afiliados</p>
+<div class="page-wrapper" [class.dedicated-tab-mode]="esPestanaDedicada">
+  <!-- BARRA SUPERIOR EXCLUSIVA CUANDO SE ABRE EN PESTAÑA DEDICADA (/editar-gimnasio) -->
+  @if (esPestanaDedicada) {
+    <header class="dedicated-studio-topbar">
+      <div class="dedicated-brand-col">
+        <a routerLink="/panel/dashboard" class="dedicated-brand-logo">
+          <img src="assets/logo-icon-orange.png" alt="The House Fit" />
+          <span>THE HOUSE <strong>FIT</strong></span>
+        </a>
+        <span class="dedicated-divider"></span>
+        <span class="dedicated-mode-pill">✏️ PESTAÑA DEDICADA DE EDICIÓN DE GIMNASIO</span>
+      </div>
+
+      <div class="dedicated-actions-col">
+        <button
+          type="button"
+          class="btn-dedicated-preview"
+          [class.active]="seccionActivaEditor === 'preview'"
+          (click)="seccionActivaEditor = seccionActivaEditor === 'preview' ? 'todo' : 'preview'"
+        >
+          {{ seccionActivaEditor === 'preview' ? '✏️ Volver a los Campos de Edición' : '👁️ Ver Vista Previa en Vivo' }}
+        </button>
+        <a routerLink="/panel/dashboard" class="btn-dedicated-back">
+          ← Ir al Panel Principal
+        </a>
+        <button type="button" class="btn-dedicated-save" (click)="guardar()" [disabled]="guardando">
+          {{ guardando ? 'Guardando...' : '💾 Guardar Todos los Cambios' }}
+        </button>
+      </div>
+    </header>
+  }
+
+  <!-- 1. CABECERA DEL ESTUDIO DE EDICIÓN -->
+  <div class="admin-header-row">
+    <div class="header-titles">
+      <div class="header-badge">
+        <span class="badge-dot"></span>
+        <span>ESTUDIO DE EDICIÓN DEL CREADOR GYM &middot; THE HOUSE FIT</span>
+      </div>
+      <h1 class="page-title">
+        @if (modoEdicion) {
+          Editar mi Gimnasio: <span class="title-highlight">{{ formulario.nombre || 'Mi Sede' }}</span>
+        } @else {
+          Crear Nuevo Gimnasio en el Catálogo
+        }
+      </h1>
+      <p class="page-subtitle">
+        Modifica con total comodidad todos los apartados que configuraste al crear tu gimnasio: espacio, acceso, ubicación, aforo, comodidades, galería de fotos, precios, descuentos, seguridad y datos fiscales.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      @if (!esPestanaDedicada) {
+        <button
+          type="button"
+          class="btn-open-dedicated-tab"
+          (click)="abrirEnPestanaDedicada(idEditando)"
+          title="Abrir el editor en una nueva pestaña de pantalla completa sin menú lateral"
+        >
+          <span>↗ Abrir Editor en Nueva Pestaña Dedicada</span>
+        </button>
+      }
+      <a routerLink="/publicar-gimnasio" [queryParams]="{ iniciar: 'true' }" class="btn-view-live">
+        <span>✨ Asistente Paso a Paso</span>
+      </a>
+      <a routerLink="/gimnasios" target="_blank" class="btn-view-live">
+        <span>Ver Catálogo Público</span>
+        <span class="external-arrow">↗</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- 2. SELECTOR RÁPIDO DE SEDE DEL CREADOR -->
+  @if (todosLosGimnasios.length > 0) {
+    <section class="gym-selector-strip-box">
+      <div class="strip-top-bar">
+        <div class="strip-title-col">
+          <span class="strip-kicker">TUS SEDES REGISTRADAS ({{ todosLosGimnasios.length }})</span>
+          <p class="strip-hint">Selecciona el gimnasio que deseas editar o ábrelo en una nueva pestaña dedicada:</p>
         </div>
+        <div class="strip-top-actions">
+          @if (!esPestanaDedicada && idEditando) {
+            <a
+              [routerLink]="['/editar-gimnasio']"
+              [queryParams]="{ editarId: idEditando }"
+              target="_blank"
+              class="btn-new-tab-pill"
+            >
+              ↗ Abrir "{{ formulario.nombre }}" en nueva pestaña
+            </a>
+          }
+          <button type="button" class="btn-new-gym-inline" (click)="iniciarNuevoGimnasioEnEditor()">
+            + Registrar otra sede
+          </button>
+        </div>
+      </div>
+
+      <div class="gym-selector-pills-row">
+        @for (g of todosLosGimnasios; track g.id) {
+          <div
+            class="gym-selector-pill-card"
+            [class.active-editing]="modoEdicion && idEditando === g.id"
+            (click)="editar(g)"
+          >
+            <img
+              [src]="g.fotos[0] || 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=300&q=80'"
+              [alt]="g.nombre"
+              class="selector-pill-thumb"
+            />
+            <div class="selector-pill-info">
+              <strong>{{ g.imagen }} {{ g.nombre }}</strong>
+              <span>📍 {{ g.ciudad }} &middot; ${{ g.precio | number }} {{ g.moneda }}</span>
+            </div>
+            @if (modoEdicion && idEditando === g.id) {
+              <span class="editing-now-tag">Editando</span>
+            }
+            <a
+              [routerLink]="['/editar-gimnasio']"
+              [queryParams]="{ editarId: g.id }"
+              target="_blank"
+              class="pill-open-tab-icon"
+              (click)="$event.stopPropagation()"
+              title="Abrir edición de {{ g.nombre }} en una nueva pestaña dedicada"
+            >
+              ↗
+            </a>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- 3. ALERTAS DE ESTADO -->
+  @if (mensajeExito) {
+    <div class="status-alert success">
+      <div class="alert-content">
+        <span class="alert-icon">✅</span>
+        <div class="alert-text-block">
+          <strong>¡Cambios guardados en tiempo real!</strong>
+          <p>{{ mensajeExito }}</p>
+        </div>
+      </div>
+      <a routerLink="/gimnasios" target="_blank" class="alert-cta-btn">Ver en catálogo ↗</a>
+    </div>
+  }
+
+  @if (mensajeError) {
+    <div class="status-alert error">
+      <div class="alert-content">
+        <span class="alert-icon">⚠️</span>
+        <div class="alert-text-block">
+          <strong>Atención</strong>
+          <p>{{ mensajeError }}</p>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- 4. BANNER HORIZONTAL DE VISTA PREVIA EN TIEMPO REAL (AMPLIO Y SIN AMONTONAMIENTO) -->
+  <section class="live-horizontal-showcase">
+    <div class="live-showcase-photo">
+      <img
+        [src]="formulario.fotos[0] || 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=900&q=80'"
+        alt="Portada en vivo"
+      />
+      <span
+        class="live-showcase-status"
+        [class.is-active]="formulario.activo"
+        [class.is-paused]="!formulario.activo"
+      >
+        {{ formulario.activo ? '● PUBLICADO' : '○ PAUSADO' }}
+      </span>
+      <span class="live-photo-counter">📷 {{ formulario.fotos.length }} foto(s)</span>
     </div>
 
-    @if (mensaje) {
-        <div class="alert" [class.success]="tipoMensaje==='success'" [class.error]="tipoMensaje==='error'">{{ mensaje }}</div>
+    <div class="live-showcase-body">
+      <div class="live-showcase-top-row">
+        <div class="live-showcase-title-group">
+          <div class="live-realtime-pill">
+            <span class="pulse-dot"></span>
+            <span>VISTA PREVIA EN TIEMPO REAL</span>
+          </div>
+          <h3>
+            <span>{{ formulario.imagen || '🏋️' }}</span>
+            {{ formulario.nombre || 'Nombre de tu Gimnasio' }}
+            <span class="live-rating-pill">★ 4.9</span>
+          </h3>
+          <p class="live-showcase-address">
+            📍 {{ formulario.direccion || 'Dirección' }}
+            @if (formulario.barrio) {
+              <span>&middot; {{ formulario.barrio }}</span>
+            }
+            <span>&middot; {{ formulario.ciudad || 'Ciudad' }}, {{ formulario.departamento || 'Colombia' }}</span>
+          </p>
+        </div>
+
+        <div class="live-showcase-price-box">
+          <span class="live-price-label">MENSUALIDAD BASE</span>
+          <div class="live-price-amount">
+            <strong>${{ formulario.precio || 0 | number }}</strong>
+            <span>{{ formulario.moneda }} / mes</span>
+          </div>
+          <span class="live-net-hint">Ganancia neta: ${{ gananciaAnfitrionCOP | number }} {{ formulario.moneda }}</span>
+        </div>
+      </div>
+
+      <div class="live-showcase-metrics-bar">
+        <div class="live-metric-chip">
+          <span class="metric-kicker">Espacio</span>
+          <strong>{{ nombreTipoEspacioActual }}</strong>
+        </div>
+        <div class="live-metric-chip">
+          <span class="metric-kicker">Acceso</span>
+          <strong>{{ formulario.tipoAcceso === 'completo' ? 'Instalaciones completas' : formulario.tipoAcceso === 'areas' ? 'Por áreas' : 'Clases dirigidas' }}</strong>
+        </div>
+        <div class="live-metric-chip">
+          <span class="metric-kicker">Capacidad</span>
+          <strong>👥 {{ formulario.aforoMaximo || 45 }} atletas &middot; {{ formulario.zonasEntrenamiento || 5 }} zonas</strong>
+        </div>
+        <div class="live-metric-chip">
+          <span class="metric-kicker">Equipo &amp; Lockers</span>
+          <strong>🧑‍🏫 {{ formulario.entrenadoresPlanta ?? 4 }} coaches &middot; 🔐 {{ formulario.lockersDisponibles ?? 30 }} lockers</strong>
+        </div>
+        <div class="live-metric-chip">
+          <span class="metric-kicker">Reservación</span>
+          <strong>{{ formulario.tipoReservacion === 'inmediata' ? '⚡ Inmediata' : '📋 Aprobar primeras 5' }}</strong>
+        </div>
+      </div>
+
+      <div class="live-showcase-bottom-row">
+        <div class="live-services-pills">
+          @for (srv of formulario.servicios.slice(0, 6); track srv) {
+            <span class="mockup-service-tag">{{ srv }}</span>
+          }
+          @if (formulario.servicios.length > 6) {
+            <span class="mockup-more-tag">+{{ formulario.servicios.length - 6 }} más</span>
+          }
+        </div>
+
+        <div class="live-showcase-cta-group">
+          <button
+            type="button"
+            class="btn-preview-tab-toggle"
+            [class.active]="seccionActivaEditor === 'preview'"
+            (click)="seccionActivaEditor = seccionActivaEditor === 'preview' ? 'todo' : 'preview'"
+          >
+            {{ seccionActivaEditor === 'preview' ? '✏️ Volver al Editor' : '👁️ Ver Ficha Completa' }}
+          </button>
+          <button type="button" class="btn-quick-save-top" (click)="guardar()" [disabled]="guardando">
+            {{ guardando ? 'Guardando...' : '💾 Guardar Cambios' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. BARRA DE NAVEGACIÓN POR ETAPAS DE CREACIÓN + PESTAÑA DE VISTA PREVIA -->
+  <nav class="wizard-steps-tabs five-tabs" aria-label="Secciones de edición del gimnasio">
+    <button
+      type="button"
+      class="wizard-step-tab"
+      [class.active]="seccionActivaEditor === 'todo'"
+      (click)="seccionActivaEditor = 'todo'"
+    >
+      <span class="step-badge">✨</span>
+      <div class="step-tab-text">
+        <strong>Todo el Gimnasio</strong>
+        <span>Los 3 pasos completos</span>
+      </div>
+    </button>
+
+    <button
+      type="button"
+      class="wizard-step-tab"
+      [class.active]="seccionActivaEditor === 'paso1'"
+      (click)="seccionActivaEditor = 'paso1'"
+    >
+      <span class="step-badge">1</span>
+      <div class="step-tab-text">
+        <strong>Paso 1: Espacio y Ubicación</strong>
+        <span>Tipo de gym, acceso, mapa y aforo</span>
+      </div>
+    </button>
+
+    <button
+      type="button"
+      class="wizard-step-tab"
+      [class.active]="seccionActivaEditor === 'paso2'"
+      (click)="seccionActivaEditor = 'paso2'"
+    >
+      <span class="step-badge">2</span>
+      <div class="step-tab-text">
+        <strong>Paso 2: Comodidades y Fotos</strong>
+        <span>Servicios, galería, título y aspectos</span>
+      </div>
+    </button>
+
+    <button
+      type="button"
+      class="wizard-step-tab"
+      [class.active]="seccionActivaEditor === 'paso3'"
+      (click)="seccionActivaEditor = 'paso3'"
+    >
+      <span class="step-badge">3</span>
+      <div class="step-tab-text">
+        <strong>Paso 3: Precios y Fiscal</strong>
+        <span>Reservas, tarifas, descuentos y empresa</span>
+      </div>
+    </button>
+
+    <button
+      type="button"
+      class="wizard-step-tab preview-special-tab"
+      [class.active]="seccionActivaEditor === 'preview'"
+      (click)="seccionActivaEditor = 'preview'"
+    >
+      <span class="step-badge">👁️</span>
+      <div class="step-tab-text">
+        <strong>Vista Previa del Anuncio</strong>
+        <span>Así lo ven tus clientes</span>
+      </div>
+    </button>
+  </nav>
+
+  <!-- 6. CONTENEDOR ANCHO COMPLETO (100% ESPACIOSO, SIN COLUMNA DERECHA AMONTONADA) -->
+  <div class="editor-full-width-container">
+    @if (seccionActivaEditor === 'preview') {
+      <!-- PESTAÑA DEDICADA DE VISTA PREVIA AMPLIA -->
+      <div class="full-preview-showcase-card">
+        <div class="full-preview-top-bar">
+          <div>
+            <span class="step-pill">VISTA DEL CLIENTE EN EL CATÁLOGO</span>
+            <h2>Así se presenta "{{ formulario.nombre || 'Tu Gimnasio' }}" ante los atletas</h2>
+          </div>
+          <div class="full-preview-actions">
+            <button type="button" class="btn-reset" style="padding: 10px 18px;" (click)="seccionActivaEditor = 'todo'">
+              ✏️ Seguir editando datos
+            </button>
+            <button type="button" class="btn-submit-main" style="padding: 10px 22px;" (click)="guardar()" [disabled]="guardando">
+              💾 Confirmar y Guardar Cambios
+            </button>
+          </div>
+        </div>
+
+        <div class="full-preview-gallery-grid">
+          <div class="full-preview-main-photo">
+            <img
+              [src]="formulario.fotos[0] || 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=900&q=80'"
+              alt="Foto principal"
+            />
+            <span class="preview-cover-tag">⭐ Foto de Portada</span>
+          </div>
+          <div class="full-preview-side-photos">
+            @for (f of formulario.fotos.slice(1, 5); track $index) {
+              <div class="full-preview-sub-photo">
+                <img [src]="f" alt="Foto secundaria" />
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="full-preview-details-split">
+          <div class="full-preview-info-col">
+            <h3>{{ formulario.imagen }} {{ formulario.nombre }} &middot; <span style="color: #ff7a45;">{{ nombreTipoEspacioActual }}</span></h3>
+            <p class="full-preview-sub">
+              📍 {{ formulario.direccion }} &middot; {{ formulario.barrio }} &middot; {{ formulario.ciudad }}, {{ formulario.departamento }} ({{ formulario.pais }})
+            </p>
+
+            <div class="full-preview-capacities">
+              <span>👥 Aforo: <strong>{{ formulario.aforoMaximo }} atletas/hora</strong></span>
+              <span>🏋️ Zonas: <strong>{{ formulario.zonasEntrenamiento }} áreas</strong></span>
+              <span>🧑‍🏫 Coaches: <strong>{{ formulario.entrenadoresPlanta }} en planta</strong></span>
+              <span>🚿 Duchas: <strong>{{ formulario.duchasVestidores }}</strong></span>
+              <span>🔐 Lockers: <strong>{{ formulario.lockersDisponibles }}</strong></span>
+            </div>
+
+            <h4>Descripción del centro deportivo</h4>
+            <p class="full-preview-desc">
+              {{ formulario.descripcion || 'Sin descripción configurada aún.' }}
+            </p>
+
+            <h4>Servicios y disciplinas incluidas ({{ formulario.servicios.length }})</h4>
+            <div class="services-chips-cloud">
+              @for (s of formulario.servicios; track s) {
+                <span class="service-chip active">✓ {{ s }}</span>
+              }
+            </div>
+          </div>
+
+          <div class="full-preview-booking-card">
+            <div class="booking-card-price-head">
+              <strong>${{ formulario.precio | number }} {{ formulario.moneda }}</strong>
+              <span>/ mensualidad</span>
+            </div>
+            <p class="booking-weekend-line">
+              Pase fin de semana (+{{ formulario.ajusteFinDeSemanaPorcentaje }}%): <strong>${{ precioFinDeSemanaCOP | number }} {{ formulario.moneda }}</strong>
+            </p>
+            <div class="booking-meta-rows">
+              <div><span>🕒 Horario:</span> <strong>{{ formulario.horario }}</strong></div>
+              <div><span>📞 Teléfono:</span> <strong>{{ formulario.telefono || 'No especificado' }}</strong></div>
+              <div><span>⚡ Modalidad:</span> <strong>{{ formulario.tipoReservacion === 'inmediata' ? 'Reservación inmediata' : 'Aprobar primeras 5' }}</strong></div>
+              <div><span>🛡️ Seguridad:</span> <strong>{{ formulario.tieneCamaraExterior ? 'Cámaras CCTV activas' : 'Estándar' }}</strong></div>
+            </div>
+            <button type="button" class="btn-submit-main" style="width: 100%; margin-top: 14px;" (click)="seccionActivaEditor = 'todo'">
+              ✏️ Volver a Editar Datos
+            </button>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <!-- FORMULARIO EXHAUSTIVO A ANCHO COMPLETO -->
+      <div class="editor-card">
+        <div class="card-section-header">
+          <div class="header-icon-box">
+            <span>{{ modoEdicion ? '✏️' : '🏋️' }}</span>
+          </div>
+          <div class="header-meta-col">
+            <h2>{{ modoEdicion ? 'Editando todos los datos de tu gimnasio' : 'Configurar nuevo gimnasio' }}</h2>
+            <span class="section-desc">
+              Cada cambio que realices aquí actualiza inmediatamente tu anuncio en la página de Inicio y en el Catálogo de Gimnasios.
+            </span>
+          </div>
+        </div>
+
+        <form (ngSubmit)="guardar()" class="gym-form">
+          <!-- ===================================================================
+               PASO 1 DE CREACIÓN: TIPO DE ESPACIO, ACCESO, UBICACIÓN Y CAPACIDAD
+               =================================================================== -->
+          @if (seccionActivaEditor === 'todo' || seccionActivaEditor === 'paso1') {
+            <div class="step-divider-banner">
+              <span class="step-pill">PASO 1 DE CREACIÓN</span>
+              <h3>Describe tu espacio, tipo de acceso, ubicación y capacidad</h3>
+            </div>
+
+            <!-- 1.1 ¿Cuál de estas opciones describe mejor tu gimnasio? -->
+            <div class="form-fieldset">
+              <span class="fieldset-legend">1.1 ¿Cuál de estas opciones describe mejor tu gimnasio?</span>
+              <p class="field-hint">Selecciona la categoría principal que define el enfoque deportivo de tu sede.</p>
+
+              <div class="space-types-grid">
+                @for (tipo of tiposEspacio; track tipo.id) {
+                  <button
+                    type="button"
+                    class="space-type-card"
+                    [class.selected]="formulario.tipoEspacio === tipo.id"
+                    (click)="formulario.tipoEspacio = tipo.id"
+                  >
+                    <span class="space-type-icon">{{ tipo.icono }}</span>
+                    <strong class="space-type-name">{{ tipo.nombre }}</strong>
+                    <span class="space-type-desc">{{ tipo.descripcion }}</span>
+                  </button>
+                }
+              </div>
+            </div>
+
+            <!-- 1.2 ¿Qué tipo de acceso tendrán los atletas? -->
+            <div class="form-fieldset">
+              <span class="fieldset-legend">1.2 ¿Qué tipo de acceso tendrán los socios y atletas?</span>
+              <p class="field-hint">Define la modalidad de ingreso cuando un usuario reserva un pase o membresía.</p>
+
+              <div class="access-types-list">
+                @for (acceso of tiposAcceso; track acceso.id) {
+                  <button
+                    type="button"
+                    class="access-type-card"
+                    [class.selected]="formulario.tipoAcceso === acceso.id"
+                    (click)="formulario.tipoAcceso = acceso.id"
+                  >
+                    <div class="access-type-info">
+                      <strong>{{ acceso.titulo }}</strong>
+                      <p>{{ acceso.descripcion }}</p>
+                    </div>
+                    <span class="access-type-emoji">{{ acceso.icono }}</span>
+                  </button>
+                }
+              </div>
+            </div>
+
+            <!-- 1.3 Ubicación, Dirección Postal y Mapa Interactivo -->
+            <div class="form-fieldset">
+              <span class="fieldset-legend">1.3 Ubicación, Dirección Exacta y Mapa</span>
+
+              <div class="city-selector-bar">
+                <span class="selector-label">Selección rápida de ciudad:</span>
+                <div class="city-chips">
+                  @for (c of ciudadesRapidas; track c.nombre) {
+                    <button
+                      type="button"
+                      class="city-chip"
+                      [class.selected]="formulario.ciudad === c.nombre"
+                      (click)="seleccionarCiudadRapida(c)"
+                    >
+                      📍 {{ c.nombre }}
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <div class="form-grid-3">
+                <div class="input-field">
+                  <label>País / Región</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="formulario.pais"
+                    name="pais"
+                    placeholder="Colombia"
+                  />
+                </div>
+
+                <div class="input-field">
+                  <label>Departamento / Estado</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="formulario.departamento"
+                    name="departamento"
+                    placeholder="Ej: Casanare"
+                  />
+                </div>
+
+                <div class="input-field">
+                  <label>Ciudad / Municipio <span class="required">*</span></label>
+                  <input
+                    type="text"
+                    [(ngModel)]="formulario.ciudad"
+                    name="ciudad"
+                    placeholder="Ej: Aguazul, Yopal, Bogotá"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="input-field">
+                  <label>Barrio / Sector</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="formulario.barrio"
+                    name="barrio"
+                    placeholder="Ej: Centro, La Campiña, Chicó"
+                  />
+                </div>
+
+                <div class="input-field">
+                  <label>Dirección exacta <span class="required">*</span></label>
+                  <input
+                    type="text"
+                    [(ngModel)]="formulario.direccion"
+                    name="direccion"
+                    placeholder="Ej: Calle 11 # 15-24"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="input-field">
+                  <label>Apartamento, piso, bodega o local (si aplica)</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="formulario.apartamentoPiso"
+                    name="apartamentoPiso"
+                    placeholder="Ej: Piso 2, Local 104, Frente al parque"
+                  />
+                </div>
+
+                <div class="input-field">
+                  <label>Código postal (opcional)</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="formulario.codigoPostal"
+                    name="codigoPostal"
+                    placeholder="Ej: 856010"
+                  />
+                </div>
+              </div>
+
+              <!-- Toggle Mostrar ubicación exacta -->
+              <div class="toggle-switch-field" style="margin-bottom: 16px;">
+                <label class="switch-container">
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="formulario.mostrarUbicacionExacta"
+                    name="mostrarUbicacionExacta"
+                  />
+                  <span class="switch-slider"></span>
+                </label>
+                <div class="switch-labels">
+                  <span class="switch-title">Mostrar tu ubicación exacta a los atletas</span>
+                  <span class="switch-desc">
+                    {{ formulario.mostrarUbicacionExacta ? 'Se mostrará el pin exacto e indicaciones en Google Maps.' : 'Solo se mostrará el sector general hasta confirmar la reserva.' }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Mapa en vivo y ajuste de coordenadas -->
+              <div class="map-editor-split">
+                <div class="map-iframe-box">
+                  <iframe
+                    [src]="obtenerUrlMapaEmbed()"
+                    width="100%"
+                    height="220"
+                    style="border: 0"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="Mapa de ubicación del gimnasio"
+                  ></iframe>
+                </div>
+
+                <div class="map-pin-adjuster" (click)="moverMarcadorMapa($event)" title="Haz clic para ajustar el pin">
+                  <div class="pin-adjuster-grid"></div>
+                  <div
+                    class="draggable-gym-pin"
+                    [style.left.%]="formulario.marcadorX || 54"
+                    [style.top.%]="formulario.marcadorY || 46"
+                  >
+                    <span>{{ formulario.imagen || '🏋️' }}</span>
+                  </div>
+                  <span class="pin-adjuster-caption">
+                    Haz clic aquí para ajustar posición fina del marcador ({{ formulario.lat || 5.1728 }}, {{ formulario.lng || -72.5471 }})
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 1.4 Capacidad e Instalaciones Básicas (Contadores + / -) -->
+            <div class="form-fieldset">
+              <span class="fieldset-legend">1.4 Capacidad y Datos Básicos de tu Gimnasio</span>
+              <p class="field-hint">Ajusta los contadores de capacidad física y equipamiento base tal como en el asistente de creación.</p>
+
+              <div class="counters-list-box">
+                <div class="counter-row-item">
+                  <div class="counter-row-info">
+                    <strong>Aforo máximo de atletas por hora</strong>
+                    <span>Capacidad cómoda simultánea en tus instalaciones</span>
+                  </div>
+                  <div class="counter-row-controls">
+                    <button type="button" class="btn-step-round" (click)="ajustarContador('aforoMaximo', -5, 5)">−</button>
+                    <span class="counter-val-num">{{ formulario.aforoMaximo || 45 }}</span>
+                    <button type="button" class="btn-step-round" (click)="ajustarContador('aforoMaximo', 5, 5)">+</button>
+                  </div>
+                </div>
+
+                <div class="counter-row-item">
+                  <div class="counter-row-info">
+                    <strong>Zonas de entrenamiento</strong>
+                    <span>Musculación, cardio, funcional, peso libre, salas grupales</span>
+                  </div>
+                  <div class="counter-row-controls">
+                    <button type="button" class="btn-step-round" (click)="ajustarContador('zonasEntrenamiento', -1, 1)">−</button>
+                    <span class="counter-val-num">{{ formulario.zonasEntrenamiento || 5 }}</span>
+                    <button type="button" class="btn-step-round" (click)="ajustarContador('zonasEntrenamiento', 1, 1)">+</button>
+                  </div>
+                </div>
+
+                <div class="counter-row-item">
+                  <div class="counter-row-info">
+                    <strong>Entrenadores de planta</strong>
+                    <span>Coaches o instructores disponibles para guiar en piso</span>
+                  </div>
+                  <div class="counter-row-controls">
+                    <button type="button" class="btn-step-round" (click)="ajustarContador('entrenadoresPlanta', -1, 0)">−</button>
+                    <span class="counter-val-num">{{ formulario.entrenadoresPlanta ?? 4 }}</span>
+                    <button type="button" class="btn-step-round" (click)="ajustarContador('entrenadoresPlanta', 1, 0)">+</button>
+                  </div>
+                </div>
+
+                <div class="counter-row-item">
+                  <div class="counter-row-info">
+                    <strong>Duchas y vestidores</strong>
+                    <span>Baños y vestuarios habilitados para socios</span>
+                  </div>
+                  <div class="counter-row-controls">
+                    <button type="button" class="btn-step-round" (click)="ajustarContador('duchasVestidores', -1, 0)">−</button>
+                    <span class="counter-val-num">{{ formulario.duchasVestidores ?? 4 }}</span>
+                    <button type="button" class="btn-step-round" (click)="ajustarContador('duchasVestidores', 1, 0)">+</button>
+                  </div>
+                </div>
+
+                <div class="counter-row-item">
+                  <div class="counter-row-info">
+                    <strong>Casilleros / Lockers disponibles</strong>
+                    <span>Para guardar pertenencias durante el entrenamiento</span>
+                  </div>
+                  <div class="counter-row-controls">
+                    <button type="button" class="btn-step-round" (click)="ajustarContador('lockersDisponibles', -5, 0)">−</button>
+                    <span class="counter-val-num">{{ formulario.lockersDisponibles ?? 30 }}</span>
+                    <button type="button" class="btn-step-round" (click)="ajustarContador('lockersDisponibles', 5, 0)">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- ===================================================================
+               PASO 2 DE CREACIÓN: COMODIDADES, FOTOS, TÍTULO, ASPECTOS Y DESCRIPCIÓN
+               =================================================================== -->
+          @if (seccionActivaEditor === 'todo' || seccionActivaEditor === 'paso2') {
+            <div class="step-divider-banner">
+              <span class="step-pill">PASO 2 DE CREACIÓN</span>
+              <h3>Haz que tu gimnasio destaque: Comodidades, Galería, Título y Descripción</h3>
+            </div>
+
+            <!-- 2.1 Comodidades de tu gimnasio por categoría -->
+            <div class="form-fieldset">
+              <span class="fieldset-legend">2.1 ¿Qué comodidades e instalaciones ofrece tu gimnasio?</span>
+              <p class="field-hint">Marca o desmarca las comodidades de tu sede (organizadas en las 3 categorías de creación).</p>
+
+              <div class="amenities-category-group">
+                <h4 class="amenity-cat-title">✨ Básicos e Higiene</h4>
+                <div class="amenities-cards-grid">
+                  @for (item of comodidadesBasicas; track item.id) {
+                    <button
+                      type="button"
+                      class="amenity-toggle-card"
+                      [class.selected]="tieneComodidad(item.id)"
+                      (click)="alternarComodidad(item)"
+                    >
+                      <span class="amenity-emoji">{{ item.icono }}</span>
+                      <span class="amenity-label">{{ item.nombre }}</span>
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <div class="amenities-category-group">
+                <h4 class="amenity-cat-title">🏋️ Zonas y Equipamiento Deportivo</h4>
+                <div class="amenities-cards-grid">
+                  @for (item of comodidadesInstalaciones; track item.id) {
+                    <button
+                      type="button"
+                      class="amenity-toggle-card"
+                      [class.selected]="tieneComodidad(item.id)"
+                      (click)="alternarComodidad(item)"
+                    >
+                      <span class="amenity-emoji">{{ item.icono }}</span>
+                      <span class="amenity-label">{{ item.nombre }}</span>
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <div class="amenities-category-group">
+                <h4 class="amenity-cat-title">🧑‍🏫 Servicios Profesionales y Sonido</h4>
+                <div class="amenities-cards-grid">
+                  @for (item of comodidadesSeguridad; track item.id) {
+                    <button
+                      type="button"
+                      class="amenity-toggle-card"
+                      [class.selected]="tieneComodidad(item.id)"
+                      (click)="alternarComodidad(item)"
+                    >
+                      <span class="amenity-emoji">{{ item.icono }}</span>
+                      <span class="amenity-label">{{ item.nombre }}</span>
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <!-- Etiquetas de disciplinas del filtro público -->
+              <div class="amenities-category-group" style="margin-top: 18px;">
+                <h4 class="amenity-cat-title">🏷️ Disciplinas y Servicios Visibles en el Buscador</h4>
+                <div class="services-chips-cloud">
+                  @for (srv of serviciosDisponibles; track srv) {
+                    <button
+                      type="button"
+                      class="service-chip"
+                      [class.active]="tieneServicio(srv)"
+                      (click)="alternarServicio(srv)"
+                    >
+                      <span class="chip-status">{{ tieneServicio(srv) ? '✓' : '+' }}</span>
+                      <span>{{ srv }}</span>
+                    </button>
+                  }
+                </div>
+
+                <div class="custom-service-row">
+                  <input
+                    type="text"
+                    [(ngModel)]="nuevoServicioPersonalizado"
+                    name="nuevoServicioPersonalizado"
+                    placeholder="Añadir otra disciplina o servicio personalizado (ej: Artes Marciales, Fisioterapia)..."
+                    (keyup.enter)="$event.preventDefault(); agregarServicioPersonalizado()"
+                  />
+                  <button type="button" class="btn-add-service" (click)="agregarServicioPersonalizado()">
+                    + Añadir
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2.2 Galería de Fotos del Gimnasio -->
+            <div class="form-fieldset">
+              <span class="fieldset-legend">2.2 Galería de Fotos y Portada del Gimnasio</span>
+              <p class="field-hint">
+                La primera foto (<strong>#1 Portada</strong>) es la que aparece en grande en el catálogo. Puedes cambiar la portada con un clic, eliminar fotos o agregar nuevas.
+              </p>
+
+              @if (formulario.fotos.length > 0) {
+                <div class="photo-gallery-manager-grid">
+                  @for (foto of formulario.fotos; track $index) {
+                    <div class="photo-manager-card" [class.is-cover-photo]="$index === 0">
+                      <img [src]="foto" alt="Foto gimnasio" />
+                      <span class="thumb-index">
+                        {{ $index === 0 ? '⭐ PORTADA PRINCIPAL' : '#' + ($index + 1) }}
+                      </span>
+                      <div class="photo-card-overlay-actions">
+                        @if ($index > 0) {
+                          <button
+                            type="button"
+                            class="btn-make-cover"
+                            (click)="establecerComoPortada($index)"
+                            title="Establecer como foto de portada"
+                          >
+                            ⭐ Hacer portada
+                          </button>
+                        }
+                        <button
+                          type="button"
+                          class="btn-remove-photo"
+                          (click)="eliminarFoto($index)"
+                          title="Eliminar esta foto"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+
+              <div class="add-photo-bar">
+                <input
+                  type="url"
+                  [(ngModel)]="nuevaFotoUrl"
+                  name="nuevaFotoUrl"
+                  placeholder="Pega la URL de una foto de tus instalaciones (https://...)"
+                  (keyup.enter)="$event.preventDefault(); agregarFoto()"
+                />
+                <button type="button" class="btn-add-photo" (click)="agregarFoto()">
+                  + Añadir Foto
+                </button>
+              </div>
+
+              <div class="photo-presets-block">
+                <span class="presets-title">Biblioteca rápida de fotos profesionales (clic para añadir a tu galería):</span>
+                <div class="preset-items-row">
+                  @for (preset of fotosSugeridas; track preset.url) {
+                    <button
+                      type="button"
+                      class="preset-item"
+                      (click)="usarFotoSugerida(preset.url)"
+                      title="Añadir {{ preset.etiqueta }}"
+                    >
+                      <img [src]="preset.url" [alt]="preset.etiqueta" />
+                      <span class="preset-tag">+ {{ preset.etiqueta }}</span>
+                    </button>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <!-- 2.3 Título, Contacto, Aspectos Destacados y Descripción -->
+            <div class="form-fieldset">
+              <span class="fieldset-legend">2.3 Título, Contacto, Aspectos Destacados y Descripción</span>
+
+              <div class="form-grid-2">
+                <div class="input-field">
+                  <label>Título / Nombre del Gimnasio <span class="required">*</span></label>
+                  <input
+                    type="text"
+                    [(ngModel)]="formulario.nombre"
+                    name="nombre"
+                    maxlength="60"
+                    placeholder="Ej: Aguazul Iron Club & CrossFit"
+                    required
+                  />
+                  <div class="quick-title-suggestions">
+                    @for (sug of titulosSugeridos; track sug) {
+                      <button type="button" class="mini-suggestion-chip" (click)="aplicarTituloSugerido(sug)">
+                        {{ sug }}
+                      </button>
+                    }
+                  </div>
+                </div>
+
+                <div class="input-field">
+                  <label>Ícono / Emblema del Gimnasio</label>
+                  <div class="emoji-picker-row">
+                    @for (emo of iconosEmojiDisponibles; track emo) {
+                      <button
+                        type="button"
+                        class="emoji-choice-btn"
+                        [class.selected]="formulario.imagen === emo"
+                        (click)="formulario.imagen = emo"
+                      >
+                        {{ emo }}
+                      </button>
+                    }
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="input-field">
+                  <label>Teléfono / WhatsApp de Contacto</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="formulario.telefono"
+                    name="telefono"
+                    placeholder="Ej: 315 890 1234"
+                  />
+                </div>
+
+                <div class="input-field">
+                  <label>Horario de Atención</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="formulario.horario"
+                    name="horario"
+                    placeholder="Ej: Lunes a Sábado 5:00am - 10:00pm"
+                  />
+                </div>
+              </div>
+
+              <!-- Aspectos destacados -->
+              <div class="input-field" style="margin-top: 12px;">
+                <label>Aspectos Destacados del Gimnasio (Elige los que mejor describan el ambiente)</label>
+                <div class="highlights-chips-row">
+                  @for (asp of catalogoAspectos; track asp.id) {
+                    <button
+                      type="button"
+                      class="highlight-pill-btn"
+                      [class.selected]="tieneAspecto(asp.id)"
+                      (click)="alternarAspecto(asp.id)"
+                    >
+                      <span>{{ asp.icono }}</span>
+                      <span>{{ asp.etiqueta }}</span>
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <!-- Descripción -->
+              <div class="input-field" style="margin-top: 14px;">
+                <label>Descripción Detallada del Centro Deportivo ({{ (formulario.descripcion || '').length }}/500)</label>
+                <textarea
+                  rows="4"
+                  maxlength="500"
+                  [(ngModel)]="formulario.descripcion"
+                  name="descripcion"
+                  placeholder="Describe el equipamiento, las marcas de máquinas, el ambiente de entrenamiento, los vestidores y por qué los atletas disfrutarán entrenar en tu gimnasio..."
+                ></textarea>
+              </div>
+            </div>
+          }
+
+          <!-- ===================================================================
+               PASO 3 DE CREACIÓN: RESERVACIONES, PRECIOS, DESCUENTOS, SEGURIDAD Y FISCAL
+               =================================================================== -->
+          @if (seccionActivaEditor === 'todo' || seccionActivaEditor === 'paso3') {
+            <div class="step-divider-banner">
+              <span class="step-pill">PASO 3 DE CREACIÓN</span>
+              <h3>Reservaciones, Precios, Descuentos, Seguridad y Datos Fiscales</h3>
+            </div>
+
+            <!-- 3.1 Configuración de Reservaciones -->
+            <div class="form-fieldset">
+              <span class="fieldset-legend">3.1 Elige cómo quieres recibir tus reservaciones</span>
+              <div class="access-types-list">
+                <button
+                  type="button"
+                  class="access-type-card"
+                  [class.selected]="formulario.tipoReservacion === 'aprobar_primeras'"
+                  (click)="formulario.tipoReservacion = 'aprobar_primeras'"
+                >
+                  <div class="access-type-info">
+                    <div class="badge-recommended-inline">Recomendado</div>
+                    <strong>Aprobar tus primeras 5 reservaciones</strong>
+                    <p>Revisa manualmente las primeras solicitudes de atletas antes de habilitar la confirmación automática.</p>
+                  </div>
+                  <span class="access-type-emoji">📋</span>
+                </button>
+
+                <button
+                  type="button"
+                  class="access-type-card"
+                  [class.selected]="formulario.tipoReservacion === 'inmediata'"
+                  (click)="formulario.tipoReservacion = 'inmediata'"
+                >
+                  <div class="access-type-info">
+                    <strong>Reservación inmediata</strong>
+                    <p>Los socios y atletas pueden reservar su membresía o pase diario de forma instantánea sin esperas.</p>
+                  </div>
+                  <span class="access-type-emoji">⚡</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 3.2 Precio Base Mensual y Prima de Fin de Semana -->
+            <div class="form-fieldset">
+              <span class="fieldset-legend">3.2 Tarifas, Mensualidad y Pase de Fin de Semana</span>
+
+              <div class="pricing-studio-box">
+                <div class="pricing-stepper-row">
+                  <button type="button" class="btn-price-step" (click)="ajustarPrecioBase(-5000)">
+                    − $5.000
+                  </button>
+                  <div class="price-big-input-wrap">
+                    <span class="big-currency-symbol">$</span>
+                    <input
+                      type="number"
+                      [(ngModel)]="formulario.precio"
+                      name="precio"
+                      min="0"
+                      step="5000"
+                    />
+                    <select [(ngModel)]="formulario.moneda" name="moneda" class="currency-select-pill">
+                      <option value="COP">COP</option>
+                      <option value="USD">USD</option>
+                      <option value="EUR">EUR</option>
+                    </select>
+                  </div>
+                  <button type="button" class="btn-price-step" (click)="ajustarPrecioBase(5000)">
+                    + $5.000
+                  </button>
+                </div>
+
+                <div class="pricing-breakdown-grid">
+                  <div class="breakdown-item">
+                    <span>Precio base mensual</span>
+                    <strong>${{ formulario.precio | number }} {{ formulario.moneda }}</strong>
+                  </div>
+                  <div class="breakdown-item">
+                    <span>Tarifa de servicio atleta (14%)</span>
+                    <strong>${{ comisionPlataformaCOP | number }} {{ formulario.moneda }}</strong>
+                  </div>
+                  <div class="breakdown-item highlight-green">
+                    <span>Tu ganancia neta estimada</span>
+                    <strong>${{ gananciaAnfitrionCOP | number }} {{ formulario.moneda }}</strong>
+                  </div>
+                </div>
+
+                <!-- Ajuste de fin de semana -->
+                <div class="weekend-slider-box">
+                  <div class="weekend-header-row">
+                    <div>
+                      <strong>Prima de fin de semana y festivos ({{ formulario.ajusteFinDeSemanaPorcentaje || 0 }}%)</strong>
+                      <p>Tarifa con ajuste para pases de sábado, domingo y festivos: <strong>${{ precioFinDeSemanaCOP | number }} {{ formulario.moneda }}</strong></p>
+                    </div>
+                    <span class="weekend-pct-badge">+{{ formulario.ajusteFinDeSemanaPorcentaje || 0 }}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="99"
+                    [(ngModel)]="formulario.ajusteFinDeSemanaPorcentaje"
+                    name="ajusteFinDeSemanaPorcentaje"
+                    class="orange-range-slider"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- 3.3 Descuentos Promocionales -->
+            <div class="form-fieldset">
+              <span class="fieldset-legend">3.3 Descuentos y Promociones Activas</span>
+              <p class="field-hint">Activa o desactiva descuentos para atraer más socios a tu gimnasio.</p>
+
+              <div class="discounts-list-box">
+                <label class="discount-card-row" [class.active]="formulario.descuentoPromocionActivo">
+                  <div class="discount-pct-pill">20%</div>
+                  <div class="discount-info-col">
+                    <strong>Promoción de anuncio destacado</strong>
+                    <span>Ofrece un 20% de descuento en las primeras 3 membresías reservadas en este mes.</span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="formulario.descuentoPromocionActivo"
+                    name="descuentoPromocionActivo"
+                  />
+                </label>
+
+                <label class="discount-card-row" [class.active]="formulario.descuentoUltimoMinutoActivo">
+                  <div class="discount-pct-pill">10%</div>
+                  <div class="discount-info-col">
+                    <strong>Descuento de último minuto</strong>
+                    <span>Para reservas realizadas con menos de 24 horas de anticipación al entrenamiento.</span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="formulario.descuentoUltimoMinutoActivo"
+                    name="descuentoUltimoMinutoActivo"
+                  />
+                </label>
+
+                <label class="discount-card-row" [class.active]="formulario.descuentoSemanalActivo">
+                  <div class="discount-pct-pill">15%</div>
+                  <div class="discount-info-col">
+                    <strong>Descuento por plan trimestral / fidelidad</strong>
+                    <span>Para atletas que contratan 3 meses o más de entrenamiento continuo.</span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="formulario.descuentoSemanalActivo"
+                    name="descuentoSemanalActivo"
+                  />
+                </label>
+              </div>
+            </div>
+
+            <!-- 3.4 Seguridad y Monitoreo -->
+            <div class="form-fieldset">
+              <span class="fieldset-legend">3.4 Dispositivos de Seguridad y Monitoreo</span>
+
+              <div class="discounts-list-box">
+                <label class="discount-card-row" [class.active]="formulario.tieneCamaraExterior">
+                  <div class="discount-pct-pill">📹</div>
+                  <div class="discount-info-col">
+                    <strong>Cámara de seguridad en accesos y zonas comunes</strong>
+                    <span>Cámaras activas en recepción, entrada y pasillos (nunca en vestidores ni baños).</span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="formulario.tieneCamaraExterior"
+                    name="tieneCamaraExterior"
+                  />
+                </label>
+
+                @if (formulario.tieneCamaraExterior) {
+                  <div class="input-field" style="margin-top: 8px;">
+                    <label>Descripción de las cámaras de seguridad para los socios</label>
+                    <textarea
+                      rows="2"
+                      [(ngModel)]="formulario.descripcionCamarasSeguridad"
+                      name="descripcionCamarasSeguridad"
+                      placeholder="Ej: Contamos con circuito cerrado de TV en entrada principal, recepción y zona de pesas."
+                    ></textarea>
+                  </div>
+                }
+
+                <label class="discount-card-row" [class.active]="formulario.tieneMonitorRuido">
+                  <div class="discount-pct-pill">🔊</div>
+                  <div class="discount-info-col">
+                    <strong>Monitor de decibelios de ruido</strong>
+                    <span>Dispositivo que mide el nivel acústico ambiental sin grabar conversaciones.</span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="formulario.tieneMonitorRuido"
+                    name="tieneMonitorRuido"
+                  />
+                </label>
+
+                <label class="discount-card-row" [class.active]="formulario.tieneArmasOPropiedad">
+                  <div class="discount-pct-pill">🩺</div>
+                  <div class="discount-info-col">
+                    <strong>Equipo médico / Primeros auxilios / DEA en la propiedad</strong>
+                    <span>Botiquín reglamentario y desfibrilador externo automático disponible en sede.</span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="formulario.tieneArmasOPropiedad"
+                    name="tieneArmasOPropiedad"
+                  />
+                </label>
+              </div>
+            </div>
+
+            <!-- 3.5 Datos Fiscales, Empresa y Estado del Anuncio -->
+            <div class="form-fieldset">
+              <div class="fiscal-header-bar">
+                <span class="fieldset-legend" style="margin-bottom: 0;">3.5 Dirección Fiscal, Tipo de Anfitrión y Visibilidad</span>
+                <button type="button" class="btn-copy-fiscal" (click)="sincronizarDireccionFiscal()">
+                  📋 Copiar desde dirección del gimnasio
+                </button>
+              </div>
+
+              <div class="form-grid-3" style="margin-top: 14px;">
+                <div class="input-field">
+                  <label>País de residencia fiscal</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="formulario.paisFiscal"
+                    name="paisFiscal"
+                    placeholder="Colombia"
+                  />
+                </div>
+
+                <div class="input-field">
+                  <label>Departamento fiscal</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="formulario.departamentoFiscal"
+                    name="departamentoFiscal"
+                    placeholder="Casanare"
+                  />
+                </div>
+
+                <div class="input-field">
+                  <label>Ciudad fiscal</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="formulario.ciudadFiscal"
+                    name="ciudadFiscal"
+                    placeholder="Aguazul"
+                  />
+                </div>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="input-field">
+                  <label>Dirección postal fiscal</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="formulario.direccionFiscal"
+                    name="direccionFiscal"
+                    placeholder="Cra 15 # 12-30"
+                  />
+                </div>
+
+                <div class="input-field">
+                  <label>Apartamento, local o código postal fiscal</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="formulario.apartamentoFiscal"
+                    name="apartamentoFiscal"
+                    placeholder="Local 101"
+                  />
+                </div>
+              </div>
+
+              <!-- ¿Operas como empresa? -->
+              <div class="input-field" style="margin-top: 10px;">
+                <label>¿Anuncias este gimnasio como empresa registrada?</label>
+                <div class="form-grid-2">
+                  <button
+                    type="button"
+                    class="access-type-card"
+                    [class.selected]="formulario.esEmpresa === true"
+                    (click)="formulario.esEmpresa = true"
+                  >
+                    <div class="access-type-info">
+                      <strong>Sí, soy una empresa registrada</strong>
+                      <p>Persona jurídica, sociedad comercial o cadena deportiva con NIT.</p>
+                    </div>
+                    <span class="access-type-emoji">🏢</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="access-type-card"
+                    [class.selected]="formulario.esEmpresa === false"
+                    (click)="formulario.esEmpresa = false"
+                  >
+                    <div class="access-type-info">
+                      <strong>No, como propietario / persona natural</strong>
+                      <p>Creador o emprendedor independiente titular del centro deportivo.</p>
+                    </div>
+                    <span class="access-type-emoji">👤</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Estado del anuncio -->
+              <div class="toggle-switch-field" style="margin-top: 16px;">
+                <label class="switch-container">
+                  <input type="checkbox" [(ngModel)]="formulario.activo" name="activo" />
+                  <span class="switch-slider"></span>
+                </label>
+                <div class="switch-labels">
+                  <span class="switch-title">
+                    {{ formulario.activo ? 'Gimnasio Publicado y Visible en el Catálogo' : 'Gimnasio Pausado / Oculto temporalmente' }}
+                  </span>
+                  <span class="switch-desc">
+                    Los atletas pueden encontrar y reservar en tu gimnasio cuando está activo.
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- BARRA INFERIOR DE GUARDADO -->
+          <div class="form-actions-bar">
+            <button type="submit" class="btn-submit-main" [disabled]="guardando">
+              @if (guardando) {
+                <span class="spinner"></span>
+                <span>Guardando cambios...</span>
+              } @else {
+                <span>{{ modoEdicion ? '💾 Guardar Todos los Cambios del Gimnasio' : '🚀 Publicar Gimnasio en el Catálogo' }}</span>
+              }
+            </button>
+
+            <button
+              type="button"
+              class="btn-reset"
+              (click)="seccionActivaEditor = 'preview'"
+            >
+              👁️ Ver Vista Previa del Anuncio
+            </button>
+
+            <button type="button" class="btn-reset" (click)="iniciarNuevoGimnasioEnEditor()">
+              + Crear otro gimnasio
+            </button>
+          </div>
+        </form>
+      </div>
     }
+  </div>
 
-    <div class="grid grid-2">
-        <section class="card">
-            <h2>{{ idEditar == null ? 'Registrar gimnasio' : 'Editar gimnasio' }}</h2>
-            <div class="form-row mt-16">
-                <div class="form-group">
-                    <label>Nombre</label>
-                    <input type="text" [(ngModel)]="nombre" placeholder="Nombre del gimnasio" />
-                </div>
-                <div class="form-group">
-                    <label>Ícono</label>
-                    <input type="text" [(ngModel)]="imagen" placeholder="🏋️" />
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Dirección</label>
-                <input type="text" [(ngModel)]="direccion" placeholder="Cra / Calle #" />
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Barrio</label>
-                    <input type="text" [(ngModel)]="barrio" placeholder="Barrio" />
-                </div>
-                <div class="form-group">
-                    <label>Teléfono</label>
-                    <input type="text" [(ngModel)]="telefono" placeholder="300 000 0000" />
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Ciudad</label>
-                    <input type="text" [(ngModel)]="ciudad" placeholder="Yopal" />
-                </div>
-                <div class="form-group">
-                    <label>País</label>
-                    <input type="text" [(ngModel)]="pais" placeholder="Colombia" />
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Precio mensual</label>
-                    <input type="number" [(ngModel)]="precio" placeholder="120000" />
-                </div>
-                <div class="form-group">
-                    <label>Moneda</label>
-                    <input type="text" [(ngModel)]="moneda" placeholder="COP" />
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Horario</label>
-                <input type="text" [(ngModel)]="horario" placeholder="Lunes a sábado 6am - 9pm" />
-            </div>
-            <div class="form-group">
-                <label>Descripción</label>
-                <textarea rows="3" [(ngModel)]="descripcion" placeholder="Describe el gimnasio..."></textarea>
-            </div>
-            <div class="form-group">
-                <label>Fotos (URLs separadas por coma)</label>
-                <input type="text" [(ngModel)]="fotosTexto" placeholder="https://... , https://..." />
-            </div>
-            <div class="form-group">
-                <label>Servicios (separados por coma)</label>
-                <input type="text" [(ngModel)]="serviciosTexto" placeholder="Musculación, Cardio, Yoga" />
-            </div>
-            <div class="checkbox-group mb-16">
-                <label><input type="checkbox" [(ngModel)]="activo" /> Gimnasio activo en el catálogo</label>
-            </div>
-            <div class="flex gap-8">
-                <button class="btn btn-primary" (click)="guardar()">{{ idEditar == null ? 'Registrar' : 'Actualizar' }}</button>
-                <button class="btn btn-outline" (click)="limpiarFormulario()">Limpiar</button>
-            </div>
-        </section>
+  <!-- 7. LISTADO COMPLETO DE SEDES EN LA RED -->
+  <div class="registered-gyms-section">
+    <div class="section-title-row">
+      <div>
+        <h2>Todas las Sedes en la Red ({{ gimnasios.length }})</h2>
+        <p>Presiona <strong>"Editar en nueva pestaña"</strong> para abrir una pestaña dedicada exclusiva o edítalo aquí mismo.</p>
+      </div>
 
-        <section class="card">
-            <h2>Gimnasios registrados ({{ gimnasios.length }})</h2>
-            <div class="table-responsive mt-16">
-                <table>
-                    <thead>
-                        <tr><th>Gimnasio</th><th>Barrio</th><th>Estado</th><th>Acciones</th></tr>
-                    </thead>
-                    <tbody>
-                        @for (g of gimnasios; track g.id) {
-                            <tr>
-                                <td>{{ g.imagen }} {{ g.nombre }}</td>
-                                <td>{{ g.barrio }}</td>
-                                <td>
-                                    <span class="badge" [class.badge-success]="g.activo" [class.badge-gray]="!g.activo">
-                                        {{ g.activo ? 'Activo' : 'Inactivo' }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-outline btn-sm" (click)="editar(g)">✏️</button>
-                                    <button class="btn btn-danger btn-sm" (click)="eliminar(g)">🗑️</button>
-                                </td>
-                            </tr>
-                        }
-                        @empty {
-                            <tr><td colspan="4" class="empty-state">No hay gimnasios registrados.</td></tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </section>
+      <div class="filter-search-box">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.3-4.3" />
+        </svg>
+        <input
+          type="text"
+          [(ngModel)]="filtroTexto"
+          placeholder="Buscar por nombre, ciudad o barrio..."
+        />
+      </div>
     </div>
+
+    @if (cargandoLista) {
+      <div class="loading-state">
+        <div class="spinner-large"></div>
+        <p>Cargando gimnasios registrados...</p>
+      </div>
+    } @else {
+      <div class="gyms-cards-grid">
+        @for (g of gimnasios; track g.id) {
+          <article class="gym-admin-card" [class.editing-card]="idEditando === g.id">
+            <div class="card-thumb-wrap">
+              <img
+                [src]="g.fotos[0] || 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&q=80'"
+                [alt]="g.nombre"
+              />
+              <span
+                class="card-badge-status"
+                [class.active-badge]="g.activo"
+                [class.inactive-badge]="!g.activo"
+              >
+                {{ g.activo ? 'Activo' : 'Pausado' }}
+              </span>
+            </div>
+
+            <div class="card-info-wrap">
+              <div class="card-head">
+                <h3>{{ g.imagen }} {{ g.nombre }}</h3>
+                <span class="card-city-pill">📍 {{ g.ciudad }}</span>
+              </div>
+
+              <p class="card-address">
+                {{ g.direccion }} {{ g.barrio ? '· ' + g.barrio : '' }}
+              </p>
+
+              <p class="card-price-line">
+                <strong>${{ g.precio | number }}</strong>
+                <span class="currency">{{ g.moneda }} / mes</span>
+                <span style="margin-left: 8px; font-size: 11px; color: #94a3b8;">
+                  &middot; 👥 Aforo {{ g.aforoMaximo || 45 }}
+                </span>
+              </p>
+
+              <div class="card-services-list">
+                @for (s of g.servicios.slice(0, 4); track s) {
+                  <span class="mini-tag">{{ s }}</span>
+                }
+                @if (g.servicios.length > 4) {
+                  <span class="mini-tag-more">+{{ g.servicios.length - 4 }}</span>
+                }
+              </div>
+
+              <div class="card-actions-row">
+                <a
+                  [routerLink]="['/editar-gimnasio']"
+                  [queryParams]="{ editarId: g.id }"
+                  target="_blank"
+                  class="btn-card-edit-newtab"
+                  title="Abrir edición completa en una nueva pestaña dedicada"
+                >
+                  ✏️ Editar en nueva pestaña ↗
+                </a>
+                <button type="button" class="btn-card-edit" (click)="editar(g)" title="Cargar aquí arriba">
+                  ⚡ Aquí
+                </button>
+                <button type="button" class="btn-card-delete" (click)="eliminar(g.id)" title="Eliminar gimnasio">
+                  🗑️
+                </button>
+              </div>
+            </div>
+          </article>
+        } @empty {
+          <div class="empty-gyms-state">
+            <span class="empty-icon">🏋️‍♂️</span>
+            <h3>No se encontraron gimnasios</h3>
+            <p>Usa el editor superior para publicar tu primer gimnasio en la plataforma.</p>
+          </div>
+        }
+      </div>
+    }
+  </div>
 </div>

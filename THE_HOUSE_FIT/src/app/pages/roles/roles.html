@@ -5,6 +5,9 @@
     @if (mensaje) {
         <div class="alert success">{{ mensaje }}</div>
     }
+    @if (mensajeError) {
+        <div class="alert error">{{ mensajeError }}</div>
+    }
 
     <div class="grid grid-3 mb-16">
         @for (d of descripciones; track d.rol) {

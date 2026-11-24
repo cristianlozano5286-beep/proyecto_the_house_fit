@@ -1,0 +1,78 @@
+<div class="user-studio-viewport">
+  <!-- CABECERA UNIFICADA ESTILO STEAM DARK GLASS -->
+  <header class="steam-shell-navbar">
+    <div class="steam-brand-left">
+      <a routerLink="/panel/dashboard" class="steam-brand-link" title="Volver al Dashboard">
+        <div class="steam-logo-box">
+          <img src="assets/logo-icon-white.png" alt="The House Fit" />
+        </div>
+        <span class="steam-brand-name">THE HOUSE <strong>FIT</strong></span>
+      </a>
+      <span class="steam-role-chip">{{ rolUsuario }}</span>
+    </div>
+
+    <nav class="steam-top-nav" aria-label="Apartados personales">
+      <ul class="steam-nav-list">
+        @for (s of seccionesVisibles; track s.id) {
+          <li>
+            <a
+              class="steam-nav-link"
+              [routerLink]="s.ruta"
+              routerLinkActive="active"
+              [attr.aria-current]="esRutaActiva(s.ruta) ? 'page' : null"
+            >
+              <ng-container [ngTemplateOutlet]="iconoSeccion" [ngTemplateOutletContext]="{ id: s.id }"></ng-container>
+              <span>{{ s.nombre }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <div class="steam-nav-actions">
+      <a routerLink="/" class="steam-btn-ghost">Ir al inicio</a>
+      <button type="button" class="steam-btn-ember-soft" (click)="salirAlPanel()">Salir al panel</button>
+    </div>
+  </header>
+
+  <!-- ESCENARIO PRINCIPAL -->
+  <main class="user-studio-stage" tabindex="-1">
+    <router-outlet (activate)="alActivarSeccion()"></router-outlet>
+  </main>
+</div>
+
+<!-- ICONOS VECTORIALES UNIFORMES -->
+<ng-template #iconoSeccion let-id="id">
+  @switch (id) {
+    @case ('perfil') {
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+    }
+    @case ('entrenamiento') {
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+      </svg>
+    }
+    @case ('reservar-clase') {
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="16" y1="2" x2="16" y2="6"></line>
+        <line x1="8" y1="2" x2="8" y2="6"></line>
+        <line x1="3" y1="10" x2="21" y2="10"></line>
+      </svg>
+    }
+    @case ('resenas') {
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+      </svg>
+    }
+    @case ('pagos') {
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+        <line x1="1" y1="10" x2="23" y2="10"></line>
+      </svg>
+    }
+  }
+</ng-template>

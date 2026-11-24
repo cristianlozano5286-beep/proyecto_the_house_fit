@@ -1,0 +1,400 @@
+:host {
+  display: contents;
+}
+
+dialog.wmp-dialog {
+  margin: auto;
+  padding: 0;
+  width: min(490px, calc(100vw - 24px));
+  max-width: 490px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(165deg, #131824 0%, #0b0e15 100%);
+  color: #f8fafc;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  box-shadow: 0 32px 84px rgba(0, 0, 0, 0.85);
+  overflow: hidden;
+  opacity: 0;
+  transition-property: opacity, transform, display, overlay;
+  transition-duration: 0.22s;
+  transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+  transition-behavior: allow-discrete;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  dialog.wmp-dialog {
+    transform: scale(0.95) translateY(10px);
+  }
+}
+
+dialog.wmp-dialog:modal {
+  overscroll-behavior: contain;
+}
+
+dialog.wmp-dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background-color: rgba(3, 5, 10, 0.82);
+}
+
+dialog.wmp-dialog[open] {
+  display: block;
+  opacity: 1;
+
+  @starting-style {
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    transform: scale(1) translateY(0);
+
+    @starting-style {
+      transform: scale(0.95) translateY(10px);
+    }
+  }
+}
+
+.wmp-shell {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.wmp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.wmp-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wmp-logo-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wmp-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wmp-title-row strong {
+  font-size: 15.5px;
+  font-weight: 700;
+}
+
+.wmp-sandbox-pill {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.16);
+  color: #34d399;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.wmp-sub {
+  display: block;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.wmp-close-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: #f8fafc;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.wmp-summary-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.wmp-summary-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.wmp-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #ff7a45;
+}
+
+.wmp-summary-copy strong {
+  font-size: 13.5px;
+  color: #f8fafc;
+}
+
+.wmp-summary-copy small {
+  font-size: 11.5px;
+  color: #94a3b8;
+}
+
+.wmp-summary-price {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.wmp-summary-price span {
+  display: block;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.wmp-summary-price strong {
+  font-size: 17px;
+  font-weight: 800;
+  color: #34d399;
+}
+
+.wmp-methods-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.wmp-method-btn {
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  color: #f8fafc;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  transition-property: background-color, border-color, transform;
+  transition-duration: 0.16s;
+}
+
+.wmp-method-btn.active {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.wmp-method-btn strong {
+  font-size: 13px;
+}
+
+.wmp-method-btn span {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.wmp-form-panel {
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(8, 10, 16, 0.65);
+}
+
+.wmp-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.wmp-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.wmp-field.full {
+  grid-column: 1 / -1;
+}
+
+.wmp-field label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.wmp-field input,
+.wmp-field select {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 9px 11px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #f8fafc;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+}
+
+.wmp-field select option {
+  background: #111521;
+  color: #f8fafc;
+}
+
+.wmp-field small {
+  font-size: 11.5px;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+.wmp-info-note strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.wmp-info-note p {
+  margin: 0;
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.45;
+}
+
+.wmp-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wmp-pay-btn {
+  width: 100%;
+  padding: 13px 16px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition-property: transform;
+  transition-duration: 0.16s;
+}
+
+.wmp-pay-btn:active {
+  transform: scale(0.97);
+}
+
+.wmp-cancel-link {
+  background: transparent;
+  border: none;
+  padding: 6px;
+  color: #94a3b8;
+  font-family: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.wmp-status-box,
+.wmp-approved-box {
+  padding: 20px 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+
+.wmp-spinner {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid rgba(16, 185, 129, 0.2);
+  border-top-color: #10b981;
+  animation: wmpSpin 0.8s linear infinite;
+}
+
+@keyframes wmpSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.wmp-approved-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.16);
+  color: #34d399;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wmp-approved-box h4 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  color: #34d399;
+}
+
+.wmp-approved-box p {
+  margin: 0;
+  font-size: 13px;
+  color: #cbd5e1;
+  line-height: 1.45;
+}
+
+.wmp-receipt-list {
+  width: 100%;
+  margin: 4px 0 6px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wmp-receipt-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12.5px;
+}
+
+.wmp-receipt-list dt {
+  color: #94a3b8;
+}
+
+.wmp-receipt-list dd {
+  margin: 0;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.wmp-receipt-list dd.ok {
+  color: #34d399;
+}

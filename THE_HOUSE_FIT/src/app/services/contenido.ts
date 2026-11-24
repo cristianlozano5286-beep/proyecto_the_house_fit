@@ -1,131 +1,142 @@
 import { Injectable } from '@angular/core';
 import { GuiaFisica, GuiaNutricional, Rutina } from '../models/contenido.models';
-
-const KEY_RUTINAS = 'thehousefit_rutinas';
-const KEY_GUIAS_FISICAS = 'thehousefit_guias_fisicas';
-const KEY_GUIAS_NUTRICIONALES = 'thehousefit_guias_nutricionales';
+import { ApiService, mensajeDeError, reemplazarLista } from './api';
 
 @Injectable({ providedIn: 'root' })
 export class ContenidoService {
-  // -------- RUTINAS (HU27, HU28, HU33) --------
-  private rutinasIniciales: Rutina[] = [
+  private rutinas: Rutina[] = [
     {
       id: 1,
+      nombre: 'Fuerza e Hipertrofia Clásica',
       tipoEntrenamiento: 'Fuerza',
-      nombre: 'Rutina de fuerza - Tren superior',
       nivel: 'Intermedio',
-      descripcion: 'Enfocada en desarrollar fuerza en pecho, espalda y brazos.',
-      ejercicios: ['Press de banca 4x8', 'Remo con barra 4x8', 'Press militar 3x10', 'Curl de bíceps 3x12'],
       duracionSemanas: 6,
+      descripcion: 'Enfoque en levantamientos compuestos para maximizar la masa muscular y fuerza base.',
+      ejercicios: ['Press de banca', 'Sentadilla profunda', 'Peso muerto convencional', 'Press militar'],
     },
     {
       id: 2,
-      tipoEntrenamiento: 'Cardio',
-      nombre: 'Rutina cardiovascular quema grasa',
+      nombre: 'Iniciación a la Calistenia y Fuerza',
+      tipoEntrenamiento: 'Fuerza',
       nivel: 'Principiante',
-      descripcion: 'Sesiones de cardio moderado para mejorar resistencia y quemar calorías.',
-      ejercicios: ['Trote 20 min', 'Bicicleta estática 15 min', 'Saltos de cuerda 3x2min'],
       duracionSemanas: 4,
+      descripcion: 'Acondicionamiento muscular con peso corporal y cargas ligeras para construir base.',
+      ejercicios: ['Dominadas asistidas', 'Fondos en paralelas', 'Flexiones de pecho', 'Sentadillas aéreas'],
     },
     {
       id: 3,
-      tipoEntrenamiento: 'Funcional',
-      nombre: 'Entrenamiento funcional total body',
+      nombre: 'HIIT Quema Grasa y Resistencia',
+      tipoEntrenamiento: 'Cardio',
       nivel: 'Intermedio',
-      descripcion: 'Movimientos multiarticulares que trabajan todo el cuerpo.',
-      ejercicios: ['Burpees 4x15', 'Kettlebell swing 4x15', 'Mountain climbers 4x20', 'Sentadilla con salto 4x12'],
-      duracionSemanas: 5,
+      duracionSemanas: 4,
+      descripcion: 'Entrenamiento interválico de alta intensidad para acelerar el metabolismo y quemar calorías.',
+      ejercicios: ['Burpees con salto', 'Mountain climbers', 'Salto con cuerda', 'Sprints en cinta'],
     },
     {
       id: 4,
-      tipoEntrenamiento: 'Pérdida de peso',
-      nombre: 'Plan de pérdida de peso acelerado',
-      nivel: 'Principiante',
-      descripcion: 'Combinación de cardio y fuerza para maximizar el gasto calórico.',
-      ejercicios: ['Circuito HIIT 20 min', 'Sentadillas 4x15', 'Plancha 3x40seg'],
+      nombre: 'Endurance & Cardio Aeróbico',
+      tipoEntrenamiento: 'Cardio',
+      nivel: 'Avanzado',
       duracionSemanas: 8,
+      descripcion: 'Mejora de la capacidad pulmonar, resistencia cardiovascular y ritmo sostenido.',
+      ejercicios: ['Remo estático', 'Intervalos en elíptica', 'Ciclismo indoor', 'Carrera continua'],
     },
     {
       id: 5,
-      tipoEntrenamiento: 'Flexibilidad',
-      nombre: 'Rutina de movilidad y flexibilidad',
+      nombre: 'Cross Training Total',
+      tipoEntrenamiento: 'Funcional',
+      nivel: 'Avanzado',
+      duracionSemanas: 6,
+      descripcion: 'Circuito dinámico para mejorar agilidad, potencia muscular y coordinación corporal.',
+      ejercicios: ['Kettlebell swings', 'Box jumps', 'Balón medicinal a la pared', 'Paseo del granjero'],
+    },
+    {
+      id: 6,
+      nombre: 'Movilidad Funcional y Core',
+      tipoEntrenamiento: 'Funcional',
       nivel: 'Principiante',
-      descripcion: 'Estiramientos y movilidad articular para prevenir lesiones.',
-      ejercicios: ['Estiramiento de isquiotibiales', 'Movilidad de cadera', 'Yoga flow 15 min'],
       duracionSemanas: 4,
+      descripcion: 'Fortalece la zona media y mejora los patrones de movimiento diario sin sobrecarga.',
+      ejercicios: ['Planchas dinámicas', 'Bird-dog', 'Puente de glúteos', 'Giros rusos'],
+    },
+    {
+      id: 7,
+      nombre: 'Yoga Postural y Estiramiento Profundo',
+      tipoEntrenamiento: 'Flexibilidad',
+      nivel: 'Principiante',
+      duracionSemanas: 4,
+      descripcion: 'Alivia tensiones acumuladas en espalda y articulaciones mientras expandes tu rango articular.',
+      ejercicios: ['Perro boca abajo', 'Cobra suave', 'Guerrero II', 'Apertura de caderas'],
+    },
+    {
+      id: 8,
+      nombre: 'Acondicionamiento Metabólico y Definición',
+      tipoEntrenamiento: 'Pérdida de peso',
+      nivel: 'Intermedio',
+      duracionSemanas: 6,
+      descripcion: 'Fusión de superseries de alta quema calórica para esculpir y tonificar el cuerpo.',
+      ejercicios: ['Sentadilla con salto', 'Thrusters con mancuerna', 'Jumping jacks', 'Zancadas alternas'],
     },
   ];
-
-  // -------- GUÍAS FÍSICAS (HU29, HU31) --------
-  private guiasFisicasIniciales: GuiaFisica[] = [
+  private guiasFisicas: GuiaFisica[] = [
     {
       id: 1,
-      titulo: 'Manual de técnica de sentadilla',
-      metodo: 'Fuerza',
-      contenido:
-        'Coloca la barra sobre los trapecios, pies al ancho de hombros, baja controlando la rodilla en línea con la punta del pie y mantén la espalda recta durante todo el recorrido.',
-      fechaPublicacion: '2026-02-10',
+      titulo: 'Biomecánica de la Sentadilla Libre y Profunda',
+      metodo: 'Fuerza y Powerlifting',
+      contenido: 'Mantén el pecho erguido, activa el core mediante respiración diafragmática (bracing), alinea las rodillas en dirección a la punta de los pies y desciende controlando la fase excéntrica hasta romper el paralelo.',
+      fechaPublicacion: '2026-08-12',
     },
     {
       id: 2,
-      titulo: 'Guía de entrenamiento en circuito',
-      metodo: 'Funcional',
-      contenido:
-        'Alterna ejercicios de 40 segundos de trabajo por 20 segundos de descanso, completando 4 rondas por sesión para maximizar la quema calórica.',
-      fechaPublicacion: '2026-03-02',
+      titulo: 'Técnica de Retracción Escapular en Press y Dominadas',
+      metodo: 'Hipertrofia y Calistenia',
+      contenido: 'Antes de iniciar el empuje o tracción, junta y deprime las escápulas hacia los bolsillos traseros para proteger el manguito rotador y maximizar la activación pectoral y dorsal.',
+      fechaPublicacion: '2026-09-05',
     },
   ];
-
-  // -------- GUÍAS NUTRICIONALES (HU32, HU34) --------
-  private guiasNutricionalesIniciales: GuiaNutricional[] = [
+  private guiasNutricionales: GuiaNutricional[] = [
     {
       id: 1,
-      categoriaIMC: 'Bajo peso',
-      titulo: 'Plan de alimentación para aumento de masa',
-      recomendaciones: 'Aumenta la ingesta calórica con proteínas magras, carbohidratos complejos y grasas saludables.',
-      ejemploComidas: 'Desayuno: avena con maní y banano. Almuerzo: pollo, arroz y aguacate. Cena: pasta con carne y ensalada.',
-    },
-    {
-      id: 2,
       categoriaIMC: 'Peso normal',
-      titulo: 'Plan de mantenimiento saludable',
-      recomendaciones: 'Mantén una dieta balanceada con proteína, vegetales y grasas saludables en cada comida.',
-      ejemploComidas: 'Desayuno: huevos y fruta. Almuerzo: pescado, quinoa y vegetales. Cena: ensalada con pollo a la plancha.',
+      titulo: 'Plan de Recomposición Corporal y Rendimiento',
+      recomendaciones: 'Prioriza entre 1.8g y 2.2g de proteína por kg de peso corporal, carbohidratos complejos alrededor del entrenamiento y al menos 3 litros de hidratación diaria.',
+      ejemploComidas: 'Desayuno: Omelette de 3 huevos con avena y frutos rojos. Almuerzo: 180g de pechuga a la plancha, arroz jazmín y aguacate. Cena: Salmón o tilapia con vegetales salteados.',
     },
     {
-      id: 3,
+      id: 2,
       categoriaIMC: 'Sobrepeso',
-      titulo: 'Plan de control de peso',
-      recomendaciones: 'Reduce carbohidratos refinados, aumenta fibra y vegetales, controla las porciones.',
-      ejemploComidas: 'Desayuno: batido de proteína con espinaca. Almuerzo: pechuga a la plancha con ensalada. Cena: sopa de vegetales.',
-    },
-    {
-      id: 4,
-      categoriaIMC: 'Obesidad',
-      titulo: 'Plan de reducción calórica supervisada',
-      recomendaciones: 'Déficit calórico moderado, alta ingesta de proteína y vegetales, acompañamiento profesional recomendado.',
-      ejemploComidas: 'Desayuno: claras de huevo y vegetales. Almuerzo: proteína magra con ensalada abundante. Cena: caldo de vegetales con pollo.',
+      titulo: 'Déficit Calórico Inteligente con Preservación Muscular',
+      recomendaciones: 'Establece un déficit moderado de 300 a 450 kcal diarias, alta densidad de fibra vegetal para saciedad y entrenamiento de fuerza combinado con HIIT.',
+      ejemploComidas: 'Desayuno: Claras de huevo con espinaca y pan integral. Almuerzo: Carne magra, ensalada verde abundante y papa al vapor. Snack: Yogur griego sin azúcar.',
     },
   ];
 
-  private rutinas: Rutina[] = [];
-  private guiasFisicas: GuiaFisica[] = [];
-  private guiasNutricionales: GuiaNutricional[] = [];
+  constructor(private api: ApiService) {}
 
-  constructor() {
-    this.rutinas = this.cargarLista(KEY_RUTINAS, this.rutinasIniciales);
-    this.guiasFisicas = this.cargarLista(KEY_GUIAS_FISICAS, this.guiasFisicasIniciales);
-    this.guiasNutricionales = this.cargarLista(KEY_GUIAS_NUTRICIONALES, this.guiasNutricionalesIniciales);
+  async cargar(): Promise<void> {
+    try {
+      const rutinas = await this.api.obtener<Rutina[]>('/rutinas');
+      if (rutinas && rutinas.length > 0) {
+        reemplazarLista(this.rutinas, rutinas);
+      }
+    } catch (_) {}
+
+    try {
+      const guiasFisicas = await this.api.obtener<GuiaFisica[]>('/guias-fisicas');
+      if (guiasFisicas && guiasFisicas.length > 0) {
+        reemplazarLista(this.guiasFisicas, guiasFisicas);
+      }
+    } catch (_) {}
+
+    try {
+      const guiasNutricionales = await this.api.obtener<GuiaNutricional[]>('/guias-nutricionales');
+      if (guiasNutricionales && guiasNutricionales.length > 0) {
+        reemplazarLista(this.guiasNutricionales, guiasNutricionales);
+      }
+    } catch (_) {}
   }
 
-  private cargarLista<T>(key: string, iniciales: T[]): T[] {
-    const datos = localStorage.getItem(key);
-    if (datos) return JSON.parse(datos);
-    localStorage.setItem(key, JSON.stringify(iniciales));
-    return [...iniciales];
-  }
-
-  // ----- Rutinas -----
+  // ----- Rutinas (HU27, HU28, HU33) -----
   listarRutinas(): Rutina[] {
     return this.rutinas;
   }
@@ -133,30 +144,58 @@ export class ContenidoService {
     return this.rutinas.filter((r) => r.tipoEntrenamiento === tipo);
   }
   crearRutina(rutina: Omit<Rutina, 'id'>): void {
-    const id = this.rutinas.length ? Math.max(...this.rutinas.map((r) => r.id)) + 1 : 1;
-    this.rutinas.push({ ...rutina, id });
-    localStorage.setItem(KEY_RUTINAS, JSON.stringify(this.rutinas));
+    const nueva: Rutina = { ...rutina, id: Date.now() };
+    this.rutinas.push(nueva);
+
+    this.api
+      .crear<Rutina>('/rutinas', rutina)
+      .then((creada) => Object.assign(nueva, creada))
+      .catch(() => {});
+  }
+  actualizarRutina(id: number, cambios: Partial<Rutina>): void {
+    const item = this.rutinas.find((r) => r.id === id);
+    if (item) {
+      Object.assign(item, cambios);
+      this.api.actualizar('/rutinas/' + id, cambios).catch(() => {});
+    }
   }
   eliminarRutina(id: number): void {
-    this.rutinas = this.rutinas.filter((r) => r.id !== id);
-    localStorage.setItem(KEY_RUTINAS, JSON.stringify(this.rutinas));
+    reemplazarLista(
+      this.rutinas,
+      this.rutinas.filter((r) => r.id !== id),
+    );
+    this.api.borrar('/rutinas/' + id).catch(() => {});
   }
 
-  // ----- Guías físicas -----
+  // ----- Guías físicas (HU29, HU31) -----
   listarGuiasFisicas(): GuiaFisica[] {
     return this.guiasFisicas;
   }
   crearGuiaFisica(guia: Omit<GuiaFisica, 'id'>): void {
-    const id = this.guiasFisicas.length ? Math.max(...this.guiasFisicas.map((g) => g.id)) + 1 : 1;
-    this.guiasFisicas.push({ ...guia, id });
-    localStorage.setItem(KEY_GUIAS_FISICAS, JSON.stringify(this.guiasFisicas));
+    const nueva: GuiaFisica = { ...guia, id: Date.now() };
+    this.guiasFisicas.push(nueva);
+
+    this.api
+      .crear<GuiaFisica>('/guias-fisicas', guia)
+      .then((creada) => Object.assign(nueva, creada))
+      .catch(() => {});
+  }
+  actualizarGuiaFisica(id: number, cambios: Partial<GuiaFisica>): void {
+    const item = this.guiasFisicas.find((g) => g.id === id);
+    if (item) {
+      Object.assign(item, cambios);
+      this.api.actualizar('/guias-fisicas/' + id, cambios).catch(() => {});
+    }
   }
   eliminarGuiaFisica(id: number): void {
-    this.guiasFisicas = this.guiasFisicas.filter((g) => g.id !== id);
-    localStorage.setItem(KEY_GUIAS_FISICAS, JSON.stringify(this.guiasFisicas));
+    reemplazarLista(
+      this.guiasFisicas,
+      this.guiasFisicas.filter((g) => g.id !== id),
+    );
+    this.api.borrar('/guias-fisicas/' + id).catch(() => {});
   }
 
-  // ----- Guías nutricionales -----
+  // ----- Guías nutricionales (HU32, HU34) -----
   listarGuiasNutricionales(): GuiaNutricional[] {
     return this.guiasNutricionales;
   }
@@ -164,18 +203,32 @@ export class ContenidoService {
     return this.guiasNutricionales.find((g) => g.categoriaIMC === categoria);
   }
   crearGuiaNutricional(guia: Omit<GuiaNutricional, 'id'>): void {
-    const id = this.guiasNutricionales.length
-      ? Math.max(...this.guiasNutricionales.map((g) => g.id)) + 1
-      : 1;
-    this.guiasNutricionales.push({ ...guia, id });
-    localStorage.setItem(KEY_GUIAS_NUTRICIONALES, JSON.stringify(this.guiasNutricionales));
+    const nueva: GuiaNutricional = { ...guia, id: Date.now() };
+    this.guiasNutricionales.push(nueva);
+
+    this.api
+      .crear<GuiaNutricional>('/guias-nutricionales', guia)
+      .then((creada) => Object.assign(nueva, creada))
+      .catch(() => {});
+  }
+  actualizarGuiaNutricional(id: number, cambios: Partial<GuiaNutricional>): void {
+    const item = this.guiasNutricionales.find((g) => g.id === id);
+    if (item) {
+      Object.assign(item, cambios);
+      this.api.actualizar('/guias-nutricionales/' + id, cambios).catch(() => {});
+    }
   }
   eliminarGuiaNutricional(id: number): void {
-    this.guiasNutricionales = this.guiasNutricionales.filter((g) => g.id !== id);
-    localStorage.setItem(KEY_GUIAS_NUTRICIONALES, JSON.stringify(this.guiasNutricionales));
+    reemplazarLista(
+      this.guiasNutricionales,
+      this.guiasNutricionales.filter((g) => g.id !== id),
+    );
+    this.api.borrar('/guias-nutricionales/' + id).catch(() => {});
   }
 
   // ----- Calculadora de IMC (HU30) -----
+  // se calcula en el navegador para que responda al instante
+  // (el MID también tiene GET /imc con la misma cuenta)
   calcularIMC(pesoKg: number, estaturaM: number): number {
     if (!pesoKg || !estaturaM) return 0;
     return Number((pesoKg / (estaturaM * estaturaM)).toFixed(1));
@@ -186,5 +239,10 @@ export class ContenidoService {
     if (imc < 25) return 'Peso normal';
     if (imc < 30) return 'Sobrepeso';
     return 'Obesidad';
+  }
+
+  private avisarError(error: unknown): void {
+    alert(mensajeDeError(error));
+    this.cargar();
   }
 }

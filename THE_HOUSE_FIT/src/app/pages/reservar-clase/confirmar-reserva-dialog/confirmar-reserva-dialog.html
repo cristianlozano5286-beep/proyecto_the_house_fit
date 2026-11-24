@@ -1,13 +1,83 @@
-<h2 mat-dialog-title>Confirmar reserva</h2>
-<mat-dialog-content>
-    <p><strong>Gimnasio:</strong> {{ data.nombreGimnasio }}</p>
-    <p><strong>Clase:</strong> {{ data.clase.tipoClase }} con {{ data.clase.instructor }}</p>
-    <p><strong>Hora:</strong> {{ data.clase.hora }} · {{ data.clase.duracion }}</p>
-    <p><strong>Fecha:</strong> {{ data.fecha }}</p>
-    <p><strong>Personas:</strong> {{ data.personas }}</p>
-    <p class="total"><strong>Total:</strong> {{ formatearPrecio(data.clase.precio * data.personas) }}</p>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-    <button mat-stroked-button (click)="cancelar()">Cancelar</button>
-    <button mat-raised-button color="primary" (click)="confirmar()">Confirmar reserva</button>
-</mat-dialog-actions>
+<div class="modal-reserva-wrapper">
+  <!-- Cabecera -->
+  <div class="modal-header">
+    <div class="header-icon-box">
+      <span class="header-icon">⚡</span>
+    </div>
+    <div class="header-text">
+      <h2 mat-dialog-title class="dialog-title">Confirmar Reserva</h2>
+      <p class="dialog-subtitle">Verifica los detalles antes de asegurar tu cupo</p>
+    </div>
+    <button type="button" class="btn-close" (click)="cancelar()" aria-label="Cerrar modal">✕</button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <!-- Tarjeta resumen de la clase -->
+    <div class="resumen-card">
+      <div class="resumen-top">
+        <span class="discipline-tag">{{ data.clase.tipoClase }}</span>
+        <span class="spots-badge">Cupos garantizados</span>
+      </div>
+
+      <h3 class="gym-title">{{ data.nombreGimnasio }}</h3>
+      
+      <div class="coach-row">
+        <div class="coach-avatar">
+          {{ data.clase.instructor.substring(0, 2).toUpperCase() }}
+        </div>
+        <div class="coach-info">
+          <span class="coach-label">Instructor</span>
+          <span class="coach-name">{{ data.clase.instructor }}</span>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="item-label">📅 Fecha</span>
+          <span class="item-value">{{ data.fecha }}</span>
+        </div>
+        <div class="info-item">
+          <span class="item-label">⏰ Horario</span>
+          <span class="item-value">{{ data.clase.hora }} ({{ data.clase.duracion }})</span>
+        </div>
+        <div class="info-item">
+          <span class="item-label">👥 Asistentes</span>
+          <span class="item-value">{{ data.personas }} {{ data.personas === 1 ? 'persona' : 'personas' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="item-label">💵 Tarifa unitaria</span>
+          <span class="item-value">{{ formatearPrecio(data.clase.precio) }}</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="total-row">
+        <div class="total-label-box">
+          <span class="total-label">Total a Pagar</span>
+          <span class="total-sub">IVA incluido • Pago en recepción o saldo</span>
+        </div>
+        <span class="total-val">{{ formatearPrecio(data.clase.precio * data.personas) }}</span>
+      </div>
+    </div>
+
+    <!-- Políticas de cancelación -->
+    <div class="policy-card">
+      <span class="policy-icon">🛡️</span>
+      <p class="policy-text">
+        <strong>Cancelación flexible:</strong> Puedes cancelar sin costo hasta 2 horas antes de la sesión.
+      </p>
+    </div>
+  </mat-dialog-content>
+
+  <!-- Acciones -->
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-stroked-button type="button" class="btn-cancelar" (click)="cancelar()">
+      Volver
+    </button>
+    <button mat-raised-button type="button" class="btn-confirmar" (click)="confirmar()">
+      <span class="btn-icon">✓</span>
+      Confirmar Reserva
+    </button>
+  </mat-dialog-actions>
+</div>

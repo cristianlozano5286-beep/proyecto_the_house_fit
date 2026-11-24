@@ -1,18 +1,22 @@
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Footercomponent } from './footer';
+import { FooterComponent } from './footer';
 
 describe('Footer', () => {
-  let component: Footercomponent;
-  let fixture: ComponentFixture<Footercomponent>;
+  let component: FooterComponent;
+  let fixture: ComponentFixture<FooterComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Footercomponent]
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+      imports: [FooterComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Footercomponent);
+    fixture = TestBed.createComponent(FooterComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

@@ -1,0 +1,466 @@
+<div class="profile-fullscreen-viewport">
+  <!-- CABECERA UNIFICADA ESTILO STEAM DARK GLASS -->
+  <header class="steam-shell-navbar">
+    <div class="steam-brand-left">
+      <a routerLink="/panel/dashboard" class="steam-brand-link" title="Volver al Dashboard">
+        <div class="steam-logo-box">
+          <img src="assets/logo-icon-white.png" alt="The House Fit" />
+        </div>
+        <span class="steam-brand-name">THE HOUSE <strong>FIT</strong></span>
+      </a>
+      <span class="steam-role-chip">{{ rol }}</span>
+    </div>
+
+    <nav class="steam-top-nav" aria-label="Apartados personales">
+      <ul class="steam-nav-list">
+        <li>
+          <a routerLink="/mi-perfil" class="steam-nav-link active" aria-current="page">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Mi perfil</span>
+          </a>
+        </li>
+
+        @if (esUsuarioOEntrenador) {
+          <li>
+            <a routerLink="/mi-espacio/entrenamiento" class="steam-nav-link">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              <span>Mi entrenamiento</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/mi-espacio/reservar-clase" class="steam-nav-link">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <span>Reservar clase</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/mi-espacio/resenas" class="steam-nav-link">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+              <span>Reseñas</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/mi-espacio/pagos" class="steam-nav-link">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+              </svg>
+              <span>Pagos</span>
+            </a>
+          </li>
+        } @else {
+          <li>
+            <a routerLink="/contabilidad-gestion" class="steam-nav-link">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                <line x1="2" y1="10" x2="22" y2="10"></line>
+              </svg>
+              <span>Contabilidad</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/editar-gimnasio" class="steam-nav-link">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 20h9"></path>
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+              </svg>
+              <span>Mi gimnasio</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/instructores-gestion" class="steam-nav-link">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+              </svg>
+              <span>Instructores</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/productos-gestion" class="steam-nav-link">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+              </svg>
+              <span>Productos</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <div class="steam-nav-actions">
+      <a routerLink="/" class="steam-btn-ghost">Ir al inicio</a>
+      <button type="button" class="steam-btn-ember-soft" (click)="salirAlPanel()">Salir al panel</button>
+    </div>
+  </header>
+
+  <main class="steam-page-shell" tabindex="-1">
+    <!-- 1. ESCAPARATE HERO SPLIT DE IDENTIDAD -->
+    <section class="steam-hero-split" aria-label="Resumen de perfil">
+      <article class="steam-hero-banner steam-profile-stage">
+        <img
+          class="steam-hero-bg steam-profile-bg"
+          src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80"
+          alt=""
+        />
+        <div class="steam-hero-scrim" aria-hidden="true"></div>
+
+        <div class="steam-hero-top">
+          <div class="steam-hero-tags">
+            <span class="steam-tag-pill">
+              <span class="steam-dot-ember" aria-hidden="true"></span>
+              {{ rol }}
+            </span>
+            <span class="steam-tag-pill">
+              <span class="steam-dot-green" aria-hidden="true"></span>
+              Cuenta verificada
+            </span>
+          </div>
+        </div>
+
+        <div class="steam-hero-bottom profile-hero-main">
+          <div class="avatar-upload-zone">
+            <div class="avatar-ring-frame">
+              @if (fotoPerfil) {
+                <img [src]="fotoPerfil" [alt]="nombre" class="profile-avatar-img" />
+              } @else {
+                <div class="profile-avatar-initial">{{ inicial }}</div>
+              }
+
+              <label class="avatar-camera-fab" title="Subir foto desde tu dispositivo">
+                <input
+                  type="file"
+                  accept="image/*"
+                  class="sr-only-file-input"
+                  (change)="alSeleccionarArchivo($event)"
+                  [disabled]="guardando || procesandoImagen"
+                />
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                  <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+              </label>
+            </div>
+          </div>
+
+          <div class="profile-identity-col">
+            <h1 class="steam-hero-title">{{ nombre }}</h1>
+            <p class="steam-hero-sub">{{ correo || 'Atleta registrado en The House Fit' }}</p>
+
+            <div class="profile-photo-actions">
+              <label class="btn-upload-primary">
+                <input
+                  type="file"
+                  accept="image/*"
+                  class="sr-only-file-input"
+                  (change)="alSeleccionarArchivo($event)"
+                  [disabled]="guardando || procesandoImagen"
+                />
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span>{{ procesandoImagen ? 'Procesando foto...' : 'Subir foto' }}</span>
+              </label>
+
+              <button
+                type="button"
+                class="btn-photo-secondary"
+                (click)="mostrarInputUrl = !mostrarInputUrl"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                </svg>
+                <span>Usar enlace</span>
+              </button>
+
+              @if (fotoPerfil) {
+                <button
+                  type="button"
+                  class="btn-photo-remove"
+                  (click)="quitarFoto()"
+                  [disabled]="guardando"
+                >
+                  Quitar foto
+                </button>
+              }
+            </div>
+
+            @if (mostrarInputUrl) {
+              <div class="external-url-box">
+                <input
+                  type="url"
+                  class="profile-text-input"
+                  placeholder="https://ejemplo.com/mi-foto.jpg"
+                  [(ngModel)]="urlExterna"
+                  (keyup.enter)="aplicarUrlExterna()"
+                />
+                <button type="button" class="btn-apply-url" (click)="aplicarUrlExterna()">
+                  Aplicar
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      </article>
+
+      <div class="steam-hero-aside">
+        <article class="steam-featured-card">
+          <div class="steam-featured-body">
+            <div class="steam-featured-eyebrow">MEMBRESÍA E IDENTIDAD</div>
+            <h2>Hola, {{ primerNombre }}</h2>
+            <p class="steam-featured-desc">
+              @if (rol === 'Creador gym') {
+                Anfitrión verificado con acceso a gestión de sedes, contabilidad e instructores.
+              } @else if (rol === 'Administrador') {
+                Control total de sedes, reseñas de la comunidad y administración de roles.
+              } @else {
+                Miembro activo de The House Fit con acceso directo a rutinas, reservas y pasarela de pagos.
+              }
+            </p>
+          </div>
+
+          <div class="steam-featured-meta">
+            <div class="steam-featured-price">Estado: Verificada · {{ rol }}</div>
+            <div class="steam-featured-foot">
+              <a
+                [routerLink]="esUsuarioOEntrenador ? '/mi-espacio/entrenamiento' : '/contabilidad-gestion'"
+                class="steam-featured-btn"
+              >
+                <span>{{ esUsuarioOEntrenador ? 'Ir a Mi entrenamiento' : 'Ir a Contabilidad' }}</span>
+              </a>
+              <span class="steam-featured-mark" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </article>
+
+        <div class="steam-aside-tiles">
+          <a
+            [routerLink]="esUsuarioOEntrenador ? '/mi-espacio/reservar-clase' : '/editar-gimnasio'"
+            class="steam-mini-glass-tile"
+          >
+            <span class="steam-mini-tile-label">{{ esUsuarioOEntrenador ? 'Agenda rápida' : 'Gestión' }}</span>
+            <strong class="steam-mini-tile-val">{{ esUsuarioOEntrenador ? 'Reservar clase' : 'Editar sede' }}</strong>
+          </a>
+          <a routerLink="/panel/dashboard" class="steam-mini-glass-tile">
+            <span class="steam-mini-tile-label">Inicio del portal</span>
+            <strong class="steam-mini-tile-val">Dashboard →</strong>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- AVISOS -->
+    @if (mensajeExito) {
+      <div class="profile-alert alert-success" role="status">
+        <span class="alert-text-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          {{ mensajeExito }}
+        </span>
+        <button type="button" class="alert-close" (click)="mensajeExito = ''" aria-label="Cerrar aviso">✕</button>
+      </div>
+    }
+    @if (mensajeError) {
+      <div class="profile-alert alert-error" role="alert">
+        <span class="alert-text-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          {{ mensajeError }}
+        </span>
+        <button type="button" class="alert-close" (click)="mensajeError = ''" aria-label="Cerrar aviso">✕</button>
+      </div>
+    }
+
+    <!-- 2. GRID DE CONFIGURACIÓN SOBRE VIDRIO OSCURO -->
+    <div class="profile-content-grid">
+      <!-- Columna Izquierda: Información de la Cuenta -->
+      <section class="steam-glass-panel profile-panel-card">
+        <div class="card-header-block">
+          <h2>Información de Mi Perfil</h2>
+          <p>Personaliza cómo aparece tu nombre y foto en reseñas, reservas y tu panel.</p>
+        </div>
+
+        <form class="profile-form" (ngSubmit)="guardarCambios()">
+          <div class="form-field">
+            <label for="perfil-nombre">Nombre completo</label>
+            <input
+              id="perfil-nombre"
+              name="nombre"
+              type="text"
+              class="profile-text-input"
+              [(ngModel)]="nombre"
+              placeholder="Tu nombre y apellido"
+              required
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="perfil-correo">Correo electrónico (ID de sesión)</label>
+            <input
+              id="perfil-correo"
+              type="email"
+              class="profile-text-input input-readonly"
+              [value]="correo"
+              readonly
+            />
+            <small class="field-hint">Tu correo está vinculado a la verificación de seguridad de tu cuenta.</small>
+          </div>
+
+          <div class="form-field">
+            <label>Tipo de cuenta activa</label>
+            <div class="role-summary-box">
+              <div class="role-summary-info">
+                <strong>{{ rol }}</strong>
+                @if (rol === 'Creador gym') {
+                  <span>Anfitrión verificado · Puedes publicar y editar tus sedes deportivas.</span>
+                } @else if (rol === 'Administrador') {
+                  <span>Control total del ecosistema The House Fit.</span>
+                } @else {
+                  <span>Miembro deportivo · Acceso a reservas, entrenamiento, rutinas Pro y tienda.</span>
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions-row">
+            <button type="submit" class="btn-save-profile" [disabled]="guardando">
+              {{ guardando ? 'Guardando cambios...' : 'Guardar cambios del perfil' }}
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Columna Derecha: Avatares Deportivos + Accesos según Rol -->
+      <div class="profile-side-stack">
+        <section class="steam-glass-panel profile-panel-card">
+          <div class="card-header-block">
+            <h2>Avatares Deportivos Rápidos</h2>
+            <p>Elige una insignia oficial de The House Fit con un clic.</p>
+          </div>
+
+          <div class="presets-grid">
+            @for (preset of presets; track preset.id) {
+              <button
+                type="button"
+                class="preset-avatar-card"
+                [class.active-preset]="fotoPerfil === preset.dataUrl"
+                (click)="elegirPreset(preset)"
+              >
+                <img [src]="preset.dataUrl" [alt]="preset.etiqueta" class="preset-img" />
+                <span class="preset-label">{{ preset.etiqueta }}</span>
+              </button>
+            }
+          </div>
+        </section>
+
+        <section class="steam-glass-panel profile-panel-card">
+          <div class="card-header-block">
+            <h2>Accesos Rápidos de tu Cuenta</h2>
+            <p>Atajos directos según tu rol de {{ rol }}.</p>
+          </div>
+
+          <div class="profile-Quick-links">
+            <a routerLink="/panel/dashboard" class="profile-quick-item">
+              <span class="quick-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+              </span>
+              <div class="quick-text">
+                <strong>Volver al Dashboard</strong>
+                <span>Resumen general de tu actividad</span>
+              </div>
+              <span class="quick-arrow" aria-hidden="true">→</span>
+            </a>
+
+            @if (esCreadorOAdmin) {
+              <a routerLink="/editar-gimnasio" class="profile-quick-item highlight-orange">
+                <span class="quick-icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                  </svg>
+                </span>
+                <div class="quick-text">
+                  <strong>Editar mi gimnasio</strong>
+                  <span>Gestiona fotos, precios y servicios de tus sedes</span>
+                </div>
+                <span class="quick-arrow" aria-hidden="true">→</span>
+              </a>
+
+              <a routerLink="/publicar-gimnasio" class="profile-quick-item">
+                <span class="quick-icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </span>
+                <div class="quick-text">
+                  <strong>Publicar nueva sede</strong>
+                  <span>Abre el asistente paso a paso de anfitrión</span>
+                </div>
+                <span class="quick-arrow" aria-hidden="true">→</span>
+              </a>
+            } @else {
+              <a routerLink="/mi-espacio/reservar-clase" class="profile-quick-item highlight-orange">
+                <span class="quick-icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </span>
+                <div class="quick-text">
+                  <strong>Mis Reservas de Clases</strong>
+                  <span>Consulta y agenda sesiones en tus sedes favoritas</span>
+                </div>
+                <span class="quick-arrow" aria-hidden="true">→</span>
+              </a>
+
+              <a routerLink="/mi-espacio/entrenamiento" class="profile-quick-item">
+                <span class="quick-icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                  </svg>
+                </span>
+                <div class="quick-text">
+                  <strong>Mi Entrenamiento</strong>
+                  <span>Rutinas guiadas y plan nutricional</span>
+                </div>
+                <span class="quick-arrow" aria-hidden="true">→</span>
+              </a>
+            }
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>

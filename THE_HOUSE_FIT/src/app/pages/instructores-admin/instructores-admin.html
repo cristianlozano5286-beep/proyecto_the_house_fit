@@ -1,90 +1,427 @@
-<div class="page-wrapper">
-    <h1 class="section-title">🧑‍🏫 Gestión de instructores</h1>
-    <p class="section-subtitle">Registra y administra los instructores/entrenadores de cada gimnasio</p>
+<div class="wizard-viewport">
+  <!-- CABECERA EN PANTALLA COMPLETA -->
+  <header class="wizard-navbar">
+    <div class="navbar-left">
+      <a routerLink="/panel/dashboard" class="brand-link" title="Volver al Dashboard">
+        <div class="logo-circle">
+          <img src="assets/logo-icon-white.png" alt="The House Fit" />
+        </div>
+        <span class="brand-text">THE HOUSE <strong>FIT</strong></span>
+      </a>
+      <span class="portal-badge">
+        {{ idEditar !== null ? 'CREADOR GYM · EDITANDO INSTRUCTOR' : 'CREADOR GYM · INSTRUCTORES' }}
+      </span>
+    </div>
 
-    @if (mensaje) {
-        <div class="alert" [class.success]="tipoMensaje==='success'" [class.error]="tipoMensaje==='error'">{{ mensaje }}</div>
+    <!-- PESTAÑAS DE PASOS CUANDO SE ESTÁ CREANDO O EDITANDO -->
+    @if (pantallaActual !== 'hub') {
+      <nav class="wizard-steps-tabs" aria-label="Pasos de instructor">
+        <button type="button" class="wizard-tab-btn" [class.active]="pantallaActual === 'paso1'" (click)="irAPaso('paso1')">
+          <span class="tab-num" [class.done]="pantallaActual === 'paso2' || pantallaActual === 'paso3'">1</span>
+          <span class="tab-label">Identidad y contacto</span>
+        </button>
+        <span class="tab-arrow-sep">›</span>
+        <button type="button" class="wizard-tab-btn" [class.active]="pantallaActual === 'paso2'" (click)="irAPaso('paso2')">
+          <span class="tab-num" [class.done]="pantallaActual === 'paso3'">2</span>
+          <span class="tab-label">Especialidad y trayectoria</span>
+        </button>
+        <span class="tab-arrow-sep">›</span>
+        <button type="button" class="wizard-tab-btn" [class.active]="pantallaActual === 'paso3'" (click)="irAPaso('paso3')">
+          <span class="tab-num">3</span>
+          <span class="tab-label">Sede y confirmación</span>
+        </button>
+      </nav>
     }
 
-    <div class="grid grid-2">
-        <section class="card">
-            <h2>{{ idEditar == null ? 'Registrar instructor' : 'Editar instructor' }}</h2>
-            <div class="form-row mt-16">
-                <div class="form-group">
-                    <label>Nombre completo</label>
-                    <input type="text" [(ngModel)]="nombre" placeholder="Nombre del instructor" />
-                </div>
-                <div class="form-group">
-                    <label>Correo</label>
-                    <input type="email" [(ngModel)]="correo" placeholder="correo@thehousefit.com" />
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Teléfono</label>
-                    <input type="text" [(ngModel)]="telefono" placeholder="300 000 0000" />
-                </div>
-                <div class="form-group">
-                    <label>Años de experiencia</label>
-                    <input type="number" min="0" [(ngModel)]="experiencia" />
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Especialidad</label>
-                <input type="text" [(ngModel)]="especialidad" placeholder="Ej. Musculación, Yoga, Crossfit" />
-            </div>
-            <div class="form-group">
-                <label>Gimnasio asignado</label>
-                <select [(ngModel)]="gimnasioId">
-                    <option [ngValue]="null">Sin asignar</option>
-                    @for (g of gimnasios; track g.id) {
-                        <option [ngValue]="g.id">{{ g.nombre }}</option>
-                    }
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Biografía</label>
-                <textarea rows="3" [(ngModel)]="biografia" placeholder="Breve descripción del instructor..."></textarea>
-            </div>
-            <div class="checkbox-group mb-16">
-                <label><input type="checkbox" [(ngModel)]="activo" /> Instructor activo</label>
-            </div>
-            <div class="flex gap-8">
-                <button class="btn btn-primary" (click)="guardar()">{{ idEditar == null ? 'Registrar' : 'Actualizar' }}</button>
-                <button class="btn btn-outline" (click)="limpiarFormulario()">Limpiar</button>
-            </div>
-        </section>
-
-        <section class="card">
-            <h2>Instructores registrados ({{ instructores.length }})</h2>
-            <div class="table-responsive mt-16">
-                <table>
-                    <thead>
-                        <tr><th>Instructor</th><th>Especialidad</th><th>Gimnasio</th><th>Estado</th><th>Acciones</th></tr>
-                    </thead>
-                    <tbody>
-                        @for (i of instructores; track i.id) {
-                            <tr>
-                                <td>{{ i.imagen }} {{ i.nombre }}</td>
-                                <td>{{ i.especialidad }}</td>
-                                <td>{{ nombreGimnasio(i.gimnasioId) }}</td>
-                                <td>
-                                    <span class="badge" [class.badge-success]="i.activo" [class.badge-gray]="!i.activo">
-                                        {{ i.activo ? 'Activo' : 'Inactivo' }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-outline btn-sm" (click)="editar(i)">✏️</button>
-                                    <button class="btn btn-danger btn-sm" (click)="eliminar(i)">🗑️</button>
-                                </td>
-                            </tr>
-                        }
-                        @empty {
-                            <tr><td colspan="5" class="empty-state">No hay instructores registrados.</td></tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </section>
+    <div class="navbar-right">
+      @if (pantallaActual !== 'hub') {
+        <button type="button" class="btn-nav-pill-subtle" (click)="volverAlHub()">
+          Ver todos los instructores
+        </button>
+        <button type="button" class="btn-nav-outline" (click)="guardar()" [disabled]="guardando">
+          {{ idEditar !== null ? 'Guardar cambios y salir' : 'Guardar instructor' }}
+        </button>
+      } @else {
+        <button type="button" class="btn-nav-outline" (click)="iniciarNuevo()">
+          + Nuevo instructor
+        </button>
+        <button type="button" class="btn-nav-pill" (click)="salirAlPanel()">
+          Salir al panel
+        </button>
+      }
     </div>
+  </header>
+
+  <!-- ================================================================= -->
+  <!-- PANTALLA HUB: BIENVENIDA Y LISTADO DE INSTRUCTORES                -->
+  <!-- ================================================================= -->
+  @if (pantallaActual === 'hub') {
+    <main class="hub-container">
+      @if (mensaje) {
+        <div class="studio-toast-alert" [class.error]="tipoMensaje === 'error'">
+          <span>{{ tipoMensaje === 'error' ? '⚠️' : '✓' }} {{ mensaje }}</span>
+          <button type="button" class="btn-nav-pill-subtle" (click)="mensaje = ''">Cerrar</button>
+        </div>
+      }
+
+      <div class="hub-top-row">
+        <div>
+          <div class="hub-header-badge">
+            <span class="pulse-dot"></span>
+            <span>Portal Dedicado de Entrenadores</span>
+          </div>
+          <h1 class="hub-greeting">Hola de nuevo, {{ nombreUsuario }}</h1>
+          <p class="hub-subtitle">
+            Selecciona un entrenador para editar su perfil paso a paso o incorpora un nuevo profesional a tu sede.
+          </p>
+        </div>
+
+        <div class="hub-kpis-row">
+          <div class="hub-kpi-pill">
+            <span class="kpi-val">{{ totalInstructores }}</span>
+            <span class="kpi-lbl">Instructores</span>
+          </div>
+          <div class="hub-kpi-pill highlight">
+            <span class="kpi-val">{{ totalActivos }}</span>
+            <span class="kpi-lbl">Activos</span>
+          </div>
+          <div class="hub-kpi-pill">
+            <span class="kpi-val">{{ totalSedes }}</span>
+            <span class="kpi-lbl">Sedes</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACCIÓN PRINCIPAL: CREAR NUEVO -->
+      <section class="hub-section">
+        <h2 class="hub-section-title">Incorporar talento deportivo</h2>
+        <div class="options-list" style="margin-top: 12px;">
+          <div class="option-row" (click)="iniciarNuevo()" role="button" tabindex="0">
+            <div class="option-left">
+              <div class="option-icon-square">🧑‍🏫</div>
+              <div class="option-meta">
+                <span class="option-label">Registrar un nuevo instructor desde cero</span>
+                <span class="option-sub">Te guiaremos paso a paso en su perfil, especialidad, experiencia y sede asignada</span>
+              </div>
+            </div>
+            <div class="option-chevron">›</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LISTADO INTERACTIVO PARA EDITAR O GESTIONAR -->
+      <section class="hub-section">
+        <div class="hub-section-header">
+          <h2 class="hub-section-title">Selecciona el instructor que deseas editar ({{ instructoresFiltrados.length }})</h2>
+        </div>
+
+        <div class="hub-controls-bar">
+          <div class="hub-search-box">
+            <span>🔍</span>
+            <input
+              type="text"
+              [(ngModel)]="busqueda"
+              placeholder="Buscar por nombre, correo, especialidad o gimnasio..." />
+          </div>
+
+          <div class="hub-filter-pills">
+            @for (f of ['Todas', 'Musculación', 'CrossFit', 'Yoga', 'Pilates']; track f) {
+              <button
+                type="button"
+                class="filter-pill-btn"
+                [class.active]="filtroEspecialidad === f"
+                (click)="filtroEspecialidad = f">
+                {{ f }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="items-stack-list">
+          @for (i of instructoresFiltrados; track i.id) {
+            <div class="draft-card" (click)="iniciarEdicion(i)" role="button" tabindex="0">
+              <div class="draft-icon-box">
+                <span>{{ i.imagen || '🏋️‍♂️' }}</span>
+              </div>
+              <div class="draft-info">
+                <div class="draft-title-row">
+                  <strong class="draft-title">{{ i.nombre }}</strong>
+                  <span class="draft-badge">{{ i.especialidad }}</span>
+                  <span class="draft-badge" [class.green]="i.activo">
+                    {{ i.activo ? '● Activo' : '○ Inactivo' }}
+                  </span>
+                </div>
+                <p class="draft-text">
+                  📍 {{ nombreGimnasio(i.gimnasioId) }} &middot; 🏅 {{ i.experiencia }} años exp. &middot; ✉️ {{ i.correo }}
+                </p>
+              </div>
+              <div class="draft-actions">
+                <button type="button" class="btn-card-edit" (click)="$event.stopPropagation(); iniciarEdicion(i)">
+                  ✏️ Editar
+                </button>
+                <button
+                  type="button"
+                  class="btn-card-delete"
+                  (click)="$event.stopPropagation(); eliminar(i)"
+                  title="Eliminar instructor">
+                  🗑️
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    </main>
+  }
+
+  <!-- ================================================================= -->
+  <!-- PASO 1: IDENTIDAD, AVATAR Y DATOS DE CONTACTO                     -->
+  <!-- ================================================================= -->
+  @if (pantallaActual === 'paso1') {
+    <main class="step-content-container">
+      @if (mensaje) {
+        <div class="studio-toast-alert" [class.error]="tipoMensaje === 'error'">
+          <span>{{ mensaje }}</span>
+        </div>
+      }
+
+      <span class="step-mini-tag">Paso 1 de 3 &middot; Identidad Profesional</span>
+      <h1 class="step-large-heading">
+        {{ idEditar !== null ? 'Edita la identidad de ' + nombre : '¿Quién es el nuevo entrenador de tu equipo?' }}
+      </h1>
+      <p class="step-description-text">
+        Elige un avatar representativo y completa sus datos de contacto para que los atletas puedan identificarlo en sus reservas.
+      </p>
+
+      <label class="studio-field-label" style="margin-bottom: 10px;">Elige un icono o avatar deportivo</label>
+      <div class="emoji-selector-grid">
+        @for (av of avataresSugeridos; track av) {
+          <button
+            type="button"
+            class="emoji-tile-btn"
+            [class.selected]="imagen === av"
+            (click)="seleccionarAvatar(av)">
+            {{ av }}
+          </button>
+        }
+      </div>
+
+      <div class="studio-fields-stack">
+        <div class="studio-field-box">
+          <label class="studio-field-label">Nombre completo del instructor *</label>
+          <input
+            type="text"
+            class="studio-input"
+            [(ngModel)]="nombre"
+            placeholder="Ej: Carlos Andrés Méndez" />
+        </div>
+
+        <div class="studio-row-2">
+          <div class="studio-field-box">
+            <label class="studio-field-label">Correo electrónico *</label>
+            <input
+              type="email"
+              class="studio-input"
+              [(ngModel)]="correo"
+              placeholder="carlos.instructor@thehousefit.com" />
+          </div>
+
+          <div class="studio-field-box">
+            <label class="studio-field-label">Teléfono / WhatsApp</label>
+            <input
+              type="text"
+              class="studio-input"
+              [(ngModel)]="telefono"
+              placeholder="Ej: 320 456 7890" />
+          </div>
+        </div>
+      </div>
+    </main>
+  }
+
+  <!-- ================================================================= -->
+  <!-- PASO 2: ESPECIALIDAD, AÑOS DE EXPERIENCIA Y BIOGRAFÍA             -->
+  <!-- ================================================================= -->
+  @if (pantallaActual === 'paso2') {
+    <main class="step-content-container">
+      <span class="step-mini-tag">Paso 2 de 3 &middot; Especialidad y Trayectoria</span>
+      <h1 class="step-large-heading">¿Cuál es el enfoque deportivo de {{ nombre || 'tu instructor' }}?</h1>
+      <p class="step-description-text">
+        Selecciona su disciplina principal, ajusta sus años de experiencia y destaca sus certificaciones.
+      </p>
+
+      <div class="choice-cards-grid">
+        @for (esp of especialidadesCards; track esp.nombre) {
+          <button
+            type="button"
+            class="choice-card-item"
+            [class.selected]="especialidad === esp.nombre"
+            (click)="seleccionarEspecialidad(esp.nombre, esp.icono)">
+            <span class="choice-card-emoji">{{ esp.icono }}</span>
+            <span class="choice-card-title">{{ esp.nombre }}</span>
+            <span class="choice-card-sub">{{ esp.desc }}</span>
+          </button>
+        }
+      </div>
+
+      <div class="studio-fields-stack">
+        <div class="studio-field-box">
+          <label class="studio-field-label">Especialidad personalizada *</label>
+          <input
+            type="text"
+            class="studio-input"
+            [(ngModel)]="especialidad"
+            placeholder="Ej: Musculación, Powerlifting, Yoga..." />
+        </div>
+
+        <div class="stepper-counter-card">
+          <div class="stepper-info">
+            <strong>Años de experiencia profesional</strong>
+            <span>Trayectoria entrenando atletas o dirigiendo clases grupales</span>
+          </div>
+          <div class="stepper-controls">
+            <button type="button" class="stepper-circle-btn" (click)="ajustarExperiencia(-1)">−</button>
+            <span class="stepper-value">{{ experiencia }}</span>
+            <button type="button" class="stepper-circle-btn" (click)="ajustarExperiencia(1)">+</button>
+          </div>
+        </div>
+
+        <div class="studio-field-box">
+          <label class="studio-field-label">Biografía y certificaciones</label>
+          <textarea
+            rows="3"
+            class="studio-textarea"
+            [(ngModel)]="biografia"
+            placeholder="Describe su formación, certificaciones y metodología de trabajo..."></textarea>
+
+          <div class="quick-suggestions-row">
+            @for (b of biosSugeridas; track b; let idx = $index) {
+              <button type="button" class="quick-chip-btn" (click)="aplicarBioSugerida(b)">
+                ✨ Plantilla profesional {{ idx + 1 }}
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    </main>
+  }
+
+  <!-- ================================================================= -->
+  <!-- PASO 3: SEDE ASIGNADA, ESTADO Y VISTA PREVIA                      -->
+  <!-- ================================================================= -->
+  @if (pantallaActual === 'paso3') {
+    <main class="step-content-container">
+      <span class="step-mini-tag">Paso 3 de 3 &middot; Asignación y Publicación</span>
+      <h1 class="step-large-heading">Asigna la sede de trabajo y confirma el perfil</h1>
+      <p class="step-description-text">
+        Elige en qué gimnasio estará disponible {{ nombre || 'el instructor' }} y verifica su tarjeta de presentación.
+      </p>
+
+      <label class="studio-field-label" style="margin-bottom: 10px;">Selecciona la sede asignada</label>
+      <div class="choice-cards-grid">
+        <button
+          type="button"
+          class="choice-card-item"
+          [class.selected]="gimnasioId === null"
+          (click)="gimnasioId = null">
+          <span class="choice-card-emoji">🌐</span>
+          <span class="choice-card-title">Todas las sedes</span>
+          <span class="choice-card-sub">Entrenador rotativo o freelance disponible en toda la red</span>
+        </button>
+
+        @for (g of gimnasios; track g.id) {
+          <button
+            type="button"
+            class="choice-card-item"
+            [class.selected]="gimnasioId === g.id"
+            (click)="gimnasioId = g.id">
+            <span class="choice-card-emoji">🏋️</span>
+            <span class="choice-card-title">{{ g.nombre }}</span>
+            <span class="choice-card-sub">{{ g.ciudad || 'Sede oficial The House Fit' }}</span>
+          </button>
+        }
+      </div>
+
+      <label class="studio-field-label" style="margin-bottom: 10px;">Estado de visibilidad en la plataforma</label>
+      <div class="studio-row-2">
+        <button
+          type="button"
+          class="choice-card-item"
+          [class.selected]="activo === true"
+          (click)="activo = true">
+          <span class="choice-card-emoji">✅</span>
+          <span class="choice-card-title">Instructor Activo</span>
+          <span class="choice-card-sub">Visible inmediatamente en el catálogo y habilitado para clases</span>
+        </button>
+
+        <button
+          type="button"
+          class="choice-card-item"
+          [class.selected]="activo === false"
+          (click)="activo = false">
+          <span class="choice-card-emoji">⏸️</span>
+          <span class="choice-card-title">En pausa / Inactivo</span>
+          <span class="choice-card-sub">Oculto temporalmente para nuevas reservas de usuarios</span>
+        </button>
+      </div>
+
+      <!-- VISTA PREVIA EN TIEMPO REAL -->
+      <div class="live-preview-box">
+        <span class="preview-header-tag">● Vista previa oficial del instructor</span>
+        <div class="draft-card" style="cursor: default;">
+          <div class="draft-icon-box">
+            <span>{{ imagen }}</span>
+          </div>
+          <div class="draft-info">
+            <div class="draft-title-row">
+              <strong class="draft-title">{{ nombre || 'Nombre del Instructor' }}</strong>
+              <span class="draft-badge">{{ especialidad }}</span>
+              <span class="draft-badge" [class.green]="activo">
+                {{ activo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+            <p class="draft-text">
+              📍 {{ nombreGimnasio(gimnasioId) }} &middot; 🏅 {{ experiencia }} años de experiencia &middot; ✉️ {{ correo || 'correo@thehousefit.com' }}
+            </p>
+            @if (biografia) {
+              <p class="draft-text" style="margin-top: 6px; color: #cbd5e1;">"{{ biografia }}"</p>
+            }
+          </div>
+        </div>
+      </div>
+    </main>
+  }
+
+  <!-- ================================================================= -->
+  <!-- FOOTER STICKY CON BARRA DE PROGRESO                               -->
+  <!-- ================================================================= -->
+  @if (pantallaActual !== 'hub') {
+    <footer class="wizard-sticky-footer">
+      <div class="footer-progress-bar">
+        <div class="progress-segment-wrap">
+          <div class="progress-segment-fill" [style.width.%]="100"></div>
+        </div>
+        <div class="progress-segment-wrap">
+          <div class="progress-segment-fill" [style.width.%]="pantallaActual === 'paso2' || pantallaActual === 'paso3' ? 100 : 0"></div>
+        </div>
+        <div class="progress-segment-wrap">
+          <div class="progress-segment-fill" [style.width.%]="pantallaActual === 'paso3' ? 100 : 0"></div>
+        </div>
+      </div>
+
+      <div class="footer-buttons-bar">
+        <button type="button" class="btn-footer-back" (click)="irPasoAnterior()">
+          Atrás
+        </button>
+
+        <button type="button" class="btn-footer-next" (click)="irPasoSiguiente()" [disabled]="guardando">
+          @if (pantallaActual === 'paso3') {
+            {{ idEditar !== null ? 'Guardar cambios del instructor' : 'Registrar instructor' }}
+          } @else {
+            Siguiente
+          }
+        </button>
+      </div>
+    </footer>
+  }
 </div>

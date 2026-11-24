@@ -1,9 +1,33 @@
 /* --- CONTENEDOR PRINCIPAL Y TEMA OSCURO --- */
+:host {
+    display: block;
+    position: relative;
+    min-height: 100vh;
+    background-color: transparent;
+}
+
+/* Luz atmosférica continua desde y=0 estilo Steam Dark Glass */
+:host::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse 95% 420px at 32% 0px, rgba(190, 62, 30, 0.14) 0%, rgba(140, 46, 24, 0.05) 52%, transparent 82%);
+}
+
+:host::before {
+    display: none;
+}
+
 .dark-page-wrapper {
-    background-color: #0c0c0c;
+    position: relative;
+    z-index: 1;
+    background-color: transparent;
     color: #fff;
     min-height: 100vh;
-    padding: 40px 20px;
+    padding: 36px 20px 80px;
 }
 
 .container-nutricion {

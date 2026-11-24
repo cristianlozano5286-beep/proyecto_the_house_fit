@@ -1,0 +1,8 @@
+appname=thehousefit_mid
+httpport=8080
+runmode=dev
+copyrequestbody=true
+url_crud=http://localhost:3000
+enviar_correo=false
+codigos_en_consola=false
+origen_cliente=http://localhost:4200

@@ -1,12 +1,16 @@
 // Modelos relacionados con el Módulo 2 (Gimnasios) y Módulo 3 (Servicios)
 
 export interface Gimnasio {
+  propietarioId?: number | null;
   id: number;
   nombre: string;
   direccion: string;
   barrio: string;
   ciudad: string;
+  departamento?: string;
   pais: string;
+  apartamentoPiso?: string;
+  codigoPostal?: string;
   telefono: string;
   horario: string;
   descripcion: string;
@@ -18,6 +22,36 @@ export interface Gimnasio {
   activo: boolean;
   lat?: number;
   lng?: number;
+
+  // Campos extendidos del asistente de creación / edición completa
+  tipoEspacio?: string;
+  tipoAcceso?: string;
+  mostrarUbicacionExacta?: boolean;
+  marcadorX?: number;
+  marcadorY?: number;
+  aforoMaximo?: number;
+  zonasEntrenamiento?: number;
+  entrenadoresPlanta?: number;
+  duchasVestidores?: number;
+  lockersDisponibles?: number;
+  comodidades?: string[];
+  aspectosDestacados?: string[];
+  tipoReservacion?: 'aprobar_primeras' | 'inmediata';
+  ajusteFinDeSemanaPorcentaje?: number;
+  descuentoPromocionActivo?: boolean;
+  descuentoUltimoMinutoActivo?: boolean;
+  descuentoSemanalActivo?: boolean;
+  tieneCamaraExterior?: boolean;
+  descripcionCamarasSeguridad?: string;
+  tieneMonitorRuido?: boolean;
+  tieneArmasOPropiedad?: boolean;
+  paisFiscal?: string;
+  direccionFiscal?: string;
+  apartamentoFiscal?: string;
+  ciudadFiscal?: string;
+  departamentoFiscal?: string;
+  codigoPostalFiscal?: string;
+  esEmpresa?: boolean;
 }
 
 export interface Instructor {

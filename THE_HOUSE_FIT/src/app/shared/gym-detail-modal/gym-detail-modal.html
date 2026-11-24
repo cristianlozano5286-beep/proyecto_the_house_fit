@@ -1,0 +1,909 @@
+<dialog
+  #gymDialog
+  class="thf-listing-dialog"
+  closedby="any"
+  [attr.aria-labelledby]="activeGym() ? 'gym-detail-title-' + activeGym()!.id : null"
+  (cancel)="onDialogCancel($event)"
+  (close)="onDialogNativeClose()"
+  (pointerdown)="onDialogPointerDown($event)"
+  (pointerup)="onDialogPointerUp($event)"
+>
+  @if (activeGym(); as gym) {
+    <div #modalScroller class="thf-listing-scroller">
+      <div id="thf-scroll-sentinel" class="thf-scroll-sentinel" aria-hidden="true"></div>
+      <!-- BARRA FLOTANTE STICKY AL HACER SCROLL (AIRBNB SCROLL ANCHORS + CONVERSIÓN RÁPIDA) -->
+      <div class="thf-sticky-anchor-wrap" [class.is-visible]="modalScrolled()">
+        <header class="thf-sticky-subnav">
+        <nav class="thf-sticky-links" aria-label="Secciones de la sede">
+          <button
+            type="button"
+            class="thf-anchor-btn"
+            [class.active]="seccionActiva() === 'fotos'"
+            (click)="scrollASeccion('fotos')"
+          >
+            Fotos
+          </button>
+          <button
+            type="button"
+            class="thf-anchor-btn"
+            [class.active]="seccionActiva() === 'servicios'"
+            (click)="scrollASeccion('servicios')"
+          >
+            Servicios
+          </button>
+          <button
+            type="button"
+            class="thf-anchor-btn"
+            [class.active]="seccionActiva() === 'resenas'"
+            (click)="scrollASeccion('resenas')"
+          >
+            Reseñas
+          </button>
+          <button
+            type="button"
+            class="thf-anchor-btn"
+            [class.active]="seccionActiva() === 'ubicacion'"
+            (click)="scrollASeccion('ubicacion')"
+          >
+            Ubicación
+          </button>
+        </nav>
+
+        <div class="thf-sticky-cta-group">
+          <div class="thf-sticky-price-meta">
+            <div class="thf-sticky-price-line">
+              <strong>{{ formatoPrecioPlanModal(gym) }}</strong>
+              <span>{{ planModalSeleccionado() === 'mensual' ? '/ mes' : '/ sesión' }}</span>
+            </div>
+            <div class="thf-sticky-rating-mini">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              </svg>
+              <span>{{ promedioModal() || '4.8' }}</span>
+              <span class="dot">·</span>
+              <span>{{ totalResenasModal() }} reseña(s)</span>
+            </div>
+          </div>
+
+          <button type="button" class="thf-sticky-reserve-btn" (click)="irAReservar()">
+            Reservar
+          </button>
+
+          <button
+            type="button"
+            class="thf-circle-close-btn compact"
+            (click)="cerrarModal()"
+            aria-label="Cerrar detalle del gimnasio"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </header>
+      </div>
+
+      <!-- CABECERA EDITORIAL SUPERIOR -->
+      <div class="thf-hero-topbar">
+        <div class="thf-hero-title-block">
+          <div class="thf-hero-kicker-row">
+            <span class="thf-verified-badge">
+              <span class="thf-verified-pulse" aria-hidden="true"></span>
+              Sede Verificada The House Fit
+            </span>
+            <span class="thf-city-chip">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              {{ gym.ciudad }}, {{ gym.pais }}
+            </span>
+          </div>
+
+          <h2 [id]="'gym-detail-title-' + gym.id" class="thf-hero-title">
+            {{ gym.nombre }}
+          </h2>
+        </div>
+
+        <div class="thf-hero-actions">
+          <button type="button" class="thf-action-pill" (click)="compartirSede(gym)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+              <polyline points="16 6 12 2 8 6" />
+              <line x1="12" y1="2" x2="12" y2="15" />
+            </svg>
+            <span>Compartir</span>
+          </button>
+
+          <button
+            type="button"
+            class="thf-action-pill"
+            [class.is-fav]="esFavorito(gym.id)"
+            (click)="alternarFavorito($event, gym)"
+            aria-label="Guardar gimnasio en favoritos"
+          >
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              [attr.fill]="esFavorito(gym.id) ? '#FF385C' : 'none'"
+              [attr.stroke]="esFavorito(gym.id) ? '#FF385C' : 'currentColor'"
+              stroke-width="2.1"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+            <span>{{ esFavorito(gym.id) ? 'Guardado' : 'Guardar' }}</span>
+          </button>
+
+          <button
+            type="button"
+            class="thf-circle-close-btn"
+            (click)="cerrarModal()"
+            autofocus
+            aria-label="Cerrar detalle del gimnasio"
+          >
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- MOSAICO EDITORIAL 1 + 4 BENTO GALLERY -->
+      <section id="gym-sec-fotos" class="thf-bento-gallery-section" aria-label="Galería de instalaciones">
+        @if (fotosMosaicoModal(); as fotos) {
+          <div class="thf-bento-mosaic">
+            <button
+              type="button"
+              class="thf-bento-tile thf-bento-lead"
+              (click)="abrirGaleria(0)"
+              [attr.aria-label]="'Abrir foto principal de ' + gym.nombre"
+            >
+              <img [src]="fotos[0]" [alt]="gym.nombre + ' - Vista principal'" decoding="async" (error)="onFotoError($event, 0)" />
+              <span class="thf-bento-scrim"></span>
+            </button>
+
+            @for (foto of fotos.slice(1, 5); track $index) {
+              <button
+                type="button"
+                class="thf-bento-tile"
+                (click)="abrirGaleria($index + 1)"
+                [attr.aria-label]="'Abrir foto ' + ($index + 2) + ' de ' + gym.nombre"
+              >
+                <img [src]="foto" [alt]="gym.nombre + ' - Zona ' + ($index + 2)" decoding="async" (error)="onFotoError($event, $index + 1)" />
+                <span class="thf-bento-scrim"></span>
+              </button>
+            }
+
+            <button
+              type="button"
+              class="thf-show-all-photos-btn"
+              (click)="abrirGaleria(0)"
+            >
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <circle cx="3" cy="3" r="1.4" />
+                <circle cx="8" cy="3" r="1.4" />
+                <circle cx="13" cy="3" r="1.4" />
+                <circle cx="3" cy="8" r="1.4" />
+                <circle cx="8" cy="8" r="1.4" />
+                <circle cx="13" cy="8" r="1.4" />
+                <circle cx="3" cy="13" r="1.4" />
+                <circle cx="8" cy="13" r="1.4" />
+                <circle cx="13" cy="13" r="1.4" />
+              </svg>
+              <span>Mostrar todas las fotos ({{ fotos.length }})</span>
+            </button>
+          </div>
+        }
+      </section>
+
+      <!-- GRID EDITORIAL 2 COLUMNAS: DETALLES IZQ + TARJETA STICKY DER -->
+      <div class="thf-editorial-split">
+        <!-- COLUMNA IZQUIERDA -->
+        <div class="thf-editorial-main">
+          <!-- Subtítulo técnico y ubicación -->
+          <div class="thf-specs-heading-block">
+            <h3 class="thf-specs-title">
+              Centro de entrenamiento en {{ gym.barrio }}, {{ gym.ciudad }}
+            </h3>
+            <p class="thf-specs-line">
+              {{ gym.servicios.length }} disciplinas incluidas
+              <span aria-hidden="true">·</span>
+              {{ gym.horario }}
+              <span aria-hidden="true">·</span>
+              Nivel Principiante a Pro
+            </p>
+          </div>
+
+          <!-- Banner Laurel "Favorito entre atletas" estilo Airbnb -->
+          <div class="thf-guest-favorite-banner">
+            <div class="thf-gf-laurel-col">
+              <svg class="thf-laurel-svg" width="26" height="40" viewBox="0 0 26 40" fill="none" aria-hidden="true">
+                <path d="M18 36C10 31 6 22 6 12C6 8 7.5 4.5 9.5 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                <ellipse cx="7" cy="10" rx="3.2" ry="1.8" transform="rotate(-35 7 10)" fill="currentColor" opacity="0.85" />
+                <ellipse cx="6.5" cy="17" rx="3.4" ry="1.9" transform="rotate(-20 6.5 17)" fill="currentColor" opacity="0.85" />
+                <ellipse cx="8.5" cy="24" rx="3.4" ry="1.9" transform="rotate(-5 8.5 24)" fill="currentColor" opacity="0.85" />
+                <ellipse cx="12.5" cy="30" rx="3.2" ry="1.8" transform="rotate(18 12.5 30)" fill="currentColor" opacity="0.85" />
+              </svg>
+              <div class="thf-gf-title">
+                <span>Favorito entre</span>
+                <strong>atletas</strong>
+              </div>
+              <svg class="thf-laurel-svg flip" width="26" height="40" viewBox="0 0 26 40" fill="none" aria-hidden="true">
+                <path d="M18 36C10 31 6 22 6 12C6 8 7.5 4.5 9.5 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                <ellipse cx="7" cy="10" rx="3.2" ry="1.8" transform="rotate(-35 7 10)" fill="currentColor" opacity="0.85" />
+                <ellipse cx="6.5" cy="17" rx="3.4" ry="1.9" transform="rotate(-20 6.5 17)" fill="currentColor" opacity="0.85" />
+                <ellipse cx="8.5" cy="24" rx="3.4" ry="1.9" transform="rotate(-5 8.5 24)" fill="currentColor" opacity="0.85" />
+                <ellipse cx="12.5" cy="30" rx="3.2" ry="1.8" transform="rotate(18 12.5 30)" fill="currentColor" opacity="0.85" />
+              </svg>
+            </div>
+
+            <p class="thf-gf-copy">
+              {{ esFavoritoAtletasModal()
+                ? 'Uno de los centros mejor valorados en ' + gym.ciudad + ' dentro de The House Fit'
+                : 'Sede certificada en equipación, higiene y acompañamiento profesional' }}
+            </p>
+
+            <div class="thf-gf-metrics">
+              <div class="thf-gf-stat">
+                <strong>{{ promedioModal() || '4.8' }}</strong>
+                <div class="thf-gf-stars" aria-label="Calificación en estrellas">★★★★★</div>
+              </div>
+              <div class="thf-gf-divider" aria-hidden="true"></div>
+              <button type="button" class="thf-gf-stat btn-link" (click)="scrollASeccion('resenas')">
+                <strong>{{ totalResenasModal() }}</strong>
+                <span>{{ totalResenasModal() === 1 ? 'Reseña' : 'Reseñas' }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Franja de Coaches / Anfitrión -->
+          @if (coachesModal(); as coaches) {
+            <div class="thf-host-mini-row">
+              <div class="thf-host-avatar">
+                {{ coaches[0] ? coaches[0].nombre.charAt(0) : 'HF' }}
+              </div>
+              <div class="thf-host-mini-copy">
+                <strong>
+                  {{ coaches[0] ? 'Coach líder: ' + coaches[0].nombre : 'Equipo de planta certificado The House Fit' }}
+                </strong>
+                <span>
+                  {{ coaches[0]
+                    ? coaches[0].especialidad + ' · ' + coaches[0].experiencia + ' años de trayectoria'
+                    : 'Acompañamiento técnico y guía inicial de rutina sin costo adicional' }}
+                </span>
+              </div>
+            </div>
+          }
+
+          <div class="thf-section-rule"></div>
+
+          <!-- Highlights editoriales limpios (sin cajas pesadas) -->
+          <div class="thf-highlights-stack">
+            <div class="thf-highlight-row">
+              <span class="thf-hl-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+              </span>
+              <div>
+                <strong>Jornada continua todos los días</strong>
+                <p>Acceso operativo en horario {{ gym.horario }} con registro digital ágil.</p>
+              </div>
+            </div>
+
+            <div class="thf-highlight-row">
+              <span class="thf-hl-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="16" rx="2" />
+                  <circle cx="9" cy="11" r="2" />
+                  <path d="M15 9h3M15 13h3M6 16c0-1.5 1.5-2.5 3-2.5s3 1 3 2.5" />
+                </svg>
+              </span>
+              <div>
+                <strong>Ingreso inmediato con Cédula</strong>
+                <p>Activa tu membresía mensual o pase diario en línea y valida tu documento en recepción.</p>
+              </div>
+            </div>
+
+            <div class="thf-highlight-row">
+              <span class="thf-hl-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  <polyline points="9 12 11 14 15 10" />
+                </svg>
+              </span>
+              <div>
+                <strong>Valoración física y diagnóstico inicial</strong>
+                <p>Control de IMC, adaptación postural y orientación técnica incluida desde el primer día.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="thf-section-rule"></div>
+
+          <!-- Sobre este centro -->
+          <section class="thf-editorial-section">
+            <h3 class="thf-ed-heading">Sobre este centro de entrenamiento</h3>
+            <p class="thf-ed-body" [class.is-collapsed]="!mostrarDescripcionCompleta() && gym.descripcion.length > 180">
+              {{ gym.descripcion }}
+            </p>
+            @if (mostrarDescripcionCompleta()) {
+              <p class="thf-ed-body secondary">
+                Ubicado estratégicamente en {{ gym.direccion }} ({{ gym.barrio }}, {{ gym.ciudad }}), este centro ofrece pisos con amortiguación de impacto, zonas diferenciadas para levantamiento y acondicionamiento metabólico, y soporte directo mediante tu membresía The House Fit.
+              </p>
+            }
+            <button
+              type="button"
+              class="thf-text-disclosure-btn"
+              (click)="mostrarDescripcionCompleta.set(!mostrarDescripcionCompleta())"
+            >
+              <span>{{ mostrarDescripcionCompleta() ? 'Mostrar menos' : 'Mostrar más' }}</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+          </section>
+
+          <div class="thf-section-rule"></div>
+
+          <!-- Dónde entrenarás (Zonas visuales estilo Airbnb "Dónde dormirás") -->
+          <section class="thf-editorial-section">
+            <h3 class="thf-ed-heading">Dónde entrenarás</h3>
+            <div class="thf-zones-grid">
+              @for (zona of zonasModal(); track zona.titulo; let idx = $index) {
+                <button type="button" class="thf-zone-card" (click)="abrirGaleria(idx + 1)">
+                  <div class="thf-zone-thumb">
+                    <img [src]="zona.foto" [alt]="zona.titulo" loading="lazy" decoding="async" (error)="onFotoError($event, idx + 1)" />
+                  </div>
+                  <strong>{{ zona.titulo }}</strong>
+                  <span>{{ zona.subtitulo }}</span>
+                </button>
+              }
+            </div>
+          </section>
+
+          <div class="thf-section-rule"></div>
+
+          <!-- Lo que ofrece este gimnasio (2 columnas limpias tipo Airbnb sin bordes pesados) -->
+          <section id="gym-sec-servicios" class="thf-editorial-section">
+            <h3 class="thf-ed-heading">Lo que ofrece este gimnasio</h3>
+            <div class="thf-amenities-two-col">
+              @for (servicio of serviciosVisiblesModal(); track servicio) {
+                <div class="thf-amenity-item">
+                  <span class="thf-amenity-svg" aria-hidden="true">
+                    @switch (iconoClaveServicio(servicio)) {
+                      @case ('weights') {
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                          <path d="M6.5 6.5v11M17.5 6.5v11M3 9v6M21 9v6M6.5 12h11" />
+                        </svg>
+                      }
+                      @case ('flame') {
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
+                        </svg>
+                      }
+                      @case ('heart') {
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                        </svg>
+                      }
+                      @case ('bike') {
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="5.5" cy="17.5" r="3.5" />
+                          <circle cx="18.5" cy="17.5" r="3.5" />
+                          <path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5V14l-3-3 4-3 2 3h2" />
+                        </svg>
+                      }
+                      @case ('snow') {
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                          <path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" />
+                        </svg>
+                      }
+                      @case ('drop') {
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+                        </svg>
+                      }
+                      @case ('wifi') {
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                          <path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" />
+                        </svg>
+                      }
+                      @case ('lock') {
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                          <rect x="3" y="11" width="18" height="11" rx="2" />
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                      }
+                      @case ('target') {
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                          <circle cx="12" cy="12" r="10" />
+                          <circle cx="12" cy="12" r="5" />
+                          <circle cx="12" cy="12" r="1" fill="currentColor" />
+                        </svg>
+                      }
+                      @default {
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                        </svg>
+                      }
+                    }
+                  </span>
+                  <span class="thf-amenity-name">{{ servicio }}</span>
+                </div>
+              }
+            </div>
+
+            @if (gym.servicios.length > 6) {
+              <button
+                type="button"
+                class="thf-outline-btn"
+                (click)="mostrarTodosServicios.set(!mostrarTodosServicios())"
+              >
+                {{ mostrarTodosServicios()
+                  ? 'Mostrar menos servicios'
+                  : 'Mostrar los ' + gym.servicios.length + ' servicios' }}
+              </button>
+            }
+          </section>
+        </div>
+
+        <!-- COLUMNA DERECHA STICKY: CAJA DE CONVERSIÓN ESTILO AIRBNB -->
+        <aside id="gym-booking-sidebar" class="thf-sticky-booking-col" aria-label="Reserva de membresía">
+          <div class="thf-booking-card">
+            <div class="thf-booking-head">
+              <div>
+                <span class="thf-booking-kicker">
+                  {{ planModalSeleccionado() === 'mensual' ? 'Membresía mensual oficial' : 'Pase diario / 1 sesión' }}
+                </span>
+                <div class="thf-booking-price-row">
+                  <strong>{{ formatoPrecioPlanModal(gym) }}</strong>
+                  <span>{{ planModalSeleccionado() === 'mensual' ? '/ mes' : '/ día' }}</span>
+                </div>
+              </div>
+              <div class="thf-booking-rating-pill">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+                <strong>{{ promedioModal() || '4.8' }}</strong>
+              </div>
+            </div>
+
+            <!-- Caja dividida bordeada estilo selector Airbnb -->
+            <div class="thf-airbnb-picker-box">
+              <div class="thf-picker-mode-row" role="tablist" aria-label="Modalidad de acceso">
+                <button
+                  type="button"
+                  role="tab"
+                  [attr.aria-selected]="planModalSeleccionado() === 'mensual'"
+                  class="thf-picker-cell"
+                  [class.is-selected]="planModalSeleccionado() === 'mensual'"
+                  (click)="seleccionarPlanModal('mensual')"
+                >
+                  <span class="cell-kicker">PLAN MENSUAL</span>
+                  <strong>Acceso ilimitado</strong>
+                </button>
+
+                <button
+                  type="button"
+                  role="tab"
+                  [attr.aria-selected]="planModalSeleccionado() === 'diario'"
+                  class="thf-picker-cell"
+                  [class.is-selected]="planModalSeleccionado() === 'diario'"
+                  (click)="seleccionarPlanModal('diario')"
+                >
+                  <span class="cell-kicker">PASE DIARIO</span>
+                  <strong>1 clase o día</strong>
+                </button>
+              </div>
+
+              <div class="thf-picker-info-row">
+                <span class="cell-kicker">HORARIO DE SEDE</span>
+                <strong>{{ gym.horario }}</strong>
+              </div>
+
+              <div class="thf-picker-info-row">
+                <span class="cell-kicker">RECEPCIÓN Y DIRECCIÓN</span>
+                <strong>{{ gym.telefono }} · {{ gym.direccion }}</strong>
+              </div>
+            </div>
+
+            @if (!mostrarFormularioReserva()) {
+              <ul class="thf-booking-perks">
+                <li>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <span>Zonas activas: {{ gym.servicios.slice(0, 2).join(' y ') }}</span>
+                </li>
+                <li>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <span>Valoración de IMC y guía inicial sin costo</span>
+                </li>
+                <li>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <span>Confirmación inmediata con número de cédula</span>
+                </li>
+              </ul>
+            }
+
+            @if (reservaExitoMensaje()) {
+              <div class="thf-checkout-success">
+                <strong>Membresía Activa y Contabilizada</strong>
+                <span>{{ reservaExitoMensaje() }}</span>
+              </div>
+            }
+
+            @if (mostrarFormularioReserva()) {
+              <div class="thf-inline-checkout">
+                <div class="thf-checkout-head">
+                  <h4>Registro con Cédula · {{ planModalSeleccionado() === 'mensual' ? 'Mensual' : 'Pase Diario' }}</h4>
+                  <button
+                    type="button"
+                    class="thf-checkout-cancel"
+                    (click)="mostrarFormularioReserva.set(false)"
+                  >
+                    Cerrar
+                  </button>
+                </div>
+
+                @if (reservaErrorMensaje()) {
+                  <div class="thf-checkout-error">{{ reservaErrorMensaje() }}</div>
+                }
+
+                <div class="thf-checkout-fields">
+                  <div class="thf-field full">
+                    <label for="thf-res-nombre">Nombre completo *</label>
+                    <input
+                      id="thf-res-nombre"
+                      name="nombre"
+                      type="text"
+                      [(ngModel)]="formReserva.nombre"
+                      autocomplete="name"
+                      placeholder="Ej: Juan Sebastián Pérez"
+                    />
+                  </div>
+                  <div class="thf-field">
+                    <label for="thf-res-cedula">Cédula *</label>
+                    <input
+                      id="thf-res-cedula"
+                      name="cedula"
+                      type="text"
+                      inputmode="numeric"
+                      [(ngModel)]="formReserva.cedula"
+                      autocorrect="off"
+                      autocapitalize="none"
+                      spellcheck="false"
+                      placeholder="1094958321"
+                    />
+                  </div>
+                  <div class="thf-field">
+                    <label for="thf-res-celular">Celular *</label>
+                    <input
+                      id="thf-res-celular"
+                      name="celular"
+                      type="tel"
+                      inputmode="tel"
+                      [(ngModel)]="formReserva.celular"
+                      autocomplete="tel"
+                      placeholder="314 789 4512"
+                    />
+                  </div>
+                  <div class="thf-field full">
+                    <label for="thf-res-correo">Correo electrónico *</label>
+                    <input
+                      id="thf-res-correo"
+                      name="correo"
+                      type="email"
+                      [(ngModel)]="formReserva.correo"
+                      autocomplete="email"
+                      autocorrect="off"
+                      autocapitalize="none"
+                      spellcheck="false"
+                      placeholder="correo@ejemplo.com"
+                    />
+                  </div>
+                  <div class="thf-field full">
+                    <label for="thf-res-dir">Dirección de residencia *</label>
+                    <input
+                      id="thf-res-dir"
+                      name="direccionResidencia"
+                      type="text"
+                      [(ngModel)]="formReserva.direccionResidencia"
+                      autocomplete="street-address"
+                      placeholder="Barrio, calle y número"
+                    />
+                  </div>
+                  <div class="thf-field full">
+                    <label for="thf-res-pago">Método de pago</label>
+                    <select id="thf-res-pago" name="metodoPago" [(ngModel)]="formReserva.metodoPago">
+                      <option value="Transferencia / Nequi">Transferencia / Nequi</option>
+                      <option value="Efectivo en Sede">Efectivo en Sede</option>
+                      <option value="Tarjeta Débito / Crédito">Tarjeta Débito / Crédito</option>
+                      <option value="PSE">PSE</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  class="thf-primary-ember-btn"
+                  (click)="confirmarPagoMembresiaModal(gym)"
+                >
+                  Pagar con Wompi Sandbox ({{ formatoPrecioPlanModal(gym) }})
+                </button>
+              </div>
+            } @else {
+              <button
+                type="button"
+                class="thf-primary-ember-btn"
+                (click)="irAReservar()"
+              >
+                <span>Reservar {{ planModalSeleccionado() === 'mensual' ? 'Membresía Mensual' : 'Pase Diario' }}</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </button>
+            }
+
+            <button type="button" class="thf-secondary-map-btn" (click)="abrirMapa(gym)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              <span>Ver ubicación en Google Maps</span>
+            </button>
+
+            <p class="thf-booking-foot">
+              Reserva protegida · Sin cargos ocultos · Pago seguro en línea o sede
+            </p>
+          </div>
+        </aside>
+      </div>
+
+      <div class="thf-section-rule wide"></div>
+
+      <!-- SECCIÓN FULL-WIDTH: LAUREL RATING HERO + BARRAS + RESEÑAS -->
+      <section id="gym-sec-resenas" class="thf-full-section">
+        <div class="thf-rating-hero-band">
+          <div class="thf-big-laurel-score">
+            <svg class="thf-big-laurel" width="46" height="72" viewBox="0 0 26 40" fill="none" aria-hidden="true">
+              <path d="M18 36C10 31 6 22 6 12C6 8 7.5 4.5 9.5 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+              <ellipse cx="7" cy="10" rx="3.2" ry="1.8" transform="rotate(-35 7 10)" fill="currentColor" opacity="0.85" />
+              <ellipse cx="6.5" cy="17" rx="3.4" ry="1.9" transform="rotate(-20 6.5 17)" fill="currentColor" opacity="0.85" />
+              <ellipse cx="8.5" cy="24" rx="3.4" ry="1.9" transform="rotate(-5 8.5 24)" fill="currentColor" opacity="0.85" />
+              <ellipse cx="12.5" cy="30" rx="3.2" ry="1.8" transform="rotate(18 12.5 30)" fill="currentColor" opacity="0.85" />
+            </svg>
+            <span class="thf-score-giant">{{ promedioModal() || '4.8' }}</span>
+            <svg class="thf-big-laurel flip" width="46" height="72" viewBox="0 0 26 40" fill="none" aria-hidden="true">
+              <path d="M18 36C10 31 6 22 6 12C6 8 7.5 4.5 9.5 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+              <ellipse cx="7" cy="10" rx="3.2" ry="1.8" transform="rotate(-35 7 10)" fill="currentColor" opacity="0.85" />
+              <ellipse cx="6.5" cy="17" rx="3.4" ry="1.9" transform="rotate(-20 6.5 17)" fill="currentColor" opacity="0.85" />
+              <ellipse cx="8.5" cy="24" rx="3.4" ry="1.9" transform="rotate(-5 8.5 24)" fill="currentColor" opacity="0.85" />
+              <ellipse cx="12.5" cy="30" rx="3.2" ry="1.8" transform="rotate(18 12.5 30)" fill="currentColor" opacity="0.85" />
+            </svg>
+          </div>
+          <h3>{{ esFavoritoAtletasModal() ? 'Favorito entre atletas' : 'Calificación verificada' }}</h3>
+          <p>
+            Evaluado en equipamiento, higiene, asesoría técnica y cumplimiento de horarios por miembros de The House Fit.
+          </p>
+        </div>
+
+        <!-- Desglose por categorías -->
+        <div class="thf-criteria-grid">
+          @for (crit of criteriosModal(); track crit.etiqueta) {
+            <div class="thf-criteria-item">
+              <div class="thf-criteria-top">
+                <span>{{ crit.etiqueta }}</span>
+                <strong>{{ crit.puntuacion.toFixed(1) }}</strong>
+              </div>
+              <div class="thf-criteria-track">
+                <div class="thf-criteria-fill" [style.width.%]="crit.porcentaje"></div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Tarjetas de reseñas en 2 columnas -->
+        <div class="thf-reviews-two-col">
+          @for (r of resenasModal(); track r.id) {
+            <article class="thf-review-card">
+              <header class="thf-review-head">
+                <div class="thf-review-avatar">{{ r.usuario.charAt(0) }}</div>
+                <div>
+                  <strong>{{ r.usuario }}</strong>
+                  <span>Atleta verificado · {{ r.fecha || 'Reciente' }}</span>
+                </div>
+              </header>
+              <div class="thf-review-stars" [attr.aria-label]="r.puntuacion + ' de 5 estrellas'">
+                {{ '★'.repeat(r.puntuacion) }}
+              </div>
+              <p>"{{ r.cuerpo }}"</p>
+            </article>
+          } @empty {
+            <div class="thf-empty-review-banner">
+              <strong>Sede destacada ({{ promedioModal() || '4.8' }} / 5)</strong>
+              <p>Entrena en {{ gym.nombre }} y sé de los primeros atletas en publicar una reseña verificada.</p>
+            </div>
+          }
+        </div>
+      </section>
+
+      <div class="thf-section-rule wide"></div>
+
+      <!-- SECCIÓN UBICACIÓN INTERACTIVA ("A DÓNDE IRÁS" BOTÓN DIRECTO A GOOGLE MAPS) -->
+      <section id="gym-sec-ubicacion" class="thf-full-section">
+        <div class="thf-loc-header">
+          <div>
+            <h3 class="thf-ed-heading">A dónde irás</h3>
+            <p class="thf-loc-subtitle">{{ gym.direccion }}, {{ gym.barrio }} · {{ gym.ciudad }}, {{ gym.pais }}</p>
+          </div>
+          <button type="button" class="thf-outline-btn" (click)="abrirMapa(gym)">
+            Abrir en Google Maps
+          </button>
+        </div>
+
+        <button
+          type="button"
+          class="thf-map-preview-btn"
+          (click)="abrirMapa(gym)"
+          [attr.aria-label]="'Ir a la ubicación exacta de ' + gym.nombre + ' en Google Maps'"
+        >
+          <span class="thf-map-grid-lines" aria-hidden="true"></span>
+          <span class="thf-map-action-cta" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+              <polyline points="15 3 21 3 21 9" />
+              <line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
+            Cómo llegar en Google Maps
+          </span>
+
+          <span class="thf-map-pin-cluster">
+            <span class="thf-map-pin-core">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" />
+              </svg>
+            </span>
+            <span class="thf-map-address-pill">
+              <strong>{{ gym.nombre }}</strong>
+              <span>{{ gym.direccion }} · {{ gym.barrio }}</span>
+            </span>
+          </span>
+
+          <span class="thf-map-meta-chips">
+            <span>Recepción: {{ gym.telefono }}</span>
+            <span>Horario: {{ gym.horario }}</span>
+            <span>Validación directa con cédula</span>
+          </span>
+        </button>
+      </section>
+
+      <div class="thf-section-rule wide"></div>
+
+      <!-- EQUIPO EN SEDE Y POLÍTICAS -->
+      <section id="gym-sec-anfitrion" class="thf-full-section">
+        <h3 class="thf-ed-heading">Instructores y reglas de la sede</h3>
+        <div class="thf-coaches-row">
+          @for (coach of coachesModal(); track coach.id) {
+            <div class="thf-coach-glass-card">
+              <div class="thf-coach-monogram">{{ coach.nombre.charAt(0) }}</div>
+              <div>
+                <strong>{{ coach.nombre }}</strong>
+                <span>{{ coach.especialidad }}</span>
+                <small>{{ coach.experiencia }} años de experiencia · Sede activa</small>
+              </div>
+            </div>
+          } @empty {
+            <div class="thf-coach-glass-card full">
+              <div class="thf-coach-monogram">HF</div>
+              <div>
+                <strong>Coaches certificados de planta</strong>
+                <span>Asesoría técnica en piso, corrección de postura y rutina inicial sin cargo adicional.</span>
+                <small>Disponible durante todo el horario operativo ({{ gym.horario }})</small>
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="thf-policies-grid">
+          <div class="thf-policy-col">
+            <strong>Acceso a la sede</strong>
+            <p>Presenta tu cédula en recepción para validar tu membresía mensual o pase diario al instante.</p>
+          </div>
+          <div class="thf-policy-col">
+            <strong>Normas de entrenamiento</strong>
+            <p>Uso obligatorio de toalla personal, hidratación sellada y retorno de discos a sus racks.</p>
+          </div>
+          <div class="thf-policy-col">
+            <strong>Transparencia de pago</strong>
+            <p>Sin cláusulas ocultas ni cargos sorpresa. El valor mostrado corresponde exactamente al período seleccionado.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- VISOR LIGHTBOX PANTALLA COMPLETA AL HACER CLIC EN CUALQUIER FOTO -->
+      @if (lightboxAbierto()) {
+        <div class="thf-lightbox-overlay" (click)="cerrarGaleria()">
+          <div class="thf-lightbox-stage" (click)="$event.stopPropagation()">
+            <div class="thf-lightbox-topbar">
+              <span class="thf-lightbox-counter">
+                {{ fotoActiva() + 1 }} / {{ fotosMosaicoModal().length }} · {{ gym.nombre }}
+              </span>
+              <button
+                type="button"
+                class="thf-circle-close-btn"
+                (click)="cerrarGaleria()"
+                aria-label="Cerrar galería de fotos"
+              >
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div class="thf-lightbox-main">
+              <button
+                type="button"
+                class="thf-lb-nav prev"
+                (click)="fotoAnterior($event)"
+                aria-label="Foto anterior"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </button>
+
+              <img
+                [src]="fotosMosaicoModal()[fotoActiva()] || fotosMosaicoModal()[0]"
+                [alt]="gym.nombre + ' - Fotografía ampliada'"
+                class="thf-lightbox-image"
+                decoding="async"
+                (error)="onFotoError($event, fotoActiva())"
+              />
+
+              <button
+                type="button"
+                class="thf-lb-nav next"
+                (click)="fotoSiguiente($event)"
+                aria-label="Foto siguiente"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+            </div>
+
+            <div class="thf-lightbox-thumbs">
+              @for (foto of fotosMosaicoModal(); track $index) {
+                <button
+                  type="button"
+                  class="thf-lb-thumb"
+                  [class.active]="$index === fotoActiva()"
+                  (click)="cambiarFotoModal($index)"
+                  [attr.aria-label]="'Seleccionar foto ' + ($index + 1)"
+                >
+                  <img [src]="foto" [alt]="'Miniatura ' + ($index + 1)" decoding="async" (error)="onFotoError($event, $index)" />
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      }
+      <!-- TOAST TOP-LAYER DENTRO DEL DIALOG -->
+      <div class="thf-dialog-toast" [class.is-shown]="!!localToast()" role="status" aria-live="polite">
+        {{ localToast() }}
+      </div>
+    </div>
+  }
+</dialog>

@@ -1,322 +1,395 @@
-<section class="dark-page">
-    <!-- Header principal despejado -->
-    <div class="page-header">
-        <span class="eyebrow"></span>
-        <h1 class="display-title" style="font-size: clamp(36px, 6vw, 64px); margin-top: 35px;">
-            ENCUENTRA TU <span class="accent">GIMNASIO IDEAL</span>
-        </h1>
-        <p class="page-desc">Busca gimnasios por ciudad o país, filtra por servicio y precio, y reserva tu entrenamiento en cualquier parte del mundo.</p>
-    </div>
+<section class="catalogo-airbnb-page">
+  <div class="airbnb-container">
+    <!-- Header de la página con animaciones de entrada -->
+    <header class="catalogo-header">
+      <div class="catalogo-badge-pill animate-fade-down">
+        <img src="assets/logo-icon-orange.png" alt="The House Fit" class="badge-brand-icon" />
+        <span class="beacon-pulse"></span>
+        <span>CATÁLOGO OFICIAL THE HOUSE FIT</span>
+        <span class="badge-count">{{ gimnasios.length }} SEDES</span>
+      </div>
 
-    <!-- Barra de búsqueda estilo Airbnb -->
-    <div class="airbnb-search">
-        <div class="airbnb-search-field grow" style="position: relative;" [class.active]="mostrarSugerencias">
-            <label>DÓNDE</label>
-            <input
-                type="text"
-                placeholder="Buscar ciudad, país o barrio..."
-                [(ngModel)]="destino"
-                (input)="buscar()"
-                (focus)="mostrarSugerencias = true"
-                (blur)="cerrarSugerenciasDiferido()"
-            />
-            @if (mostrarSugerencias && destinosDisponibles.length) {
-                <div class="airbnb-suggestions">
-                    @for (d of destinosDisponibles; track d) {
-                        <button type="button" (mousedown)="seleccionarDestino(d)"> {{ d }}</button>
-                    }
-                </div>
-            }
-        </div>
+      <h1 class="catalogo-title animate-fade-down delay-1">
+        Encuentra tu gimnasio <span class="gradient-text">ideal</span>
+      </h1>
+      <p class="catalogo-subtitle animate-fade-down delay-2">
+        Explora los mejores centros de acondicionamiento, box de crossfit, estudios de yoga y spas deportivos en Casanare y el mundo.
+      </p>
+    </header>
 
-        <div class="airbnb-search-divider"></div>
-
-        <!-- CAMPO SERVICIO PERSONALIZADO -->
-        <div class="airbnb-search-field custom-dropdown" (click)="toggleDropdownServicio($event)">
-            <label>SERVICIO</label>
-            <div class="selected-value">
-                <span>{{ servicioFiltro || 'Cualquiera' }}</span>
-                <span class="chevron" [class.rotated]="dropdownServicioAbierto">▾</span>
-            </div>
-
-            @if (dropdownServicioAbierto) {
-                <div class="dropdown-menu-custom" (click)="$event.stopPropagation()">
-                    <div 
-                        class="dropdown-option" 
-                        [class.active]="!servicioFiltro" 
-                        (click)="seleccionarServicioCustom('')"
-                    >
-                        Cualquiera
-                    </div>
-                    @for (s of serviciosDisponibles; track s) {
-                        <div 
-                            class="dropdown-option" 
-                            [class.active]="servicioFiltro === s" 
-                            (click)="seleccionarServicioCustom(s)"
-                        >
-                            {{ s }}
-                        </div>
-                    }
-                </div>
-            }
-        </div>
-
-        <div class="airbnb-search-divider"></div>
-
-        <!-- CAMPO PRECIO MÁX. -->
-        <div class="airbnb-search-field precio-field">
-            <label>PRECIO MÁX.</label>
-            <div class="precio-input-wrapper">
-                <span class="currency-symbol">$</span>
-                <input 
-                    type="number" 
-                    placeholder="Sin límite" 
-                    [(ngModel)]="precioMax" 
-                    (input)="buscar()" 
-                    min="0"
-                />
-            </div>
-        </div>
-
-        <!-- BOTÓN DE BÚSQUEDA -->
-        <button class="airbnb-search-btn" (click)="buscar()" aria-label="Buscar">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-        </button>
-    </div>
-
-    <!-- Chips de categorías rápidas -->
-    <div class="category-chips">
-        @for (s of serviciosDisponibles; track s) {
+    <!-- Barra de Búsqueda Flotante Estilo Airbnb con Efecto Glow -->
+    <div class="airbnb-search-bar-wrapper animate-fade-up delay-2">
+      <!-- Campo Dónde -->
+      <div
+        class="search-field grow"
+        [class.active]="campoActivo === 'donde' || mostrarSugerencias"
+        (click)="enfocarDestino($event)"
+      >
+        <label for="campo-destino-input">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="field-label-icon">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          DÓNDE
+        </label>
+        <div class="input-with-clear">
+          <input
+            #inputDestino
+            id="campo-destino-input"
+            type="text"
+            placeholder="Buscar ciudad, barrio o nombre..."
+            [(ngModel)]="destino"
+            (input)="buscar()"
+            (focus)="campoActivo = 'donde'; mostrarSugerencias = true"
+            (blur)="cerrarSugerenciasDiferido()"
+          />
+          @if (destino) {
             <button
-                type="button"
-                class="chip"
-                [class.chip-active]="servicioFiltro === s"
-                (click)="toggleServicio(s)"
-            >{{ s }}</button>
+              type="button"
+              class="btn-clear-input"
+              (click)="destino = ''; buscar(); enfocarDestino($event)"
+              aria-label="Limpiar destino"
+            >
+              ✕
+            </button>
+          }
+        </div>
+
+        @if (mostrarSugerencias && destinosDisponibles.length) {
+          <div class="airbnb-suggestions-box animate-dropdown" (click)="$event.stopPropagation()">
+            <div class="dropdown-header-note">CIUDADES Y DESTINOS DISPONIBLES</div>
+            @for (d of destinosDisponibles; track d) {
+              <button type="button" class="suggestion-item" (mousedown)="seleccionarDestino(d)">
+                <span class="suggestion-icon">📍</span>
+                <span class="suggestion-name">{{ d }}</span>
+              </button>
+            }
+          </div>
         }
-        <button type="button" class="chip chip-fav" [class.chip-active]="soloFavoritos" (click)="soloFavoritos = !soloFavoritos; buscar()">
-            ♥ Favoritos
-        </button>
+      </div>
+
+      <div class="search-divider"></div>
+
+      <!-- Dropdown Disciplina -->
+      <div
+        class="search-field custom-dropdown"
+        [class.active]="campoActivo === 'servicio' || dropdownServicioAbierto"
+        (click)="toggleDropdownServicio($event)"
+      >
+        <label>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="field-label-icon">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          DISCIPLINA
+        </label>
+        <div class="field-value-display">
+          <span class="field-value-text" [class.is-placeholder]="!servicioFiltro">
+            {{ servicioFiltro ? obtenerIconoServicio(servicioFiltro) + ' ' + servicioFiltro : 'Cualquiera' }}
+          </span>
+          <span class="chevron" [class.rotated]="dropdownServicioAbierto">▾</span>
+        </div>
+
+        @if (dropdownServicioAbierto) {
+          <div class="airbnb-dropdown-options disciplina-dropdown animate-dropdown" (click)="$event.stopPropagation()">
+            <div class="dropdown-header-note">DISCIPLINAS Y SERVICIOS</div>
+            <div class="dropdown-scroll">
+              <div
+                class="dropdown-option-row"
+                [class.selected]="!servicioFiltro"
+                (click)="seleccionarServicioCustom('')"
+              >
+                <span class="opt-icon-tile">🌐</span>
+                <span class="opt-label">Cualquier disciplina</span>
+                <span class="opt-meta">
+                  <span class="opt-count">{{ gimnasios.length }}</span>
+                  @if (!servicioFiltro) {
+                    <span class="opt-check">✓</span>
+                  }
+                </span>
+              </div>
+              @for (s of serviciosDisponibles; track s) {
+                <div
+                  class="dropdown-option-row"
+                  [class.selected]="servicioFiltro === s"
+                  (click)="seleccionarServicioCustom(s)"
+                >
+                  <span class="opt-icon-tile">{{ obtenerIconoServicio(s) }}</span>
+                  <span class="opt-label">{{ s }}</span>
+                  <span class="opt-meta">
+                    <span class="opt-count">{{ contarGimnasiosCon(s) }}</span>
+                    @if (servicioFiltro === s) {
+                      <span class="opt-check">✓</span>
+                    }
+                  </span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="search-divider"></div>
+
+      <!-- Precio Máximo -->
+      <div
+        class="search-field precio-field"
+        [class.active]="campoActivo === 'precio'"
+        (click)="enfocarPrecio($event)"
+      >
+        <label for="campo-precio-input">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="field-label-icon">
+            <line x1="12" y1="1" x2="12" y2="23"></line>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+          PRECIO MÁX.
+        </label>
+        <div class="precio-input-row">
+          <span class="currency-symbol" [class.has-value]="precioMax !== null">$</span>
+          <input
+            #inputPrecio
+            id="campo-precio-input"
+            type="number"
+            inputmode="numeric"
+            placeholder="Sin límite"
+            [(ngModel)]="precioMax"
+            (input)="buscar()"
+            (wheel)="$any($event.target).blur()"
+            (focus)="campoActivo = 'precio'; mostrarSugerencias = false; dropdownServicioAbierto = false"
+            min="0"
+          />
+          @if (precioMax !== null) {
+            <button
+              type="button"
+              class="btn-clear-input"
+              (click)="precioMax = null; buscar(); enfocarPrecio($event)"
+              aria-label="Sin límite"
+            >
+              ✕
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Botón de Búsqueda -->
+      <button class="search-submit-btn" (click)="buscar()" aria-label="Buscar gimnasios" title="Filtrar resultados">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </button>
     </div>
 
-    <!-- Barra de resultados + Ordenamiento Customizado Corregido -->
-    <div class="results-bar">
-        <p class="result-count">{{ gimnasiosFiltrados.length }} gimnasio(s) encontrado(s)</p>
-        
-        <div class="order-field">
-            <label>ORDENAR POR</label>
-            <div class="custom-select-wrapper" (click)="toggleDropdownOrden($event)">
-                <button type="button" class="custom-select-trigger">
-                    <span>{{ ordenSeleccionadoTexto || 'Relevancia' }}</span>
-                    <span class="chevron" [class.rotated]="dropdownOrdenAbierto">▾</span>
-                </button>
-                
-                @if (dropdownOrdenAbierto) {
-                    <div class="dropdown-menu-custom order-dropdown" (click)="$event.stopPropagation()">
-                        <div class="dropdown-option" 
-                             [class.active]="orden === 'relevancia'"
-                             (click)="seleccionarOrden('relevancia', 'Relevancia')">
-                            Relevancia
-                        </div>
-                        <div class="dropdown-option" 
-                             [class.active]="orden === 'precio-asc'"
-                             (click)="seleccionarOrden('precio-asc', 'Precio: menor a mayor')">
-                            Precio: menor a mayor
-                        </div>
-                        <div class="dropdown-option" 
-                             [class.active]="orden === 'precio-desc'"
-                             (click)="seleccionarOrden('precio-desc', 'Precio: mayor a menor')">
-                            Precio: mayor a menor
-                        </div>
-                        <div class="dropdown-option" 
-                             [class.active]="orden === 'calificacion'"
-                             (click)="seleccionarOrden('calificacion', 'Mejor calificados')">
-                            Mejor calificados
-                        </div>
-                    </div>
-                }
+    <!-- Chips Rápidos de Categorías con Íconos y Animación -->
+    <div class="quick-chips-wrapper animate-fade-up delay-3">
+      <div class="quick-chips-row">
+        <!-- Chip Todos -->
+        <button
+          type="button"
+          class="service-chip-pill"
+          [class.active]="!servicioFiltro && !soloFavoritos"
+          (click)="servicioFiltro = ''; soloFavoritos = false; buscar()"
+        >
+          <span class="chip-icon">🌐</span> Todos
+        </button>
+
+        @for (s of serviciosDisponibles; track s) {
+          <button
+            type="button"
+            class="service-chip-pill"
+            [class.active]="servicioFiltro === s"
+            (click)="toggleServicio(s)"
+          >
+            <span class="chip-icon">{{ obtenerIconoServicio(s) }}</span>
+            <span>{{ s }}</span>
+          </button>
+        }
+
+        <!-- Chip Favoritos -->
+        <button
+          type="button"
+          class="service-chip-pill fav-chip"
+          [class.active]="soloFavoritos"
+          (click)="soloFavoritos = !soloFavoritos; buscar()"
+        >
+          <span class="chip-icon">♥</span>
+          <span>Mis Favoritos</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Barra de Resultados & Ordenamiento -->
+    <div class="catalog-toolbar-row animate-fade-up delay-3">
+      <div class="results-count-group">
+        <span class="live-pulse-dot"></span>
+        <p class="results-count-text">
+          <strong>{{ gimnasiosFiltrados.length }}</strong> gimnasio(s) disponible(s)
+        </p>
+      </div>
+
+      <div class="toolbar-right-actions">
+        <!-- Ordenar Por -->
+        <div class="custom-select-wrapper" (click)="toggleDropdownOrden($event)">
+          <button type="button" class="order-trigger-btn">
+            <span class="order-label">Ordenar por:</span>
+            <span class="order-val">{{ ordenSeleccionadoTexto }}</span>
+            <span class="chevron" [class.rotated]="dropdownOrdenAbierto">▾</span>
+          </button>
+
+          @if (dropdownOrdenAbierto) {
+            <div class="airbnb-dropdown-options order-dropdown-box animate-dropdown" (click)="$event.stopPropagation()">
+              <div
+                class="dropdown-option-row"
+                [class.selected]="orden === 'relevancia'"
+                (click)="seleccionarOrden('relevancia', 'Relevancia')"
+              >
+                ✨ Relevancia
+              </div>
+              <div
+                class="dropdown-option-row"
+                [class.selected]="orden === 'precio-asc'"
+                (click)="seleccionarOrden('precio-asc', 'Precio: menor a mayor')"
+              >
+                💰 Precio: menor a mayor
+              </div>
+              <div
+                class="dropdown-option-row"
+                [class.selected]="orden === 'precio-desc'"
+                (click)="seleccionarOrden('precio-desc', 'Precio: mayor a menor')"
+              >
+                💎 Precio: mayor a menor
+              </div>
+              <div
+                class="dropdown-option-row"
+                [class.selected]="orden === 'calificacion'"
+                (click)="seleccionarOrden('calificacion', 'Mejor calificados')"
+              >
+                ⭐ Mejor calificados
+              </div>
             </div>
+          }
         </div>
 
         @if (destino || servicioFiltro || precioMax || soloFavoritos) {
-            <button class="clear-filters" (click)="limpiarFiltros()">Limpiar filtros ✕</button>
+          <button type="button" class="btn-clear-filters" (click)="limpiarFiltros()">
+            <span>Restablecer</span>
+            <span class="clear-cross">✕</span>
+          </button>
         }
+      </div>
     </div>
 
-    <!-- Grid de tarjetas estilo Airbnb -->
-    <div class="airbnb-grid">
-        @for (g of gimnasiosFiltrados; track g.id) {
-            <div class="airbnb-card" (click)="verDetalle(g)">
-                <div class="airbnb-card-image">
-                    <img [src]="g.fotos[0]" [alt]="g.nombre" loading="lazy" />
-                    <button
-                        class="heart-btn"
-                        [class.heart-active]="esFavorito(g.id)"
-                        (click)="alternarFavorito($event, g.id)"
-                        aria-label="Guardar en favoritos"
-                    >{{ esFavorito(g.id) ? '♥' : '♡' }}</button>
-                    @if (promedio(g.id)) {
-                        <span class="rating-badge">★ {{ promedio(g.id) }}</span>
-                    }
-                </div>
-                <div class="airbnb-card-body">
-                    <div class="flex-between">
-                        <h3 class="airbnb-card-title">{{ g.nombre }}</h3>
-                    </div>
-                    <p class="airbnb-card-location"> {{ g.ciudad }}, {{ g.pais }}</p>
-                    <p class="airbnb-card-barrio">{{ g.barrio }} · {{ g.horario }}</p>
-                    <div class="tag-row mt-8">
-                        @for (s of g.servicios.slice(0, 3); track s) {
-                            <span class="tag-outline">{{ s }}</span>
-                        }
-                    </div>
-                    <p class="airbnb-card-price"><strong>{{ formatoPrecio(g) }}</strong> / mes</p>
-                </div>
+    <!-- Grid de Tarjetas Estilo Airbnb con Animación de Entrada -->
+    <div class="airbnb-listings-grid">
+      @for (g of gimnasiosFiltrados; track g.id) {
+        <article class="airbnb-card-item animate-card-pop" (click)="verDetalle(g)">
+          <div class="card-media-wrapper">
+            <img [src]="fotoActualDe(g)" [alt]="g.nombre" loading="lazy" />
+
+            <!-- Badge "Favorito entre atletas" estilo Airbnb -->
+            @if (esFavoritoAtletas(g.id)) {
+              <div class="guest-favorite-pill">
+                <span class="fav-sparkle">🏆</span>
+                <span>Favorito entre atletas</span>
+              </div>
+            }
+
+            <!-- Navegación de carrusel -->
+            @if (g.fotos.length > 1) {
+              <button
+                type="button"
+                class="carousel-nav-btn prev-btn"
+                (click)="anteriorFotoTarjeta($event, g)"
+                aria-label="Foto anterior"
+              >
+                ‹
+              </button>
+              <button
+                type="button"
+                class="carousel-nav-btn next-btn"
+                (click)="siguienteFotoTarjeta($event, g)"
+                aria-label="Foto siguiente"
+              >
+                ›
+              </button>
+
+              <!-- Puntos indicadores del carrusel -->
+              <div class="card-carousel-dots" aria-hidden="true">
+                @for (f of g.fotos; track $index) {
+                  <span class="carousel-dot" [class.active]="$index === indiceFotoActual(g)"></span>
+                }
+              </div>
+            }
+
+            <!-- Botón Favorito ♥ -->
+            <button
+              type="button"
+              class="card-heart-btn"
+              [class.is-favorite]="esFavorito(g.id)"
+              (click)="alternarFavorito($event, g.id)"
+              aria-label="Guardar en favoritos"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" [attr.fill]="esFavorito(g.id) ? '#FF385C' : 'rgba(0,0,0,0.35)'" stroke="currentColor" stroke-width="2.2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+            </button>
+
+            <!-- Badge Calificación -->
+            @if (promedio(g.id)) {
+              <div class="card-badge-rating">
+                <span class="star-icon">★</span>
+                <span>{{ promedio(g.id) }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="card-info-content">
+            <div class="card-info-header">
+              <h3 class="card-gym-name">{{ g.nombre }}</h3>
+              @if (promedio(g.id)) {
+                <span class="card-inline-rating">★ {{ promedio(g.id) }}</span>
+              }
             </div>
-        }
-        @empty {
-            <div class="empty-state-dark">
-                No encontramos gimnasios con esos filtros. Intenta con otra ciudad o país.
+            <p class="card-gym-location">📍 {{ g.ciudad }}, {{ g.pais }}</p>
+            <p class="card-gym-features">{{ g.barrio }} · {{ g.horario }}</p>
+
+            <div class="card-amenities-row">
+              @for (s of g.servicios.slice(0, 3); track s) {
+                <span class="card-amenity-tag">{{ s }}</span>
+              }
             </div>
-        }
+
+            <div class="card-price-row">
+              <strong>{{ formatoPrecio(g) }}</strong>
+              <span class="period"> / mes</span>
+            </div>
+          </div>
+        </article>
+      }
+      @empty {
+        <div class="empty-listings-state animate-fade-up">
+          <div class="empty-icon-pulse">🔍</div>
+          <h3>No encontramos gimnasios disponibles</h3>
+          <p>Intenta buscando en otra ciudad, modificando el precio o seleccionando otra disciplina.</p>
+          <button type="button" class="btn-airbnb btn-airbnb-primary" (click)="limpiarFiltros()">
+            Restablecer todos los filtros
+          </button>
+        </div>
+      }
     </div>
+  </div>
 </section>
 
-<!-- MODAL DE DETALLES MEJORADO -->
-@if (gimnasioSeleccionado) {
-    <div class="modal-overlay" (click)="cerrarDetalle()">
-        <div class="modal-dark listing-modal" (click)="$event.stopPropagation()">
-            <div class="modal-dark-header">
-                <h2>{{ gimnasioSeleccionado.nombre }}</h2>
-                <div class="header-actions">
-                    <button
-                        class="modal-icon-btn"
-                        [class.heart-active]="esFavorito(gimnasioSeleccionado.id)"
-                        (click)="alternarFavorito($event, gimnasioSeleccionado.id)"
-                    >{{ esFavorito(gimnasioSeleccionado.id) ? '♥' : '♡' }}</button>
-                    <button class="modal-icon-btn close-btn" (click)="cerrarDetalle()">✕</button>
-                </div>
-            </div>
+<!-- MODAL DE DETALLE DE GIMNASIO (AIRBNB SHOWCASE EDITORIAL) -->
+<app-gym-detail-modal
+  [gimnasio]="gimnasioSeleccionado"
+  (cerrada)="cerrarDetalle()"
+  (toastMensaje)="onModalToast($event)"
+></app-gym-detail-modal>
 
-            <!-- Galería de fotos con navegación -->
-            <div class="photo-gallery">
-                <img [src]="gimnasioSeleccionado.fotos[fotoActiva]" [alt]="gimnasioSeleccionado.nombre" />
-                @if (gimnasioSeleccionado.fotos.length > 1) {
-                    <button class="gallery-nav left" (click)="fotoAnterior($event)">‹</button>
-                    <button class="gallery-nav right" (click)="fotoSiguiente($event)">›</button>
-                    <div class="gallery-dots">
-                        @for (f of gimnasioSeleccionado.fotos; track $index) {
-                            <span class="dot" [class.dot-active]="$index === fotoActiva" (click)="cambiarFoto($index)"></span>
-                        }
-                    </div>
-                }
-            </div>
 
-            <div class="modal-dark-body">
-                <div class="modal-info-bar">
-                    <p class="listing-location"> {{ gimnasioSeleccionado.direccion }}, {{ gimnasioSeleccionado.barrio }}, {{ gimnasioSeleccionado.ciudad }}, {{ gimnasioSeleccionado.pais }}</p>
-                    @if (promedio(gimnasioSeleccionado.id)) {
-                        <span class="stars-badge">★ {{ promedio(gimnasioSeleccionado.id) }} <small>({{ resenasDe(gimnasioSeleccionado.id).length }})</small></span>
-                    }
-                </div>
-
-                <div class="price-container">
-                    <span class="price-value">{{ formatoPrecio(gimnasioSeleccionado) }}</span>
-                    <span class="price-period">/ mes</span>
-                </div>
-
-                <div class="info-grid">
-                    <div class="info-item">
-                        <span class="info-icon">📞</span>
-                        <div>
-                            <span class="info-label">Teléfono</span>
-                            <span class="info-val">{{ gimnasioSeleccionado.telefono }}</span>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-icon">⏰</span>
-                        <div>
-                            <span class="info-label">Horario</span>
-                            <span class="info-val">{{ gimnasioSeleccionado.horario }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <p class="description-text">{{ gimnasioSeleccionado.descripcion }}</p>
-
-                <div class="section-block">
-                    <h4 class="block-title">SERVICIOS INCLUIDOS</h4>
-                    <div class="tag-row">
-                        @for (s of gimnasioSeleccionado.servicios; track s) {
-                            <span class="tag-pill">{{ s.toUpperCase() }}</span>
-                        }
-                    </div>
-                </div>
-
-                <!-- Contenedor del Mapa / Ubicación -->
-                <div class="airbnb-location-card">
-                    <div class="map-preview-container" (click)="abrirMapaInteractivo()">
-                        <div class="map-overlay">
-                            <span class="map-badge">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                    <circle cx="12" cy="10" r="3"></circle>
-                                </svg>
-                                Ver en mapa interactivo
-                            </span>
-                        </div>
-                    </div>
-                  
-                    <div class="action-buttons-row">
-                        <button class="btn-location-full" (click)="abrirMapaInteractivo()">
-                            UBICACIÓN
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Instructores -->
-                <div class="section-block mt-24">
-                    <h4 class="block-title">INSTRUCTORES DESTACADOS</h4>
-                    <div class="cards-grid">
-                        @for (i of instructoresDe(gimnasioSeleccionado.id); track i.id) {
-                            <div class="instructor-card">
-                                <div class="instructor-avatar">{{ i.imagen || '🧘' }}</div>
-                                <div class="instructor-info">
-                                    <strong>{{ i.nombre }}</strong>
-                                    <p>{{ i.especialidad }} · {{ i.experiencia }} años exp.</p>
-                                </div>
-                            </div>
-                        }
-                        @empty {
-                            <p class="muted-text">Aún no hay instructores registrados.</p>
-                        }
-                    </div>
-                </div>
-
-                <!-- Reseñas -->
-                <div class="section-block mt-24">
-                    <h4 class="block-title">RESEÑAS DE CLIENTES</h4>
-                    <div class="reviews-list">
-                        @for (r of resenasDe(gimnasioSeleccionado.id); track r.id) {
-                            <div class="review-card">
-                                <div class="review-header">
-                                    <strong>{{ r.titulo }}</strong>
-                                    <span class="stars-rating">{{ '★'.repeat(r.puntuacion) }}</span>
-                                </div>
-                                <p class="review-body">{{ r.cuerpo }}</p>
-                                <span class="review-meta">{{ r.usuario }} · {{ r.fecha }}</span>
-                            </div>
-                        }
-                        @empty {
-                            <p class="muted-text">Este gimnasio aún no tiene reseñas.</p>
-                        }
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
+<!-- TOAST NOTIFICACIÓN -->
+@if (mostrarToast) {
+  <div class="airbnb-toast">
+    <span>{{ mensajeToast }}</span>
+  </div>
 }

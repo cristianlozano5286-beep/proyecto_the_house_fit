@@ -1,16 +1,20 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { routes } from '../app.routes';
+import { AuthService } from '../services/auth';
 
-export const authGuard: CanActivateFn = () => {
-  const router= inject(Router);
+export const authGuard: CanActivateFn = (_route, state) => {
+  const router = inject(Router);
+  const authService = inject(AuthService);
 
-
-  //Simulacion de autenticacion
-  const autenticado = localStorage.getItem('usuarioLogueado');
-  if(autenticado==='true'){
+  if (authService.estaAutenticado()) {
     return true;
   }
-  router.navigate(['/login']);
+
+  router.navigate(['/login'], {
+    queryParams: {
+      bloqueado: '1',
+      destino: state.url || '/',
+    },
+  });
   return false;
 };

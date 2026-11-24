@@ -1,0 +1,2118 @@
+<div class="wizard-viewport">
+    <!-- ================================================================= -->
+    <!-- CABECERA DE ALTA FIDELIDAD THE HOUSE FIT (ESTILO BECOME-A-HOST)    -->
+    <!-- ================================================================= -->
+    <header class="wizard-navbar">
+        <div class="navbar-left">
+            <a routerLink="/panel/dashboard" class="brand-link" title="Volver al Dashboard">
+                <div class="logo-circle">
+                    <img src="assets/logo-icon-white.png" alt="The House Fit" class="wizard-brand-logo-img" />
+                </div>
+                <span class="brand-text">THE HOUSE <strong>FIT</strong></span>
+            </a>
+            <span class="portal-badge">{{ esModoEdicion ? 'CREADOR GYM · EDICIÓN DE SEDE' : 'CREADOR GYM · PUBLICACIÓN' }}</span>
+        </div>
+
+        <!-- PESTAÑAS PRINCIPALES DEL ASISTENTE PARA PUBLICAR / EDITAR GIMNASIO -->
+        @if (pantallaActual !== 'hub') {
+            <nav class="wizard-steps-tabs" aria-label="Pasos de publicación">
+                <button
+                    type="button"
+                    class="wizard-tab-btn"
+                    [class.active]="esPaso1Activo"
+                    (click)="irAPaso('describe-espacio')"
+                    title="Paso 1: Describe tu espacio">
+                    <span class="tab-num" [class.done]="esPaso2Activo || esPaso3Activo">1</span>
+                    <span class="tab-label">Describe tu espacio</span>
+                </button>
+
+                <span class="tab-arrow-sep">›</span>
+
+                <button
+                    type="button"
+                    class="wizard-tab-btn"
+                    [class.active]="esPaso2Activo"
+                    (click)="irAPaso('stand-out')"
+                    title="Paso 2: Haz que destaque">
+                    <span class="tab-num" [class.done]="esPaso3Activo">2</span>
+                    <span class="tab-label">Haz que destaque</span>
+                </button>
+
+                <span class="tab-arrow-sep">›</span>
+
+                <button
+                    type="button"
+                    class="wizard-tab-btn"
+                    [class.active]="esPaso3Activo"
+                    (click)="irAPaso('intro-paso3')"
+                    title="Paso 3: Termina y publica">
+                    <span class="tab-num">3</span>
+                    <span class="tab-label">{{ esModoEdicion ? 'Termina y guarda' : 'Termina y publica' }}</span>
+                </button>
+            </nav>
+        }
+
+        <div class="navbar-right">
+            @if (esModoEdicion && pantallaActual !== 'hub') {
+                <button type="button" class="btn-nav-pill-subtle" (click)="volverASeleccionGimnasio()" title="Elegir otro gimnasio para editar">
+                    Cambiar gimnasio
+                </button>
+            } @else {
+                <button type="button" class="btn-nav-pill-subtle" (click)="abrirModalAyuda()" title="Centro de ayuda y soporte">
+                    ¿Alguna pregunta?
+                </button>
+            }
+            @if (pantallaActual !== 'hub') {
+                <button type="button" class="btn-nav-outline" (click)="guardarYSalir()" [disabled]="publicandoEnProceso">
+                    {{ esModoEdicion ? (publicandoEnProceso ? 'Guardando...' : 'Guardar cambios y salir') : 'Guarda y sal' }}
+                </button>
+            } @else {
+                <button type="button" class="btn-nav-pill" (click)="salir()">
+                    Salir al panel
+                </button>
+            }
+        </div>
+    </header>
+    @if (errorPublicacion) {
+        <p class="error-publicacion" role="alert">{{ errorPublicacion }}</p>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 1. HUB DE BIENVENIDA ("Hola de nuevo, Daniel")                    -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'hub') {
+        <main class="hub-container">
+            <div class="hub-header-badge">
+                <span class="pulse-dot"></span>
+                <span>{{ esModoEdicion ? 'Portal de Edición de Sedes' : 'Portal de Gestión de Sedes' }}</span>
+            </div>
+            <h1 class="hub-greeting">Hola de nuevo, {{ nombreUsuario }}</h1>
+
+            @if (esModoEdicion) {
+                <section class="hub-section">
+                    <h2 class="hub-section-title">Selecciona el gimnasio que deseas editar</h2>
+
+                    <div class="options-list">
+                        @for (g of gimnasiosEditables; track g.id) {
+                            <div class="draft-card" (click)="iniciarEdicionDeGimnasio(g)" role="button" tabindex="0">
+                                <div class="draft-icon-box" style="overflow: hidden;">
+                                    @if (g.fotos && g.fotos.length > 0) {
+                                        <img [src]="g.fotos[0]" [alt]="g.nombre" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;" />
+                                    } @else {
+                                        <span class="draft-icon">{{ g.imagen || '🏋️' }}</span>
+                                    }
+                                </div>
+                                <div class="draft-info">
+                                    <strong class="draft-title">{{ g.nombre }}</strong>
+                                    <p class="draft-text">
+                                        {{ g.ciudad }} &middot; {{ g.direccion }} &middot; ${{ g.precio | number }} {{ g.moneda || 'COP' }}/mes
+                                    </p>
+                                </div>
+                                <div class="draft-action-arrow">›</div>
+                            </div>
+                        }
+                    </div>
+                </section>
+
+                <section class="hub-section">
+                    <h2 class="hub-section-title">¿Buscas registrar otra sede?</h2>
+
+                    <div class="options-list">
+                        <div class="option-row" (click)="cambiarAModoCreacion()" role="button" tabindex="0">
+                            <div class="option-left">
+                                <div class="option-icon-square">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                </div>
+                                <div class="option-meta">
+                                    <span class="option-label">Crea un nuevo anuncio desde cero</span>
+                                    <span class="option-sub">Te guiaremos paso a paso en fotos, comodidades y ubicación</span>
+                                </div>
+                            </div>
+                            <div class="option-chevron">›</div>
+                        </div>
+                    </div>
+                </section>
+            } @else {
+                <section class="hub-section">
+                    <h2 class="hub-section-title">Terminar el anuncio</h2>
+
+                    <div class="draft-card" (click)="continuarBorrador()" role="button" tabindex="0">
+                        <div class="draft-icon-box">
+                            <span class="draft-icon">🏋️</span>
+                        </div>
+                        <div class="draft-info">
+                            <strong class="draft-title">{{ borrador?.nombre || 'Sede deportiva The House Fit' }}</strong>
+                            <p class="draft-text">
+                                Publicación en proceso iniciada el {{ borrador?.fechaInicio || fechaHoy }} &middot; {{ ciudad || 'Yopal' }}
+                            </p>
+                        </div>
+                        <div class="draft-action-arrow">›</div>
+                    </div>
+                </section>
+
+                <section class="hub-section">
+                    <h2 class="hub-section-title">Crea o edita un anuncio</h2>
+
+                    <div class="options-list">
+                        <div class="option-row" (click)="iniciarNuevoAnuncio()" role="button" tabindex="0">
+                            <div class="option-left">
+                                <div class="option-icon-square">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                </div>
+                                <div class="option-meta">
+                                    <span class="option-label">Crea un nuevo anuncio desde cero</span>
+                                    <span class="option-sub">Te guiaremos paso a paso en fotos, comodidades y ubicación</span>
+                                </div>
+                            </div>
+                            <div class="option-chevron">›</div>
+                        </div>
+
+                        <div class="option-row" (click)="cambiarAModoEdicion()" role="button" tabindex="0">
+                            <div class="option-left">
+                                <div class="option-icon-square">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 20h9"></path>
+                                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                                    </svg>
+                                </div>
+                                <div class="option-meta">
+                                    <span class="option-label">Editar un gimnasio ya publicado</span>
+                                    <span class="option-sub">Modifica fotos, precios, ubicación, comodidades o datos fiscales de tu sede</span>
+                                </div>
+                            </div>
+                            <div class="option-chevron">›</div>
+                        </div>
+
+                        <div class="option-row" (click)="abrirPlantillasExistentes()" role="button" tabindex="0">
+                            <div class="option-left">
+                                <div class="option-icon-square">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                </div>
+                                <div class="option-meta">
+                                    <span class="option-label">Crea a partir de una sede ya existente</span>
+                                    <span class="option-sub">Clona comodidades, planes y reglas de otra de tus sedes</span>
+                                </div>
+                            </div>
+                            <div class="option-chevron">›</div>
+                        </div>
+                    </div>
+                </section>
+            }
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 2. CONFIGURA TU ANUNCIO / DIRECCIÓN                              -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'configura-direccion') {
+        <main class="address-screen-container">
+            <div class="address-two-columns">
+                <div class="address-col-left">
+                    <div class="step-badge">Paso 1 &middot; Localización</div>
+                    <h1 class="main-hero-title">Configura tu sede en The House Fit</h1>
+                    <p class="main-hero-subtitle">
+                        Publicar tu gimnasio y empezar a recibir miembros es muy fácil. Comencemos definiendo tu dirección principal.
+                    </p>
+
+                    <div class="search-pill-btn" (click)="abrirModalDireccion()" role="button" tabindex="0">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff7a45" stroke-width="2.2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <span class="search-pill-text">{{ direccion ? direccion + ', ' + ciudad : 'Ingresa la dirección de tu gimnasio' }}</span>
+                    </div>
+
+                    <p class="secondary-offering-note">
+                        ¿Tienes dudas sobre los requisitos? Consulta nuestra <a href="javascript:void(0)" (click)="abrirModalDireccion()">Guía para Anfitriones y Creadores Gym</a>.
+                    </p>
+                </div>
+
+                <div class="address-col-right">
+                    <div class="pastel-wrapper-box">
+                        <div class="floating-preview-card">
+                            <div class="card-image-box">
+                                <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80" alt="Gym preview" />
+                                <span class="gym-floating-tag">Sede Deportiva</span>
+                            </div>
+                            <div class="card-content-box">
+                                <h3 class="card-title">
+                                    Gimnasio completo en {{ ciudad || 'Yopal' }}, {{ departamento || 'Casanare' }}
+                                </h3>
+                                <div class="card-host-line">
+                                    <span>Creador Gym: <strong>{{ nombreUsuario }}</strong></span>
+                                    <div class="mini-avatar">
+                                        {{ nombreUsuario.charAt(0) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 3. INTRO PASO 1: "DESCRIBE TU ESPACIO"                           -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'describe-espacio') {
+        <main class="step-overview-container">
+            <div class="step-overview-grid">
+                <div class="step-text-col">
+                    <span class="step-mini-tag">Paso 1</span>
+                    <h1 class="step-large-heading">Describe tu espacio</h1>
+                    <p class="step-description-text">
+                        En esta etapa configuraremos la categoría de tu centro fitness, si los usuarios tendrán acceso total o por zonas, y la ubicación exacta de las instalaciones.
+                    </p>
+                </div>
+
+                <div class="step-graphic-col">
+                    <div class="isometric-illustration-box">
+                        <div class="space-cutaway-art">
+                            <div class="cutaway-room">
+                                <div class="room-floor">
+                                    <div class="gym-equipment-zone weight-zone">
+                                        <span class="zone-label">🏋️ Zona de Musculación & Peso Libre</span>
+                                    </div>
+                                    <div class="gym-equipment-zone cardio-zone">
+                                        <span class="zone-label">🏃 Cardio & Cintas</span>
+                                    </div>
+                                    <div class="gym-equipment-zone lounge-zone">
+                                        <span class="zone-label">🧘 Yoga & Calentamiento</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 4. PANTALLA TIPO ESPACIO (IMAGE 1): ¿Cuál de estas opciones describe mejor tu espacio? -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'tipo-espacio') {
+        <main class="step-content-container">
+            <div class="step-header-center">
+                <span class="step-mini-tag">Paso 1 &middot; Tipología de Centro</span>
+                <h1 class="step-large-heading">¿Cuál de estas opciones describe mejor tu espacio?</h1>
+                <p class="step-description-text">
+                    Selecciona la categoría principal de tu gimnasio para que los atletas encuentren el entrenamiento adecuado.
+                </p>
+            </div>
+
+            <div class="spaces-grid-cards">
+                @for (item of tiposEspacio; track item.id) {
+                    <div
+                        class="space-select-card"
+                        [class.selected]="tipoEspacioSeleccionado === item.id"
+                        (click)="seleccionarTipoEspacio(item.id)"
+                        role="button"
+                        tabindex="0">
+                        <div class="space-card-icon">{{ item.icono }}</div>
+                        <div class="space-card-info">
+                            <h3 class="space-card-name">{{ item.nombre }}</h3>
+                            <p class="space-card-desc">{{ item.descripcion }}</p>
+                        </div>
+                        @if (tipoEspacioSeleccionado === item.id) {
+                            <div class="selected-check-indicator">✓</div>
+                        }
+                    </div>
+                }
+            </div>
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 5. PANTALLA TIPO ACCESO (IMAGE 2): ¿De qué tipo de alojamiento dispondrán los huéspedes? -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'tipo-acceso') {
+        <main class="step-content-container max-w-720">
+            <div class="step-header-center">
+                <span class="step-mini-tag">Paso 1 &middot; Modalidad de Acceso</span>
+                <h1 class="step-large-heading">¿De qué tipo de acceso dispondrán los usuarios?</h1>
+                <p class="step-description-text">
+                    Especifica cómo tus miembros o clientes accederán a las instalaciones deportivas.
+                </p>
+            </div>
+
+            <div class="stacked-access-options">
+                @for (opc of tiposAcceso; track opc.id) {
+                    <div
+                        class="access-option-card"
+                        [class.selected]="tipoAccesoSeleccionado === opc.id"
+                        (click)="seleccionarTipoAcceso(opc.id)"
+                        role="button"
+                        tabindex="0">
+                        <div class="access-text-col">
+                            <h3 class="access-title">{{ opc.titulo }}</h3>
+                            <p class="access-desc">{{ opc.descripcion }}</p>
+                        </div>
+                        <div class="access-icon-col">
+                            <span class="access-emoji-icon">{{ opc.icono }}</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 6. PANTALLA UBICACIÓN MARCADOR (IMAGE 3): ¿El marcador está en el lugar correcto? -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'ubicacion-marcador') {
+        <main class="step-content-container max-w-820">
+            <div class="step-header-center">
+                <span class="step-mini-tag">Paso 1 &middot; Confirmación Geográfica</span>
+                <h1 class="step-large-heading">¿El marcador está en el lugar correcto?</h1>
+                <p class="step-description-text">
+                    Solo compartiremos tu dirección con los usuarios que hayan realizado una reserva o comprado su membresía.
+                </p>
+            </div>
+
+            <div class="address-chip-bar" (click)="abrirModalDireccion()" title="Haz clic para modificar la dirección escrita">
+                <div class="address-chip-content">
+                    <span class="pin-symbol">📍</span>
+                    <span class="address-chip-text">{{ direccion }}, {{ ciudad }}, {{ departamento }}, Colombia</span>
+                </div>
+                <span class="edit-link-sub">Editar</span>
+            </div>
+
+            <div class="map-interactive-viewport" (click)="moverMarcadorEnMapa($event)">
+                <svg class="map-grid-svg" viewBox="0 0 800 450" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="mapBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#0f172a" />
+                            <stop offset="100%" stop-color="#090d16" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="800" height="450" fill="url(#mapBgGrad)" />
+
+                    <rect x="40" y="40" width="160" height="90" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+                    <rect x="230" y="40" width="160" height="90" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+                    <rect x="420" y="40" width="160" height="90" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+                    <rect x="610" y="40" width="150" height="90" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+
+                    <rect x="40" y="160" width="160" height="110" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+                    <rect x="230" y="160" width="160" height="110" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+                    <rect x="420" y="160" width="160" height="110" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+                    <rect x="610" y="160" width="150" height="110" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+
+                    <rect x="40" y="300" width="160" height="110" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+                    <rect x="230" y="300" width="160" height="110" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+                    <rect x="420" y="300" width="160" height="110" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+                    <rect x="610" y="300" width="150" height="110" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+
+                    <text x="120" y="148" fill="#94a3b8" font-size="12" font-weight="600">Calle 34 A</text>
+                    <text x="310" y="148" fill="#94a3b8" font-size="12" font-weight="600">Calle 34</text>
+                    <text x="500" y="148" fill="#94a3b8" font-size="12" font-weight="600">Calle 35</text>
+                    <text x="680" y="148" fill="#94a3b8" font-size="12" font-weight="600">Calle 36</text>
+
+                    <text x="208" y="220" fill="#ff7a45" font-size="12" font-weight="700" transform="rotate(-90 208,220)">Transversal 7</text>
+                    <text x="398" y="220" fill="#94a3b8" font-size="12" font-weight="600" transform="rotate(-90 398,220)">Transversal 7a</text>
+                    <text x="588" y="220" fill="#94a3b8" font-size="12" font-weight="600" transform="rotate(-90 588,220)">Carrera 15</text>
+                </svg>
+
+                <div
+                    class="interactive-pin-marker"
+                    [style.left.%]="marcadorX"
+                    [style.top.%]="marcadorY"
+                    title="Marcador de tu gimnasio">
+                    <div class="pin-radar-pulse"></div>
+                    <div class="pin-circle-badge">
+                        <span class="pin-gym-icon">🏋️</span>
+                    </div>
+                </div>
+
+                <div class="map-hint-pill">
+                    <span class="hint-dot"></span>
+                    <span>Arrastra o haz clic en el mapa para posicionar la sede</span>
+                </div>
+
+                <div class="map-zoom-controls" (click)="$event.stopPropagation()">
+                    <button type="button" class="zoom-btn" (click)="zoomIn()" title="Acercar">+</button>
+                    <button type="button" class="zoom-btn" (click)="zoomOut()" title="Alejar">&minus;</button>
+                </div>
+            </div>
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 7. PANTALLA PRIVACIDAD UBICACIÓN (IMAGE 4): Elige cómo ven los usuarios tu ubicación -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'ubicacion-privacidad') {
+        <main class="step-content-container max-w-820">
+            <div class="step-header-center">
+                <span class="step-mini-tag">Paso 1 &middot; Privacidad y Radio</span>
+                <h1 class="step-large-heading">Elige cómo ven los usuarios tu ubicación en un mapa</h1>
+                <p class="step-description-text">
+                    Solo compartiremos tu dirección después de que los usuarios reservan. Hasta entonces, verán una ubicación aproximada.
+                </p>
+            </div>
+
+            <div class="address-chip-bar">
+                <div class="address-chip-content">
+                    <span class="pin-symbol">📍</span>
+                    <span class="address-chip-text">{{ direccion }}, {{ ciudad }}, {{ departamento }}, Colombia</span>
+                </div>
+            </div>
+
+            <div class="map-interactive-viewport privacy-map-height">
+                <svg class="map-grid-svg" viewBox="0 0 800 360" preserveAspectRatio="none">
+                    <rect width="800" height="360" fill="#090d16" />
+                    <rect x="50" y="30" width="200" height="120" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+                    <rect x="280" y="30" width="220" height="120" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+                    <rect x="530" y="30" width="220" height="120" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+                    <rect x="50" y="180" width="200" height="150" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+                    <rect x="280" y="180" width="220" height="150" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+                    <rect x="530" y="180" width="220" height="150" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+
+                    <text x="140" y="165" fill="#94a3b8" font-size="12">Calle 34 A</text>
+                    <text x="370" y="165" fill="#94a3b8" font-size="12">Calle 35</text>
+                    <text x="620" y="165" fill="#94a3b8" font-size="12">Transversal 7</text>
+                </svg>
+
+                @if (mostrarUbicacionExacta) {
+                    <div class="interactive-pin-marker" style="left: 50%; top: 50%;">
+                        <div class="pin-radar-pulse"></div>
+                        <div class="pin-circle-badge">
+                            <span class="pin-gym-icon">🏋️</span>
+                        </div>
+                    </div>
+                } @else {
+                    <div class="privacy-radius-zone" style="left: 50%; top: 50%;">
+                        <div class="radius-glow-circle"></div>
+                        <div class="radius-center-dot">
+                            <span>📍 Zona aproximada</span>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="toggle-card-box">
+                <div class="toggle-info-col">
+                    <h3 class="toggle-main-title">Mostrar la ubicación exacta</h3>
+                    <p class="toggle-sub-desc">
+                        Permite que los usuarios vean la ubicación exacta de tu gimnasio en el mapa antes de reservar. <a href="javascript:void(0)" class="link-orange">Más información</a>
+                    </p>
+                </div>
+
+                <div class="toggle-switch-col">
+                    <label class="switch-container">
+                        <input type="checkbox" [(ngModel)]="mostrarUbicacionExacta" (change)="toggleUbicacionExacta()" />
+                        <span class="switch-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 8. PANTALLA DATOS BÁSICOS (IMAGE 5): Agrega algunos datos básicos sobre tu espacio -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'datos-basicos') {
+        <main class="step-content-container max-w-720">
+            <div class="step-header-center">
+                <span class="step-mini-tag">Paso 1 &middot; Capacidad e Instalaciones</span>
+                <h1 class="step-large-heading">Agrega algunos datos básicos sobre tu espacio</h1>
+                <p class="step-description-text">
+                    Después podrás agregar más información, como los tipos de máquinas específicas y los horarios por turnos.
+                </p>
+            </div>
+
+            <div class="counters-list-card">
+                <div class="counter-item-row">
+                    <div class="counter-meta-col">
+                        <span class="counter-title">Aforo máximo simultáneo</span>
+                        <span class="counter-desc">Usuarios entrenando cómodamente al mismo tiempo</span>
+                    </div>
+                    <div class="counter-actions-col">
+                        <button type="button" class="btn-step-counter" (click)="decrementar('aforo')" [disabled]="aforoMaximo <= 5">&minus;</button>
+                        <span class="counter-value-num">{{ aforoMaximo }}</span>
+                        <button type="button" class="btn-step-counter" (click)="incrementar('aforo')">+</button>
+                    </div>
+                </div>
+
+                <div class="counter-item-row">
+                    <div class="counter-meta-col">
+                        <span class="counter-title">Zonas o salas de entrenamiento</span>
+                        <span class="counter-desc">Áreas diferenciadas (ej. musculación, cardio, tatami, spinning)</span>
+                    </div>
+                    <div class="counter-actions-col">
+                        <button type="button" class="btn-step-counter" (click)="decrementar('zonas')" [disabled]="zonasEntrenamiento <= 1">&minus;</button>
+                        <span class="counter-value-num">{{ zonasEntrenamiento }}</span>
+                        <button type="button" class="btn-step-counter" (click)="incrementar('zonas')">+</button>
+                    </div>
+                </div>
+
+                <div class="counter-item-row">
+                    <div class="counter-meta-col">
+                        <span class="counter-title">Entrenadores de planta</span>
+                        <span class="counter-desc">Instructores presentes en sala para asesorar a los miembros</span>
+                    </div>
+                    <div class="counter-actions-col">
+                        <button type="button" class="btn-step-counter" (click)="decrementar('entrenadores')" [disabled]="entrenadoresPlanta <= 0">&minus;</button>
+                        <span class="counter-value-num">{{ entrenadoresPlanta }}</span>
+                        <button type="button" class="btn-step-counter" (click)="incrementar('entrenadores')">+</button>
+                    </div>
+                </div>
+
+                <div class="counter-item-row">
+                    <div class="counter-meta-col">
+                        <span class="counter-title">Duchas y vestidores</span>
+                        <span class="counter-desc">Cabinas individuales y vestuarios disponibles para aseo personal</span>
+                    </div>
+                    <div class="counter-actions-col">
+                        <button type="button" class="btn-step-counter" (click)="decrementar('duchas')" [disabled]="duchasVestidores <= 0">&minus;</button>
+                        <span class="counter-value-num">{{ duchasVestidores }}</span>
+                        <button type="button" class="btn-step-counter" (click)="incrementar('duchas')">+</button>
+                    </div>
+                </div>
+
+                <div class="counter-item-row no-border">
+                    <div class="counter-meta-col">
+                        <span class="counter-title">Casilleros / Lockers</span>
+                        <span class="counter-desc">Espacios seguros para que los miembros guarden bolsos y llaves</span>
+                    </div>
+                    <div class="counter-actions-col">
+                        <button type="button" class="btn-step-counter" (click)="decrementar('lockers')" [disabled]="lockersDisponibles <= 0">&minus;</button>
+                        <span class="counter-value-num">{{ lockersDisponibles }}</span>
+                        <button type="button" class="btn-step-counter" (click)="incrementar('lockers')">+</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 9. INTRO PASO 2: "HAZ QUE TU ESPACIO SE DESTAQUE" (NUEVA IMAGEN 1) -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'stand-out' || pantallaActual === 'completado-paso1') {
+        <main class="step-overview-container">
+            <div class="step-overview-grid">
+                <div class="step-text-col">
+                    <span class="step-mini-tag">Paso 2</span>
+                    <h1 class="step-large-heading">Haz que tu espacio se destaque</h1>
+                    <p class="step-description-text">
+                        En este paso deberás agregar algunas de las comodidades que ofrece tu gimnasio y al menos cinco fotos. Luego, deberás crear un título y una descripción atractivos.
+                    </p>
+                </div>
+
+                <div class="step-graphic-col">
+                    <div class="isometric-illustration-box">
+                        <!-- MAQUETA ISOMÉTRICA DEPORTIVA 3D THE HOUSE FIT -->
+                        <div class="isometric-cutaway-wrapper">
+                            <svg class="isometric-gym-svg" viewBox="0 0 600 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="gymWallGrad" x1="0" y1="0" x2="1" y2="1">
+                                        <stop offset="0%" stop-color="#1e293b" />
+                                        <stop offset="100%" stop-color="#0f172a" />
+                                    </linearGradient>
+                                    <linearGradient id="gymFloorGrad" x1="0" y1="0" x2="1" y2="0">
+                                        <stop offset="0%" stop-color="#161f30" />
+                                        <stop offset="100%" stop-color="#0d1424" />
+                                    </linearGradient>
+                                    <linearGradient id="orangeNeonGlow" x1="0" y1="0" x2="1" y2="1">
+                                        <stop offset="0%" stop-color="#ff7a45" />
+                                        <stop offset="100%" stop-color="#ff5722" />
+                                    </linearGradient>
+                                    <filter id="neonBlur" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="6" result="blur" />
+                                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                    </filter>
+                                </defs>
+
+                                <!-- Base de piso isométrico del gimnasio -->
+                                <polygon points="300,90 530,220 300,350 70,220" fill="url(#gymFloorGrad)" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+                                <!-- Cuadrícula de suelo deportivo / losas de caucho -->
+                                <path d="M185,155 L415,285 M125,190 L355,320 M240,125 L470,255" stroke="rgba(255,87,34,0.12)" stroke-width="1.5"/>
+                                <path d="M185,285 L415,155 M125,255 L355,125 M240,320 L470,190" stroke="rgba(255,87,34,0.12)" stroke-width="1.5"/>
+
+                                <!-- Pared trasera izquierda (espejos y logo neón) -->
+                                <polygon points="70,220 300,90 300,10 70,140" fill="url(#gymWallGrad)" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+                                <!-- Espejo con reflejos -->
+                                <polygon points="85,200 285,85 285,30 85,145" fill="rgba(56,189,248,0.08)" stroke="rgba(56,189,248,0.3)" stroke-width="1.5"/>
+                                <!-- Tira LED Neón The House Fit -->
+                                <line x1="85" y1="28" x2="285" y2="83" stroke="#ff5722" stroke-width="4" filter="url(#neonBlur)"/>
+                                <text x="185" y="115" fill="#ffffff" font-size="11" font-weight="800" letter-spacing="3" transform="rotate(-26 185 115)">THE HOUSE FIT</text>
+
+                                <!-- Pared trasera derecha (loft de cardio y ventanal) -->
+                                <polygon points="300,90 530,220 530,140 300,10" fill="#141c2e" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+                                <!-- Ventanales con luz exterior -->
+                                <polygon points="315,85 515,200 515,155 315,40" fill="rgba(255,87,34,0.06)" stroke="rgba(255,87,34,0.3)" stroke-width="1.5"/>
+
+                                <!-- Mezzanine / Loft Cardio (Nivel superior) -->
+                                <polygon points="310,130 490,230 430,265 250,165" fill="#1e293b" stroke="rgba(255,87,34,0.4)" stroke-width="2"/>
+                                <!-- Baranda de cristal templado en loft -->
+                                <polygon points="250,165 430,265 430,240 250,140" fill="rgba(56,189,248,0.18)" stroke="#38bdf8" stroke-width="1.5"/>
+                                <!-- Cintas de correr en loft -->
+                                <rect x="330" y="170" width="30" height="15" rx="3" fill="#ff5722" transform="rotate(-30 330 170)"/>
+                                <rect x="375" y="195" width="30" height="15" rx="3" fill="#ff5722" transform="rotate(-30 375 195)"/>
+
+                                <!-- Escalera isométrica de acceso -->
+                                <path d="M250,165 L270,177 L270,220 L250,208 Z" fill="#334155" stroke="rgba(255,255,255,0.2)"/>
+                                <path d="M230,177 L250,189 L250,232 L230,220 Z" fill="#1e293b" stroke="rgba(255,255,255,0.2)"/>
+                                <path d="M210,189 L230,201 L230,244 L210,232 Z" fill="#334155" stroke="rgba(255,255,255,0.2)"/>
+
+                                <!-- Zona de musculación en planta baja -->
+                                <!-- Banco de press de banca -->
+                                <rect x="180" y="240" width="45" height="18" rx="4" fill="#090d16" stroke="#ff7a45" stroke-width="2" transform="rotate(30 180 240)"/>
+                                <!-- Barra olímpica con discos -->
+                                <line x1="150" y1="230" x2="235" y2="280" stroke="#94a3b8" stroke-width="4"/>
+                                <circle cx="160" cy="235" r="9" fill="#ff5722" stroke="#ffffff" stroke-width="1.5"/>
+                                <circle cx="225" cy="275" r="9" fill="#ff5722" stroke="#ffffff" stroke-width="1.5"/>
+
+                                <!-- Rack piramidal de mancuernas -->
+                                <polygon points="260,250 310,280 310,260 260,230" fill="#090d16" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+                                <circle cx="275" cy="245" r="5" fill="#f8fafc"/>
+                                <circle cx="295" cy="257" r="6" fill="#f8fafc"/>
+
+                                <!-- Lockers / Casilleros vestidor -->
+                                <polygon points="120,240 160,263 160,210 120,187" fill="#1e293b" stroke="#ff5722" stroke-width="1.5"/>
+                                <line x1="140" y1="200" x2="140" y2="250" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+
+                                <!-- Glow decorativo inferior -->
+                                <ellipse cx="300" cy="400" rx="160" ry="25" fill="rgba(255,87,34,0.12)" filter="url(#neonBlur)"/>
+                            </svg>
+                            <div class="cutaway-badge-floating">
+                                <span class="badge-dot-live"></span>
+                                Maqueta 3D · Instalaciones The House Fit
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 10. PASO 2: COMODIDADES / SERVICIOS (NUEVA IMAGEN 2)             -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'comodidades') {
+        <main class="step-content-container max-w-860">
+            <div class="step-header-center">
+                <span class="step-mini-tag">Paso 2 &middot; Comodidades e Instalaciones</span>
+                <h1 class="step-large-heading">Indica a los usuarios qué comodidades encontrarán en tu gimnasio</h1>
+                <p class="step-description-text">
+                    Puedes agregar más comodidades una vez que publiques el anuncio o actualices tu sede.
+                </p>
+            </div>
+
+            <!-- SECCIÓN 1: BÁSICOS (ESTILO AIRBNB EXACTO) -->
+            <div class="amenities-group-block">
+                <h2 class="amenities-group-title">Básicos</h2>
+                <div class="amenities-grid-cards">
+                    @for (item of comodidadesBasicas; track item.id) {
+                        <div
+                            class="amenity-select-card"
+                            [class.selected]="estaComodidadSeleccionada(item.id)"
+                            (click)="toggleComodidad(item.id)"
+                            role="button"
+                            tabindex="0">
+                            <div class="amenity-card-icon-wrap">
+                                @switch (item.id) {
+                                    @case ('duchas') {
+                                        <!-- Ducha / Agua caliente -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M4 4h16v3a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V4z"/>
+                                            <path d="M6 15v1"/>
+                                            <path d="M10 15v2"/>
+                                            <path d="M14 15v1"/>
+                                            <path d="M18 15v2"/>
+                                            <path d="M8 19v1"/>
+                                            <path d="M12 19v2"/>
+                                            <path d="M16 19v1"/>
+                                        </svg>
+                                    }
+                                    @case ('aire') {
+                                        <!-- Aire acondicionado / Snowflake -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M12 2v20M2 12h20"/>
+                                            <path d="m4.93 4.93 14.14 14.14M19.07 4.93 4.93 19.07"/>
+                                            <path d="m9 2 3 3-3 3M15 22l-3-3 3-3M2 9l3 3-3 3M22 15l-3-3 3-3"/>
+                                        </svg>
+                                    }
+                                    @case ('lockers') {
+                                        <!-- Casilleros / Candado -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                            <circle cx="12" cy="16" r="1.5"/>
+                                        </svg>
+                                    }
+                                    @case ('wifi') {
+                                        <!-- Wi-Fi -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
+                                            <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+                                            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+                                            <line x1="12" y1="20" x2="12.01" y2="20"/>
+                                        </svg>
+                                    }
+                                    @case ('agua') {
+                                        <!-- Hidratación / Gotas de agua -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                                        </svg>
+                                    }
+                                    @case ('toallas') {
+                                        <!-- Toallas -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M4 6h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/>
+                                            <path d="M18 6V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2"/>
+                                            <line x1="7" y1="12" x2="17" y2="12"/>
+                                        </svg>
+                                    }
+                                    @case ('parking_auto') {
+                                        <!-- Parqueadero de autos -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="2" y="5" width="20" height="14" rx="3"/>
+                                            <path d="M9 17V9h4a3 3 0 0 1 0 6H9"/>
+                                        </svg>
+                                    }
+                                    @case ('parking_bici') {
+                                        <!-- Bici-parking -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="5.5" cy="17.5" r="3.5"/>
+                                            <circle cx="18.5" cy="17.5" r="3.5"/>
+                                            <path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5L9 11l3-3 3 3"/>
+                                            <path d="M12 17.5V14l4-3h3"/>
+                                        </svg>
+                                    }
+                                    @default {
+                                        <span class="emoji-icon-fallback">{{ item.icono }}</span>
+                                    }
+                                }
+                            </div>
+                            <span class="amenity-card-name">{{ item.nombre }}</span>
+                            @if (estaComodidadSeleccionada(item.id)) {
+                                <div class="amenity-check-badge">✓</div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- SECCIÓN 2: ZONAS Y EQUIPAMIENTO DEPORTIVO -->
+            <div class="amenities-group-block">
+                <h2 class="amenities-group-title">Zonas y Equipamiento Deportivo</h2>
+                <div class="amenities-grid-cards">
+                    @for (item of comodidadesEquipamiento; track item.id) {
+                        <div
+                            class="amenity-select-card"
+                            [class.selected]="estaComodidadSeleccionada(item.id)"
+                            (click)="toggleComodidad(item.id)"
+                            role="button"
+                            tabindex="0">
+                            <div class="amenity-card-icon-wrap">
+                                @switch (item.id) {
+                                    @case ('peso_libre') {
+                                        <!-- Mancuernas / Peso libre -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M6 5v14M18 5v14M2 9v6M22 9v6M6 12h12M4 7v10M20 7v10"/>
+                                        </svg>
+                                    }
+                                    @case ('maquinas') {
+                                        <!-- Máquinas de fuerza y poleas -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="3"/>
+                                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                                        </svg>
+                                    }
+                                    @case ('cardio') {
+                                        <!-- Cardio y cintas -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                                        </svg>
+                                    }
+                                    @case ('crossfit') {
+                                        <!-- CrossFit y barras -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                                        </svg>
+                                    }
+                                    @case ('yoga') {
+                                        <!-- Yoga y pilates -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="5" r="2.5"/>
+                                            <path d="M12 9v5l-3 4-2-2M12 14l3 4 2-2M7 11h10"/>
+                                        </svg>
+                                    }
+                                    @case ('boxeo') {
+                                        <!-- Boxeo / Combate -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M4 11V8a4 4 0 0 1 8 0v3"/>
+                                            <rect x="4" y="11" width="16" height="10" rx="3"/>
+                                            <path d="M12 11v10"/>
+                                        </svg>
+                                    }
+                                    @case ('spinning') {
+                                        <!-- Sala de spinning -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="7" cy="17" r="4"/>
+                                            <circle cx="17" cy="17" r="4"/>
+                                            <path d="M17 17l-5-8h-3l2 4"/>
+                                            <path d="M7 17l5-4"/>
+                                            <circle cx="13" cy="6" r="1.5"/>
+                                        </svg>
+                                    }
+                                    @case ('piscina') {
+                                        <!-- Piscina -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M2 12c1.5 0 2.5 1 4 1s2.5-1 4-1 2.5 1 4 1 2.5-1 4-1 2.5 1 4 1"/>
+                                            <path d="M2 17c1.5 0 2.5 1 4 1s2.5-1 4-1 2.5 1 4 1 2.5-1 4-1 2.5 1 4 1"/>
+                                            <circle cx="12" cy="6" r="2"/>
+                                            <path d="M12 8l4 2-2 2"/>
+                                        </svg>
+                                    }
+                                    @case ('sauna') {
+                                        <!-- Sauna -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M8 4c0 3 4 3 4 6s-4 3-4 6M16 4c0 3 4 3 4 6s-4 3-4 6"/>
+                                            <rect x="4" y="18" width="16" height="3" rx="1"/>
+                                        </svg>
+                                    }
+                                    @case ('cafeteria') {
+                                        <!-- Batidos de proteína -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M7 2h10l-1 18a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2L7 2z"/>
+                                            <line x1="6" y1="6" x2="18" y2="6"/>
+                                            <line x1="12" y1="2" x2="15" y2="9"/>
+                                        </svg>
+                                    }
+                                    @default {
+                                        <span class="emoji-icon-fallback">{{ item.icono }}</span>
+                                    }
+                                }
+                            </div>
+                            <span class="amenity-card-name">{{ item.nombre }}</span>
+                            @if (estaComodidadSeleccionada(item.id)) {
+                                <div class="amenity-check-badge">✓</div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- SECCIÓN 3: SERVICIOS PROFESIONALES -->
+            <div class="amenities-group-block">
+                <h2 class="amenities-group-title">Servicios Profesionales y Bienestar</h2>
+                <div class="amenities-grid-cards">
+                    @for (item of comodidadesServicios; track item.id) {
+                        <div
+                            class="amenity-select-card"
+                            [class.selected]="estaComodidadSeleccionada(item.id)"
+                            (click)="toggleComodidad(item.id)"
+                            role="button"
+                            tabindex="0">
+                            <div class="amenity-card-icon-wrap">
+                                @switch (item.id) {
+                                    @case ('entrenadores') {
+                                        <!-- Entrenadores -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                            <circle cx="9" cy="7" r="4"/>
+                                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                        </svg>
+                                    }
+                                    @case ('nutricion') {
+                                        <!-- Nutrición e InBody -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="3" y="4" width="18" height="16" rx="3"/>
+                                            <line x1="8" y1="12" x2="16" y2="12"/>
+                                            <line x1="12" y1="8" x2="12" y2="16"/>
+                                        </svg>
+                                    }
+                                    @case ('sonido') {
+                                        <!-- Sonido motivacional -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M9 18V5l12-2v13"/>
+                                            <circle cx="6" cy="18" r="3"/>
+                                            <circle cx="18" cy="16" r="3"/>
+                                        </svg>
+                                    }
+                                    @case ('primeros_auxilios') {
+                                        <!-- Botiquín -->
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="2" y="6" width="20" height="14" rx="3"/>
+                                            <path d="M12 10v6M9 13h6"/>
+                                            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                        </svg>
+                                    }
+                                    @default {
+                                        <span class="emoji-icon-fallback">{{ item.icono }}</span>
+                                    }
+                                }
+                            </div>
+                            <span class="amenity-card-name">{{ item.nombre }}</span>
+                            @if (estaComodidadSeleccionada(item.id)) {
+                                <div class="amenity-check-badge">✓</div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 11. PASO 2: FOTOS (NUEVAS IMÁGENES 3 Y 5)                        -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'fotos') {
+        <main class="step-content-container max-w-860">
+            <!-- ESTADO A: SIN FOTOS (NUEVA IMAGEN 3) -->
+            @if (fotos.length === 0) {
+                <div class="step-header-center">
+                    <span class="step-mini-tag">Paso 2 &middot; Galería Visual</span>
+                    <h1 class="step-large-heading">Agrega algunas fotos de tu gimnasio</h1>
+                    <p class="step-description-text">
+                        Para comenzar, necesitarás cinco fotos. Después podrás agregar más o hacer cambios.
+                    </p>
+                </div>
+
+                <!-- DROPZONE CON CÁMARA 3D (IMAGE 3 AIRBNB EXACTO) -->
+                <div class="empty-photos-dropzone" (click)="abrirModalFotos()" role="button" tabindex="0">
+                    <div class="camera-3d-box">
+                        <!-- ILUSTRACIÓN SVG CÁMARA 3D CON CORREA -->
+                        <svg class="camera-3d-svg" viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Correa de cuero -->
+                            <path d="M25 45 C15 20, 105 20, 95 45" stroke="#92400e" stroke-width="6" stroke-linecap="round" fill="none"/>
+                            <!-- Cuerpo cámara -->
+                            <rect x="18" y="32" width="84" height="56" rx="14" fill="#cbd5e1" stroke="#475569" stroke-width="3"/>
+                            <!-- Franja superior cromada -->
+                            <path d="M18 42 L102 42 L102 36 C102 33.8 100.2 32 98 32 L22 32 C19.8 32 18 33.8 18 36 Z" fill="#94a3b8"/>
+                            <!-- Botón disparador -->
+                            <rect x="28" y="27" width="14" height="5" rx="2" fill="#ef4444"/>
+                            <!-- Flash -->
+                            <rect x="76" y="35" width="12" height="8" rx="2" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5"/>
+                            <!-- Lente 3D -->
+                            <circle cx="60" cy="60" r="22" fill="#1e293b" stroke="#64748b" stroke-width="4"/>
+                            <circle cx="60" cy="60" r="15" fill="#0f172a"/>
+                            <circle cx="60" cy="60" r="10" fill="#0284c7" fill-opacity="0.6"/>
+                            <!-- Brillo del lente -->
+                            <ellipse cx="55" cy="55" rx="5" ry="3" fill="#ffffff" fill-opacity="0.8" transform="rotate(-30 55 55)"/>
+                        </svg>
+                    </div>
+
+                    <button type="button" class="btn-add-photos-center" (click)="abrirModalFotos(); $event.stopPropagation()">
+                        Agrega fotos
+                    </button>
+                    <p class="dropzone-sub-hint">Haz clic o arrastra fotos desde tu dispositivo</p>
+                </div>
+
+                <div class="quick-sample-photos-bar">
+                    <button type="button" class="btn-sample-photos" (click)="cargarFotosEjemplo()">
+                        ⚡ Cargar 6 fotos profesionales de demostración para mi gimnasio
+                    </button>
+                </div>
+            }
+
+            <!-- ESTADO B: CON FOTOS CARGADAS (NUEVA IMAGEN 5) -->
+            @if (fotos.length > 0) {
+                <div class="photos-manage-header">
+                    <div class="photos-title-col">
+                        <h1 class="step-large-heading mb-4">¡Tarán! ¿Qué tal se ve?</h1>
+                        <p class="step-description-text">
+                            Arrastra la foto para cambiarla de lugar
+                        </p>
+                    </div>
+
+                    <div class="photos-header-actions">
+                        <span class="photos-count-badge" [class.ready]="fotos.length >= 5">
+                            {{ fotos.length }} / 5 fotos {{ fotos.length >= 5 ? '✓ listas' : 'requeridas' }}
+                        </span>
+                        <button type="button" class="btn-plus-photo" (click)="abrirModalFotos()" title="Subir más fotos">
+                            +
+                        </button>
+                    </div>
+                </div>
+
+                <!-- GRILLA ESTILO AIRBNB DE FOTOS CON MENÚS Y BADGE BLANCO (IMAGE 5) -->
+                <div class="gym-photos-mosaic-grid">
+                    <!-- FOTO DE PORTADA PRINCIPAL (GRANDE) -->
+                    @if (fotoPortada) {
+                        <div class="photo-mosaic-item photo-cover-hero">
+                            <img [src]="fotoPortada.url" [alt]="fotoPortada.titulo" />
+                            
+                            <!-- BADGE BLANCO EXACTO A AIRBNB: "Foto de portada" -->
+                            <div class="cover-badge-pill-airbnb">Foto de portada</div>
+
+                            <!-- BOTÓN DE TRES PUNTOS EN LA TARJETA (IMAGE 5) -->
+                            <button
+                                type="button"
+                                class="btn-photo-dots"
+                                (click)="toggleMenuFoto(fotoPortada.id, $event)"
+                                title="Opciones de la foto">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <circle cx="5" cy="12" r="2.2" />
+                                    <circle cx="12" cy="12" r="2.2" />
+                                    <circle cx="19" cy="12" r="2.2" />
+                                </svg>
+                            </button>
+
+                            <!-- MENÚ DROPDOWN DE OPCIONES -->
+                            @if (fotoMenuAbiertoId === fotoPortada.id) {
+                                <div class="photo-dropdown-menu" (click)="$event.stopPropagation()">
+                                    <button type="button" class="dropdown-item" (click)="moverFotoAbajo(fotoPortada.id, $event)">
+                                        ⬇️ Mover al segundo lugar
+                                    </button>
+                                    <button type="button" class="dropdown-item danger" (click)="eliminarFoto(fotoPortada.id); cerrarMenuFoto()">
+                                        🗑️ Eliminar foto
+                                    </button>
+                                </div>
+                            }
+
+                            <div class="photo-overlay-actions">
+                                <span class="photo-title-tag">{{ fotoPortada.titulo }}</span>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- FOTOS SECUNDARIAS -->
+                    @for (f of fotosSecundarias; track f.id) {
+                        <div class="photo-mosaic-item photo-secondary-thumb">
+                            <img [src]="f.url" [alt]="f.titulo" />
+
+                            <!-- BOTÓN DE TRES PUNTOS EN SECUNDARIAS -->
+                            <button
+                                type="button"
+                                class="btn-photo-dots"
+                                (click)="toggleMenuFoto(f.id, $event)"
+                                title="Opciones de la foto">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <circle cx="5" cy="12" r="2.2" />
+                                    <circle cx="12" cy="12" r="2.2" />
+                                    <circle cx="19" cy="12" r="2.2" />
+                                </svg>
+                            </button>
+
+                            <!-- MENÚ DROPDOWN DE OPCIONES -->
+                            @if (fotoMenuAbiertoId === f.id) {
+                                <div class="photo-dropdown-menu" (click)="$event.stopPropagation()">
+                                    <button type="button" class="dropdown-item" (click)="establecerComoPortada(f.id); cerrarMenuFoto()">
+                                        ⭐ Convertir en foto de portada
+                                    </button>
+                                    <button type="button" class="dropdown-item" (click)="moverFotoArriba(f.id, $event)">
+                                        ⬆️ Mover adelante
+                                    </button>
+                                    <button type="button" class="dropdown-item" (click)="moverFotoAbajo(f.id, $event)">
+                                        ⬇️ Mover atrás
+                                    </button>
+                                    <button type="button" class="dropdown-item danger" (click)="eliminarFoto(f.id); cerrarMenuFoto()">
+                                        🗑️ Eliminar foto
+                                    </button>
+                                </div>
+                            }
+
+                            <div class="photo-overlay-actions">
+                                <span class="photo-title-tag">{{ f.titulo }}</span>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- CARD PARA AÑADIR MÁS -->
+                    <div class="photo-mosaic-item add-more-tile" (click)="abrirModalFotos()" role="button" tabindex="0">
+                        <div class="add-tile-icon">+</div>
+                        <span class="add-tile-text">Agregar más</span>
+                    </div>
+                </div>
+            }
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 12. PANTALLA TÍTULO GIMNASIO (NUEVA IMAGEN 2 AIRBNB EXACTO)        -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'titulo-gimnasio') {
+        <main class="step-content-container max-w-720">
+            <div class="step-header-center">
+                <span class="step-mini-tag">Paso 2 &middot; Nombre de tu Sede</span>
+                <h1 class="step-large-heading">Ahora, ponle un título a tu gimnasio</h1>
+                <p class="step-description-text">
+                    Los títulos cortos funcionan mejor. No te preocupes, puedes modificarlo más adelante.
+                </p>
+            </div>
+
+            <div class="airbnb-input-card">
+                <textarea
+                    [(ngModel)]="tituloGimnasio"
+                    maxlength="50"
+                    rows="4"
+                    class="airbnb-large-textarea"
+                    placeholder="Ej: Titan Fitness Club - Sede Principal">
+                </textarea>
+                <div class="input-char-counter">
+                    <span [class.limit-reached]="tituloGimnasio.length >= 50">{{ tituloGimnasio.length }}/50</span>
+                </div>
+            </div>
+
+            <!-- Sugerencias rápidas para el título -->
+            <div class="quick-title-suggestions">
+                <span class="suggestions-label">Ideas sugeridas para tu centro deportivo:</span>
+                <div class="suggestions-pills">
+                    <button type="button" class="btn-suggestion-pill" (click)="aplicarTituloSugerido('The House Fit - ' + (ciudad || 'Sede Central'))">
+                        ⚡ The House Fit - {{ ciudad || 'Sede Central' }}
+                    </button>
+                    <button type="button" class="btn-suggestion-pill" (click)="aplicarTituloSugerido('PowerHouse Gym & Box ' + (ciudad || ''))">
+                        ⚡ PowerHouse Gym & Box {{ ciudad || '' }}
+                    </button>
+                    <button type="button" class="btn-suggestion-pill" (click)="aplicarTituloSugerido('Titan Iron Center ' + (departamento || ''))">
+                        ⚡ Titan Iron Center {{ departamento || '' }}
+                    </button>
+                </div>
+            </div>
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 13. PANTALLA ASPECTOS DESTACADOS (NUEVA IMAGEN 3 AIRBNB EXACTO)   -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'descripcion-aspectos') {
+        <main class="step-content-container max-w-720">
+            <div class="step-header-center">
+                <span class="step-mini-tag">Paso 2 &middot; Aspectos Destacados</span>
+                <h1 class="step-large-heading">Ahora describamos tu gimnasio</h1>
+                <p class="step-description-text">
+                    Elige hasta 2 aspectos destacados. Los usaremos para comenzar tu descripción.
+                </p>
+            </div>
+
+            <div class="aspects-pills-grid">
+                @for (item of aspectosDisponibles; track item.id) {
+                    <button
+                        type="button"
+                        class="aspect-pill-btn"
+                        [class.selected]="esAspectoSeleccionado(item.id)"
+                        (click)="toggleAspecto(item.id)">
+                        <span class="aspect-icon">{{ item.icono }}</span>
+                        <span class="aspect-name">{{ item.nombre }}</span>
+                        @if (esAspectoSeleccionado(item.id)) {
+                            <span class="aspect-check">✓</span>
+                        }
+                    </button>
+                }
+            </div>
+
+            <div class="aspects-counter-bar">
+                <span class="counter-badge" [class.maxed]="aspectosDestacados.length === 2">
+                    {{ aspectosDestacados.length }} / 2 seleccionados
+                </span>
+            </div>
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 14. PANTALLA REDACCIÓN DESCRIPCIÓN (NUEVA IMAGEN 4 AIRBNB EXACTO) -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'descripcion-texto') {
+        <main class="step-content-container max-w-720">
+            <div class="step-header-center">
+                <span class="step-mini-tag">Paso 2 &middot; Descripción General</span>
+                <h1 class="step-large-heading">Escribe tu descripción</h1>
+                <p class="step-description-text">
+                    Comparte lo que hace que tu espacio sea especial.
+                </p>
+            </div>
+
+            <div class="airbnb-input-card">
+                <textarea
+                    [(ngModel)]="descripcionGimnasio"
+                    maxlength="500"
+                    rows="7"
+                    class="airbnb-large-textarea description-textarea"
+                    placeholder="Comparte con los atletas el ambiente, las máquinas, los instructores y las reglas que hacen único a tu gimnasio...">
+                </textarea>
+                <div class="input-char-counter">
+                    <span [class.limit-reached]="descripcionGimnasio.length >= 500">{{ descripcionGimnasio.length }}/500</span>
+                </div>
+            </div>
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 15. INTRO PASO 3: TERMINAR Y PUBLICAR (NUEVA IMAGEN 5 AIRBNB)     -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'intro-paso3') {
+        <main class="step-overview-container">
+            <div class="step-overview-grid">
+                <div class="step-text-col">
+                    <span class="step-mini-tag">Paso 3</span>
+                    <h1 class="step-large-heading">Terminar y publicar</h1>
+                    <p class="step-description-text">
+                        Por último, vas a elegir la configuración de los accesos y reservaciones, establecer el precio y publicar tu anuncio.
+                    </p>
+
+                    <div class="step3-checklist-box">
+                        <div class="checklist-item">
+                            <span class="checklist-bullet">✓</span>
+                            <span>Configura precios de pases diarios y membresías mensuales</span>
+                        </div>
+                        <div class="checklist-item">
+                            <span class="checklist-bullet">✓</span>
+                            <span>Define horarios de apertura y aforo por turnos</span>
+                        </div>
+                        <div class="checklist-item">
+                            <span class="checklist-bullet">✓</span>
+                            <span>Establece políticas de cancelación y reservas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-graphic-col">
+                    <div class="isometric-illustration-box">
+                        <!-- MAQUETA 3D ISOMÉTRICA PASO 3 THE HOUSE FIT (RECEPCIÓN & PUBLICACIÓN) -->
+                        <div class="isometric-cutaway-wrapper">
+                            <svg class="isometric-gym-svg" viewBox="0 0 600 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="receptionWallGrad" x1="0" y1="0" x2="1" y2="1">
+                                        <stop offset="0%" stop-color="#1e293b" />
+                                        <stop offset="100%" stop-color="#0b111e" />
+                                    </linearGradient>
+                                    <linearGradient id="receptionFloorGrad" x1="0" y1="0" x2="1" y2="0">
+                                        <stop offset="0%" stop-color="#1a2436" />
+                                        <stop offset="100%" stop-color="#0d1424" />
+                                    </linearGradient>
+                                    <linearGradient id="neonOrangePaso3" x1="0" y1="0" x2="1" y2="1">
+                                        <stop offset="0%" stop-color="#ff7a45" />
+                                        <stop offset="100%" stop-color="#ff5722" />
+                                    </linearGradient>
+                                    <filter id="neonGlowPaso3" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="6" result="blur" />
+                                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                    </filter>
+                                </defs>
+
+                                <!-- Suelo de la recepción -->
+                                <polygon points="300,100 520,225 300,350 80,225" fill="url(#receptionFloorGrad)" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+                                <path d="M190,162 L410,287 M135,193 L355,318 M245,131 L465,256" stroke="rgba(255,87,34,0.14)" stroke-width="1.5"/>
+
+                                <!-- Paredes traseras -->
+                                <polygon points="80,225 300,100 300,20 80,145" fill="url(#receptionWallGrad)" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+                                <polygon points="300,100 520,225 520,145 300,20" fill="#131c2d" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+
+                                <!-- Cartel Neón THE HOUSE FIT · RECEPCIÓN -->
+                                <rect x="120" y="55" width="130" height="35" rx="6" fill="#090d16" stroke="#ff5722" stroke-width="1.5" transform="rotate(-26 120 55)" filter="url(#neonGlowPaso3)"/>
+                                <text x="135" y="77" fill="#ffffff" font-size="10" font-weight="800" letter-spacing="2" transform="rotate(-26 120 55)">THE HOUSE FIT</text>
+
+                                <!-- Mostrador de recepción moderno -->
+                                <polygon points="210,195 310,250 310,215 210,160" fill="#1e293b" stroke="#ff5722" stroke-width="2"/>
+                                <polygon points="210,160 310,215 360,185 260,130" fill="#334155" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+                                <polygon points="310,250 360,220 360,185 310,215" fill="#0f172a" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
+                                <!-- Monitor en mostrador -->
+                                <rect x="270" y="150" width="22" height="15" rx="2" fill="#0284c7" stroke="#ffffff" stroke-width="1" transform="rotate(-15 270 150)"/>
+
+                                <!-- Torniquete de acceso biométrico / QR -->
+                                <rect x="360" y="240" width="18" height="40" rx="3" fill="#475569" stroke="#94a3b8" stroke-width="1.5"/>
+                                <circle cx="369" cy="245" r="4" fill="#22c55e" filter="url(#neonGlowPaso3)"/>
+                                <line x1="378" y1="260" x2="415" y2="245" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round"/>
+
+                                <!-- Badge Flotante "¡Paso 3 Listo para Publicar!" -->
+                                <ellipse cx="300" cy="410" rx="140" ry="20" fill="rgba(255,87,34,0.15)" filter="url(#neonGlowPaso3)"/>
+                            </svg>
+                            <div class="cutaway-badge-floating">
+                                <span class="badge-dot-live"></span>
+                                Recepción y Tarifas · The House Fit
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 16. PANTALLA RESERVACIONES (NUEVA IMAGEN 1 AIRBNB EXACTO)        -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'reservaciones-tipo') {
+        <main class="step-content-container max-w-720">
+            <div class="step-header-center">
+                <span class="step-mini-tag">Paso 3 &middot; Gestión de Acceso</span>
+                <h1 class="step-large-heading">Elige tus preferencias en las reservaciones</h1>
+                <p class="step-description-text">
+                    Puedes modificar esto en cualquier momento. <a href="javascript:void(0)" class="link-orange" (click)="abrirModalAyuda()">Más información</a>
+                </p>
+            </div>
+
+            <div class="reservation-cards-stack">
+                <!-- OPCIÓN 1: APROBAR PRIMERAS 5 (RECOMENDADO) -->
+                <div
+                    class="reservation-select-card"
+                    [class.selected]="tipoReservacion === 'aprobar_primeras'"
+                    (click)="seleccionarTipoReservacion('aprobar_primeras')"
+                    role="button"
+                    tabindex="0">
+                    <div class="reservation-card-info">
+                        <div class="reservation-card-title-row">
+                            <h3 class="reservation-title">Aprobar tus primeras 5 reservaciones</h3>
+                            <span class="badge-recommended">Recomendado</span>
+                        </div>
+                        <p class="reservation-desc">
+                            Para empezar, revisa las solicitudes de reservación y luego cambia a Reservación inmediata para que los huéspedes puedan reservar automáticamente.
+                        </p>
+                    </div>
+                    <div class="reservation-card-icon">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                            <polyline points="9 16 11 18 15 14"></polyline>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- OPCIÓN 2: RESERVACIÓN INMEDIATA -->
+                <div
+                    class="reservation-select-card"
+                    [class.selected]="tipoReservacion === 'inmediata'"
+                    (click)="seleccionarTipoReservacion('inmediata')"
+                    role="button"
+                    tabindex="0">
+                    <div class="reservation-card-info">
+                        <h3 class="reservation-title">Usa la Reservación inmediata</h3>
+                        <p class="reservation-desc">
+                            Deja que los huéspedes hagan reservaciones automáticas.
+                        </p>
+                    </div>
+                    <div class="reservation-card-icon bolt-icon">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 17. PANTALLA PRECIOS (NUEVA IMAGEN 2 AIRBNB EXACTO)               -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'precios-gimnasio') {
+        <main class="step-content-container max-w-720">
+            <div class="step-header-center">
+                <span class="step-mini-tag">Paso 3 &middot; Tarifas</span>
+                <h1 class="step-large-heading">Ahora, establece tus precios</h1>
+                <p class="step-description-text">
+                    Estas sugerencias se basan en la demanda que hay de anuncios similares por parte de los huéspedes. <a href="javascript:void(0)" class="link-orange" (click)="abrirModalAyuda()">Más información</a>
+                </p>
+            </div>
+
+            <div class="pricing-stacked-card">
+                <!-- BLOQUE 1: PRECIO BASE -->
+                <div class="pricing-card-box">
+                    <span class="pricing-box-label">Precio base</span>
+                    <div class="pricing-value-row">
+                        <div class="pricing-main-amount">
+                            <span class="currency-symbol">$</span>
+                            <input
+                                type="number"
+                                [(ngModel)]="precioBaseCOP"
+                                class="pricing-number-input"
+                                step="5000"
+                                min="10000"
+                            />
+                            <span class="currency-code">COP</span>
+                        </div>
+                        <div class="pricing-stepper-btns">
+                            <button type="button" class="btn-price-step" (click)="ajustarPrecioBase(-5000)" title="Reducir $5.000">&minus;</button>
+                            <button type="button" class="btn-price-step" (click)="ajustarPrecioBase(5000)" title="Aumentar $5.000">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BLOQUE 2: AJUSTE DE FIN DE SEMANA -->
+                <div class="pricing-card-box">
+                    <span class="pricing-box-label">Ajuste de fin de semana</span>
+                    <div class="pricing-weekend-row">
+                        <div class="weekend-percent-tag">+{{ ajusteFinDeSemanaPorcentaje }}%</div>
+                        <div class="weekend-hint-text">
+                            ${{ precioFinDeSemanaCOP | number }} COP para viernes y sábados
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pricing-pill-action-center">
+                <button type="button" class="btn-similar-ads-pill" (click)="abrirPlantillasExistentes()">
+                    📍 Ver anuncios similares
+                </button>
+            </div>
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 18. PANTALLA DESCUENTOS (NUEVA IMAGEN 3 AIRBNB EXACTO)            -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'descuentos-gimnasio') {
+        <main class="step-content-container max-w-720">
+            <div class="step-header-center">
+                <span class="step-mini-tag">Paso 3 &middot; Promociones</span>
+                <h1 class="step-large-heading">Agrega los descuentos</h1>
+                <p class="step-description-text">
+                    Destaca tu alojamiento para conseguir reservaciones más rápido y obtener tus primeras reseñas.
+                </p>
+            </div>
+
+            <div class="discounts-cards-stack">
+                <!-- DESCUENTO 1: NUEVA PROMOCIÓN 20% -->
+                <div
+                    class="discount-select-card"
+                    [class.checked]="descuentoPromocionActivo"
+                    (click)="toggleDescuento('promocion')"
+                    role="button"
+                    tabindex="0">
+                    <div class="discount-badge-percent">20 %</div>
+                    <div class="discount-meta-col">
+                        <h3 class="discount-title">Nueva promoción del anuncio</h3>
+                        <p class="discount-desc">Ofrece un 20 % de descuento en tus primeras 3 reservaciones</p>
+                    </div>
+                    <div class="discount-checkbox-col">
+                        <div class="airbnb-checkbox-box" [class.active]="descuentoPromocionActivo">
+                            @if (descuentoPromocionActivo) { <span>✓</span> }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DESCUENTO 2: ÚLTIMO MINUTO 3% -->
+                <div
+                    class="discount-select-card"
+                    [class.checked]="descuentoUltimoMinutoActivo"
+                    (click)="toggleDescuento('ultimoMinuto')"
+                    role="button"
+                    tabindex="0">
+                    <div class="discount-badge-percent">3 %</div>
+                    <div class="discount-meta-col">
+                        <h3 class="discount-title">Descuento de último minuto</h3>
+                        <p class="discount-desc">Para las estadías reservadas con 14 días de anticipación o menos</p>
+                    </div>
+                    <div class="discount-checkbox-col">
+                        <div class="airbnb-checkbox-box" [class.active]="descuentoUltimoMinutoActivo">
+                            @if (descuentoUltimoMinutoActivo) { <span>✓</span> }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DESCUENTO 3: SEMANAL 11% -->
+                <div
+                    class="discount-select-card"
+                    [class.checked]="descuentoSemanalActivo"
+                    (click)="toggleDescuento('semanal')"
+                    role="button"
+                    tabindex="0">
+                    <div class="discount-badge-percent">11 %</div>
+                    <div class="discount-meta-col">
+                        <h3 class="discount-title">Descuento semanal</h3>
+                        <p class="discount-desc">Para estadías de 7 noches o más</p>
+                    </div>
+                    <div class="discount-checkbox-col">
+                        <div class="airbnb-checkbox-box" [class.active]="descuentoSemanalActivo">
+                            @if (descuentoSemanalActivo) { <span>✓</span> }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 19. PANTALLA SEGURIDAD (NUEVA IMAGEN 4 AIRBNB EXACTO)             -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'seguridad-gimnasio') {
+        <main class="step-content-container max-w-720">
+            <div class="step-header-center">
+                <span class="step-mini-tag">Paso 3 &middot; Seguridad</span>
+                <h1 class="step-large-heading">Comparte información de seguridad</h1>
+            </div>
+
+            <div class="security-questions-card">
+                <h2 class="security-questions-title">¿Tu alojamiento tiene alguno de estos? <span class="info-circle" title="Transparencia con los atletas">ⓘ</span></h2>
+
+                <!-- ITEM 1: CÁMARAS EXTERIORES -->
+                <div class="security-toggle-item" (click)="toggleSeguridad('camara')" role="button" tabindex="0">
+                    <div class="security-label-col">
+                        <span class="security-item-label">Hay una cámara de seguridad exterior</span>
+                        @if (tieneCamaraExterior && descripcionCamarasSeguridad) {
+                            <span class="camera-desc-chip" (click)="abrirModalCamaras(); $event.stopPropagation()">
+                                📹 {{ descripcionCamarasSeguridad }} &middot; <strong class="link-orange">Editar</strong>
+                            </span>
+                        }
+                    </div>
+                    <div class="security-checkbox-col">
+                        <div class="airbnb-round-checkbox" [class.active]="tieneCamaraExterior">
+                            @if (tieneCamaraExterior) { <span>✓</span> }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ITEM 2: MONITOR DE RUIDO -->
+                <div class="security-toggle-item" (click)="toggleSeguridad('ruido')" role="button" tabindex="0">
+                    <div class="security-label-col">
+                        <span class="security-item-label">Monitor de decibeles de ruido presente</span>
+                    </div>
+                    <div class="security-checkbox-col">
+                        <div class="airbnb-round-checkbox" [class.active]="tieneMonitorRuido">
+                            @if (tieneMonitorRuido) { <span>✓</span> }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ITEM 3: ARMAS EN LA PROPIEDAD -->
+                <div class="security-toggle-item" (click)="toggleSeguridad('armas')" role="button" tabindex="0">
+                    <div class="security-label-col">
+                        <span class="security-item-label">Presencia de armas en la propiedad</span>
+                    </div>
+                    <div class="security-checkbox-col">
+                        <div class="airbnb-round-checkbox" [class.active]="tieneArmasOPropiedad">
+                            @if (tieneArmasOPropiedad) { <span>✓</span> }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CUADRO DE AVISO LEGAL Y CONDICIONES (IMAGE 4) -->
+            <div class="security-guidelines-box">
+                <h3 class="guidelines-title">Debes tener en cuenta lo siguiente:</h3>
+                <p class="guidelines-text">
+                    Las cámaras de seguridad que monitorean los espacios interiores no están permitidas, incluso si están apagadas. Debes informar la presencia de todas las cámaras de seguridad exteriores.
+                </p>
+                <p class="guidelines-disclaimer">
+                    Asegúrate de que cumples con la <a href="javascript:void(0)" class="link-underline">legislación local</a> y de revisar la <a href="javascript:void(0)" class="link-underline">Política contra la discriminación de The House Fit</a>, así como las <a href="javascript:void(0)" class="link-underline">tarifas para anfitriones y huéspedes</a>.
+                </p>
+            </div>
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 20. PANTALLA DATOS FINALES Y FISCALES (NUEVAS IMÁGENES 1 Y 2)     -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'datos-fiscales') {
+        <main class="step-content-container max-w-720">
+            <div class="step-header-left">
+                <h1 class="step-large-heading">Proporciona algunos datos finales</h1>
+                <p class="step-description-text">
+                    Este paso es necesario para cumplir con la normativa financiera y ayudarnos a prevenir el fraude.
+                </p>
+            </div>
+
+            <!-- SECCIÓN 1: ¿DÓNDE VIVES? (IMAGEN 1) -->
+            <div class="fiscal-section-block">
+                <h2 class="fiscal-section-title">¿Dónde vives?</h2>
+                <p class="fiscal-section-sub">Los huéspedes no tendrán acceso a esta información.</p>
+
+                <div class="fiscal-stacked-card">
+                    <!-- PAÍS / REGIÓN -->
+                    <div class="fiscal-stacked-row select-row">
+                        <label class="fiscal-field-label">País/región</label>
+                        <div class="fiscal-select-wrapper">
+                            <select [(ngModel)]="paisFiscal" class="fiscal-field-select">
+                                <option value="Colombia">Colombia</option>
+                                <option value="España">España</option>
+                                <option value="Estados Unidos">Estados Unidos</option>
+                                <option value="México">México</option>
+                                <option value="Argentina">Argentina</option>
+                                <option value="Chile">Chile</option>
+                                <option value="Perú">Perú</option>
+                            </select>
+                            <span class="fiscal-select-chevron">⌄</span>
+                        </div>
+                    </div>
+
+                    <!-- DIRECCIÓN -->
+                    <div class="fiscal-stacked-row">
+                        <label class="fiscal-field-label">Dirección</label>
+                        <input
+                            type="text"
+                            [(ngModel)]="direccionFiscal"
+                            class="fiscal-field-input"
+                            placeholder="Dirección fiscal o sede principal"
+                        />
+                    </div>
+
+                    <!-- APARTAMENTO / PISO / EDIFICIO -->
+                    <div class="fiscal-stacked-row">
+                        <label class="fiscal-field-label">Apartamento, piso, edificio (si corresponde)</label>
+                        <input
+                            type="text"
+                            [(ngModel)]="apartamentoFiscal"
+                            class="fiscal-field-input"
+                            placeholder="Apartamento, piso, edificio (si corresponde)"
+                        />
+                    </div>
+
+                    <!-- CIUDAD / MUNICIPIO -->
+                    <div class="fiscal-stacked-row">
+                        <label class="fiscal-field-label">Ciudad/municipio</label>
+                        <input
+                            type="text"
+                            [(ngModel)]="ciudadFiscal"
+                            class="fiscal-field-input"
+                            placeholder="Ciudad/municipio"
+                        />
+                    </div>
+
+                    <!-- DEPARTAMENTO -->
+                    <div class="fiscal-stacked-row no-border">
+                        <label class="fiscal-field-label">Departamento</label>
+                        <input
+                            type="text"
+                            [(ngModel)]="departamentoFiscal"
+                            class="fiscal-field-input"
+                            placeholder="Departamento"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 2: ¿ANFITRIONAS COMO EMPRESA? (IMAGEN 2) -->
+            <div class="fiscal-section-block mt-8">
+                <h2 class="fiscal-section-title">¿Anfitrionas como empresa?</h2>
+                <p class="fiscal-section-sub">
+                    Esto significa que seguramente tu empresa está registrada ante las autoridades pertinentes.
+                </p>
+                <div class="mb-3">
+                    <a href="javascript:void(0)" class="fiscal-details-link" (click)="abrirModalDetallesEmpresa()">
+                        Obtén más detalles
+                    </a>
+                </div>
+
+                <div class="company-toggle-grid">
+                    <button
+                        type="button"
+                        class="company-choice-btn"
+                        [class.selected]="esEmpresa === true"
+                        (click)="seleccionarEsEmpresa(true)">
+                        Sí
+                    </button>
+                    <button
+                        type="button"
+                        class="company-choice-btn"
+                        [class.selected]="esEmpresa === false"
+                        (click)="seleccionarEsEmpresa(false)">
+                        No
+                    </button>
+                </div>
+            </div>
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 21. PANTALLA PUBLICACIÓN EXITOSA (CELEBRACIÓN FINAL)              -->
+    <!-- ================================================================= -->
+    @if (pantallaActual === 'publicacion-exitosa') {
+        <main class="step-content-container max-w-720">
+            <div class="celebration-card-box">
+                <div class="celebration-emoji-circle">🏆</div>
+                <span class="step-mini-tag">¡Gimnasio publicado con éxito!</span>
+                <h1 class="step-large-heading">{{ tituloGimnasio || 'Tu gimnasio' }}</h1>
+                <p class="step-description-text">
+                    Tu sede deportiva en {{ ciudad }}, {{ departamento }} ya está activa y disponible en la plataforma de The House Fit para recibir a atletas y miembros.
+                </p>
+
+                <div class="summary-pills-row">
+                    <div class="summary-pill">
+                        Tarifa base: <strong>${{ precioBaseCOP | number }} COP</strong>
+                    </div>
+                    <div class="summary-pill">
+                        Reservaciones: <strong>{{ tipoReservacion === 'inmediata' ? 'Inmediatas' : 'Primeras 5 con aprobación' }}</strong>
+                    </div>
+                    <div class="summary-pill">
+                        Fotos: <strong>{{ fotos.length }} cargadas</strong>
+                    </div>
+                    <div class="summary-pill">
+                        Comodidades: <strong>{{ comodidadesSeleccionadas.length }} servicios</strong>
+                    </div>
+                </div>
+
+                <div class="celebration-actions-row">
+                    <a routerLink="/inicio" class="btn-next-step-celebrate">
+                        🔍 Ver en el Catálogo de Gimnasios
+                    </a>
+                    <a routerLink="/panel/dashboard" class="btn-back-celebrate">
+                        📊 Ir al Panel de Creador gym
+                    </a>
+                </div>
+            </div>
+        </main>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 21. MODAL CÁMARAS DE SEGURIDAD (NUEVA IMAGEN 5 AIRBNB EXACTO)      -->
+    <!-- ================================================================= -->
+    @if (modalCamarasAbierto) {
+        <div class="modal-backdrop-fade" (click)="cerrarModalCamaras()">
+            <div class="modal-dialog-box modal-camera-desc-box" (click)="$event.stopPropagation()">
+                <div class="modal-top-bar no-border">
+                    <span class="header-placeholder"></span>
+                    <button type="button" class="modal-close-btn" (click)="cerrarModalCamaras()">✕</button>
+                </div>
+                <div class="modal-body-camera">
+                    <h3 class="modal-camera-title">Informa a los huéspedes sobre las cámaras de seguridad exteriores</h3>
+                    <p class="modal-camera-sub">
+                        Describe la zona que registra cada cámara, como el patio de atrás o la piscina. <a href="javascript:void(0)" class="link-orange" (click)="abrirModalAyuda()">Más información</a>
+                    </p>
+
+                    <div class="airbnb-input-card mb-4">
+                        <textarea
+                            [(ngModel)]="descripcionCamarasSeguridad"
+                            maxlength="300"
+                            rows="4"
+                            class="airbnb-large-textarea"
+                            placeholder="Describe la zona de cada cámara exterior...">
+                        </textarea>
+                    </div>
+                    <div class="camera-char-counter">
+                        <span>{{ 300 - descripcionCamarasSeguridad.length }} caracteres disponibles</span>
+                    </div>
+
+                    <div class="modal-camera-action-row">
+                        <button type="button" class="btn-camera-continue" (click)="guardarDescripcionCamaras()">
+                            Continúa
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 13. MODAL: SUBE FOTOS (NUEVA IMAGEN 4 AIRBNB EXACTO)              -->
+    <!-- ================================================================= -->
+    @if (modalFotosAbierto) {
+        <div class="modal-backdrop-fade" (click)="cerrarModalFotos()">
+            <div class="modal-dialog-box modal-photos-box" (click)="$event.stopPropagation()">
+                <!-- HEADER DEL MODAL (IMAGE 4) -->
+                <div class="modal-top-bar">
+                    <button type="button" class="modal-close-btn" (click)="cerrarModalFotos()" title="Cerrar">
+                        ✕
+                    </button>
+
+                    <div class="modal-title-col">
+                        <h3 class="modal-title">Sube fotos</h3>
+                        <span class="modal-subtitle-counter">
+                            {{ fotos.length === 0 ? 'No seleccionaste ningún elemento.' : fotos.length + ' fotos en tu anuncio' }}
+                        </span>
+                    </div>
+
+                    <label class="modal-add-label-btn" title="Buscar más fotos">
+                        +
+                        <input type="file" multiple accept="image/*" class="hidden-file-input" (change)="onArchivosSeleccionados($event)" />
+                    </label>
+                </div>
+
+                <!-- CUERPO DEL MODAL CON DROPZONE Y 2 MARCOS DE FOTOS (IMAGE 4) -->
+                <div class="modal-body">
+                    <!-- ÁREA ARRASTRA Y SUELTA -->
+                    <label class="modal-drag-drop-area">
+                        <input type="file" multiple accept="image/*" class="hidden-file-input" (change)="onArchivosSeleccionados($event)" />
+                        <!-- ICONO DE 2 FOTOS SUPERPUESTAS EXACTO A AIRBNB -->
+                        <div class="airbnb-photos-icon-wrap">
+                            <svg class="airbnb-photos-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Foto trasera rotada -->
+                                <rect x="14" y="6" width="38" height="30" rx="4" transform="rotate(8 14 6)" stroke="currentColor" stroke-width="2.5" fill="none"/>
+                                <!-- Foto delantera principal -->
+                                <rect x="8" y="16" width="46" height="34" rx="5" stroke="currentColor" stroke-width="2.5" fill="rgba(255,87,34,0.06)"/>
+                                <!-- Montañas y sol -->
+                                <circle cx="20" cy="26" r="3.5" fill="currentColor"/>
+                                <path d="M12 44 L25 28 L35 40 L43 32 L50 44 Z" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+
+                        <h4 class="drag-drop-title">Arrastra y suelta</h4>
+                        <p class="drag-drop-sub">o busca fotos</p>
+                        <span class="btn-browse-photos">Navegar</span>
+                    </label>
+
+                    <!-- BIBLIOTECA RÁPIDA DE FOTOS PROFESIONALES DE GIMNASIO -->
+                    <div class="preset-library-block">
+                        <div class="preset-lib-header">
+                            <span class="preset-lib-title">O agrega de nuestra galería deportiva recomendada:</span>
+                            <button type="button" class="btn-add-all-presets" (click)="cargarFotosEjemplo()">
+                                + Agregar todas (6 fotos)
+                            </button>
+                        </div>
+
+                        <div class="preset-photos-scroll">
+                            @for (sf of fotosSugeridasBiblioteca; track sf.id) {
+                                <div class="preset-photo-card" (click)="agregarFotoBiblioteca(sf)">
+                                    <img [src]="sf.url" [alt]="sf.titulo" />
+                                    <div class="preset-photo-tag">{{ sf.titulo }}</div>
+                                    <span class="preset-add-indicator">+</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FOOTER DEL MODAL (IMAGE 4) -->
+                <div class="modal-footer-dual">
+                    <button type="button" class="btn-modal-cancel" (click)="cerrarModalFotos()">
+                        Listo
+                    </button>
+                    <button
+                        type="button"
+                        class="btn-modal-confirm"
+                        (click)="cerrarModalFotos()"
+                        [disabled]="fotos.length === 0">
+                        Sube
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 14. MODAL: ¿ALGUNA PREGUNTA? (SOPORTE Y GUÍA PARA CREADORES)      -->
+    <!-- ================================================================= -->
+    @if (modalAyudaAbierto) {
+        <div class="modal-backdrop-fade" (click)="cerrarModalAyuda()">
+            <div class="modal-dialog-box modal-faq-box" (click)="$event.stopPropagation()">
+                <div class="modal-top-bar">
+                    <h3 class="modal-title">Centro de ayuda para Creadores Gym</h3>
+                    <button type="button" class="modal-close-btn" (click)="cerrarModalAyuda()">✕</button>
+                </div>
+                <div class="modal-body faq-content-scroll">
+                    <div class="faq-item">
+                        <h4 class="faq-q">¿Por qué se requieren al menos 5 fotos?</h4>
+                        <p class="faq-a">
+                            Los gimnasios con 5 o más fotos de calidad (sala de pesas, cardio, vestidores, fachada y recepción) reciben hasta un 70% más reservas de atletas en The House Fit.
+                        </p>
+                    </div>
+                    <div class="faq-item">
+                        <h4 class="faq-q">¿Cómo elijo la foto de portada?</h4>
+                        <p class="faq-a">
+                            La primera foto de tu galería será automáticamente la portada principal. Puedes hacer clic en los tres puntos (...) de cualquier foto para convertirla en portada.
+                        </p>
+                    </div>
+                    <div class="faq-item">
+                        <h4 class="faq-q">¿Puedo modificar las comodidades más tarde?</h4>
+                        <p class="faq-a">
+                            Sí. Una vez publicado el anuncio, podrás ingresar a la gestión de tu sede desde el portal Creador gym para agregar nuevas máquinas o servicios.
+                        </p>
+                    </div>
+                </div>
+                <div class="modal-footer-single">
+                    <button type="button" class="btn-orange-submit" (click)="cerrarModalAyuda()">Entendido</button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 14. MODAL: INGRESA / CONFIRMA TU DIRECCIÓN                        -->
+    <!-- ================================================================= -->
+    @if (modalDireccionAbierto) {
+        <div class="modal-backdrop-fade" (click)="cerrarModalDireccion()">
+            <div class="modal-dialog-box" (click)="$event.stopPropagation()">
+                <div class="modal-top-bar">
+                    @if (pasoModalDireccion === 'confirmar') {
+                        <button type="button" class="modal-back-btn" (click)="retrocederABuscarDireccion()" title="Volver">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <line x1="19" y1="12" x2="5" y2="12"></line>
+                                <polyline points="12 19 5 12 12 5"></polyline>
+                            </svg>
+                        </button>
+                    } @else {
+                        <span class="header-placeholder"></span>
+                    }
+
+                    <h3 class="modal-title">
+                        {{ pasoModalDireccion === 'buscar' ? 'Ingresa la dirección del gimnasio' : 'Confirma tu dirección' }}
+                    </h3>
+
+                    <button type="button" class="modal-close-btn" (click)="cerrarModalDireccion()" title="Cerrar">
+                        ✕
+                    </button>
+                </div>
+
+                @if (pasoModalDireccion === 'buscar') {
+                    <div class="modal-body">
+                        <div class="search-input-wrap">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff7a45" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input
+                                type="text"
+                                [(ngModel)]="busquedaDireccion"
+                                placeholder="Ingresa tu dirección o sede..."
+                                (keydown.enter)="$event.preventDefault(); avanzarAConfirmarDireccion()"
+                                autofocus
+                            />
+                        </div>
+
+                        <div class="use-location-btn" (click)="usarUbicacionActual()" role="button" tabindex="0">
+                            <div class="location-icon-circle">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff5722" stroke-width="2">
+                                    <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+                                </svg>
+                            </div>
+                            <span class="location-text">Usar mi ubicación GPS actual</span>
+                        </div>
+                    </div>
+                }
+
+                @if (pasoModalDireccion === 'confirmar') {
+                    <div class="modal-body">
+                        <div class="stacked-fields-card">
+                            <div class="stacked-field-row">
+                                <label class="stacked-label">País / Región</label>
+                                <select [(ngModel)]="paisRegion" class="stacked-select">
+                                    @for (p of paisesDisponibles; track p.codigo) {
+                                        <option [value]="p.codigo">{{ p.codigo }}</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="stacked-field-row">
+                                <label class="stacked-label">Dirección</label>
+                                <input type="text" [(ngModel)]="direccion" class="stacked-input" placeholder="Ej: Transversal 7 #35-10" />
+                            </div>
+
+                            <div class="stacked-field-row">
+                                <label class="stacked-label">Piso, Local o Edificio (Opcional)</label>
+                                <input type="text" [(ngModel)]="apartamentoPiso" class="stacked-input" placeholder="Ej: Local 202, Edificio Titán" />
+                            </div>
+
+                            <div class="stacked-field-row">
+                                <label class="stacked-label">Ciudad / Municipio</label>
+                                <input type="text" [(ngModel)]="ciudad" class="stacked-input" placeholder="Ej: Yopal" />
+                            </div>
+
+                            <div class="stacked-field-row no-border">
+                                <label class="stacked-label">Departamento / Estado</label>
+                                <input type="text" [(ngModel)]="departamento" class="stacked-input" placeholder="Ej: Casanare" />
+                            </div>
+                        </div>
+
+                        <div class="modal-footer-action">
+                            <button type="button" class="btn-orange-submit" (click)="confirmarDireccionYSiguiente()">
+                                Confirmar y Continuar
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 15. MODAL DE PLANTILLAS EXISTENTES                               -->
+    <!-- ================================================================= -->
+    @if (modalPlantillasAbierto) {
+        <div class="modal-backdrop-fade" (click)="cerrarModalPlantillas()">
+            <div class="modal-dialog-box" (click)="$event.stopPropagation()">
+                <div class="modal-top-bar">
+                    <span class="header-placeholder"></span>
+                    <h3 class="modal-title">Selecciona una sede base</h3>
+                    <button type="button" class="modal-close-btn" (click)="cerrarModalPlantillas()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-subtitle-note">Puedes clonar los datos de una sede registrada para publicar una nueva más rápido:</p>
+                    <div class="templates-list">
+                        @for (g of gimnasiosExistentes; track g.id) {
+                            <div class="template-item" (click)="seleccionarPlantilla(g)" role="button" tabindex="0">
+                                <div class="template-icon">{{ g.imagen || '🏋️' }}</div>
+                                <div class="template-info">
+                                    <strong>{{ g.nombre }}</strong>
+                                    <span>{{ g.ciudad }} &middot; {{ g.direccion }}</span>
+                                </div>
+                                <span class="template-arrow">›</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 22. MODAL: DETALLES DE REGISTRO COMO EMPRESA (IMAGE 2 AIRBNB)     -->
+    <!-- ================================================================= -->
+    @if (modalDetallesEmpresaAbierto) {
+        <div class="modal-backdrop-fade" (click)="cerrarModalDetallesEmpresa()">
+            <div class="modal-dialog-box modal-faq-box" (click)="$event.stopPropagation()">
+                <div class="modal-top-bar">
+                    <h3 class="modal-title">Registro como empresa o anfitrión comercial</h3>
+                    <button type="button" class="modal-close-btn" (click)="cerrarModalDetallesEmpresa()">✕</button>
+                </div>
+                <div class="modal-body faq-content-scroll">
+                    <div class="faq-item">
+                        <h4 class="faq-q">¿Cuándo debo seleccionar "Sí"?</h4>
+                        <p class="faq-a">
+                            Selecciona <strong>Sí</strong> si tu gimnasio, centro fitness o box opera bajo una razón social registrada, personería jurídica o cuenta con NIT/RUT empresarial registrado ante la DIAN o la cámara de comercio correspondiente.
+                        </p>
+                    </div>
+                    <div class="faq-item">
+                        <h4 class="faq-q">¿Cuándo debo seleccionar "No"?</h4>
+                        <p class="faq-a">
+                            Selecciona <strong>No</strong> si eres persona natural independiente, propietario individual o entrenador titular ofreciendo tu espacio personal a la comunidad.
+                        </p>
+                    </div>
+                    <div class="faq-item">
+                        <h4 class="faq-q">Privacidad y facturación legal</h4>
+                        <p class="faq-a">
+                            Tus datos fiscales se mantienen confidenciales y encriptados. Solo se emplean para el cumplimiento de normativas fiscales y la dispersión bancaria de ingresos por reservaciones.
+                        </p>
+                    </div>
+                </div>
+                <div class="modal-footer-single">
+                    <button type="button" class="btn-orange-submit" (click)="cerrarModalDetallesEmpresa()">Entendido</button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- ================================================================= -->
+    <!-- 16. FOOTER STICKY CON BARRA DE PROGRESO THE HOUSE FIT             -->
+    <!-- ================================================================= -->
+    @if (pantallaActual !== 'hub' && pantallaActual !== 'configura-direccion' && pantallaActual !== 'publicacion-exitosa') {
+        <footer class="wizard-sticky-footer">
+            <div class="footer-progress-bar">
+                <!-- Paso 1: Describe tu espacio -->
+                <div class="progress-segment-wrap">
+                    <div class="progress-segment-fill" [style.width.%]="porcentajePaso1"></div>
+                </div>
+                <!-- Paso 2: Haz que se destaque -->
+                <div class="progress-segment-wrap">
+                    <div class="progress-segment-fill" [style.width.%]="porcentajePaso2"></div>
+                </div>
+                <!-- Paso 3: Termina y publica -->
+                <div class="progress-segment-wrap">
+                    <div class="progress-segment-fill" [style.width.%]="porcentajePaso3"></div>
+                </div>
+            </div>
+
+            <div class="footer-buttons-bar">
+                <button type="button" class="btn-footer-back" (click)="irPasoAnterior()">
+                    Atrás
+                </button>
+                <button
+                    type="button"
+                    class="btn-footer-next"
+                    (click)="irPasoSiguiente()"
+                    [disabled]="(pantallaActual === 'fotos' && fotos.length < 5) || (pantallaActual === 'titulo-gimnasio' && (!tituloGimnasio || tituloGimnasio.trim().length === 0)) || (pantallaActual === 'datos-fiscales' && (!direccionFiscal?.trim() || !ciudadFiscal?.trim() || esEmpresa === null)) || publicandoEnProceso">
+                    @if (publicandoEnProceso) {
+                        {{ esModoEdicion ? 'Guardando cambios...' : 'Creando anuncio...' }}
+                    } @else if (pantallaActual === 'fotos') {
+                        {{ fotos.length >= 5 ? 'Continuar' : 'Agrega 5 fotos' }}
+                    } @else if (pantallaActual === 'datos-fiscales') {
+                        {{ esModoEdicion ? 'Guardar cambios del gimnasio' : 'Crea un anuncio' }}
+                    } @else {
+                        Siguiente
+                    }
+                </button>
+            </div>
+        </footer>
+    }
+</div>

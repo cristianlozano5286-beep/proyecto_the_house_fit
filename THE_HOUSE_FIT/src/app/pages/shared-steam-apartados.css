@@ -1,0 +1,792 @@
+/* ==========================================================================
+   THE HOUSE FIT - SISTEMA VISUAL COMPARTIDO (STEAM DARK GLASS & WARM EMBER)
+   Unifica la navegación superior, vitrinas Hero Split, tarjetas cálidas
+   destacadas y paneles translúcidos en los apartados del atleta.
+   ========================================================================== */
+
+:host {
+  display: block;
+  width: 100%;
+  color: #f4f5f8;
+  font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   1. CABECERA SUPERIOR UNIFICADA (SINGLE-ROW COMPACT < 12% VIEWPORT)
+   ========================================================================== */
+.steam-shell-navbar {
+  min-height: 66px;
+  padding: 10px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  background: rgba(20, 21, 27, 0.74);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border: none;
+  border-bottom: none;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-sizing: border-box;
+}
+
+.steam-brand-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.steam-brand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  text-decoration: none;
+  color: #ffffff;
+  white-space: nowrap;
+  transition: transform 0.16s ease;
+}
+
+.steam-brand-link:hover {
+  transform: translateY(-1px);
+}
+
+.steam-logo-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ff5d28 0%, #d94112 100%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  box-sizing: border-box;
+  box-shadow: 0 6px 18px -6px rgba(255, 91, 36, 0.55);
+  flex-shrink: 0;
+}
+
+.steam-logo-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.steam-brand-name {
+  font-family: 'Plus Jakarta Sans', inherit;
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #ffffff;
+}
+
+.steam-brand-name strong {
+  color: #ff6a33;
+}
+
+.steam-role-chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #a9afbf;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Navegación central única (sin tarjetas encerradas, estilo Steam aireado) */
+.steam-top-nav {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.steam-nav-list {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.steam-nav-list::-webkit-scrollbar {
+  display: none;
+}
+
+.steam-nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 13px;
+  border-radius: 10px;
+  color: #9fa4b5;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color 0.16s ease, background-color 0.16s ease;
+}
+
+.steam-nav-link:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.steam-nav-link:focus-visible {
+  outline: 2px solid #ff6a33;
+  outline-offset: 2px;
+}
+
+.steam-nav-link svg {
+  color: #7c8194;
+  flex-shrink: 0;
+  transition: color 0.16s ease;
+}
+
+.steam-nav-link:hover svg {
+  color: #e4e6ed;
+}
+
+.steam-nav-link.active,
+.steam-nav-link[aria-current="page"] {
+  color: #ff7745;
+  font-weight: 600;
+  background: rgba(255, 91, 36, 0.09);
+}
+
+.steam-nav-link.active svg,
+.steam-nav-link[aria-current="page"] svg {
+  color: #ff7745;
+}
+
+.steam-nav-link.active::after,
+.steam-nav-link[aria-current="page"]::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  height: 2.5px;
+  border-radius: 999px;
+  background: #ff6a33;
+}
+
+@media (forced-colors: active) {
+  .steam-nav-link.active,
+  .steam-nav-link[aria-current="page"] {
+    outline: 2px solid Highlight;
+  }
+}
+
+.steam-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.steam-btn-ghost,
+.steam-btn-ember-soft {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 35px;
+  padding: 0 14px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 500;
+  font-family: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease, transform 0.14s ease;
+}
+
+.steam-btn-ghost {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #d6dae4;
+}
+
+.steam-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.095);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.steam-btn-ember-soft {
+  background: rgba(255, 91, 36, 0.12);
+  border-color: rgba(255, 91, 36, 0.26);
+  color: #ff9c78;
+}
+
+.steam-btn-ember-soft:hover {
+  background: rgba(255, 91, 36, 0.22);
+  border-color: rgba(255, 119, 69, 0.48);
+  color: #ffffff;
+}
+
+.steam-btn-ghost:active,
+.steam-btn-ember-soft:active {
+  transform: scale(0.98);
+}
+
+@media (max-width: 1120px) {
+  .steam-shell-navbar {
+    flex-wrap: wrap;
+    padding: 10px 20px;
+    gap: 10px 14px;
+  }
+
+  .steam-top-nav {
+    order: 3;
+    flex-basis: 100%;
+    justify-content: flex-start;
+    padding-top: 2px;
+  }
+
+  .steam-role-chip {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .steam-shell-navbar {
+    padding: 10px 14px;
+  }
+
+  .steam-brand-name {
+    font-size: 13.5px;
+  }
+
+  .steam-btn-ghost,
+  .steam-btn-ember-soft {
+    height: 32px;
+    padding: 0 11px;
+    font-size: 12px;
+  }
+}
+
+/* ==========================================================================
+   2. CONTENEDOR BASE & ESCAPARATE HERO SPLIT DE APARTADOS
+   ========================================================================== */
+.steam-page-shell {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 16px 28px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .steam-page-shell {
+    padding: 12px 14px 48px;
+    gap: 16px;
+  }
+}
+
+.steam-hero-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.85fr) minmax(300px, 1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.steam-hero-banner {
+  position: relative;
+  min-height: 290px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  box-shadow:
+    0 24px 48px -18px rgba(0, 0, 0, 0.72),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.steam-hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.steam-hero-banner:hover .steam-hero-bg {
+  transform: scale(1.025);
+}
+
+.steam-hero-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(13, 15, 21, 0.42) 0%,
+    rgba(13, 15, 21, 0.18) 38%,
+    rgba(11, 13, 18, 0.92) 100%
+  );
+  pointer-events: none;
+}
+
+.steam-hero-top {
+  position: relative;
+  z-index: 2;
+  padding: 18px 20px 0;
+}
+
+.steam-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+}
+
+.steam-tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: rgba(14, 16, 23, 0.56);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  font-family: inherit;
+  transition: background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+
+button.steam-tag-pill {
+  cursor: pointer;
+}
+
+button.steam-tag-pill:hover,
+button.steam-tag-pill.is-active {
+  background: rgba(255, 91, 36, 0.25);
+  border-color: rgba(255, 119, 69, 0.55);
+  color: #ffffff;
+}
+
+.steam-hero-bottom {
+  position: relative;
+  z-index: 2;
+  padding: 0 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.steam-hero-title {
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', inherit;
+  font-size: clamp(23px, 2.5vw, 31px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: #ffffff;
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.55);
+}
+
+.steam-hero-sub {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.48;
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 62ch;
+}
+
+.steam-members-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: fit-content;
+  height: 26px;
+  padding: 0 11px;
+  border-radius: 999px;
+  background: rgba(12, 14, 20, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.steam-dot-ember {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff6a33;
+  flex-shrink: 0;
+}
+
+.steam-dot-green {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  flex-shrink: 0;
+}
+
+/* Columna derecha del Hero: Tarjeta cálida destacada + 2 mini tarjetas */
+.steam-hero-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.steam-featured-card {
+  flex: 1 1 auto;
+  min-height: 0;
+  border-radius: 16px;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  background: linear-gradient(135deg, #9d6f18 0%, #ba4914 48%, #8d131a 100%);
+  border: 1px solid rgba(255, 214, 158, 0.24);
+  box-shadow:
+    0 22px 44px -16px rgba(175, 48, 14, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.26);
+}
+
+.steam-featured-eyebrow {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+  margin-bottom: 4px;
+}
+
+.steam-featured-body h2 {
+  margin: 0 0 6px;
+  font-family: 'Plus Jakarta Sans', inherit;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  line-height: 1.22;
+}
+
+.steam-featured-desc {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.48;
+  color: rgba(255, 255, 255, 0.88);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.steam-featured-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.steam-featured-price {
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #ffffff;
+}
+
+.steam-featured-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.steam-featured-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 18px;
+  border-radius: 10px;
+  background: rgba(16, 14, 16, 0.56);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  font-size: 12.5px;
+  font-weight: 600;
+  font-family: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.16s ease, border-color 0.16s ease, transform 0.14s ease;
+}
+
+.steam-featured-btn:hover {
+  background: rgba(16, 14, 16, 0.78);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.steam-featured-btn:active {
+  transform: scale(0.98);
+}
+
+.steam-featured-mark {
+  color: rgba(255, 255, 255, 0.85);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.steam-aside-tiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.steam-mini-glass-tile {
+  position: relative;
+  height: 84px;
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-decoration: none;
+  color: #f4f5f8;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.16s ease, background-color 0.16s ease, transform 0.16s ease;
+}
+
+.steam-mini-glass-tile:hover {
+  border-color: rgba(255, 119, 69, 0.42);
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-1px);
+}
+
+.steam-mini-tile-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #9fa4b5;
+}
+
+.steam-mini-tile-val {
+  font-family: 'Plus Jakarta Sans', inherit;
+  font-size: 17px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Superficie base Steam Glass reutilizable */
+.steam-glass-panel {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 16px;
+  box-shadow:
+    0 16px 34px -14px rgba(0, 0, 0, 0.48),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Fila visual de 4 tarjetas estilo Steam ("Special offers") */
+.steam-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.steam-section-head h3 {
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', inherit;
+  font-size: 16px;
+  font-weight: 600;
+  color: #f4f5f8;
+  letter-spacing: -0.01em;
+}
+
+.steam-section-sublink {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #9fa4b5;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: inherit;
+  transition: color 0.16s ease;
+}
+
+.steam-section-sublink:hover {
+  color: #ffffff;
+}
+
+.steam-offers-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.steam-offer-card {
+  position: relative;
+  height: 132px;
+  border-radius: 14px;
+  overflow: hidden;
+  text-decoration: none;
+  background: #181a22;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: 0 18px 34px -16px rgba(0, 0, 0, 0.68);
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.steam-offer-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.steam-offer-card.is-active {
+  border-color: #ff6a33;
+  box-shadow: 0 0 0 2px rgba(255, 106, 51, 0.34), 0 18px 34px -16px rgba(255, 87, 34, 0.45);
+}
+
+.steam-offer-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.steam-offer-card:hover img {
+  transform: scale(1.045);
+}
+
+.steam-offer-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(12, 14, 20, 0.18) 0%,
+    rgba(12, 14, 20, 0.35) 45%,
+    rgba(10, 11, 16, 0.92) 100%
+  );
+  pointer-events: none;
+}
+
+.steam-offer-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(12, 14, 20, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #e4e4ea;
+}
+
+.steam-offer-caption {
+  position: absolute;
+  left: 13px;
+  right: 13px;
+  bottom: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.steam-offer-caption strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.steam-offer-caption span {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* Scroll anchor margin for compact sticky top navbar */
+[id] {
+  scroll-margin-top: 5.2rem;
+}
+
+@media (max-width: 1040px) {
+  .steam-hero-split {
+    grid-template-columns: 1fr;
+  }
+
+  .steam-offers-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .steam-hero-banner {
+    min-height: 230px;
+  }
+
+  .steam-offers-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .steam-hero-bg,
+  .steam-offer-card,
+  .steam-offer-card img,
+  .steam-featured-btn,
+  .steam-mini-glass-tile,
+  .steam-brand-link {
+    transition: none;
+  }
+}

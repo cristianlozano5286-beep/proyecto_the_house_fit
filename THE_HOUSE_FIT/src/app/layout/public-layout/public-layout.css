@@ -1,2 +1,19 @@
-.public-layout{ display:flex; flex-direction:column; min-height:100vh; background: var(--color-bg); }
-.public-content{ flex:1; }
+.public-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: transparent;
+  color: #ffffff;
+  overflow-x: clip;
+}
+
+.public-content {
+  flex: 1;
+  background: transparent;
+  outline: none;
+}
+
+.public-content:has(.airbnb-modal-backdrop) {
+  position: relative;
+  z-index: 6000 !important;
+}

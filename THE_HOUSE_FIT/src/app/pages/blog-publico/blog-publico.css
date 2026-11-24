@@ -3,10 +3,34 @@
    Mismo tema que la tienda (naranja #ff5722)
    ======================================== */
 
-.dark-page {
-  background: #0a0a0a;
+:host {
+  display: block;
+  position: relative;
   min-height: 100vh;
-  padding: 140px 24px 80px;
+  background-color: transparent;
+}
+
+/* Luz atmosférica continua desde y=0 estilo Steam Dark Glass */
+:host::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 95% 420px at 32% 0px, rgba(190, 62, 30, 0.14) 0%, rgba(140, 46, 24, 0.05) 52%, transparent 82%);
+}
+
+:host::before {
+  display: none;
+}
+
+.dark-page {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+  min-height: 100vh;
+  padding: 36px 24px 80px;
   color: #fff;
   font-family: 'Inter', sans-serif;
 }
@@ -150,8 +174,10 @@
   padding: 22px;
   display: flex;
   flex-direction: column;
-  transition: all 0.3s ease;
-  animation: fadeUp 0.5s ease both;
+  transition:
+    transform 0.2s cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 @keyframes fadeUp {
@@ -242,9 +268,16 @@
   font-weight: 700;
   font-size: 13px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition:
+    transform 0.16s cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
   text-transform: uppercase;
   letter-spacing: 0.03em;
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -293,8 +326,10 @@
   border: 1px solid #262626;
   border-radius: 16px;
   padding: 22px;
-  transition: all 0.3s ease;
-  animation: fadeUp 0.5s ease both;
+  transition:
+    transform 0.2s cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .review-card:hover {

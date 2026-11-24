@@ -1,125 +1,1277 @@
-<div class="dashboard-container">
-    <!-- Contenido Principal de dashboard -->
-    <main class="content">
-        <div class="header">
-            <div class="title-wrapper">
-                <h1>Dashboard</h1>
-                <p>Panel principal de The House Fit</p>
+<div class="dashboard-viewport">
+    <!-- BANNER DE CONFIRMACIÓN: ANUNCIO CREADO / EDITADO -->
+    @if (anuncioCreadoReciente) {
+        <div class="announcement-success-banner">
+            <div class="announcement-success-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
             </div>
+            <div class="announcement-success-text">
+                <strong class="announcement-success-title">
+                    {{ anuncioEditadoReciente ? 'Cambios guardados en el gimnasio' : 'Anuncio publicado en el catálogo' }}
+                </strong>
+                <p class="announcement-success-sub">Tu sede deportiva está actualizada y activa en The House Fit.</p>
+            </div>
+            <button type="button" class="announcement-success-close" (click)="cerrarAvisoAnuncio()" aria-label="Cerrar aviso">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    }
 
-            <div class="user-info">
-                <strong>{{usuario}}</strong>
-                <span>{{rol}}</span>
-            </div>
+    <!-- BARRA DE PESTAÑAS COMPACTA + ACCIONES ESENCIALES -->
+    <header class="v29-command-bar" aria-label="Selector de vistas del Dashboard">
+        <div class="v29-tabs-rail" role="tablist">
+            <button
+                type="button"
+                role="tab"
+                class="v29-tab-pill"
+                [class.is-active]="vistaActiva === 'general'"
+                [attr.aria-selected]="vistaActiva === 'general'"
+                (click)="cambiarVista('general')"
+            >
+                <span>Vista general</span>
+            </button>
+
+            <button
+                type="button"
+                role="tab"
+                class="v29-tab-pill"
+                [class.is-active]="vistaActiva === 'metas'"
+                [attr.aria-selected]="vistaActiva === 'metas'"
+                (click)="cambiarVista('metas')"
+            >
+                <span>Metas y tareas</span>
+                <span class="v29-tab-count">{{ conteoMetasPorGrupo('prioridad') + conteoMetasPorGrupo('hoy') }}</span>
+            </button>
+
+            <button
+                type="button"
+                role="tab"
+                class="v29-tab-pill"
+                [class.is-active]="vistaActiva === 'guardados'"
+                [attr.aria-selected]="vistaActiva === 'guardados'"
+                (click)="cambiarVista('guardados')"
+            >
+                <span>Guardados</span>
+                <span class="v29-tab-count">{{ itemsGuardados.length }}</span>
+            </button>
+
+            <button
+                type="button"
+                role="tab"
+                class="v29-tab-pill"
+                [class.is-active]="vistaActiva === 'comunidad'"
+                [attr.aria-selected]="vistaActiva === 'comunidad'"
+                (click)="cambiarVista('comunidad')"
+            >
+                <span>Coaches y red</span>
+            </button>
         </div>
 
-        <!-- Tarjetas de información dinámicas -->
-        <div class="cards">
-            <div class="card" routerLink="/panel/gimnasios">
-                <div class="card-icon gym">🏋️‍♂️</div>
-                <div class="card-info">
-                    <h3>Gimnasios</h3>
-                    <p>{{Estadisticas.Gimnasios}}</p>
-                </div>
-                <div class="card-glow"></div>
-            </div>
+        <div class="welcome-actions">
+            @if (vistaActiva !== 'general') {
+                <label class="v29-search-box" aria-label="Filtrar resultados">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input
+                        type="search"
+                        [(ngModel)]="busquedaGlobal"
+                        placeholder="Filtrar vista..."
+                    />
+                </label>
+            }
 
-            <div class="card" routerLink="/panel/instructores">
-                <div class="card-icon instructor">🧑‍🏫</div>
-                <div class="card-info">
-                    <h3>Instructores</h3>
-                    <p>{{Estadisticas.Instructores}}</p>
-                </div>
-                <div class="card-glow"></div>
-            </div>
-
-            <div class="card" routerLink="/panel/productos">
-                <div class="card-icon product">🛒</div>
-                <div class="card-info">
-                    <h3>Productos</h3>
-                    <p>{{Estadisticas.Productos}}</p>
-                </div>
-                <div class="card-glow"></div>
-            </div>
-
-            <div class="card" routerLink="/panel/usuarios">
-                <div class="card-icon user">🙋‍♂️</div>
-                <div class="card-info">
-                    <h3>Usuarios</h3>
-                    <p>{{Estadisticas.Usuarios}}</p>
-                </div>
-                <div class="card-glow"></div>
-            </div>
+            @if (esAdmin) {
+                <a routerLink="/contabilidad-gestion" class="btn-hero-primary">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                        <line x1="2" y1="10" x2="22" y2="10"></line>
+                    </svg>
+                    <span>Contabilidad</span>
+                </a>
+                <a routerLink="/publicar-gimnasio" class="btn-hero-secondary">
+                    <span>+ Nueva sede</span>
+                </a>
+            } @else {
+                <a routerLink="/mi-espacio/reservar-clase" class="btn-hero-primary">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <span>Reservar clase</span>
+                </a>
+                <a routerLink="/gimnasios" class="btn-hero-secondary">
+                    <span>Catálogo</span>
+                </a>
+            }
+            <a href="/api/v1/apk/TheHouseFit.apk" download="TheHouseFit.apk" class="btn-hero-secondary" title="Descargar App Android">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>APK</span>
+            </a>
         </div>
+    </header>
 
-        <!-- Gráfica Interactiva -->
-        <section class="wordspace">
-            <div class="section-title">
-                <h2>Actividad Mensual</h2>
-                <p>Representación gráfica utilizando únicamente HTML, CSS y Angular</p>
-            </div>
-            
-            <div class="chart">
-                @for(item of Grafica; track item.mes){
-                    <div class="bar-container">
-                        <div class="bar-wrapper">
-                            <div class="bar" [style.height.%]="item.valor">
-                                <span class="bar-tooltip">{{item.valor}}%</span>
+    <!-- ======================================================================
+         MODO 1: VISTA GENERAL (ESTILO VITRINA GLASS OSCURA + ANALÍTICA)
+         ====================================================================== -->
+    @if (vistaActiva === 'general') {
+        <div class="v29-stage-view">
+            <!-- 0A. ESCAPARATE HERO SPLIT -->
+            @if (gymHeroActivo; as hero) {
+                <section class="steam-hero-section" aria-label="Sede destacada">
+                    <div class="steam-hero-split">
+                        <!-- Izquierda: Banner visual principal + dots inferiores -->
+                        <div class="steam-hero-stage">
+                            <article class="steam-hero-banner">
+                                <img
+                                    class="steam-hero-bg"
+                                    [src]="fotoDeGym(hero, indiceFotoHero)"
+                                    [alt]="hero.nombre"
+                                />
+                                <div class="steam-hero-scrim" aria-hidden="true"></div>
+
+                                <div class="steam-hero-top">
+                                    <div class="steam-hero-tags">
+                                        @for (serv of (hero.servicios || ['Fuerza', 'HIIT', 'Functional']).slice(0, 4); track serv) {
+                                            <span class="steam-tag-pill">{{ serv }}</span>
+                                        }
+                                        <a routerLink="/gimnasios" class="steam-tag-pill steam-tag-plus" title="Ver todas las sedes">+</a>
+                                    </div>
+                                </div>
+
+                                <div class="steam-hero-bottom">
+                                    <div class="steam-hero-identity">
+                                        <h1 class="steam-hero-title" tabindex="-1">{{ hero.nombre }}</h1>
+                                        <p class="steam-hero-sub">
+                                            {{ hero.barrio || hero.ciudad }} · {{ hero.ciudad }} · {{ hero.horario || 'Lun - Dom 5:00 - 22:00' }}
+                                        </p>
+                                    </div>
+
+                                    <div class="steam-hero-members">
+                                        <div class="steam-avatar-stack" aria-hidden="true">
+                                            @for (ini of avataresHero; track $index) {
+                                                <span class="steam-mini-avatar">{{ ini }}</span>
+                                            }
+                                        </div>
+                                        <span class="steam-members-pill">{{ Estadisticas.Usuarios || 12 }} atletas activos · ★ 4.9</span>
+                                    </div>
+                                </div>
+                            </article>
+
+                            <div class="steam-hero-dots" role="tablist" aria-label="Cambiar sede destacada">
+                                @for (sede of sedesHero; track sede.id; let idx = $index) {
+                                    <button
+                                        type="button"
+                                        class="steam-hero-dot"
+                                        [class.is-active]="idx === (indiceHeroGym % sedesHero.length)"
+                                        (click)="seleccionarGymHero(idx)"
+                                        [attr.aria-label]="'Destacar ' + sede.nombre"
+                                    ></button>
+                                }
                             </div>
                         </div>
-                        <span>{{item.mes}}</span>
+
+                        <!-- Derecha: Tarjeta cálida destacada + 2 miniaturas de galería -->
+                        <div class="steam-hero-aside">
+                            <article class="steam-featured-card">
+                                <div class="steam-featured-body">
+                                    <h2>{{ hero.nombre }}</h2>
+                                    <p class="steam-featured-desc">
+                                        {{ hero.descripcion || 'Centro de entrenamiento especializado en fuerza, acondicionamiento físico y acompañamiento profesional.' }}
+                                    </p>
+                                </div>
+
+                                <div class="steam-featured-meta">
+                                    <div class="steam-featured-price">{{ formatearPrecioGym(hero) }}</div>
+                                    <div class="steam-featured-foot">
+                                        <a
+                                            [routerLink]="esAdmin ? ['/editar-gimnasio', hero.id] : '/mi-espacio/reservar-clase'"
+                                            class="steam-featured-btn"
+                                        >
+                                            <span>{{ esAdmin ? 'Gestionar sede' : 'Reservar ahora' }}</span>
+                                        </a>
+                                        <span class="steam-featured-mark" aria-hidden="true">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M6 18h12"></path>
+                                                <path d="M12 2v20"></path>
+                                                <path d="M2 10h4"></path>
+                                                <path d="M18 10h4"></path>
+                                                <path d="M2 14h4"></path>
+                                                <path d="M18 14h4"></path>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </div>
+                            </article>
+
+                            <div class="steam-thumb-pair">
+                                <button
+                                    type="button"
+                                    class="steam-thumb-btn"
+                                    [class.is-active]="indiceFotoHero === 1"
+                                    (click)="alternarFotoHero(1)"
+                                    [attr.aria-label]="'Vista interior 1 de ' + hero.nombre"
+                                >
+                                    <img [src]="fotoDeGym(hero, 1)" [alt]="hero.nombre + ' ambiente 1'" loading="lazy" />
+                                </button>
+                                <button
+                                    type="button"
+                                    class="steam-thumb-btn"
+                                    [class.is-active]="indiceFotoHero === 2"
+                                    (click)="alternarFotoHero(2)"
+                                    [attr.aria-label]="'Vista interior 2 de ' + hero.nombre"
+                                >
+                                    <img [src]="fotoDeGym(hero, 2)" [alt]="hero.nombre + ' ambiente 2'" loading="lazy" />
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                }
-            </div>
-        </section>
+                </section>
+            }
 
-        <!-- Tabla de Últimos Usuarios -->
-        <section class="wordspaces">
-            <div class="table-header-flex">
-                <div>
-                    <h2>Últimos Usuarios Registrados</h2>
-                    <p>Total Registrados: <strong>{{obtenerTotalUsuarios()}}</strong></p>
+            <!-- 0B. FILA DE 4 SEDES VISUALES ("SEDES DESTACADAS") -->
+            <section class="steam-offers-section" aria-label="Sedes destacadas">
+                <div class="steam-section-head">
+                    <h3>Sedes destacadas</h3>
+                    <a [routerLink]="esAdmin ? '/editar-gimnasio' : '/gimnasios'" class="steam-section-link">
+                        {{ esAdmin ? 'Administrar todas' : 'Explorar catálogo' }}
+                    </a>
                 </div>
+
+                <div class="steam-offers-grid">
+                    @for (gym of sedesOfertaDestacadas; track gym.id) {
+                        <a
+                            [routerLink]="esAdmin ? ['/editar-gimnasio', gym.id] : '/gimnasios'"
+                            class="steam-offer-card"
+                        >
+                            <img [src]="fotoDeGym(gym, 0)" [alt]="gym.nombre" loading="lazy" />
+                            <div class="steam-offer-scrim" aria-hidden="true"></div>
+                            <span class="steam-offer-badge">{{ gym.ciudad || 'Colombia' }}</span>
+                            <div class="steam-offer-caption">
+                                <strong>{{ gym.nombre }}</strong>
+                                <span>{{ formatearPrecioGym(gym) }}</span>
+                            </div>
+                        </a>
+                    }
+                </div>
+            </section>
+
+            <!-- 1. TIRA DE MÉTRICAS EJECUTIVA -->
+            <section class="stats-grid" aria-label="Resumen de actividad">
+                @if (esAdmin) {
+                    <article class="stat-card" routerLink="/editar-gimnasio">
+                        <div class="stat-card-top">
+                            <span class="stat-label">Mis gimnasios</span>
+                            <span class="stat-mini-icon" aria-hidden="true">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M6 18h12"></path>
+                                    <path d="M12 2v20"></path>
+                                    <path d="M2 10h4"></path>
+                                    <path d="M18 10h4"></path>
+                                    <path d="M2 14h4"></path>
+                                    <path d="M18 14h4"></path>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="stat-value-row">
+                            <strong class="stat-counter">{{ Estadisticas.Gimnasios }}</strong>
+                            <span class="stat-context-pill">Red activa</span>
+                        </div>
+                        <div class="stat-progress-line" aria-hidden="true"><span style="width: 84%"></span></div>
+                        <span class="stat-badge">Editar sedes →</span>
+                    </article>
+                } @else {
+                    <article class="stat-card" routerLink="/gimnasios">
+                        <div class="stat-card-top">
+                            <span class="stat-label">Sedes disponibles</span>
+                            <span class="stat-mini-icon" aria-hidden="true">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M6 18h12"></path>
+                                    <path d="M12 2v20"></path>
+                                    <path d="M2 10h4"></path>
+                                    <path d="M18 10h4"></path>
+                                    <path d="M2 14h4"></path>
+                                    <path d="M18 14h4"></path>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="stat-value-row">
+                            <strong class="stat-counter">{{ Estadisticas.Gimnasios }}</strong>
+                            <span class="stat-context-pill">Red activa</span>
+                        </div>
+                        <div class="stat-progress-line" aria-hidden="true"><span style="width: 84%"></span></div>
+                        <span class="stat-badge">Explorar catálogo →</span>
+                    </article>
+                }
+
+                <article class="stat-card" [routerLink]="esAdmin ? '/panel/instructores' : '/mi-espacio/reservar-clase'">
+                    <div class="stat-card-top">
+                        <span class="stat-label">Instructores activos</span>
+                        <span class="stat-mini-icon" aria-hidden="true">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="stat-value-row">
+                        <strong class="stat-counter">{{ Estadisticas.Instructores }}</strong>
+                        <span class="stat-context-pill">★ 4.9 media</span>
+                    </div>
+                    <div class="stat-progress-line" aria-hidden="true"><span style="width: 92%"></span></div>
+                    <span class="stat-badge">Ver coaches →</span>
+                </article>
+
+                <article class="stat-card" [routerLink]="esAdmin ? '/panel/productos' : '/tienda'">
+                    <div class="stat-card-top">
+                        <span class="stat-label">Productos en tienda</span>
+                        <span class="stat-mini-icon" aria-hidden="true">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="stat-value-row">
+                        <strong class="stat-counter">{{ Estadisticas.Productos }}</strong>
+                        <span class="stat-context-pill">Stock al día</span>
+                    </div>
+                    <div class="stat-progress-line" aria-hidden="true"><span style="width: 72%"></span></div>
+                    <span class="stat-badge">Suplementos e implementos →</span>
+                </article>
+
+                @if (esCreadorGym) {
+                    <article class="stat-card" routerLink="/contabilidad-gestion">
+                        <div class="stat-card-top">
+                            <span class="stat-label">Membresías activas</span>
+                            <span class="stat-mini-icon" aria-hidden="true">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                                    <line x1="2" y1="10" x2="22" y2="10"></line>
+                                    <line x1="6" y1="15" x2="10" y2="15"></line>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="stat-value-row">
+                            <strong class="stat-counter">{{ Estadisticas.MembresiasActivas }}</strong>
+                            <span class="stat-context-pill">Control cédula</span>
+                        </div>
+                        <div class="stat-progress-line" aria-hidden="true"><span style="width: 88%"></span></div>
+                        <span class="stat-badge">Contabilidad y cédulas →</span>
+                    </article>
+                } @else if (esAdmin) {
+                    <article class="stat-card" routerLink="/panel/usuarios">
+                        <div class="stat-card-top">
+                            <span class="stat-label">Usuarios registrados</span>
+                            <span class="stat-mini-icon" aria-hidden="true">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="stat-value-row">
+                            <strong class="stat-counter">{{ Estadisticas.Usuarios }}</strong>
+                            <span class="stat-context-pill">Cuentas activas</span>
+                        </div>
+                        <div class="stat-progress-line" aria-hidden="true"><span style="width: 80%"></span></div>
+                        <span class="stat-badge">Directorio activo →</span>
+                    </article>
+                } @else {
+                    <article class="stat-card" routerLink="/rutinas">
+                        <div class="stat-card-top">
+                            <span class="stat-label">Programas y rutinas</span>
+                            <span class="stat-mini-icon" aria-hidden="true">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="stat-value-row">
+                            <strong class="stat-counter">{{ Estadisticas.Rutinas }}</strong>
+                            <span class="stat-context-pill">Fuerza &amp; HIIT</span>
+                        </div>
+                        <div class="stat-progress-line" aria-hidden="true"><span style="width: 78%"></span></div>
+                        <span class="stat-badge">Explorar programas →</span>
+                    </article>
+                }
+            </section>
+
+            <!-- 2. BENTO DE 3 COLUMNAS -->
+            <div class="v29-overview-bento">
+                <!-- Columna 1: Gráfica arquitectónica de columnas con métricas resumen -->
+                <section class="dashboard-card-panel chart-panel">
+                    <div class="panel-card-header">
+                        <div class="header-titles">
+                            <h3>Actividad y rendimiento</h3>
+                            <p>Accesos y sesiones completadas por periodo</p>
+                        </div>
+                        <div class="v29-period-pills" role="group" aria-label="Periodo de gráfica">
+                            <button
+                                type="button"
+                                class="v29-period-btn"
+                                [class.active]="periodoGrafica === '6m'"
+                                (click)="cambiarPeriodoGrafica('6m')"
+                            >6 Meses</button>
+                            <button
+                                type="button"
+                                class="v29-period-btn"
+                                [class.active]="periodoGrafica === 'trimestre'"
+                                (click)="cambiarPeriodoGrafica('trimestre')"
+                            >Trimestre</button>
+                            <button
+                                type="button"
+                                class="v29-period-btn"
+                                [class.active]="periodoGrafica === 'semana'"
+                                (click)="cambiarPeriodoGrafica('semana')"
+                            >Semana</button>
+                        </div>
+                    </div>
+
+                    <div class="chart-kpi-summary">
+                        <div class="chart-kpi-cell">
+                            <span>Volumen del periodo</span>
+                            <strong>1.218 accesos</strong>
+                        </div>
+                        <div class="chart-kpi-cell">
+                            <span>Pico de ocupación</span>
+                            <strong>94% ({{ barraSeleccionada }})</strong>
+                        </div>
+                        <div class="chart-kpi-cell is-positive">
+                            <span>Tendencia</span>
+                            <strong>+18,4% vs. previo</strong>
+                        </div>
+                    </div>
+
+                    <div class="chart-bars-container">
+                        @for (item of Grafica; track item.mes) {
+                            <button
+                                type="button"
+                                class="bar-column"
+                                [class.is-selected]="barraSeleccionada === item.mes"
+                                (click)="barraSeleccionada = item.mes"
+                            >
+                                <span class="bar-top-figure">{{ item.meta }}</span>
+                                <div class="bar-track">
+                                    <div
+                                        class="bar-fill"
+                                        [class.is-peak]="barraSeleccionada === item.mes || item.valor >= 90"
+                                        [style.height.%]="item.valor"
+                                    ></div>
+                                </div>
+                                <span class="bar-label">{{ item.mes }}</span>
+                            </button>
+                        }
+                    </div>
+
+                    <div class="chart-active-footer">
+                        <span class="chart-footer-dot" aria-hidden="true"></span>
+                        <span>Periodo seleccionado: <strong>{{ barraSeleccionada }}</strong> · {{ detalleBarraSeleccionada }}</span>
+                    </div>
+                </section>
+
+                <!-- Columna 2: Sedes con mayor demanda (resumen + ranking numerado) -->
+                <article class="v29-coral-highlight-card">
+                    <div class="v29-coral-head">
+                        <div>
+                            <h3>Sedes con mayor demanda</h3>
+                            <p class="v29-coral-sub">Ocupación actual y tarifa mensual por sede</p>
+                        </div>
+                        <span class="v29-coral-pill-badge">{{ topSedesDestacadas.length }} activas</span>
+                    </div>
+
+                    <div class="v29-network-summary">
+                        <div class="v29-network-stat">
+                            <span>Ocupación media</span>
+                            <strong>85%</strong>
+                        </div>
+                        <div class="v29-network-stat">
+                            <span>Calificación red</span>
+                            <strong>★ 4.8</strong>
+                        </div>
+                    </div>
+
+                    <div class="v29-coral-bars-list">
+                        @for (sede of topSedesDestacadas; track sede.nombre; let idx = $index) {
+                            <div class="v29-coral-rank-item">
+                                <div class="v29-coral-rank-meta">
+                                    <span class="v29-rank-num" [class.is-leader]="idx === 0">0{{ idx + 1 }}</span>
+                                    <div class="v29-coral-rank-title">
+                                        <strong>{{ sede.nombre }}</strong>
+                                        <span class="v29-coral-rank-city">{{ sede.ciudad }} · ★ {{ sede.rating }}</span>
+                                    </div>
+                                    <div class="v29-coral-rank-right">
+                                        <span class="v29-coral-rank-price">{{ sede.precio }}</span>
+                                        <span class="v29-coral-rank-occupancy">{{ sede.ocupacion }}% ocup.</span>
+                                    </div>
+                                </div>
+                                <div class="v29-coral-rank-track">
+                                    <div
+                                        class="v29-coral-rank-fill"
+                                        [class.is-leader]="idx === 0"
+                                        [style.width.%]="sede.ocupacion"
+                                    ></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <a [routerLink]="esAdmin ? '/editar-gimnasio' : '/gimnasios'" class="v29-coral-cta">
+                        <span>{{ esAdmin ? 'Gestionar mis sedes' : 'Explorar sedes destacadas' }}</span>
+                        <span aria-hidden="true">→</span>
+                    </a>
+                </article>
+
+                <!-- Columna 3: Agenda de la semana + Balance semanal -->
+                <aside class="dashboard-card-panel v29-today-panel">
+                    <div class="v29-today-head">
+                        <div>
+                            <h3>Agenda de la semana</h3>
+                        </div>
+                        <a routerLink="/mi-espacio/reservar-clase" class="v29-today-add" title="Reservar o programar">+ Agendar</a>
+                    </div>
+
+                    <!-- Tira horizontal de días -->
+                    <div class="v29-week-strip" role="group" aria-label="Días de la semana">
+                        @for (d of diasSemana; track d.numero) {
+                            <button
+                                type="button"
+                                class="v29-day-pill"
+                                [class.is-active]="diaSeleccionado === d.numero"
+                                (click)="seleccionarDiaSemana(d.numero)"
+                            >
+                                <span class="v29-day-short">{{ d.corto }}</span>
+                                <strong class="v29-day-num">{{ d.numero }}</strong>
+                            </button>
+                        }
+                    </div>
+
+                    <!-- Eventos del día seleccionado -->
+                    <div class="v29-agenda-list">
+                        @for (ev of agendaDiaActual; track ev.hora) {
+                            <a [routerLink]="ev.ruta" class="v29-agenda-item">
+                                <span class="v29-agenda-time">{{ ev.hora }}</span>
+                                <div class="v29-agenda-copy">
+                                    <strong>{{ ev.titulo }}</strong>
+                                    <span>{{ ev.sub }}</span>
+                                </div>
+                                <span class="v29-agenda-tag">{{ ev.tag }}</span>
+                            </a>
+                        }
+                    </div>
+
+                    <!-- Balance semanal con pistas lineales finas -->
+                    <div class="v29-week-rings-box">
+                        <span class="v29-rings-title">Balance semanal</span>
+                        <div class="v29-rings-grid">
+                            @for (ring of anillosSemana; track ring.label) {
+                                <div class="v29-ring-card">
+                                    <div class="v29-ring-row-head">
+                                        <span class="v29-ring-label">{{ ring.label }}</span>
+                                        <div class="v29-ring-nums">
+                                            <small class="v29-ring-sub">{{ ring.meta }}</small>
+                                            <strong class="v29-ring-val">{{ ring.valor }}%</strong>
+                                        </div>
+                                    </div>
+                                    <div class="v29-ring-track">
+                                        <div class="v29-ring-track-fill" [style.width.%]="ring.valor"></div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </aside>
             </div>
 
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Correo</th>
-                            <th>Rol</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for (usuario of usuarios; track usuario.id){
-                            <tr>
-                                <td><span class="id-badge">#{{usuario.id}}</span></td>
-                                <td class="font-weight-bold">{{usuario.nombre}}</td>
-                                <td class="text-muted">{{usuario.correo}}</td>
-                                <td><span class="role-badge">{{usuario.rol}}</span></td>
-                                <td>
-                                    <span class="status-indicator" [class.active]="usuario.estado" [class.inactive]="!usuario.estado">
-                                        {{usuario.estado}}
+            <!-- 3. FILA INFERIOR: SEDES + ATAJOS RÁPIDOS -->
+            <div class="dashboard-split-grid">
+                <section class="dashboard-card-panel creator-gyms-panel">
+                    <div class="panel-card-header">
+                        <div class="header-titles">
+                            <h3>{{ esAdmin ? 'Mis sedes activas' : 'Sedes recomendadas' }}</h3>
+                            <p>{{ esAdmin ? 'Acceso directo a edición, tarifas y estado' : 'Centros verificados con pase diario y mensualidad' }}</p>
+                        </div>
+                        <a [routerLink]="esAdmin ? '/editar-gimnasio' : '/gimnasios'" class="table-view-all-link">
+                            {{ esAdmin ? 'Gestionar sedes →' : 'Ver catálogo →' }}
+                        </a>
+                    </div>
+
+                    <div class="creator-gyms-strip">
+                        @for (gym of misGimnasios.slice(0, 2); track gym.id) {
+                            <article class="creator-gym-mini-card">
+                                <div class="creator-gym-thumb">
+                                    <img [src]="fotoDeGym(gym, 0)" [alt]="gym.nombre" loading="lazy" />
+                                    <span class="creator-gym-status" [class.is-active]="gym.activo">
+                                        {{ gym.activo ? 'Activa' : 'Borrador' }}
                                     </span>
-                                </td>
-                            </tr>
-                        } 
-                    </tbody>
-                </table>
-            </div>
-        </section>
+                                </div>
+                                <div class="creator-gym-body">
+                                    <h4>{{ gym.nombre }}</h4>
+                                    <p class="creator-gym-loc">{{ gym.barrio }} · {{ gym.ciudad }}</p>
+                                    <div class="creator-gym-tags">
+                                        @for (s of gym.servicios.slice(0, 3); track s) {
+                                            <span>{{ s }}</span>
+                                        }
+                                    </div>
+                                    <a [routerLink]="esAdmin ? ['/editar-gimnasio', gym.id] : ['/gimnasios']" class="btn-edit-gym-direct">
+                                        <span>{{ esAdmin ? 'Editar sede' : 'Explorar sede →' }}</span>
+                                    </a>
+                                </div>
+                            </article>
+                        }
+                    </div>
+                </section>
 
-        <!-- Área de Trabajo / Acciones -->
-        <section class="workspace">
-            <h2>Área de trabajo</h2>
-            <p>Desde este panel podrás administrar gimnasios, instructores, productos, rutinas, noticias, pagos y roles de la plataforma The House Fit.</p>
-            <button type="button" (click)="mostrarMensaje()">
-                <span>Mostrar mensaje</span>
-                <span class="btn-icon">⚡</span>
-            </button>
-        </section>
-    </main>
+                <!-- Accesos directos con SVG reales (sin emojis) -->
+                <section class="dashboard-card-panel shortcuts-panel">
+                    <div class="panel-card-header">
+                        <div class="header-titles">
+                            <h3>Atajos rápidos</h3>
+                            <p>Módulos principales a tu alcance</p>
+                        </div>
+                    </div>
+
+                    <div class="shortcuts-list">
+                        <a *ngIf="esAdmin" routerLink="/contabilidad-gestion" class="shortcut-item">
+                            <div class="shortcut-icon-box">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                                    <line x1="2" y1="10" x2="22" y2="10"></line>
+                                    <line x1="6" y1="15" x2="10" y2="15"></line>
+                                </svg>
+                            </div>
+                            <div class="shortcut-meta">
+                                <strong>Contabilidad e ingreso por cédula</strong>
+                                <p>Pagos mensuales, pases diarios y validación</p>
+                            </div>
+                            <span class="shortcut-arrow" aria-hidden="true">→</span>
+                        </a>
+
+                        <a routerLink="/mi-perfil" class="shortcut-item">
+                            <div class="shortcut-icon-box">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            <div class="shortcut-meta">
+                                <strong>Mi perfil y foto</strong>
+                                <p>Actualiza tu imagen y datos personales</p>
+                            </div>
+                            <span class="shortcut-arrow" aria-hidden="true">→</span>
+                        </a>
+
+                        <a routerLink="/mi-espacio/entrenamiento" class="shortcut-item">
+                            <div class="shortcut-icon-box">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                                </svg>
+                            </div>
+                            <div class="shortcut-meta">
+                                <strong>Mi entrenamiento</strong>
+                                <p>Planes personalizados y progreso físico</p>
+                            </div>
+                            <span class="shortcut-arrow" aria-hidden="true">→</span>
+                        </a>
+
+                        <a routerLink="/mi-espacio/reservar-clase" class="shortcut-item">
+                            <div class="shortcut-icon-box">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                            </div>
+                            <div class="shortcut-meta">
+                                <strong>Reservar clase</strong>
+                                <p>Spinning, yoga, CrossFit y funcional</p>
+                            </div>
+                            <span class="shortcut-arrow" aria-hidden="true">→</span>
+                        </a>
+
+                        <a routerLink="/mi-espacio/resenas" class="shortcut-item">
+                            <div class="shortcut-icon-box">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                </svg>
+                            </div>
+                            <div class="shortcut-meta">
+                                <strong>Reseñas y opiniones</strong>
+                                <p>Comentarios verificados de la comunidad</p>
+                            </div>
+                            <span class="shortcut-arrow" aria-hidden="true">→</span>
+                        </a>
+
+                        <a routerLink="/mi-espacio/pagos" class="shortcut-item">
+                            <div class="shortcut-icon-box">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                                </svg>
+                            </div>
+                            <div class="shortcut-meta">
+                                <strong>Gestión de pagos</strong>
+                                <p>Membresías, pases diarios e historial</p>
+                            </div>
+                            <span class="shortcut-arrow" aria-hidden="true">→</span>
+                        </a>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 4. TABLA DE USUARIOS (SOLO ADMINISTRADOR) -->
+            @if (esAdmin) {
+                <section class="dashboard-card-panel users-table-panel">
+                    <div class="panel-card-header">
+                        <div class="header-titles">
+                            <h3>Últimos usuarios registrados</h3>
+                            <p>Total en base de datos: <strong>{{ obtenerTotalUsuarios() }} usuarios</strong></p>
+                        </div>
+                        <a routerLink="/panel/usuarios" class="table-view-all-link">Ver directorio completo →</a>
+                    </div>
+
+                    <div class="table-responsive-box">
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Correo electrónico</th>
+                                    <th>Rol</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (u of usuarios; track u.id) {
+                                    <tr>
+                                        <td><span class="id-tag">#{{ u.id }}</span></td>
+                                        <td class="user-cell-name">
+                                            <div class="mini-avatar">{{ u.nombre.charAt(0) }}</div>
+                                            <strong>{{ u.nombre }}</strong>
+                                        </td>
+                                        <td class="email-cell">{{ u.correo }}</td>
+                                        <td>
+                                            <span class="role-pill" [attr.data-role]="u.rol">{{ u.rol }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="status-pill" [class.status-active]="u.estado === 'Activo'">
+                                                <span class="status-dot"></span>
+                                                {{ u.estado }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            }
+        </div>
+    }
+
+    <!-- ======================================================================
+         MODO 2: METAS & TAREAS
+         ====================================================================== -->
+    @if (vistaActiva === 'metas') {
+        <div class="v29-stage-view">
+            <section class="v29-view-header-bar">
+                <div>
+                    <h2>Metas deportivas y tareas operativas</h2>
+                    <p>Organiza sesiones, revisa prioridades del día y marca tus avances.</p>
+                </div>
+                <button
+                    type="button"
+                    class="btn-hero-primary"
+                    (click)="mostrarInputNuevaMeta = !mostrarInputNuevaMeta"
+                >
+                    <span>+ Nueva meta</span>
+                </button>
+            </section>
+
+            @if (mostrarInputNuevaMeta) {
+                <div class="v29-quick-add-box">
+                    <input
+                        type="text"
+                        [(ngModel)]="nuevaMetaTexto"
+                        (keydown.enter)="agregarMetaRapida()"
+                        placeholder="Escribe tu nueva meta deportiva o tarea..."
+                    />
+                    <button type="button" class="btn-hero-primary" (click)="agregarMetaRapida()">Guardar meta</button>
+                    <button type="button" class="btn-hero-secondary" (click)="mostrarInputNuevaMeta = false">Cancelar</button>
+                </div>
+            }
+
+            <!-- 4 KPIs divididos por líneas de 1px -->
+            <section class="v29-tasks-kpi-row">
+                <article class="v29-task-kpi-card is-coral-featured">
+                    <span class="v29-kpi-label">Prioridad alta</span>
+                    <strong class="v29-kpi-value">{{ conteoMetasPorGrupo('prioridad') }}</strong>
+                    <span class="v29-kpi-foot">Acción inmediata hoy</span>
+                </article>
+
+                <article class="v29-task-kpi-card">
+                    <span class="v29-kpi-label">Agenda de hoy</span>
+                    <strong class="v29-kpi-value">{{ conteoMetasPorGrupo('hoy') }}</strong>
+                    <span class="v29-kpi-foot">Sesiones en curso</span>
+                </article>
+
+                <article class="v29-task-kpi-card">
+                    <span class="v29-kpi-label">Próximos retos</span>
+                    <strong class="v29-kpi-value">{{ conteoMetasPorGrupo('proximas') }}</strong>
+                    <span class="v29-kpi-foot">Programadas esta semana</span>
+                </article>
+
+                <article class="v29-task-kpi-card">
+                    <span class="v29-kpi-label">Completadas</span>
+                    <strong class="v29-kpi-value">{{ conteoMetasPorGrupo('completadas') }}</strong>
+                    <span class="v29-kpi-foot">Objetivos cumplidos</span>
+                </article>
+            </section>
+
+            <!-- Filtros -->
+            <div class="v29-filter-pills-row">
+                <button type="button" class="v29-filter-chip" [class.active]="filtroMetas === 'todas'" (click)="filtroMetas = 'todas'">
+                    Todas ({{ metasDeportivas.length }})
+                </button>
+                <button type="button" class="v29-filter-chip" [class.active]="filtroMetas === 'prioridad'" (click)="filtroMetas = 'prioridad'">
+                    Prioridad ({{ conteoMetasPorGrupo('prioridad') }})
+                </button>
+                <button type="button" class="v29-filter-chip" [class.active]="filtroMetas === 'hoy'" (click)="filtroMetas = 'hoy'">
+                    Hoy ({{ conteoMetasPorGrupo('hoy') }})
+                </button>
+                <button type="button" class="v29-filter-chip" [class.active]="filtroMetas === 'proximas'" (click)="filtroMetas = 'proximas'">
+                    Próximas ({{ conteoMetasPorGrupo('proximas') }})
+                </button>
+                <button type="button" class="v29-filter-chip" [class.active]="filtroMetas === 'completadas'" (click)="filtroMetas = 'completadas'">
+                    Completadas ({{ conteoMetasPorGrupo('completadas') }})
+                </button>
+            </div>
+
+            <!-- Grilla 2x2 de Metas -->
+            <div class="v29-tasks-quad-grid">
+                <section class="dashboard-card-panel v29-task-group-card">
+                    <div class="v29-task-group-head">
+                        <h4>Prioridad deportiva</h4>
+                        <span class="v29-group-count coral">{{ metasPorGrupo('prioridad').length }}</span>
+                    </div>
+                    <div class="v29-task-items-list">
+                        @for (m of metasPorGrupo('prioridad'); track m.id) {
+                            <div class="v29-task-row" [class.is-done]="m.completada">
+                                <button
+                                    type="button"
+                                    class="v29-check-btn"
+                                    [class.checked]="m.completada"
+                                    (click)="alternarMetaCompletada(m)"
+                                    [attr.aria-label]="'Marcar ' + m.titulo"
+                                >
+                                    @if (m.completada) {
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                    }
+                                </button>
+                                <div class="v29-task-row-copy">
+                                    <strong>{{ m.titulo }}</strong>
+                                    <p>{{ m.subtitulo }}</p>
+                                </div>
+                                <span class="v29-task-pill" [attr.data-tone]="m.colorEtiqueta">{{ m.etiqueta }}</span>
+                                <a [routerLink]="m.ruta" class="v29-task-go" title="Abrir módulo">→</a>
+                            </div>
+                        }
+                    </div>
+                </section>
+
+                <section class="dashboard-card-panel v29-task-group-card">
+                    <div class="v29-task-group-head">
+                        <h4>Agenda de hoy</h4>
+                        <span class="v29-group-count amber">{{ metasPorGrupo('hoy').length }}</span>
+                    </div>
+                    <div class="v29-task-items-list">
+                        @for (m of metasPorGrupo('hoy'); track m.id) {
+                            <div class="v29-task-row" [class.is-done]="m.completada">
+                                <button
+                                    type="button"
+                                    class="v29-check-btn"
+                                    [class.checked]="m.completada"
+                                    (click)="alternarMetaCompletada(m)"
+                                    [attr.aria-label]="'Marcar ' + m.titulo"
+                                >
+                                    @if (m.completada) {
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                    }
+                                </button>
+                                <div class="v29-task-row-copy">
+                                    <strong>{{ m.titulo }}</strong>
+                                    <p>{{ m.subtitulo }}</p>
+                                </div>
+                                <span class="v29-task-pill" [attr.data-tone]="m.colorEtiqueta">{{ m.etiqueta }}</span>
+                                <a [routerLink]="m.ruta" class="v29-task-go" title="Abrir módulo">→</a>
+                            </div>
+                        }
+                    </div>
+                </section>
+
+                <section class="dashboard-card-panel v29-task-group-card">
+                    <div class="v29-task-group-head">
+                        <h4>Próximos retos</h4>
+                        <span class="v29-group-count sky">{{ metasPorGrupo('proximas').length }}</span>
+                    </div>
+                    <div class="v29-task-items-list">
+                        @for (m of metasPorGrupo('proximas'); track m.id) {
+                            <div class="v29-task-row" [class.is-done]="m.completada">
+                                <button
+                                    type="button"
+                                    class="v29-check-btn"
+                                    [class.checked]="m.completada"
+                                    (click)="alternarMetaCompletada(m)"
+                                    [attr.aria-label]="'Marcar ' + m.titulo"
+                                >
+                                    @if (m.completada) {
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                    }
+                                </button>
+                                <div class="v29-task-row-copy">
+                                    <strong>{{ m.titulo }}</strong>
+                                    <p>{{ m.subtitulo }}</p>
+                                </div>
+                                <span class="v29-task-pill" [attr.data-tone]="m.colorEtiqueta">{{ m.etiqueta }}</span>
+                                <a [routerLink]="m.ruta" class="v29-task-go" title="Abrir módulo">→</a>
+                            </div>
+                        }
+                    </div>
+                </section>
+
+                <section class="dashboard-card-panel v29-task-group-card">
+                    <div class="v29-task-group-head">
+                        <h4>Completadas</h4>
+                        <span class="v29-group-count emerald">{{ metasPorGrupo('completadas').length }}</span>
+                    </div>
+                    <div class="v29-task-items-list">
+                        @for (m of metasPorGrupo('completadas'); track m.id) {
+                            <div class="v29-task-row" [class.is-done]="m.completada">
+                                <button
+                                    type="button"
+                                    class="v29-check-btn"
+                                    [class.checked]="m.completada"
+                                    (click)="alternarMetaCompletada(m)"
+                                    [attr.aria-label]="'Marcar ' + m.titulo"
+                                >
+                                    @if (m.completada) {
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                    }
+                                </button>
+                                <div class="v29-task-row-copy">
+                                    <strong>{{ m.titulo }}</strong>
+                                    <p>{{ m.subtitulo }}</p>
+                                </div>
+                                <span class="v29-task-pill" [attr.data-tone]="m.colorEtiqueta">{{ m.etiqueta }}</span>
+                                <a [routerLink]="m.ruta" class="v29-task-go" title="Abrir módulo">→</a>
+                            </div>
+                        }
+                    </div>
+                </section>
+            </div>
+        </div>
+    }
+
+    <!-- ======================================================================
+         MODO 3: GUARDADOS & COLECCIONES
+         ====================================================================== -->
+    @if (vistaActiva === 'guardados') {
+        <div class="v29-stage-view">
+            <section class="v29-view-header-bar">
+                <div>
+                    <h2>Guardados, sedes y sesiones HIIT</h2>
+                    <p>Sedes favoritas, protocolos de hipertrofia, sesiones guiadas y notas de laboratorio.</p>
+                </div>
+                <div class="v29-filter-pills-row">
+                    <button type="button" class="v29-filter-chip" [class.active]="filtroGuardados === 'todo'" (click)="filtroGuardados = 'todo'">
+                        Todo ({{ itemsGuardados.length }})
+                    </button>
+                    <button type="button" class="v29-filter-chip" [class.active]="filtroGuardados === 'sede'" (click)="filtroGuardados = 'sede'">
+                        Sedes (2)
+                    </button>
+                    <button type="button" class="v29-filter-chip" [class.active]="filtroGuardados === 'audio'" (click)="filtroGuardados = 'audio'">
+                        Ritmo HIIT (2)
+                    </button>
+                    <button type="button" class="v29-filter-chip" [class.active]="filtroGuardados === 'rutina'" (click)="filtroGuardados = 'rutina'">
+                        Rutinas (1)
+                    </button>
+                    <button type="button" class="v29-filter-chip" [class.active]="filtroGuardados === 'nota'" (click)="filtroGuardados = 'nota'">
+                        Notas Lab (1)
+                    </button>
+                </div>
+            </section>
+
+            <div class="v29-saved-layout">
+                <div class="v29-saved-cards-grid">
+                    @for (item of itemsGuardadosFiltrados; track item.id) {
+                        <article class="v29-saved-card" [class.is-coral-card]="item.esCoralGradiente">
+                            <div class="v29-saved-card-top">
+                                <span class="v29-saved-type-pill">{{ item.tipoLabel }}</span>
+                                @if (item.duracion) {
+                                    <span class="v29-saved-duration">{{ item.duracion }}</span>
+                                }
+                            </div>
+
+                            @if (item.valorDestacado) {
+                                <div class="v29-saved-big-val">{{ item.valorDestacado }}</div>
+                            }
+
+                            @if (item.ondas) {
+                                <div class="v29-waveform-box" [class.is-playing]="reproduciendoAudioId === item.id">
+                                    <button
+                                        type="button"
+                                        class="v29-wave-play-btn"
+                                        (click)="alternarAudioPreview($event, item.id)"
+                                        [attr.aria-label]="reproduciendoAudioId === item.id ? 'Pausar ritmo' : 'Previsualizar ritmo'"
+                                    >
+                                        @if (reproduciendoAudioId === item.id) {
+                                            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                                <rect x="6" y="4" width="4" height="16"></rect>
+                                                <rect x="14" y="4" width="4" height="16"></rect>
+                                            </svg>
+                                        } @else {
+                                            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                                <polygon points="6 4 20 12 6 20 6 4"></polygon>
+                                            </svg>
+                                        }
+                                    </button>
+                                    <div class="v29-wave-bars" aria-hidden="true">
+                                        @for (altura of item.ondas; track $index) {
+                                            <span class="v29-wave-bar" [style.height.%]="altura"></span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="v29-saved-card-body">
+                                <h3>{{ item.titulo }}</h3>
+                                <p>{{ item.subtitulo }}</p>
+                            </div>
+
+                            <footer class="v29-saved-card-foot">
+                                <span>{{ item.metaExtra }}</span>
+                                <a [routerLink]="item.ruta" class="v29-saved-open-link">Abrir →</a>
+                            </footer>
+                        </article>
+                    }
+                </div>
+
+                <aside class="dashboard-card-panel v29-collections-aside">
+                    <div class="v29-today-head">
+                        <div>
+                            <h3>Colecciones activas</h3>
+                        </div>
+                    </div>
+
+                    <div class="v29-collections-list">
+                        @for (col of coleccionesDestacadas; track col.nombre) {
+                            <div class="v29-collection-item">
+                                <div class="v29-collection-top">
+                                    <strong>{{ col.nombre }}</strong>
+                                    <span>{{ col.cantidad }}</span>
+                                </div>
+                                <div class="v29-collection-bar-track">
+                                    <div
+                                        class="v29-collection-bar-fill"
+                                        [attr.data-color]="col.color"
+                                        [style.width.%]="col.progreso"
+                                    ></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="v29-collections-cta-box">
+                        <p>Sincroniza tus sedes favoritas, rutinas biomecánicas y cálculos de IMC en un solo lugar.</p>
+                        <a routerLink="/rutinas" class="btn-hero-secondary">Explorar Rutinas Pro →</a>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    }
+
+    <!-- ======================================================================
+         MODO 4: COMUNIDAD & COACHES
+         ====================================================================== -->
+    @if (vistaActiva === 'comunidad') {
+        <div class="v29-stage-view">
+            <section class="v29-view-header-bar">
+                <div>
+                    <h2>Coaches y actividad de red</h2>
+                    <p>Consulta recomendaciones de instructores, planes adjuntos y estado de membresías.</p>
+                </div>
+                <div class="v29-filter-pills-row">
+                    <button type="button" class="v29-filter-chip" [class.active]="filtroComunidad === 'todos'" (click)="filtroComunidad = 'todos'">
+                        Todos
+                    </button>
+                    <button type="button" class="v29-filter-chip" [class.active]="filtroComunidad === 'coach'" (click)="filtroComunidad = 'coach'">
+                        Coaches élite
+                    </button>
+                    <button type="button" class="v29-filter-chip" [class.active]="filtroComunidad === 'sede'" (click)="filtroComunidad = 'sede'">
+                        Sedes y recepción
+                    </button>
+                </div>
+            </section>
+
+            <div class="v29-messages-layout">
+                <!-- Columna 1: Lista de hilos -->
+                <aside class="dashboard-card-panel v29-threads-col">
+                    <div class="v29-threads-header">
+                        <strong>Canales activos ({{ hilosComunidadFiltrados.length }})</strong>
+                    </div>
+                    <div class="v29-threads-list">
+                        @for (hilo of hilosComunidadFiltrados; track hilo.id) {
+                            <button
+                                type="button"
+                                class="v29-thread-item"
+                                [class.is-active]="hiloActivo.id === hilo.id"
+                                (click)="seleccionarHilo(hilo)"
+                            >
+                                <div class="v29-thread-avatar">{{ hilo.avatarIniciales }}</div>
+                                <div class="v29-thread-copy">
+                                    <div class="v29-thread-row-top">
+                                        <strong>{{ hilo.nombre }}</strong>
+                                        <span>{{ hilo.hora }}</span>
+                                    </div>
+                                    <p>{{ hilo.sedeNombre }} · {{ hilo.cargo }}</p>
+                                </div>
+                                @if (hilo.noLeidos > 0) {
+                                    <span class="v29-unread-badge">{{ hilo.noLeidos }}</span>
+                                }
+                            </button>
+                        }
+                    </div>
+                </aside>
+
+                <!-- Columna 2: Conversación central -->
+                <section class="dashboard-card-panel v29-chat-col">
+                    @if (hiloActivo) {
+                        <header class="v29-chat-header">
+                            <div class="v29-chat-person">
+                                <div class="v29-thread-avatar is-large">{{ hiloActivo.avatarIniciales }}</div>
+                                <div>
+                                    <h3>{{ hiloActivo.nombre }}</h3>
+                                    <p>{{ hiloActivo.cargo }} · {{ hiloActivo.sedeNombre }}</p>
+                                </div>
+                            </div>
+                            <span class="v29-chat-deal-pill">{{ hiloActivo.insigniaValor }}</span>
+                        </header>
+
+                        <div class="v29-chat-messages">
+                            @for (msg of hiloActivo.mensajes; track $index) {
+                                <div class="v29-chat-bubble-row" [class.is-own]="msg.autor === 'propio'">
+                                    <div class="v29-chat-bubble">
+                                        <p>{{ msg.texto }}</p>
+                                        <span class="v29-chat-time">{{ msg.hora }}</span>
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="v29-chat-attachment-card">
+                                <div class="v29-pdf-badge">PDF</div>
+                                <div class="v29-pdf-meta">
+                                    <strong>{{ hiloActivo.documentoAdjunto }}</strong>
+                                    <span>Guía técnica sincronizada con tu cuenta</span>
+                                </div>
+                                <a [routerLink]="hiloActivo.rutaAccion" class="v29-pdf-open">Abrir módulo →</a>
+                            </div>
+                        </div>
+
+                        <footer class="v29-chat-composer">
+                            <input
+                                type="text"
+                                [(ngModel)]="nuevoMensajeComunidad"
+                                (keydown.enter)="enviarMensajeComunidad()"
+                                [placeholder]="'Escribe una nota o consulta para ' + hiloActivo.nombre + '...'"
+                            />
+                            <button type="button" class="v29-chat-send-btn" (click)="enviarMensajeComunidad()">
+                                Enviar →
+                            </button>
+                        </footer>
+                    }
+                </section>
+
+                <!-- Columna 3: Inspector de contacto y sede -->
+                <aside class="dashboard-card-panel v29-inspector-col">
+                    @if (hiloActivo) {
+                        <div class="v29-inspector-profile">
+                            <div class="v29-thread-avatar is-xl">{{ hiloActivo.avatarIniciales }}</div>
+                            <h4>{{ hiloActivo.nombre }}</h4>
+                            <p>{{ hiloActivo.cargo }}</p>
+                        </div>
+
+                        <div class="v29-inspector-quick-actions">
+                            <a routerLink="/mi-espacio/reservar-clase" class="v29-insp-btn">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                <small>Reservar</small>
+                            </a>
+                            <a routerLink="/rutinas" class="v29-insp-btn">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                                </svg>
+                                <small>Rutina</small>
+                            </a>
+                            <a routerLink="/gimnasios" class="v29-insp-btn">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M6 18h12"></path>
+                                    <path d="M12 2v20"></path>
+                                    <path d="M2 10h4"></path>
+                                    <path d="M18 10h4"></path>
+                                </svg>
+                                <small>Sede</small>
+                            </a>
+                            <a routerLink="/mi-espacio/resenas" class="v29-insp-btn">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                </svg>
+                                <small>Reseñas</small>
+                            </a>
+                        </div>
+
+                        <div class="v29-linked-deal-card">
+                            <span class="v29-linked-kicker">Sede y plan vinculado</span>
+                            <strong>{{ hiloActivo.sedeNombre }}</strong>
+                            <div class="v29-linked-meta-row">
+                                <span class="v29-linked-val">{{ hiloActivo.insigniaValor }}</span>
+                                <span class="v29-linked-stage">{{ hiloActivo.etapaSede }}</span>
+                            </div>
+                            <a [routerLink]="hiloActivo.rutaAccion" class="v29-linked-cta">
+                                Ir al apartado vinculado →
+                            </a>
+                        </div>
+                    }
+                </aside>
+            </div>
+        </div>
+    }
 </div>

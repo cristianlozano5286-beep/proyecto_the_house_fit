@@ -1,122 +1,341 @@
-<section class="hero-section">
-  <div class="breadcrumb-row">
-    <a routerLink="/">Inicio</a>
-    <span class="sep">›</span>
-    <span class="current">Rutinas</span>
-  </div>
-  <div class="hero-text">
-    <h1>RUTINAS DE ENTRENAMIENTO</h1>
-    <p>Descubre rutinas diseñadas por profesionales para ayudarte a alcanzar tus objetivos.</p>
-  </div>
-  <span class="hero-tag">NO EXCUSES</span>
-</section>
+<div class="rutinas-workspace">
+  <!-- 1. CABECERA LIMPIA DE ESPACIO DE TRABAJO -->
+  <header class="rutinas-header">
+    <nav class="rutinas-breadcrumb" aria-label="Ruta de navegación">
+      <a routerLink="/">Inicio</a>
+      <span aria-hidden="true">/</span>
+      <span class="current">Rutinas</span>
+    </nav>
 
-<section class="content-area">
+    <div class="rutinas-header-main">
+      <div>
+        <h1 class="rutinas-title">Rutinas de Entrenamiento</h1>
+        <p class="rutinas-subtitle">
+          {{ rutinas.length }} programas guiados por disciplina, nivel de exigencia y duración en semanas.
+        </p>
+      </div>
 
-  <!-- FILTROS -->
-  <aside class="filters">
-    <div class="filters-head">
-      <h3>FILTRAR</h3>
-      <span class="filters-icon">☰</span>
+      <a routerLink="/imc" class="rutinas-imc-pill">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+        </svg>
+        <span>Calcular mi IMC</span>
+      </a>
     </div>
 
-    <div class="filter-group">
-      <h4><span class="dot-icon">🎯</span> TIPO DE ENTRENAMIENTO</h4>
-      @for (op of tiposEntrenamiento; track op) {
-        <label class="checkbox-row">
-          <input type="checkbox" [checked]="filtroTipo.includes(op)" (change)="toggleFiltro('tipo', op)">
-          <span>{{ op }}</span>
-        </label>
-      }
-    </div>
+    <!-- PESTAÑAS RÁPIDAS DE DISCIPLINA -->
+    <div class="discipline-strip" role="tablist" aria-label="Filtrar por disciplina">
+      <button
+        type="button"
+        role="tab"
+        [attr.aria-selected]="filtroTipo.length === 0"
+        class="disc-pill"
+        [class.active]="filtroTipo.length === 0"
+        (click)="filtrarPorCategoria('Todas')"
+      >
+        <span>Todas</span>
+        <span class="disc-count">{{ rutinas.length }}</span>
+      </button>
 
-    <div class="filter-group">
-      <h4><span class="dot-icon">📊</span> NIVEL</h4>
-      @for (op of niveles; track op) {
-        <label class="checkbox-row">
-          <input type="checkbox" [checked]="filtroNivel.includes(op)" (change)="toggleFiltro('nivel', op)">
-          <span>{{ op }}</span>
-        </label>
-      }
-    </div>
-
-    <div class="filter-group">
-      <h4><span class="dot-icon">⏱️</span> DURACIÓN</h4>
-      @for (op of duraciones; track op) {
-        <label class="checkbox-row">
-          <input type="checkbox" [checked]="filtroDuracion.includes(op)" (change)="toggleFiltro('duracion', op)">
-          <span>{{ op }}</span>
-        </label>
-      }
-    </div>
-
-    <button class="btn-clear" (click)="limpiarFiltros()">LIMPIAR FILTROS</button>
-  </aside>
-
-  <!-- MAIN -->
-  <div class="main-col">
-
-    <h2 class="section-label">EXPLORA POR CATEGORÍA</h2>
-    <div class="category-grid">
-      @for (cat of categorias; track cat.tipo) {
-        <button class="category-card" (click)="filtrarPorCategoria(cat.tipo)">
-          <img [src]="cat.imagen" [alt]="cat.tipo">
-          <div class="category-overlay">
-            <span class="category-icon">{{ cat.icono }}</span>
-            <strong>{{ cat.tipo }}</strong>
-            <small>{{ cat.total }} rutina{{ cat.total === 1 ? '' : 's' }}</small>
-          </div>
+      @for (tipo of tiposEntrenamiento; track tipo) {
+        <button
+          type="button"
+          role="tab"
+          [attr.aria-selected]="filtroTipo.length === 1 && filtroTipo.includes(tipo)"
+          class="disc-pill"
+          [class.active]="filtroTipo.length === 1 && filtroTipo.includes(tipo)"
+          (click)="filtrarPorCategoria(tipo)"
+        >
+          <span class="disc-svg" aria-hidden="true">
+            @switch (claveIconoTipo(tipo)) {
+              @case ('weights') {
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M6.5 6.5v11M17.5 6.5v11M3 9v6M21 9v6M6.5 12h11" />
+                </svg>
+              }
+              @case ('heart') {
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                </svg>
+              }
+              @case ('flame') {
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
+                </svg>
+              }
+              @case ('spark') {
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+                </svg>
+              }
+              @default {
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                </svg>
+              }
+            }
+          </span>
+          <span>{{ tipo }}</span>
+          <span class="disc-count">{{ contarPorTipo(tipo) }}</span>
         </button>
       }
     </div>
+  </header>
 
-    <div class="results-head">
-      <span>{{ rutinasFiltradas.length }} rutinas encontradas</span>
-      <div class="sort">
-        <label>Ordenar por:</label>
-        <select [(ngModel)]="orden" (change)="ordenar()">
-          <option value="recientes">Más recientes</option>
-          <option value="duracion">Duración</option>
-          <option value="ejercicios">N.º de ejercicios</option>
-        </select>
+  <!-- 2. CUERPO DE DOS COLUMNAS -->
+  <div class="rutinas-grid-layout">
+    <!-- BARRA LATERAL DE FILTROS CON ACCENT-COLOR NATIVO -->
+    <aside class="filter-rail" aria-label="Filtros de rutinas">
+      <div class="filter-rail-top">
+        <div class="filter-rail-heading">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="4" y1="21" x2="4" y2="14" />
+            <line x1="4" y1="10" x2="4" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="12" />
+            <line x1="12" y1="8" x2="12" y2="3" />
+            <line x1="20" y1="21" x2="20" y2="16" />
+            <line x1="20" y1="12" x2="20" y2="3" />
+            <line x1="1" y1="14" x2="7" y2="14" />
+            <line x1="9" y1="8" x2="15" y2="8" />
+            <line x1="17" y1="16" x2="23" y2="16" />
+          </svg>
+          <h2>Filtros</h2>
+          @if (totalFiltrosActivos > 0) {
+            <span class="filter-badge-count">{{ totalFiltrosActivos }}</span>
+          }
+        </div>
+
+        @if (totalFiltrosActivos > 0) {
+          <button type="button" class="filter-reset-link" (click)="limpiarFiltros()">Limpiar</button>
+        }
+
+        <button
+          type="button"
+          class="filter-mobile-toggle"
+          (click)="filtrosMovilAbiertos.set(!filtrosMovilAbiertos())"
+          [attr.aria-expanded]="filtrosMovilAbiertos()"
+        >
+          {{ filtrosMovilAbiertos() ? 'Ocultar' : 'Mostrar filtros' }}
+        </button>
       </div>
-    </div>
 
-    <div class="routine-grid">
-      @for (r of rutinasFiltradas; track r.id) {
-        <article class="routine-card">
-          <div class="routine-image">
-            <img [src]="imagen(r.tipoEntrenamiento)" [alt]="r.nombre">
-            <span class="badge-tipo">{{ r.tipoEntrenamiento }}</span>
+      <div class="filter-rail-body" [class.mobile-open]="filtrosMovilAbiertos()">
+        <div class="filter-section">
+          <h3>Tipo de entrenamiento</h3>
+          <div class="filter-check-list">
+            @for (op of tiposEntrenamiento; track op) {
+              <label class="native-check-row" [class.is-checked]="filtroTipo.includes(op)">
+                <input
+                  type="checkbox"
+                  [checked]="filtroTipo.includes(op)"
+                  (change)="toggleFiltro('tipo', op)"
+                />
+                <span class="check-label-text">{{ op }}</span>
+                <span class="check-count">{{ contarPorTipo(op) }}</span>
+              </label>
+            }
           </div>
-          <div class="routine-body">
-            <h4>{{ r.nombre }}</h4>
-            <p>{{ r.descripcion }}</p>
-            <div class="routine-meta">
-              <span>📅 {{ r.duracionSemanas }} semanas</span>
-              <span>📶 {{ r.nivel }}</span>
-              <span>📋 {{ r.ejercicios.length }} ejercicios</span>
-            </div>
-            <!-- Botón actualizado con routerLink para navegar al detalle de la rutina -->
-            <a [routerLink]="['/rutina', r.id]" class="btn-outline">VER RUTINA</a>
-          </div>
-        </article>
-      }
-      @if (rutinasFiltradas.length === 0) {
-        <p class="no-results">No encontramos rutinas con esos filtros. Prueba quitando alguno.</p>
-      }
-    </div>
+        </div>
 
-    <div class="cta-banner">
-      <div class="cta-left">
-        <span class="cta-icon">📋</span>
-        <div>
-          <strong>¿No sabes por dónde empezar?</strong>
-          <p>Responde algunas preguntas y te recomendaremos la rutina ideal para ti.</p>
+        <div class="filter-section">
+          <h3>Nivel de dificultad</h3>
+          <div class="filter-check-list">
+            @for (op of niveles; track op) {
+              <label class="native-check-row" [class.is-checked]="filtroNivel.includes(op)">
+                <input
+                  type="checkbox"
+                  [checked]="filtroNivel.includes(op)"
+                  (change)="toggleFiltro('nivel', op)"
+                />
+                <span class="check-label-text">{{ op }}</span>
+                <span class="check-count">{{ contarPorNivel(op) }}</span>
+              </label>
+            }
+          </div>
+        </div>
+
+        <div class="filter-section last">
+          <h3>Duración del plan</h3>
+          <div class="filter-check-list">
+            @for (op of duraciones; track op) {
+              <label class="native-check-row" [class.is-checked]="filtroDuracion.includes(op)">
+                <input
+                  type="checkbox"
+                  [checked]="filtroDuracion.includes(op)"
+                  (change)="toggleFiltro('duracion', op)"
+                />
+                <span class="check-label-text">{{ op }}</span>
+                <span class="check-count">{{ contarPorDuracion(op) }}</span>
+              </label>
+            }
+          </div>
         </div>
       </div>
-      <a routerLink="/imc" class="btn-primary">ENCONTRAR MI RUTINA</a>
-    </div>
+    </aside>
 
+    <!-- COLUMNA PRINCIPAL -->
+    <main class="rutinas-main-col">
+      <!-- SELECTOR INTERACTIVO POR OBJETIVO -->
+      <section class="goal-matcher-bar" aria-label="Filtrar por objetivo físico">
+        <span class="goal-label">Tu objetivo:</span>
+        <div class="goal-chips">
+          @for (obj of objetivos; track obj.id) {
+            <button
+              type="button"
+              class="goal-chip"
+              [class.active]="objetivoActivo() === obj.id"
+              (click)="seleccionarObjetivo(obj.id)"
+            >
+              {{ obj.etiqueta }}
+            </button>
+          }
+        </div>
+      </section>
+
+      <!-- BARRA DE BÚSQUEDA Y ORDEN -->
+      <div class="catalog-toolbar">
+        <div class="search-field-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            type="search"
+            name="buscarRutina"
+            placeholder="Buscar rutina o ejercicio (ej: Press, HIIT, Yoga)..."
+            [(ngModel)]="textoBusqueda"
+            (input)="aplicarFiltros()"
+            aria-label="Buscar rutinas por nombre o ejercicio"
+          />
+          @if (textoBusqueda) {
+            <button
+              type="button"
+              class="search-clear-btn"
+              (click)="textoBusqueda = ''; aplicarFiltros()"
+              aria-label="Limpiar búsqueda"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+          }
+        </div>
+
+        <div class="toolbar-meta">
+          <span class="results-counter">
+            <strong>{{ rutinasFiltradas.length }}</strong>
+            {{ rutinasFiltradas.length === 1 ? 'programa' : 'programas' }}
+          </span>
+
+          <div class="sort-field">
+            <label for="sortRutinas">Ordenar:</label>
+            <select id="sortRutinas" name="orden" [(ngModel)]="orden" (change)="ordenar()">
+              <option value="recientes">Más recientes</option>
+              <option value="duracion">Menor duración</option>
+              <option value="ejercicios">Más ejercicios</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- GRILLA DE TARJETAS INTERACTIVAS -->
+      <div class="routines-cards-grid">
+        @for (r of rutinasFiltradas; track r.id; let idx = $index) {
+          <article class="routine-card" [class.is-recommended]="esRecomendada(r, idx)">
+            <a [routerLink]="['/rutina', r.id]" class="card-media-link" [attr.aria-label]="'Abrir rutina ' + r.nombre">
+              <img
+                [src]="imagenRutina(r)"
+                [alt]="r.nombre"
+                loading="lazy"
+                decoding="async"
+                (error)="onImgError($event)"
+              />
+              <span class="card-media-fade" aria-hidden="true"></span>
+
+              <div class="card-badges-top">
+                <span class="pill-discipline">{{ r.tipoEntrenamiento }}</span>
+                <span class="pill-level" [class]="'lvl-' + r.nivel.toLowerCase()">{{ r.nivel }}</span>
+              </div>
+
+              @if (esRecomendada(r, idx)) {
+                <span class="pill-recommended">Recomendada para ti</span>
+              }
+            </a>
+
+            <div class="card-content">
+              <a [routerLink]="['/rutina', r.id]" class="card-title-link">
+                <h3>{{ r.nombre }}</h3>
+              </a>
+              <p class="card-desc">{{ r.descripcion }}</p>
+
+              <!-- VISTA RÁPIDA INTERACTIVA DE EJERCICIOS EN LA MISMA TARJETA -->
+              <div class="quick-peek-area">
+                <button
+                  type="button"
+                  class="quick-peek-toggle"
+                  (click)="toggleVistaRapida($event, r.id)"
+                  [attr.aria-expanded]="vistaRapidaActiva(r.id)"
+                >
+                  <span>{{ vistaRapidaActiva(r.id) ? 'Ocultar secuencia' : 'Ver ' + r.ejercicios.length + ' ejercicios' }}</span>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                    [class.rotated]="vistaRapidaActiva(r.id)"
+                    aria-hidden="true"
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+
+                @if (vistaRapidaActiva(r.id)) {
+                  <ol class="quick-peek-list">
+                    @for (ej of r.ejercicios; track ej) {
+                      <li>{{ ej }}</li>
+                    }
+                  </ol>
+                } @else {
+                  <div class="preview-pills">
+                    @for (ej of r.ejercicios.slice(0, 2); track ej) {
+                      <span class="preview-chip">{{ ej }}</span>
+                    }
+                    @if (r.ejercicios.length > 2) {
+                      <span class="preview-chip muted">+{{ r.ejercicios.length - 2 }}</span>
+                    }
+                  </div>
+                }
+              </div>
+
+              <footer class="card-footer">
+                <span class="card-metrics">
+                  {{ r.duracionSemanas }} sem · ~{{ minutosEstimados(r) }} min
+                </span>
+
+                <a [routerLink]="['/rutina', r.id]" class="card-open-btn">
+                  <span>Iniciar rutina</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </a>
+              </footer>
+            </div>
+          </article>
+        } @empty {
+          <div class="empty-catalog-box">
+            <h3>No hay rutinas con esos filtros</h3>
+            <p>Ajusta el objetivo, disciplina o texto buscado para ver más programas disponibles.</p>
+            <button type="button" class="btn-reset-empty" (click)="limpiarFiltros()">
+              Restablecer filtros ({{ rutinas.length }})
+            </button>
+          </div>
+        }
+      </div>
+    </main>
   </div>
-</section>
+</div>

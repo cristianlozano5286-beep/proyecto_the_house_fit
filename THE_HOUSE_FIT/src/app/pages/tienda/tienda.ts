@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DoCheck, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { PagosService } from '../../services/pagos';
 
 interface Producto {
   id: number;
@@ -46,11 +48,12 @@ interface OpcionOrden {
 @Component({
   selector: 'app-tienda',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './tienda.html',
   styleUrls: ['./tienda.css'],
 })
-export class TiendaComponent implements OnInit {
+export class TiendaComponent implements OnInit, DoCheck, OnDestroy {
+  private readonly pagosService = inject(PagosService);
   // 📦 TODA la información de cada producto vive aquí, incluidos sus beneficios.
   // El HTML solo la muestra, nunca la define.
   productos: Producto[] = [
@@ -236,6 +239,7 @@ export class TiendaComponent implements OnInit {
   categoriaFiltro: string = '';
   terminoBusqueda: string = '';
   ordenSeleccionado: string = 'default';
+  soloOfertas: boolean = false;
   productoSeleccionado: Producto | null = null;
   productoDetalle: Producto | null = null;
   carrito: CarritoItem[] = [];
@@ -297,8 +301,48 @@ export class TiendaComponent implements OnInit {
     return opcion ? opcion.icono : '📋';
   }
 
+  /** Indica si hay alguna ventana modal abierta (ficha, guía o checkout). */
+  get hayModalAbierto(): boolean {
+    return this.mostrarCarrito || !!this.productoDetalle || !!this.productoSeleccionado;
+  }
+
+  private bloqueoScrollActivo = false;
+
   ngOnInit() {
     this.aplicarFiltros();
+  }
+
+  /**
+   * Sincroniza el bloqueo de scroll del documento con el estado de los modales:
+   * mientras el checkout (o cualquier modal) está abierto, la página de fondo
+   * no se desplaza y la barra de navegación no se superpone al modal.
+   */
+  ngDoCheck(): void {
+    const abierto = this.hayModalAbierto;
+    if (abierto !== this.bloqueoScrollActivo) {
+      this.bloqueoScrollActivo = abierto;
+      this.aplicarBloqueoScroll(abierto);
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.aplicarBloqueoScroll(false);
+  }
+
+  private aplicarBloqueoScroll(activo: boolean): void {
+    if (typeof document === 'undefined') return;
+    const html = document.documentElement;
+    const body = document.body;
+    if (activo) {
+      const anchoScrollbar = window.innerWidth - html.clientWidth;
+      body.style.paddingRight = anchoScrollbar > 0 ? `${anchoScrollbar}px` : '';
+      html.classList.add('thf-modal-open');
+      body.classList.add('thf-modal-open');
+    } else {
+      body.style.paddingRight = '';
+      html.classList.remove('thf-modal-open');
+      body.classList.remove('thf-modal-open');
+    }
   }
 
   // ===== DROPDOWN ORDENAR =====
@@ -322,11 +366,33 @@ export class TiendaComponent implements OnInit {
     this.aplicarFiltros();
   }
 
+  toggleSoloOfertas(): void {
+    this.soloOfertas = !this.soloOfertas;
+    this.aplicarFiltros();
+  }
+
+  limpiarFiltros(): void {
+    this.categoriaFiltro = '';
+    this.terminoBusqueda = '';
+    this.ordenSeleccionado = 'default';
+    this.soloOfertas = false;
+    this.aplicarFiltros();
+  }
+
+  contarPorCategoria(categoria: string): number {
+    if (!categoria) return this.productos.length;
+    return this.productos.filter(p => p.categoria === categoria).length;
+  }
+
   aplicarFiltros(): void {
     let filtrados = [...this.productos];
 
     if (this.categoriaFiltro) {
       filtrados = filtrados.filter(p => p.categoria === this.categoriaFiltro);
+    }
+
+    if (this.soloOfertas) {
+      filtrados = filtrados.filter(p => p.oferta);
     }
 
     if (this.terminoBusqueda.trim()) {
@@ -445,9 +511,24 @@ export class TiendaComponent implements OnInit {
     if (this.carrito.length === 0 || this.procesandoPago || !this.pagoValido) return;
 
     this.procesandoPago = true;
+    const totalOrden = this.totalCarrito;
+    const resumenItems = this.carrito.map((c) => `${c.cantidad}x ${c.producto.nombre}`).join(', ');
+    const datosComprador = { ...this.datosPago };
+    const metodoElegido = this.metodoPago;
 
-    setTimeout(() => {
+    setTimeout(async () => {
       this.numeroOrden = 'HF-' + Math.floor(100000 + Math.random() * 900000);
+      await this.pagosService.confirmarPagoPasarela({
+        concepto: `Tienda The House Fit (${this.numeroOrden}): ${resumenItems}`,
+        monto: totalOrden,
+        metodoNombre: `Wompi Sandbox · ${metodoElegido.toUpperCase()}`,
+        pasarela: 'Wompi Sandbox',
+        referencia: this.numeroOrden,
+        usuario: datosComprador.nombre || undefined,
+        cedula: datosComprador.numeroDocumento || undefined,
+        correo: datosComprador.email || undefined,
+      });
+
       this.procesandoPago = false;
       this.pagoExitoso = true;
       this.carrito = [];

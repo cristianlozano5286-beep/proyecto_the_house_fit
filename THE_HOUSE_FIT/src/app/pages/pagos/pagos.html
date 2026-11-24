@@ -1,64 +1,322 @@
-<div class="page-wrapper">
-    <h1 class="section-title">💳 Pagos</h1>
-    <p class="section-subtitle">Selecciona tu método de pago preferido para tu membresía o compra</p>
-
-    <div class="grid grid-2">
-        <section class="card">
-            <h2>Detalle del pago</h2>
-            <div class="form-group mt-16">
-                <label>Concepto</label>
-                <input type="text" [(ngModel)]="concepto" />
-            </div>
-            <div class="form-group">
-                <label>Monto</label>
-                <input type="number" [(ngModel)]="monto" />
-            </div>
-
-            <h3 class="mt-16">Elige tu método de pago</h3>
-            <!-- CORREGIDO: Se cambia a grid-3 para alojar los 3 métodos de forma ordenada -->
-            <div class="grid grid-3 mt-8">
-                @for (m of metodos; track m.id) {
-                    <div class="metodo-card" [class.seleccionado]="metodoSeleccionado?.id===m.id" (click)="seleccionarMetodo(m)">
-                        <span class="metodo-icono">{{ m.icono }}</span>
-                        <strong>{{ m.nombre }}</strong>
-                        <p>{{ m.descripcion }}</p>
-                    </div>
-                }
-            </div>
-
-            <button class="btn btn-primary mt-16" [disabled]="!metodoSeleccionado || procesando" (click)="pagar()">
-                {{ procesando ? 'Procesando pago...' : 'Pagar ' + formatearPrecio(monto) }}
-            </button>
-
-            @if (transaccionExitosa) {
-                <div class="alert-success-box mt-16">
-                    ✅ Pago aprobado con {{ nombreMetodo(transaccionExitosa.metodoPagoId) }}. Serás redirigido a la pasarela para confirmar el comprobante.
-                </div>
-            }
-        </section>
-
-        <section class="card">
-            <h2>Mis transacciones</h2>
-            <div class="table-responsive mt-16">
-                <table>
-                    <thead>
-                        <tr><th>Concepto</th><th>Monto</th><th>Método</th><th>Estado</th></tr>
-                    </thead>
-                    <tbody>
-                        @for (t of transacciones; track t.id) {
-                            <tr>
-                                <td>{{ t.concepto }}</td>
-                                <td>{{ formatearPrecio(t.monto) }}</td>
-                                <td>{{ nombreMetodo(t.metodoPagoId) }}</td>
-                                <td><span class="badge">{{ t.estado }}</span></td>
-                            </tr>
-                        }
-                        @empty {
-                            <tr><td colspan="4" class="empty-state">Aún no tienes transacciones registradas.</td></tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </section>
+<div class="steam-page-shell">
+  <!-- Toast flotante -->
+  @if (toast) {
+    <div class="floating-toast" [ngClass]="'toast-' + toast.tipo" role="status">
+      <div class="toast-icon" aria-hidden="true">
+        @if (toast.tipo === 'exito') { ✓ } @else { ! }
+      </div>
+      <div class="toast-body">
+        <span class="toast-text">{{ toast.texto }}</span>
+      </div>
+      <button type="button" class="toast-close" (click)="cerrarToast()" aria-label="Cerrar aviso">✕</button>
     </div>
+  }
+
+  <!-- 1. ESCAPARATE HERO SPLIT DE PAGOS Y FACTURACIÓN -->
+  <section class="steam-hero-split" aria-label="Resumen de pagos y facturación">
+    <article class="steam-hero-banner">
+      <img
+        class="steam-hero-bg"
+        src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fit=crop&w=1200&q=80"
+        alt="Pasarela segura de pagos The House Fit"
+      />
+      <div class="steam-hero-scrim" aria-hidden="true"></div>
+
+      <div class="steam-hero-top">
+        <div class="steam-hero-tags">
+          <span class="steam-tag-pill">
+            <span class="steam-dot-green" aria-hidden="true"></span>
+            Encriptación SSL 256-bit
+          </span>
+          <span class="steam-tag-pill">Acreditación inmediata</span>
+          <span class="steam-tag-pill">Comprobante digital</span>
+        </div>
+      </div>
+
+      <div class="steam-hero-bottom">
+        <h1 class="steam-hero-title">Pagos y Facturación</h1>
+        <p class="steam-hero-sub">
+          Activa tus membresías mensuales, pases libres o sesiones personalizadas con historial auditado en tiempo real.
+        </p>
+        <span class="steam-members-pill">
+          <span class="steam-dot-ember" aria-hidden="true"></span>
+          {{ transacciones.length }} movimientos registrados · {{ metodoSeleccionado ? metodoSeleccionado.nombre : 'Selecciona un método' }}
+        </span>
+      </div>
+    </article>
+
+    <div class="steam-hero-aside">
+      <article class="steam-featured-card">
+        <div class="steam-featured-body">
+          <div class="steam-featured-eyebrow">RESUMEN DE CHECKOUT</div>
+          <h2>{{ concepto || 'Membresía The House Fit' }}</h2>
+          <p class="steam-featured-desc">
+            {{ metodoSeleccionado ? 'Método seleccionado: ' + metodoSeleccionado.nombre + ' · ' + metodoSeleccionado.descripcion : 'Selecciona tu método de pago preferido para completar la transacción.' }}
+          </p>
+        </div>
+
+        <div class="steam-featured-meta">
+          <div class="steam-featured-price">Total: {{ formatearPrecio(monto || 0) }}</div>
+          <div class="steam-featured-foot">
+            <button
+              type="button"
+              class="steam-featured-btn"
+              (click)="pagar()"
+              [disabled]="!metodoSeleccionado || procesando || monto <= 0"
+            >
+              <span>{{ procesando ? 'Procesando...' : 'Confirmar pago' }}</span>
+            </button>
+            <span class="steam-featured-mark" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+              </svg>
+            </span>
+          </div>
+        </div>
+      </article>
+
+      <div class="steam-aside-tiles">
+        <button type="button" class="steam-mini-glass-tile" (click)="seleccionarPlan(planesRapidos[0])">
+          <span class="steam-mini-tile-label">Plan popular</span>
+          <strong class="steam-mini-tile-val">{{ formatearPrecio(planesRapidos[0].monto) }}</strong>
+        </button>
+        <button type="button" class="steam-mini-glass-tile" (click)="seleccionarPlan(planesRapidos[2])">
+          <span class="steam-mini-tile-label">Pase diario</span>
+          <strong class="steam-mini-tile-val">{{ formatearPrecio(planesRapidos[2].monto) }}</strong>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. CHECKOUT + HISTORIAL SOBRE VIDRIO OSCURO -->
+  <div class="pagos-main-grid">
+    <!-- COLUMNA 1: CHECKOUT -->
+    <section class="checkout-column">
+      <div class="steam-glass-panel checkout-card">
+        <div class="card-header">
+          <div class="card-icon-box" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff7745" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+              <line x1="1" y1="10" x2="23" y2="10"></line>
+            </svg>
+          </div>
+          <div>
+            <h3>Detalle del Pago</h3>
+            <p>Selecciona tu plan o personaliza el monto a cancelar</p>
+          </div>
+        </div>
+
+        <div class="quick-plans-section">
+          <span class="plans-label">Planes sugeridos:</span>
+          <div class="plans-chips-row">
+            @for (p of planesRapidos; track p.nombre) {
+              <button
+                type="button"
+                class="plan-chip-btn"
+                [class.active]="concepto === p.nombre"
+                (click)="seleccionarPlan(p)"
+              >
+                <div class="chip-content">
+                  <span class="chip-name">{{ p.nombre }}</span>
+                  <span class="chip-price">{{ formatearPrecio(p.monto) }}</span>
+                </div>
+                @if (p.badge) {
+                  <span class="chip-badge">{{ p.badge }}</span>
+                }
+              </button>
+            }
+          </div>
+        </div>
+
+        <form (ngSubmit)="pagar()" class="checkout-form">
+          <div class="form-group">
+            <label for="inputConcepto" class="group-label">CONCEPTO DEL PAGO</label>
+            <div class="input-wrapper">
+              <input
+                id="inputConcepto"
+                type="text"
+                name="concepto"
+                [(ngModel)]="concepto"
+                placeholder="Ej. Membresía mensual - Plan estándar"
+                class="custom-text-input"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="inputMonto" class="group-label">MONTO A PAGAR (COP)</label>
+            <div class="input-wrapper amount-wrapper">
+              <span class="currency-prefix">COP $</span>
+              <input
+                id="inputMonto"
+                type="number"
+                name="monto"
+                min="1000"
+                step="1000"
+                [(ngModel)]="monto"
+                class="custom-text-input amount-input"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="group-label">ELIGE TU MÉTODO DE PAGO</label>
+
+            <div class="metodos-grid">
+              @for (m of metodos; track m.id) {
+                <div
+                  class="metodo-item-card"
+                  [class.selected]="metodoSeleccionado?.id === m.id"
+                  (click)="seleccionarMetodo(m)"
+                  role="button"
+                  tabindex="0"
+                >
+                  <div class="metodo-icon-circle">{{ m.icono }}</div>
+                  <div class="metodo-text-box">
+                    <strong class="metodo-title">{{ m.nombre }}</strong>
+                    <p class="metodo-desc">{{ m.descripcion }}</p>
+                  </div>
+                  @if (metodoSeleccionado?.id === m.id) {
+                    <span class="metodo-check">✓</span>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            class="btn-pay-action"
+            [disabled]="!metodoSeleccionado || procesando || monto <= 0"
+          >
+            @if (procesando) {
+              <span class="spinner-circle"></span>
+              Procesando pago seguro...
+            } @else {
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <span>Pagar {{ formatearPrecio(monto) }} con Wompi Sandbox</span>
+            }
+          </button>
+        </form>
+
+        @if (transaccionExitosa) {
+          <div class="success-approval-card">
+            <div class="approval-icon-box">✓</div>
+            <div class="approval-info">
+              <div class="approval-tag">TRANSACCIÓN APROBADA</div>
+              <h4>Pago de {{ formatearPrecio(transaccionExitosa.monto) }} confirmado</h4>
+              <p>
+                Acreditado mediante <strong>{{ transaccionExitosa.metodoNombre || nombreMetodo(transaccionExitosa.metodoPagoId) }}</strong>.
+                Referencia: <code>{{ transaccionExitosa.referencia || ('#' + transaccionExitosa.id) }}</code>
+              </p>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- COLUMNA 2: HISTORIAL DE TRANSACCIONES -->
+    <section class="history-column">
+      <div class="steam-glass-panel history-card">
+        <div class="card-header">
+          <div class="card-icon-box history-box" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+          </div>
+          <div class="history-header-flex">
+            <div>
+              <h3>Mis Transacciones</h3>
+              <p>Registro auditado de tus pagos y membresías</p>
+            </div>
+            <span class="history-badge">{{ transacciones.length }}</span>
+          </div>
+        </div>
+
+        <div class="table-responsive-box">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Concepto</th>
+                <th>Monto</th>
+                <th>Método</th>
+                <th>Estado</th>
+                <th class="text-right">Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (t of transacciones; track t.id) {
+                <tr class="history-row">
+                  <td>
+                    <div class="tx-concept-cell">
+                      <span class="tx-concept-name">{{ t.concepto }}</span>
+                      <small class="tx-id">{{ t.referencia || ('Ref #' + t.id) }} · {{ t.pasarela || 'The House Fit' }}</small>
+                    </div>
+                  </td>
+                  <td><strong class="tx-amount">{{ formatearPrecio(t.monto) }}</strong></td>
+                  <td>
+                    <div class="tx-method-pill">
+                      <span>{{ t.metodoNombre || nombreMetodo(t.metodoPagoId) }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span
+                      class="status-pill"
+                      [class.approved]="t.estado === 'Aprobado' || t.estado === 'Aprobada y pagada'"
+                      [class.pending]="t.estado === 'Pendiente'"
+                      [class.rejected]="t.estado === 'Rechazado'"
+                    >
+                      <span class="status-dot"></span>
+                      {{ t.estado }}
+                    </span>
+                  </td>
+                  <td class="text-right"><span class="tx-date">{{ t.fechaHora || formatearFecha(t.fecha) }}</span></td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="5" class="empty-tx-cell">
+                    <div class="empty-tx-content">
+                      <p>Aún no tienes pagos registrados.</p>
+                      <small>Tus transacciones aprobadas aparecerán automáticamente aquí.</small>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="security-guarantee-box">
+          <div class="guarantee-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" aria-hidden="true">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span>Certificado PCI-DSS Nivel 1</span>
+          </div>
+          <div class="guarantee-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" aria-hidden="true">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            <span>Cifrado de extremo a extremo</span>
+          </div>
+          <div class="guarantee-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff7745" stroke-width="2" aria-hidden="true">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            <span>Soporte 24/7 en plataforma</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
 </div>

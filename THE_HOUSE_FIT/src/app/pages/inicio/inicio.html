@@ -1,117 +1,541 @@
-<!-- ── HERO ── -->
-<section class="hero">
-    <div class="hero-bg">
-        <img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1800&h=1200&fit=crop&auto=format" alt="Gimnasios en Yopal" />
-        <div class="hero-gradient"></div>
-        <div class="hero-vignette"></div>
-    </div>
-    <div class="hero-accent-line"></div>
+<!-- ── 1. BARRA DE CATEGORÍAS (STICKY) ── -->
+<nav class="cat-bar" aria-label="Filtrar gimnasios por disciplina">
+  <div class="cat-bar-inner" [class.fade-left]="puedeIzq" [class.fade-right]="puedeDer">
+    <button
+      type="button"
+      id="cat-scroll-left"
+      class="cat-arrow cat-arrow-left"
+      [class.visible]="puedeIzq"
+      (click)="desplazarCategorias(-1)"
+      aria-label="Ver categorías anteriores"
+    >
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
 
-    <div class="hero-content">
-        <div class="hero-pretag">
-            <span>DIRECTORIO FITNESS · YOPAL, CASANARE</span>
-            <div class="pretag-line"></div>
+    <div class="cat-track" #catTrack (scroll)="actualizarFlechas()">
+      @for (cat of categorias; track cat.nombre) {
+        <button
+          type="button"
+          class="cat-tab"
+          [id]="'cat-' + cat.clave"
+          [class.active]="categoriaSeleccionada === cat.nombre"
+          [class.empty]="conteoCategorias[cat.nombre] === 0"
+          [attr.aria-pressed]="categoriaSeleccionada === cat.nombre"
+          (click)="filtrarPorCategoria(cat.nombre)"
+        >
+          <span class="cat-icon-tile">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              @switch (cat.clave) {
+                @case ('todos') {
+                  <rect x="3.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.8"/>
+                }
+                @case ('musculacion') {
+                  <path d="M6.5 6.5v11M17.5 6.5v11M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/>
+                }
+                @case ('crossfit') {
+                  <path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12z"/>
+                }
+                @case ('yoga') {
+                  <circle cx="12" cy="4.8" r="2"/><path d="M12 7.5v5.5M6 10.5l6 2.5 6-2.5M4.5 19.5c2.2-2 4.8-3 7.5-3s5.3 1 7.5 3"/>
+                }
+                @case ('spinning') {
+                  <circle cx="5.5" cy="17" r="3.5"/><circle cx="18.5" cy="17" r="3.5"/><path d="M5.5 17 9 9.5h6.5L18.5 17M9 9.5l3.5 7.5h6M14 5.5h2.5l1.5 4"/>
+                }
+                @case ('cardio') {
+                  <path d="M20.8 8.8a4.9 4.9 0 0 0-8.8-3A4.9 4.9 0 0 0 3.2 8.8C3.2 14.2 12 20 12 20s8.8-5.8 8.8-11.2z"/><path d="M4 12h3.5l2-3 3 6 2-3H20"/>
+                }
+                @case ('funcional') {
+                  <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/>
+                }
+                @case ('calistenia') {
+                  <path d="M3 3.5h18M8 3.5v3.5M16 3.5v3.5"/><circle cx="12" cy="9.5" r="1.8"/><path d="M8 7l4 4.2L16 7M12 11.2v5M9.5 21l2.5-4.8 2.5 4.8"/>
+                }
+                @case ('boxeo') {
+                  <path d="M7 10.5V7.5a5 5 0 0 1 10 0v5.5a4 4 0 0 1-4 4H9.2A2.2 2.2 0 0 1 7 14.8v-.3"/><path d="M7 10.5a2 2 0 1 0 0 4M8 17v3.5h7.5V17"/>
+                }
+                @case ('powerlifting') {
+                  <path d="M2 12h20M5 8.5v7M8 6v12M16 6v12M19 8.5v7"/>
+                }
+              }
+            </svg>
+            <span class="cat-count">{{ conteoCategorias[cat.nombre] }}</span>
+          </span>
+          <span class="cat-label">{{ cat.nombre }}</span>
+        </button>
+      }
+    </div>
+
+    <button
+      type="button"
+      id="cat-scroll-right"
+      class="cat-arrow cat-arrow-right"
+      [class.visible]="puedeDer"
+      (click)="desplazarCategorias(1)"
+      aria-label="Ver más categorías"
+    >
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+  </div>
+</nav>
+
+<div class="airbnb-container">
+  <!-- ── 1.2 CABECERA EDITORIAL + DESCARGA DIRECTA APK ANDROID ── -->
+  <div class="home-hero-header">
+    <div class="home-brand-pill">
+      <img src="assets/logo-icon-orange.png" alt="The House Fit" class="badge-brand-icon" />
+      <span class="beacon-pulse"></span>
+      <span>THE HOUSE FIT · ECOSISTEMA FITNESS COMPLETO</span>
+      <span class="badge-count">{{ gimnasios.length }} SEDES</span>
+    </div>
+
+    <div class="home-apk-banner">
+      <div class="home-apk-left">
+        <div class="home-apk-icon-box">
+          <img src="assets/logo-icon-orange.png" alt="App The House Fit" class="home-apk-logo" />
         </div>
-
-        <h1 class="display-title hero-headline">
-            <span class="block">ENCUENTRA TU</span>
-            <span class="block accent">GIMNASIO</span>
-            <span class="block">IDEAL.</span>
-        </h1>
-
-        <p class="hero-desc">
-            Compara gimnasios, instructores, rutinas y planes de nutrición en un solo lugar.
-            Sin excusas, sin vueltas: elige y empieza hoy.
-        </p>
-
-        <div class="hero-actions">
-            <a routerLink="/gimnasios" class="btn-landing primary">VER GIMNASIOS</a>
-            <a routerLink="/register" class="btn-landing outline">CREAR CUENTA</a>
+        <div class="home-apk-copy">
+          <span class="home-apk-kicker">APP MÓVIL OFICIAL</span>
+          <h2 class="home-apk-title">Lleva The House Fit en tu celular</h2>
+          <p class="home-apk-desc">
+            Descarga el instalador oficial <strong>.APK</strong> para Android y explora sedes, rutinas Pro, tienda y laboratorio IMC a pantalla completa.
+          </p>
         </div>
+      </div>
+
+      <div class="home-apk-actions">
+        <a
+          href="/api/v1/apk/TheHouseFit.apk"
+          download="TheHouseFit.apk"
+          class="btn-download-apk-main"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Descargar APK (Android)</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 1.5 FRANJA DE 4 ACCESOS RÁPIDOS EDITORIALES ── -->
+  <section class="airbnb-spotlight-strip" aria-label="Accesos rápidos">
+    <a
+      routerLink="/panel/dashboard"
+      class="spotlight-mini-card is-panel-spotlight"
+    >
+      <div class="spotlight-mini-copy">
+        <div class="spotlight-card-head">
+          <span class="spotlight-card-icon is-accent" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="9" rx="1.5"></rect>
+              <rect x="14" y="3" width="7" height="5" rx="1.5"></rect>
+              <rect x="14" y="12" width="7" height="9" rx="1.5"></rect>
+              <rect x="3" y="16" width="7" height="5" rx="1.5"></rect>
+            </svg>
+          </span>
+          <h3 class="spotlight-mini-title">Mi panel</h3>
+          <span class="spotlight-card-arrow" aria-hidden="true">→</span>
+        </div>
+        <p class="spotlight-mini-desc">Métricas, agenda semanal y metas de entrenamiento</p>
+      </div>
+      <div class="spotlight-panel-motif" aria-hidden="true">
+        <span class="motif-bar" style="height: 36%"></span>
+        <span class="motif-bar" style="height: 58%"></span>
+        <span class="motif-bar" style="height: 46%"></span>
+        <span class="motif-bar is-peak" style="height: 82%"></span>
+      </div>
+    </a>
+
+    <a
+      routerLink="/rutinas"
+      class="spotlight-mini-card"
+      data-vt-card="rutinas"
+      (click)="prepararTransicionFlyer($event, '/rutinas')"
+    >
+      <div class="spotlight-mini-copy">
+        <div class="spotlight-card-head">
+          <span class="spotlight-card-icon" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+          </span>
+          <h3 class="spotlight-mini-title">Rutinas Pro</h3>
+          <span class="spotlight-card-arrow" aria-hidden="true">→</span>
+        </div>
+        <p class="spotlight-mini-desc">Programas de fuerza, hipertrofia y series guiadas</p>
+      </div>
+      <div class="spotlight-mini-visual" aria-hidden="true">
+        <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=420&q=80" alt="" loading="lazy" />
+      </div>
+    </a>
+
+    <a
+      routerLink="/tienda"
+      class="spotlight-mini-card"
+      data-vt-card="tienda"
+      (click)="prepararTransicionFlyer($event, '/tienda')"
+    >
+      <div class="spotlight-mini-copy">
+        <div class="spotlight-card-head">
+          <span class="spotlight-card-icon" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+          </span>
+          <h3 class="spotlight-mini-title">Tienda deportiva</h3>
+          <span class="spotlight-card-arrow" aria-hidden="true">→</span>
+        </div>
+        <p class="spotlight-mini-desc">Suplementación, proteína Whey e implementos</p>
+      </div>
+      <div class="spotlight-mini-visual" aria-hidden="true">
+        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=420&q=80" alt="" loading="lazy" />
+      </div>
+    </a>
+
+    <a
+      routerLink="/imc"
+      class="spotlight-mini-card"
+      data-vt-card="imc"
+      (click)="prepararTransicionFlyer($event, '/imc')"
+    >
+      <div class="spotlight-mini-copy">
+        <div class="spotlight-card-head">
+          <span class="spotlight-card-icon" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+            </svg>
+          </span>
+          <h3 class="spotlight-mini-title">Calculadora IMC</h3>
+          <span class="spotlight-card-arrow" aria-hidden="true">→</span>
+        </div>
+        <p class="spotlight-mini-desc">Índice corporal, gasto calórico TDEE y macros</p>
+      </div>
+      <div class="spotlight-mini-visual" aria-hidden="true">
+        <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=420&q=80" alt="" loading="lazy" />
+      </div>
+    </a>
+  </section>
+
+  <!-- ── 2. BARRA DE FILTRO POR CIUDAD & RESULTADOS ── -->
+  <div class="home-toolbar">
+    <div class="city-chips-row">
+      <span class="filter-label">Ciudades:</span>
+      @for (c of ciudades; track c) {
+        <button
+          type="button"
+          class="city-chip"
+          [class.active]="ciudadSeleccionada === c"
+          (click)="filtrarPorCiudad(c)"
+        >
+          {{ c }}
+        </button>
+      }
     </div>
 
-    <div class="scroll-indicator">
-        <span>SCROLL</span>
-        <div class="scroll-line"></div>
+    <div class="results-meta">
+      <span>{{ gimnasiosFiltrados.length }} gimnasios disponibles</span>
+      <a routerLink="/gimnasios" class="view-all-link">Ver catálogo completo →</a>
     </div>
-</section>
+  </div>
 
-<!-- ── STATS STRIP ── -->
-<section class="stats-strip">
-    <div class="stats-inner">
-        @for (s of stats; track s.label) {
-            <div class="stat-item">
-                <div class="stat-value">{{ s.value }}</div>
-                <div class="stat-label">{{ s.label }}</div>
+  <!-- ── 3. AIRBNB GYM LISTINGS GRID ── -->
+  <section class="listings-section">
+    <div class="airbnb-listings-grid">
+      @for (gym of gimnasiosFiltrados; track gym.id; let idx = $index) {
+        <article class="airbnb-card-item" [style.--stagger-idx]="idx" (click)="abrirModalDetalle(gym)">
+          <!-- MEDIA / CARRUSEL -->
+          <div class="card-media-wrapper">
+            <img [src]="fotoActualDe(gym)" [alt]="gym.nombre" loading="lazy" />
+
+            <!-- Badge "Favorito entre atletas" estilo Airbnb -->
+            @if (esFavoritoAtletas(gym.id)) {
+              <div class="guest-favorite-pill">
+                <span class="fav-sparkle">🏆</span>
+                <span>Favorito entre atletas</span>
+              </div>
+            }
+
+            <!-- Flechas de navegación rápida en la tarjeta -->
+            @if (gym.fotos.length > 1) {
+              <button
+                type="button"
+                class="carousel-nav-btn prev-btn"
+                (click)="anteriorFotoTarjeta($event, gym)"
+                aria-label="Foto anterior"
+              >
+                ‹
+              </button>
+              <button
+                type="button"
+                class="carousel-nav-btn next-btn"
+                (click)="siguienteFotoTarjeta($event, gym)"
+                aria-label="Foto siguiente"
+              >
+                ›
+              </button>
+
+              <!-- Puntos indicadores del carrusel -->
+              <div class="card-carousel-dots" aria-hidden="true">
+                @for (f of gym.fotos; track $index) {
+                  <span class="carousel-dot" [class.active]="$index === indiceFotoActual(gym)"></span>
+                }
+              </div>
+            }
+
+            <!-- Botón Favorito ♥ -->
+            <button
+              type="button"
+              class="card-heart-btn"
+              [class.is-favorite]="esFavorito(gym.id)"
+              (click)="alternarFavorito($event, gym)"
+              aria-label="Guardar en favoritos"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" [attr.fill]="esFavorito(gym.id) ? '#FF385C' : 'rgba(0,0,0,0.35)'" stroke="currentColor" stroke-width="2.2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+            </button>
+
+            <!-- Badge de Calificación -->
+            <div class="card-badge-rating">
+              <span class="star-icon">★</span>
+              <span>{{ promedio(gym.id) }}</span>
             </div>
-        }
-    </div>
-</section>
+          </div>
 
-<!-- ── GIMNASIOS DESTACADOS ── -->
-<section class="section-dark">
-    <div class="section-inner">
-        <div class="section-header">
-            <div>
-                <span class="eyebrow">LO MEJOR CALIFICADO</span>
-                <h2 class="display-title">
-                    GIMNASIOS
-                    <br />
-                    <span class="accent">DESTACADOS</span>
-                </h2>
+          <!-- INFO CARD -->
+          <div class="card-info-content">
+            <div class="card-info-header">
+              <h3 class="card-gym-name">{{ gym.nombre }}</h3>
+              <span class="card-inline-rating">★ {{ promedio(gym.id) }}</span>
             </div>
-            <p class="section-desc">
-                Los espacios mejor valorados por nuestra comunidad de usuarios en Yopal.
+
+            <p class="card-gym-location">{{ gym.barrio }}, {{ gym.ciudad }}</p>
+            <p class="card-gym-features">
+              <span>{{ gym.horario }}</span>
             </p>
-        </div>
 
-        <div class="services-grid">
-            @for (g of gimnasiosDestacados; track g.id) {
-                <a routerLink="/gimnasios" class="service-card">
-                    <div class="service-top">
-                        <span class="service-icon">{{ g.imagen }}</span>
-                        <span class="tag-outline">{{ g.servicios[0] || 'GYM' }}</span>
-                    </div>
-                    <h3 class="service-title">{{ g.nombre }}</h3>
-                    <p class="service-desc">{{ g.descripcion }}</p>
-                    <div class="service-footer">
-                        <span class="stars">{{ estrellas(g.id) }}</span>
-                        <span class="service-link">Ver más →</span>
-                    </div>
-                </a>
-            }
-        </div>
-    </div>
-</section>
-
-<!-- ── NOTICIAS ── -->
-<section class="section-dark alt">
-    <div class="section-inner">
-        <div class="flex-between mb-16">
-            <div>
-                <span class="eyebrow">EN LA COMUNIDAD</span>
-                <h2 class="display-title" style="font-size:clamp(28px,4vw,44px);">ÚLTIMAS NOTICIAS</h2>
+            <div class="card-amenities-row">
+              @for (srv of gym.servicios.slice(0, 3); track srv) {
+                <span class="card-amenity-tag">{{ srv }}</span>
+              }
             </div>
-            <a routerLink="/blog" class="btn-landing outline">VER BLOG</a>
-        </div>
 
-        <div class="news-grid">
-            @for (n of noticiasRecientes; track n.id) {
-                <div class="news-card">
-                    <span class="tag-outline">{{ n.tipo.toUpperCase() }}</span>
-                    <h3>{{ n.imagen }} {{ n.titulo }}</h3>
-                    <p>{{ n.cuerpo }}</p>
+            <div class="card-price-row">
+              <strong>{{ formatoPrecio(gym) }}</strong>
+              <span class="period"> / mes</span>
+            </div>
+          </div>
+        </article>
+      }
+      @empty {
+        <div class="empty-listings-state">
+          <div class="empty-icon">🔍</div>
+          <h3>No encontramos gimnasios con ese filtro</h3>
+          <p>Prueba seleccionando otra disciplina o ciudad para descubrir centros disponibles.</p>
+          <button type="button" class="btn-airbnb btn-airbnb-outline" (click)="filtrarPorCategoria('Todos'); filtrarPorCiudad('Todas')">
+            Restablecer filtros
+          </button>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- ── 3.5 CARRUSELES HORIZONTALES POR CIUDAD ESTILO AIRBNB (CON BOTONES < >) ── -->
+  @if (ciudadSeleccionada === 'Todas' && categoriaSeleccionada === 'Todos') {
+    <section class="airbnb-shelf-section">
+      <div class="shelf-header-row">
+        <a routerLink="/gimnasios" [queryParams]="{ q: 'Yopal' }" class="shelf-title-link">
+          <h2>Gimnasios populares en Yopal</h2>
+          <span class="shelf-chevron">›</span>
+        </a>
+        <div class="shelf-nav-controls">
+          <button
+            type="button"
+            class="shelf-round-btn"
+            (click)="desplazarCarruselSeccion(shelfYopal, -1)"
+            aria-label="Anterior en Yopal"
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            class="shelf-round-btn"
+            (click)="desplazarCarruselSeccion(shelfYopal, 1)"
+            aria-label="Siguiente en Yopal"
+          >
+            ›
+          </button>
+        </div>
+      </div>
+
+      <div class="shelf-horizontal-track" #shelfYopal>
+        @for (gym of gimnasiosPopularesYopal; track gym.id) {
+          <article class="airbnb-card-item shelf-card-item" (click)="abrirModalDetalle(gym)">
+            <div class="card-media-wrapper">
+              <img [src]="fotoActualDe(gym)" [alt]="gym.nombre" loading="lazy" />
+              @if (esFavoritoAtletas(gym.id)) {
+                <div class="guest-favorite-pill">
+                  <span class="fav-sparkle">🏆</span>
+                  <span>Favorito entre atletas</span>
                 </div>
-            }
-        </div>
-    </div>
-</section>
+              }
+              <button
+                type="button"
+                class="card-heart-btn"
+                [class.is-favorite]="esFavorito(gym.id)"
+                (click)="alternarFavorito($event, gym)"
+                aria-label="Guardar en favoritos"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" [attr.fill]="esFavorito(gym.id) ? '#FF385C' : 'rgba(0,0,0,0.35)'" stroke="currentColor" stroke-width="2.2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="card-info-content">
+              <div class="card-info-header">
+                <h3 class="card-gym-name">{{ gym.nombre }}</h3>
+                <span class="card-inline-rating">★ {{ promedio(gym.id) }}</span>
+              </div>
+              <p class="card-gym-location">{{ gym.barrio }}, {{ gym.ciudad }}</p>
+              <div class="card-price-row">
+                <strong>{{ formatoPrecio(gym) }}</strong>
+                <span class="period"> / mes</span>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    </section>
 
-<!-- ── CTA IMC ── -->
-<section class="cta-strip">
-    <div class="cta-inner">
-        <h2 class="display-title" style="color:#fff;font-size:clamp(28px,5vw,52px);">¿YA SABES TU IMC?</h2>
-        <p>Calcula tu Índice de Masa Corporal y recibe una rutina y plan nutricional recomendado.</p>
-        <a routerLink="/imc" class="btn-landing" style="background:#0a0a0a;color:#fff;">CALCULAR MI IMC</a>
+    <section class="airbnb-shelf-section">
+      <div class="shelf-header-row">
+        <a routerLink="/gimnasios" class="shelf-title-link">
+          <h2>Sedes destacadas en Bogotá, Madrid y Miami</h2>
+          <span class="shelf-chevron">›</span>
+        </a>
+        <div class="shelf-nav-controls">
+          <button
+            type="button"
+            class="shelf-round-btn"
+            (click)="desplazarCarruselSeccion(shelfInternacional, -1)"
+            aria-label="Anterior sede"
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            class="shelf-round-btn"
+            (click)="desplazarCarruselSeccion(shelfInternacional, 1)"
+            aria-label="Siguiente sede"
+          >
+            ›
+          </button>
+        </div>
+      </div>
+
+      <div class="shelf-horizontal-track" #shelfInternacional>
+        @for (gym of gimnasiosDestacadosInternacionales; track gym.id) {
+          <article class="airbnb-card-item shelf-card-item" (click)="abrirModalDetalle(gym)">
+            <div class="card-media-wrapper">
+              <img [src]="fotoActualDe(gym)" [alt]="gym.nombre" loading="lazy" />
+              @if (esFavoritoAtletas(gym.id)) {
+                <div class="guest-favorite-pill">
+                  <span class="fav-sparkle">🏆</span>
+                  <span>Favorito entre atletas</span>
+                </div>
+              }
+              <button
+                type="button"
+                class="card-heart-btn"
+                [class.is-favorite]="esFavorito(gym.id)"
+                (click)="alternarFavorito($event, gym)"
+                aria-label="Guardar en favoritos"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" [attr.fill]="esFavorito(gym.id) ? '#FF385C' : 'rgba(0,0,0,0.35)'" stroke="currentColor" stroke-width="2.2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="card-info-content">
+              <div class="card-info-header">
+                <h3 class="card-gym-name">{{ gym.nombre }}</h3>
+                <span class="card-inline-rating">★ {{ promedio(gym.id) }}</span>
+              </div>
+              <p class="card-gym-location">{{ gym.barrio }}, {{ gym.ciudad }}</p>
+              <div class="card-price-row">
+                <strong>{{ formatoPrecio(gym) }}</strong>
+                <span class="period"> / mes</span>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- ── 4. BANNER DE EXPERIENCIAS FITNESS THE HOUSE FIT ── -->
+  <section class="fitness-banner-grid">
+    <div class="banner-card imc-promo">
+      <div class="banner-badge">SALUD & PRECISIÓN</div>
+      <h3 class="banner-title">¿Sabes cuál es tu IMC actual?</h3>
+      <p class="banner-desc">Calcula tu Índice de Masa Corporal y recibe al instante tu plan de gimnasio, nutrición y rutinas recomendadas.</p>
+      <a routerLink="/imc" class="btn-airbnb btn-airbnb-primary btn-airbnb-pill">Calcular mi IMC gratis</a>
     </div>
-</section>
+
+    <div class="banner-card rutinas-promo">
+      <div class="banner-badge">RUTINAS GUIADAS</div>
+      <h3 class="banner-title">Entrena con propósito</h3>
+      <p class="banner-desc">Planes de fuerza, crossfit, cardio y pérdida de peso elaborados por entrenadores certificados.</p>
+      <a routerLink="/rutinas" class="btn-airbnb btn-airbnb-outline btn-airbnb-pill">Explorar rutinas</a>
+    </div>
+  </section>
+
+  <!-- ── 5. RESEÑAS VERIFICADAS DE LA COMUNIDAD ── -->
+  <section class="reviews-section">
+    <div class="section-title-row">
+      <div>
+        <h2 class="section-heading">Reseñas de la comunidad</h2>
+        <p class="section-subheading">Atletas y usuarios reales calificando sus gimnasios afiliados.</p>
+      </div>
+      <a routerLink="/blog" class="view-all-link">Ver todo el blog →</a>
+    </div>
+
+    <div class="reviews-cards-grid">
+      @for (r of resenasDestacadas; track r.id) {
+        <div class="review-box">
+          <div class="review-stars-header">
+            <span class="review-stars">★★★★★</span>
+            <span class="review-date">{{ r.fecha || 'Reciente' }}</span>
+          </div>
+          <p class="review-body-text">"{{ r.cuerpo }}"</p>
+          <div class="review-author-info">
+            <div class="author-avatar">{{ r.usuario.charAt(0) }}</div>
+            <div>
+              <strong class="author-name">{{ r.usuario }}</strong>
+              <small class="author-tag">Usuario Verificado</small>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+</div>
+
+<!-- ── 6. MODAL DE DETALLE DE GIMNASIO (AIRBNB SHOWCASE EDITORIAL) ── -->
+<app-gym-detail-modal
+  [gimnasio]="gimnasioSeleccionado"
+  (cerrada)="cerrarModalDetalle()"
+  (toastMensaje)="onModalToast($event)"
+></app-gym-detail-modal>
+
+
+<!-- ── 7. TOAST NOTIFICACIÓN FEEDBACK ── -->
+@if (mostrarToast) {
+  <div class="airbnb-toast">
+    <span>{{ mensajeToast }}</span>
+  </div>
+}

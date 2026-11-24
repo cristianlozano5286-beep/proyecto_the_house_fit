@@ -1,73 +1,1264 @@
-/* ============ HERO ============ */
-.hero{
-    position:relative; min-height:100vh; display:flex; align-items:flex-end;
-    overflow:hidden; padding-bottom:80px; background:#0a0a0a;
+/* ==========================================================================
+   INICIO ESTILO AIRBNB (THE HOUSE FIT)
+   ========================================================================== */
+
+/* ── FONDO ATMOSFÉRICO EDITORIAL CONTINUO (DESDE Y=0 SIN RECORTE) ── */
+:host {
+  display: block;
+  position: relative;
+  min-height: 100vh;
+  background-color: transparent;
 }
-.hero-bg{ position:absolute; inset:0; }
-.hero-bg img{ width:100%; height:100%; object-fit:cover; opacity:.35; }
-.hero-gradient{
-    position:absolute; inset:0;
-    background: linear-gradient(to top, #0a0a0a 30%, rgba(10,10,10,.4) 70%, rgba(10,10,10,.2) 100%);
+
+:host::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 95% 420px at 32% 0px, rgba(190, 62, 30, 0.14) 0%, rgba(140, 46, 24, 0.05) 52%, transparent 82%);
 }
-.hero-vignette{
-    position:absolute; inset:0;
-    background: linear-gradient(to right, #0a0a0a 10%, transparent 60%);
+
+:host::before {
+  display: none;
 }
-.hero-accent-line{ position:absolute; left:0; top:0; bottom:0; width:4px; background: var(--color-primary); }
 
-.hero-content{ position:relative; z-index:2; max-width:1200px; margin:0 auto; padding:0 24px; width:100%; }
-.hero-pretag{ display:flex; align-items:center; gap:12px; margin-bottom:22px; }
-.hero-pretag span{ font-size:12px; font-weight:600; letter-spacing:.15em; color: var(--color-primary); font-family: var(--font-body); }
-.pretag-line{ height:1px; width:64px; background: var(--color-primary); }
-
-.hero-headline{ font-size: clamp(52px, 11vw, 140px); margin-bottom:22px; }
-.hero-desc{ color:#aaa; font-family: var(--font-body); font-weight:300; font-size:17px; max-width:560px; margin-bottom:36px; line-height:1.6; }
-.hero-actions{ display:flex; flex-wrap:wrap; gap:14px; }
-
-.scroll-indicator{ position:absolute; bottom:32px; right:32px; display:flex; flex-direction:column; align-items:center; gap:8px; color:#555; z-index:2;}
-.scroll-indicator span{ font-size:11px; letter-spacing:.15em; writing-mode:vertical-rl; font-family: var(--font-body); }
-.scroll-line{ width:1px; height:48px; background: var(--color-primary); animation: pulse 1.8s infinite; }
-@keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.3;} }
-
-/* ============ STATS STRIP ============ */
-.stats-strip{ background: var(--color-primary); }
-.stats-inner{ max-width:1200px; margin:0 auto; padding:32px 24px; display:grid; grid-template-columns:repeat(2,1fr); gap:32px; }
-@media (min-width:768px){ .stats-inner{ grid-template-columns: repeat(4,1fr); } }
-.stat-item{ text-align:center; }
-.stat-value{ font-family: var(--font-display); font-weight:900; color:#fff; font-size: clamp(36px,5vw,56px); line-height:1; }
-.stat-label{ font-size:13px; margin-top:4px; font-weight:500; color:rgba(255,255,255,.85); font-family: var(--font-body); }
-
-/* ============ SECCIONES OSCURAS ============ */
-.section-dark{ background:#0a0a0a; padding:80px 0; }
-.section-dark.alt{ background:#080808; }
-.section-inner{ max-width:1200px; margin:0 auto; padding:0 24px; }
-.section-header{ display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:24px; margin-bottom:56px; }
-.section-header .display-title{ font-size: clamp(36px,6vw,68px); }
-.section-desc{ max-width:340px; font-size:14px; line-height:1.6; color:#888; font-family: var(--font-body); align-self:flex-end; }
-
-.services-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1px; background:#1e1e1e; }
-.service-card{
-    display:block; background:#0a0a0a; padding:32px; position:relative; overflow:hidden;
-    transition: background .3s;
+.airbnb-container {
+  position: relative;
+  z-index: 1;
 }
-.service-card:hover{ background:#111; }
-.service-top{ display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:22px; }
-.service-icon{ font-size:36px; }
-.service-title{ font-family: var(--font-display); font-weight:800; text-transform:uppercase; color:#fff; font-size:24px; letter-spacing:.02em; margin-bottom:10px; }
-.service-desc{ font-size:14px; line-height:1.6; color:#777; font-family: var(--font-body); }
-.service-footer{ display:flex; align-items:center; justify-content:space-between; margin-top:22px; font-size:13px; }
-.service-link{ color:#555; font-weight:600; font-family: var(--font-body); }
 
-.news-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; }
-.news-card{ background:#111; border:1px solid #1e1e1e; padding:24px; }
-.news-card h3{ font-family: var(--font-display); font-weight:700; color:#fff; font-size:20px; margin:10px 0; }
-.news-card p{ color:#888; font-size:14px; line-height:1.6; font-family: var(--font-body); }
+/* ── CABECERA HERO EDITORIAL CON SÍMBOLO OFICIAL (THE HOUSE FIT) ── */
+.home-hero-header {
+  position: relative;
+  padding-top: 18px;
+  margin-bottom: 4px;
+}
 
-/* ============ CTA ============ */
-.cta-strip{ background: var(--color-primary); padding:70px 24px; text-align:center; }
-.cta-inner{ max-width:640px; margin:0 auto; }
-.cta-inner p{ color:#fff7ed; margin:14px 0 26px; font-family: var(--font-body); font-size:15px; }
+.home-hero-header::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  left: -50px;
+  width: 540px;
+  height: 230px;
+  background: radial-gradient(ellipse at 35% 50%, rgba(255, 69, 0, 0.14) 0%, rgba(255, 90, 31, 0.04) 50%, transparent 78%);
+  pointer-events: none;
+  z-index: -1;
+}
 
-@media (max-width:600px){
-    .hero{ padding-bottom:50px; }
+.home-brand-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 69, 0, 0.09);
+  border: 1px solid rgba(255, 69, 0, 0.32);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+  box-shadow: 0 2px 14px rgba(255, 69, 0, 0.16);
+}
+
+.home-brand-pill .badge-brand-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(255, 69, 0, 0.45));
+}
+
+.home-brand-pill .beacon-pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  box-shadow: 0 0 8px var(--color-primary);
+}
+
+.home-brand-pill .badge-count {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: #ffffff;
+  letter-spacing: 0.02em;
+}
+
+/* ── BANNER DE DESCARGA DIRECTA APK AL INICIO DE LA WEB ── */
+.home-apk-banner {
+  margin-top: 12px;
+  padding: 18px 22px;
+  border-radius: 20px;
+  background:
+    radial-gradient(ellipse 80% 120% at 0% 50%, rgba(255, 69, 0, 0.2) 0%, transparent 65%),
+    linear-gradient(145deg, rgba(24, 24, 30, 0.96) 0%, rgba(14, 14, 19, 0.98) 100%);
+  border: 1px solid rgba(255, 106, 51, 0.36);
+  box-shadow:
+    0 14px 36px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.home-apk-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  flex: 1 1 320px;
+}
+
+.home-apk-icon-box {
+  width: 54px;
+  height: 54px;
+  border-radius: 15px;
+  background: rgba(255, 69, 0, 0.14);
+  border: 1px solid rgba(255, 106, 51, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 8px 22px rgba(255, 69, 0, 0.25);
+}
+
+.home-apk-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.home-apk-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.home-apk-kicker {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #ff7a45;
+  text-transform: uppercase;
+}
+
+.home-apk-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.home-apk-desc {
+  margin: 0;
+  font-size: 13px;
+  color: #a1a1aa;
+  line-height: 1.4;
+}
+
+.home-apk-desc strong {
+  color: #ffffff;
+}
+
+.home-apk-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.btn-download-apk-main {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff6a22 0%, #e03c00 100%);
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  box-shadow:
+    0 10px 26px rgba(255, 69, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-download-apk-main:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 14px 32px rgba(255, 69, 0, 0.58),
+    inset 0 1px 0 rgba(255, 255, 255, 0.36);
+}
+
+/* ── FRANJA DE 4 ACCESOS RÁPIDOS EDITORIALES (SIN KICKERS NI STICKERS BLANCOS) ── */
+.airbnb-spotlight-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  padding-top: 20px;
+  margin-bottom: 6px;
+}
+
+.spotlight-mini-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 92px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(22, 24, 32, 0.94) 0%, rgba(14, 16, 22, 0.98) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  box-shadow:
+    0 12px 28px -10px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  text-decoration: none;
+  overflow: hidden;
+  transition:
+    transform 180ms cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.spotlight-mini-card:active {
+  transform: scale(0.985);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .spotlight-mini-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  .spotlight-mini-card.is-panel-spotlight:hover {
+    border-color: rgba(255, 85, 32, 0.45);
+  }
+}
+
+.spotlight-mini-copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  max-width: 78%;
+}
+
+.spotlight-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spotlight-card-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #a6aab8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: color 180ms ease, border-color 180ms ease;
+}
+
+.spotlight-card-icon.is-accent {
+  background: rgba(255, 85, 32, 0.14);
+  border-color: rgba(255, 85, 32, 0.32);
+  color: #ff7a45;
+}
+
+.spotlight-mini-title {
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.spotlight-card-arrow {
+  font-size: 13px;
+  color: #7c808d;
+  opacity: 0;
+  transform: translateX(-3px);
+  transition:
+    opacity 180ms ease,
+    transform 180ms cubic-bezier(0.23, 1, 0.32, 1),
+    color 180ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .spotlight-mini-card:hover .spotlight-card-arrow {
+    opacity: 1;
+    transform: translateX(0);
+    color: #ffffff;
+  }
+  .spotlight-mini-card:hover .spotlight-card-icon:not(.is-accent) {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.16);
+  }
+}
+
+.spotlight-mini-desc {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: #9498a6;
+}
+
+/* Motivo arquitectónico sutil de métricas en la tarjeta Mi panel */
+.spotlight-panel-motif {
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  height: 46px;
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.55;
+  transition: opacity 180ms ease;
+}
+
+.spotlight-panel-motif .motif-bar {
+  width: 7px;
+  border-radius: 3px 3px 0 0;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.spotlight-panel-motif .motif-bar.is-peak {
+  background: linear-gradient(180deg, #ff6a33 0%, rgba(255, 85, 32, 0.45) 100%);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .spotlight-mini-card.is-panel-spotlight:hover .spotlight-panel-motif {
+    opacity: 0.9;
+  }
+}
+
+/* Fotografía oscura fundida al borde derecho sin recuadros ni pegatinas */
+.spotlight-mini-visual {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 44%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.72) 55%, #000000 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.72) 55%, #000000 100%);
+}
+
+.spotlight-mini-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.46;
+  filter: brightness(0.86) contrast(1.06) saturate(0.88);
+  transition:
+    transform 260ms cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 200ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .spotlight-mini-card:hover .spotlight-mini-visual img {
+    transform: scale(1.05);
+    opacity: 0.64;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight-mini-card,
+  .spotlight-card-arrow,
+  .spotlight-mini-visual img {
+    transition-duration: 0.01ms;
+    transform: none !important;
+  }
+}
+
+/* Animación declarativa @starting-style para las tarjetas del catálogo al filtrar */
+.airbnb-card-item {
+  opacity: 1;
+  translate: 0 0;
+  scale: 1;
+  transition:
+    opacity 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    translate 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    scale 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--stagger-idx, 0) * 35ms);
+
+  @media (prefers-reduced-motion: reduce) {
+    translate: none;
+    scale: none;
+    transition-duration: 0.1s;
+    transition-delay: 0s;
+  }
+}
+
+@starting-style {
+  .airbnb-card-item {
+    opacity: 0;
+    translate: 0 12px;
+    scale: 0.985;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @starting-style {
+    .airbnb-card-item {
+      translate: none;
+      scale: none;
+    }
+  }
+}
+
+/* ── TOOLBAR DE CIUDADES & RESULTADOS ── */
+.home-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0 20px;
+  border-bottom: none;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.city-chips-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-right: 4px;
+}
+
+.city-chip {
+  background: #141414;
+  border: 1px solid #2c2c2c;
+  color: #d4d4d8;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.city-chip:hover {
+  border-color: var(--color-primary);
+  color: #ffffff;
+  background: #1c1c1c;
+}
+
+.city-chip.active {
+  background: var(--color-primary);
+  color: #ffffff;
+  border-color: var(--color-primary);
+  box-shadow: 0 2px 10px rgba(255, 69, 0, 0.4);
+}
+
+.results-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+  color: #a1a1aa;
+  font-weight: 500;
+}
+
+.view-all-link {
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.view-all-link:hover {
+  text-decoration: underline;
+}
+
+/* ── LISTINGS & CAROUSEL BUTTONS ── */
+.listings-section {
+  margin-bottom: 60px;
+}
+
+.carousel-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(18, 18, 18, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 4;
+}
+
+.airbnb-card-item:hover .carousel-nav-btn {
+  opacity: 1;
+}
+
+.carousel-nav-btn:hover {
+  transform: translateY(-50%) scale(1.1);
+  background: #242424;
+}
+
+.prev-btn {
+  left: 10px;
+}
+
+.next-btn {
+  right: 10px;
+}
+
+/* Badge "Favorito entre atletas" estilo Airbnb */
+.guest-favorite-pill {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #0f0f12;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}
+
+.fav-sparkle {
+  font-size: 12px;
+  line-height: 1;
+}
+
+/* Puntos indicadores del carrusel de fotos */
+.card-carousel-dots {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 4;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(4px);
+}
+
+.carousel-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+  transition: all 0.2s ease;
+}
+
+.carousel-dot.active {
+  width: 7px;
+  height: 7px;
+  background: #ffffff;
+  transform: scale(1.1);
+}
+
+.card-inline-rating {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.card-amenities-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 4px 0 2px;
+}
+
+/* ── CARRUSELES HORIZONTALES POR CIUDAD ESTILO AIRBNB (SHELVES) ── */
+.airbnb-shelf-section {
+  margin-bottom: 54px;
+}
+
+.shelf-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.shelf-title-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.shelf-title-link h2 {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin: 0;
+  transition: color 0.2s ease;
+}
+
+.shelf-title-link:hover h2 {
+  color: #ff6a33;
+}
+
+.shelf-chevron {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  color: #ffffff;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.shelf-title-link:hover .shelf-chevron {
+  transform: translateX(4px);
+  color: #ff6a33;
+}
+
+.shelf-nav-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shelf-round-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #16161c;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.shelf-round-btn:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  transform: scale(1.06);
+  box-shadow: 0 4px 14px rgba(255, 69, 0, 0.4);
+}
+
+.shelf-horizontal-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - (3 * 22px)) / 4);
+  gap: 22px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding-bottom: 6px;
+}
+
+.shelf-horizontal-track::-webkit-scrollbar {
+  display: none;
+}
+
+.shelf-card-item {
+  scroll-snap-align: start;
+}
+
+/* ── ESTADO VACÍO ── */
+.empty-listings-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 24px;
+  background: #141414;
+  border-radius: var(--radius-xl);
+  border: 1px dashed #2c2c2c;
+}
+
+.empty-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.empty-listings-state h3 {
+  font-size: 20px;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.empty-listings-state p {
+  color: #a1a1aa;
+  margin-bottom: 20px;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── BANNERS DE EXPERIENCIAS FITNESS ── */
+.fitness-banner-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 70px;
+}
+
+.banner-card {
+  padding: 40px;
+  border-radius: var(--radius-xl);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  min-height: 280px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.banner-badge {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 14px;
+}
+
+.imc-promo {
+  background: linear-gradient(135deg, #22140e 0%, #150d09 100%);
+  border: 1px solid rgba(255, 69, 0, 0.35);
+}
+
+.imc-promo .banner-badge {
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+.rutinas-promo {
+  background: linear-gradient(135deg, #151a28 0%, #0d101a 100%);
+  border: 1px solid #232c40;
+}
+
+.rutinas-promo .banner-badge {
+  background: #ff4500;
+  color: #ffffff;
+}
+
+.banner-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+
+.banner-desc {
+  font-size: 14px;
+  color: #a1a1aa;
+  margin-bottom: 24px;
+  max-width: 440px;
+}
+
+/* ── RESEÑAS VERIFICADAS ── */
+.reviews-section {
+  margin-bottom: 80px;
+}
+
+.section-title-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.section-heading {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.section-subheading {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.reviews-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.review-box {
+  background: #141414;
+  border: 1px solid #242424;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.review-stars-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.review-stars {
+  color: #EAB308;
+  font-size: 15px;
+  letter-spacing: 2px;
+}
+
+.review-date {
+  font-size: 12px;
+  color: #71717a;
+}
+
+.review-body-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #d4d4d8;
+  font-style: italic;
+}
+
+.review-author-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.author-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 69, 0, 0.2);
+  color: #ff7033;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.author-name {
+  font-size: 14px;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.author-tag {
+  display: block;
+  font-size: 11px;
+  color: #4ade80;
+  font-weight: 600;
+}
+
+/* ── MODAL AIRBNB DETALLES ── */
+.modal-top-bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 24px 28px 16px;
+  border-bottom: 1px solid #222222;
+}
+
+.modal-badge-supergym {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.modal-gym-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.modal-gym-subtitle {
+  font-size: 13px;
+  color: #a1a1aa;
+  margin-top: 4px;
+}
+
+.modal-close-btn {
+  background: #242424;
+  border: 1px solid #333333;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* Galería de fotos del modal */
+.modal-gallery-wrapper {
+  padding: 20px 28px;
+}
+
+.gallery-main-view {
+  width: 100%;
+  height: 380px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #181818;
+  border: 1px solid #282828;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.gallery-main-view img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-thumbnails {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.thumb-btn {
+  width: 90px;
+  height: 65px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 2px solid transparent;
+  padding: 0;
+  cursor: pointer;
+  background: #181818;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.thumb-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumb-btn.active {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(255, 69, 0, 0.4);
+}
+
+/* Columnas del modal */
+.modal-columns-layout {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 32px;
+  padding: 10px 28px 32px;
+}
+
+.modal-left-details {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.block-heading {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.block-paragraph {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #a1a1aa;
+}
+
+.detail-divider {
+  height: 1px;
+  background-color: #222222;
+}
+
+.amenities-pills-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.amenity-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #e4e4e7;
+}
+
+.amenity-check {
+  color: #22c55e;
+  font-weight: 800;
+}
+
+.instructors-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.instructor-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #181818;
+  border: 1px solid #262626;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+}
+
+.instructor-badge-icon {
+  font-size: 24px;
+}
+
+.instructor-row strong {
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.instructor-row p {
+  font-size: 12px;
+  color: #a1a1aa;
+}
+
+/* Tarjeta de reserva derecha */
+.airbnb-booking-card {
+  background: #161616;
+  border: 1px solid #2c2c2c;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
+  padding: 24px;
+  position: sticky;
+  top: 20px;
+}
+
+.booking-price-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.booking-price-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.booking-price-unit {
+  font-size: 14px;
+  color: #a1a1aa;
+  margin-left: 4px;
+}
+
+.booking-rating-pill {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.booking-details-box {
+  border: 1px solid #2a2a2a;
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.box-row {
+  padding: 10px 12px;
+  border-bottom: 1px solid #222222;
+  display: flex;
+  flex-direction: column;
+}
+
+.box-row:last-child {
+  border-bottom: none;
+}
+
+.box-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #71717a;
+}
+
+.box-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-top: 2px;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-booking {
+  padding: 14px;
+  font-size: 16px;
+  border-radius: var(--radius-md);
+}
+
+.mt-8 {
+  margin-top: 8px;
+}
+
+.booking-guarantee-note {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-top: 14px;
+}
+
+/* ── AIRBNB TOAST FEEDBACK ── */
+.airbnb-toast {
+  position: fixed;
+  bottom: 84px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #222222;
+  color: #ffffff;
+  padding: 12px 24px;
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  z-index: 2000;
+  animation: slideUpToast 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@keyframes slideUpToast {
+  from { opacity: 0; transform: translate(-50%, 12px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* Media queries */
+@media (max-width: 1220px) {
+  .airbnb-spotlight-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .shelf-horizontal-track {
+    grid-auto-columns: calc((100% - 20px) / 2);
+  }
+}
+
+@media (max-width: 768px) {
+  .airbnb-spotlight-strip {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 860px) {
+  .fitness-banner-grid,
+  .reviews-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .modal-columns-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .shelf-horizontal-track {
+    grid-auto-columns: 86%;
+  }
+  .home-apk-banner {
+    padding: 15px 16px;
+  }
+  .home-apk-actions,
+  .btn-download-apk-main {
+    width: 100%;
+  }
+  .city-chips-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+    width: 100%;
+  }
+  .city-chips-row::-webkit-scrollbar {
+    display: none;
+  }
+  .city-chip {
+    flex-shrink: 0;
+  }
 }

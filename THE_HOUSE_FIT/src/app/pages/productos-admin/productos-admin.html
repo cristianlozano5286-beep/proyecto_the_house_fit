@@ -1,82 +1,370 @@
-<div class="page-wrapper">
-    <h1 class="section-title">🛒 Gestión de productos</h1>
-    <p class="section-subtitle">Registra suplementos, implementos y ropa deportiva de la tienda</p>
+<div class="wizard-viewport">
+  <!-- CABECERA EN PANTALLA COMPLETA -->
+  <header class="wizard-navbar">
+    <div class="navbar-left">
+      <a routerLink="/panel/dashboard" class="brand-link" title="Volver al Dashboard">
+        <div class="logo-circle">
+          <img src="assets/logo-icon-white.png" alt="The House Fit" />
+        </div>
+        <span class="brand-text">THE HOUSE <strong>FIT</strong></span>
+      </a>
+      <span class="portal-badge">
+        {{ idEditar !== null ? 'CREADOR GYM · EDITANDO PRODUCTO' : 'CREADOR GYM · TIENDA & PRODUCTOS' }}
+      </span>
+    </div>
 
-    @if (mensaje) {
-        <div class="alert" [class.success]="tipoMensaje==='success'" [class.error]="tipoMensaje==='error'">{{ mensaje }}</div>
+    <!-- PESTAÑAS DE PASOS -->
+    @if (pantallaActual !== 'hub') {
+      <nav class="wizard-steps-tabs" aria-label="Pasos de producto">
+        <button type="button" class="wizard-tab-btn" [class.active]="pantallaActual === 'paso1'" (click)="irAPaso('paso1')">
+          <span class="tab-num" [class.done]="pantallaActual === 'paso2' || pantallaActual === 'paso3'">1</span>
+          <span class="tab-label">Categoría e identidad</span>
+        </button>
+        <span class="tab-arrow-sep">›</span>
+        <button type="button" class="wizard-tab-btn" [class.active]="pantallaActual === 'paso2'" (click)="irAPaso('paso2')">
+          <span class="tab-num" [class.done]="pantallaActual === 'paso3'">2</span>
+          <span class="tab-label">Precio e inventario</span>
+        </button>
+        <span class="tab-arrow-sep">›</span>
+        <button type="button" class="wizard-tab-btn" [class.active]="pantallaActual === 'paso3'" (click)="irAPaso('paso3')">
+          <span class="tab-num">3</span>
+          <span class="tab-label">Detalles y publicación</span>
+        </button>
+      </nav>
     }
 
-    <div class="grid grid-2">
-        <section class="card">
-            <h2>{{ idEditar == null ? 'Registrar producto' : 'Editar producto' }}</h2>
-            <div class="form-row mt-16">
-                <div class="form-group">
-                    <label>Nombre</label>
-                    <input type="text" [(ngModel)]="nombre" placeholder="Nombre del producto" />
-                </div>
-                <div class="form-group">
-                    <label>Categoría</label>
-                    <select [(ngModel)]="categoria">
-                        @for (c of categorias; track c) {
-                            <option [value]="c">{{ c }}</option>
-                        }
-                    </select>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Precio (COP)</label>
-                    <input type="number" min="0" [(ngModel)]="precio" placeholder="Ej. 120000" />
-                </div>
-                <div class="form-group">
-                    <label>Stock</label>
-                    <input type="number" min="0" [(ngModel)]="stock" placeholder="Ej. 30" />
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Ícono</label>
-                <input type="text" [(ngModel)]="imagen" placeholder="🛒" />
-            </div>
-            <div class="form-group">
-                <label>Descripción</label>
-                <textarea rows="2" [(ngModel)]="descripcion" placeholder="Describe el producto..."></textarea>
-            </div>
-            <div class="form-group">
-                <label>Guía nutricional (opcional, para suplementos)</label>
-                <textarea rows="2" [(ngModel)]="guiaNutricional" placeholder="Recomendación de consumo..."></textarea>
-            </div>
-            <div class="flex gap-8">
-                <button class="btn btn-primary" (click)="guardar()">{{ idEditar == null ? 'Registrar' : 'Actualizar' }}</button>
-                <button class="btn btn-outline" (click)="limpiarFormulario()">Limpiar</button>
-            </div>
-        </section>
-
-        <section class="card">
-            <h2>Productos registrados ({{ productos.length }})</h2>
-            <div class="table-responsive mt-16">
-                <table>
-                    <thead>
-                        <tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr>
-                    </thead>
-                    <tbody>
-                        @for (p of productos; track p.id) {
-                            <tr>
-                                <td>{{ p.imagen }} {{ p.nombre }}</td>
-                                <td>{{ p.categoria }}</td>
-                                <td>{{ formatearPrecio(p.precio) }}</td>
-                                <td>{{ p.stock }}</td>
-                                <td>
-                                    <button class="btn btn-outline btn-sm" (click)="editar(p)">✏️</button>
-                                    <button class="btn btn-danger btn-sm" (click)="eliminar(p)">🗑️</button>
-                                </td>
-                            </tr>
-                        }
-                        @empty {
-                            <tr><td colspan="5" class="empty-state">No hay productos registrados.</td></tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </section>
+    <div class="navbar-right">
+      @if (pantallaActual !== 'hub') {
+        <button type="button" class="btn-nav-pill-subtle" (click)="volverAlHub()">
+          Ver catálogo de productos
+        </button>
+        <button type="button" class="btn-nav-outline" (click)="guardar()">
+          {{ idEditar !== null ? 'Guardar cambios y salir' : 'Publicar producto' }}
+        </button>
+      } @else {
+        <button type="button" class="btn-nav-outline" (click)="iniciarNuevo()">
+          + Nuevo producto
+        </button>
+        <button type="button" class="btn-nav-pill" (click)="salirAlPanel()">
+          Salir al panel
+        </button>
+      }
     </div>
+  </header>
+
+  <!-- ================================================================= -->
+  <!-- PANTALLA HUB: BIENVENIDA Y CATÁLOGO DE PRODUCTOS                  -->
+  <!-- ================================================================= -->
+  @if (pantallaActual === 'hub') {
+    <main class="hub-container">
+      @if (mensaje) {
+        <div class="studio-toast-alert" [class.error]="tipoMensaje === 'error'">
+          <span>{{ tipoMensaje === 'error' ? '⚠️' : '✓' }} {{ mensaje }}</span>
+          <button type="button" class="btn-nav-pill-subtle" (click)="mensaje = ''">Cerrar</button>
+        </div>
+      }
+
+      <div class="hub-top-row">
+        <div>
+          <div class="hub-header-badge">
+            <span class="pulse-dot"></span>
+            <span>Portal Dedicado de Tienda Fit</span>
+          </div>
+          <h1 class="hub-greeting">Hola de nuevo, {{ nombreUsuario }}</h1>
+          <p class="hub-subtitle">
+            Selecciona un artículo de tu inventario para actualizar precio o stock, o lanza un nuevo suplemento o implemento.
+          </p>
+        </div>
+
+        <div class="hub-kpis-row">
+          <div class="hub-kpi-pill">
+            <span class="kpi-val">{{ productos.length }}</span>
+            <span class="kpi-lbl">Productos</span>
+          </div>
+          <div class="hub-kpi-pill highlight">
+            <span class="kpi-val">{{ stockTotal }}</span>
+            <span class="kpi-lbl">Unidades Stock</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACCIÓN PRINCIPAL -->
+      <section class="hub-section">
+        <h2 class="hub-section-title">Agregar al catálogo comercial</h2>
+        <div class="options-list" style="margin-top: 12px;">
+          <div class="option-row" (click)="iniciarNuevo()" role="button" tabindex="0">
+            <div class="option-left">
+              <div class="option-icon-square">🛒</div>
+              <div class="option-meta">
+                <span class="option-label">Publicar un nuevo producto paso a paso</span>
+                <span class="option-sub">Configura categoría, precio en COP, unidades de inventario y guía nutricional</span>
+              </div>
+            </div>
+            <div class="option-chevron">›</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LISTADO DE PRODUCTOS -->
+      <section class="hub-section">
+        <div class="hub-section-header">
+          <h2 class="hub-section-title">Selecciona el producto que deseas editar ({{ productosFiltrados.length }})</h2>
+        </div>
+
+        <div class="hub-controls-bar">
+          <div class="hub-search-box">
+            <span>🔍</span>
+            <input
+              type="text"
+              [(ngModel)]="busqueda"
+              placeholder="Buscar suplemento, implemento o prenda..." />
+          </div>
+
+          <div class="hub-filter-pills">
+            @for (cat of ['Todas', 'Suplemento', 'Implemento', 'Ropa deportiva']; track cat) {
+              <button
+                type="button"
+                class="filter-pill-btn"
+                [class.active]="filtroCategoria === cat"
+                (click)="filtroCategoria = cat">
+                {{ cat }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="items-stack-list">
+          @for (p of productosFiltrados; track p.id) {
+            <div class="draft-card" (click)="iniciarEdicion(p)" role="button" tabindex="0">
+              <div class="draft-icon-box">
+                <span>{{ p.imagen || '🛒' }}</span>
+              </div>
+              <div class="draft-info">
+                <div class="draft-title-row">
+                  <strong class="draft-title">{{ p.nombre }}</strong>
+                  <span class="draft-badge">{{ p.categoria }}</span>
+                  <span class="draft-badge green">{{ formatearPrecio(p.precio) }}</span>
+                  <span class="draft-badge blue">{{ p.stock }} uds en stock</span>
+                </div>
+                <p class="draft-text">
+                  {{ p.descripcion || 'Artículo oficial de la tienda deportiva The House Fit.' }}
+                </p>
+              </div>
+              <div class="draft-actions">
+                <button type="button" class="btn-card-edit" (click)="$event.stopPropagation(); iniciarEdicion(p)">
+                  ✏️ Editar
+                </button>
+                <button
+                  type="button"
+                  class="btn-card-delete"
+                  (click)="$event.stopPropagation(); eliminar(p)"
+                  title="Eliminar producto">
+                  🗑️
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    </main>
+  }
+
+  <!-- ================================================================= -->
+  <!-- PASO 1: CATEGORÍA, ICONO Y NOMBRE DEL PRODUCTO                    -->
+  <!-- ================================================================= -->
+  @if (pantallaActual === 'paso1') {
+    <main class="step-content-container">
+      @if (mensaje) {
+        <div class="studio-toast-alert" [class.error]="tipoMensaje === 'error'">
+          <span>{{ mensaje }}</span>
+        </div>
+      }
+
+      <span class="step-mini-tag">Paso 1 de 3 &middot; Clasificación Comercial</span>
+      <h1 class="step-large-heading">
+        {{ idEditar !== null ? 'Edita la categoría y nombre del producto' : '¿Qué tipo de producto vas a publicar?' }}
+      </h1>
+      <p class="step-description-text">
+        Elige la línea comercial del artículo, su icono representativo y un nombre claro para la tienda.
+      </p>
+
+      <div class="choice-cards-grid">
+        @for (c of categoriasCards; track c.id) {
+          <button
+            type="button"
+            class="choice-card-item"
+            [class.selected]="categoria === c.id"
+            (click)="seleccionarCategoria(c.id, c.icono)">
+            <span class="choice-card-emoji">{{ c.icono }}</span>
+            <span class="choice-card-title">{{ c.id }}</span>
+            <span class="choice-card-sub">{{ c.desc }}</span>
+          </button>
+        }
+      </div>
+
+      <label class="studio-field-label" style="margin-bottom: 10px;">Icono del producto</label>
+      <div class="emoji-selector-grid">
+        @for (ic of iconosSugeridos; track ic) {
+          <button
+            type="button"
+            class="emoji-tile-btn"
+            [class.selected]="imagen === ic"
+            (click)="imagen = ic">
+            {{ ic }}
+          </button>
+        }
+      </div>
+
+      <div class="studio-field-box">
+        <label class="studio-field-label">Nombre comercial del producto *</label>
+        <input
+          type="text"
+          class="studio-input"
+          [(ngModel)]="nombre"
+          placeholder="Ej: Proteína Whey Isolate Gold 2Lb" />
+
+        <div class="quick-suggestions-row">
+          @for (sug of nombresSugeridos[categoria]; track sug) {
+            <button type="button" class="quick-chip-btn" (click)="nombre = sug">
+              + {{ sug }}
+            </button>
+          }
+        </div>
+      </div>
+    </main>
+  }
+
+  <!-- ================================================================= -->
+  <!-- PASO 2: PRECIO Y UNIDADES EN INVENTARIO                           -->
+  <!-- ================================================================= -->
+  @if (pantallaActual === 'paso2') {
+    <main class="step-content-container">
+      <span class="step-mini-tag">Paso 2 de 3 &middot; Precio e Inventario</span>
+      <h1 class="step-large-heading">Establece el precio de venta y el stock disponible</h1>
+      <p class="step-description-text">
+        Puedes ajustar el valor unitario en pesos colombianos (COP) y controlar cuántas unidades tienes listas para entrega.
+      </p>
+
+      <div class="stepper-counter-card">
+        <div class="stepper-info">
+          <strong>Precio de venta (COP)</strong>
+          <span>Tarifa pública en la tienda ({{ formatearPrecio(precio) }})</span>
+        </div>
+        <div class="stepper-controls">
+          <button type="button" class="stepper-circle-btn" (click)="ajustarPrecio(-5000)">−</button>
+          <span class="stepper-value" style="min-width: 110px;">{{ formatearPrecio(precio) }}</span>
+          <button type="button" class="stepper-circle-btn" (click)="ajustarPrecio(5000)">+</button>
+        </div>
+      </div>
+
+      <div class="studio-field-box" style="margin-bottom: 20px;">
+        <label class="studio-field-label">O escribe el precio exacto en COP *</label>
+        <input type="number" min="0" class="studio-input" [(ngModel)]="precio" />
+      </div>
+
+      <div class="stepper-counter-card">
+        <div class="stepper-info">
+          <strong>Stock disponible en bodega</strong>
+          <span>Cantidad de unidades listas para compra inmediata</span>
+        </div>
+        <div class="stepper-controls">
+          <button type="button" class="stepper-circle-btn" (click)="ajustarStock(-1)">−</button>
+          <span class="stepper-value">{{ stock }} uds</span>
+          <button type="button" class="stepper-circle-btn" (click)="ajustarStock(1)">+</button>
+        </div>
+      </div>
+    </main>
+  }
+
+  <!-- ================================================================= -->
+  <!-- PASO 3: DESCRIPCIÓN, GUÍA NUTRICIONAL Y VISTA PREVIA              -->
+  <!-- ================================================================= -->
+  @if (pantallaActual === 'paso3') {
+    <main class="step-content-container">
+      <span class="step-mini-tag">Paso 3 de 3 &middot; Ficha Técnica y Publicación</span>
+      <h1 class="step-large-heading">Describe los beneficios y modo de uso</h1>
+      <p class="step-description-text">
+        Agrega los detalles comerciales y recomendaciones para que tus atletas aprovechen al máximo el producto.
+      </p>
+
+      <div class="studio-fields-stack">
+        <div class="studio-field-box">
+          <label class="studio-field-label">Descripción comercial y beneficios</label>
+          <textarea
+            rows="3"
+            class="studio-textarea"
+            [(ngModel)]="descripcion"
+            placeholder="Describe las características, pureza, materiales o beneficios para el entrenamiento..."></textarea>
+        </div>
+
+        <div class="studio-field-box">
+          <label class="studio-field-label">Guía de consumo / Uso recomendado (Opcional)</label>
+          <textarea
+            rows="3"
+            class="studio-textarea"
+            [(ngModel)]="guiaNutricional"
+            placeholder="Ej: Mezclar 1 scoop después de entrenar, o instrucciones de cuidado..."></textarea>
+        </div>
+      </div>
+
+      <!-- VISTA PREVIA EN TIEMPO REAL -->
+      <div class="live-preview-box">
+        <span class="preview-header-tag">● Vista previa en Tienda The House Fit</span>
+        <div class="draft-card" style="cursor: default;">
+          <div class="draft-icon-box">
+            <span>{{ imagen }}</span>
+          </div>
+          <div class="draft-info">
+            <div class="draft-title-row">
+              <strong class="draft-title">{{ nombre || 'Nombre del Producto' }}</strong>
+              <span class="draft-badge">{{ categoria }}</span>
+              <span class="draft-badge green">{{ formatearPrecio(precio) }}</span>
+              <span class="draft-badge blue">{{ stock }} uds</span>
+            </div>
+            <p class="draft-text">
+              {{ descripcion || 'Producto oficial de alto rendimiento deportivo.' }}
+            </p>
+            @if (guiaNutricional) {
+              <p class="draft-text" style="margin-top: 6px; color: #34d399;">
+                💡 Guía: {{ guiaNutricional }}
+              </p>
+            }
+          </div>
+        </div>
+      </div>
+    </main>
+  }
+
+  <!-- ================================================================= -->
+  <!-- FOOTER STICKY CON BARRA DE PROGRESO                               -->
+  <!-- ================================================================= -->
+  @if (pantallaActual !== 'hub') {
+    <footer class="wizard-sticky-footer">
+      <div class="footer-progress-bar">
+        <div class="progress-segment-wrap">
+          <div class="progress-segment-fill" [style.width.%]="100"></div>
+        </div>
+        <div class="progress-segment-wrap">
+          <div class="progress-segment-fill" [style.width.%]="pantallaActual === 'paso2' || pantallaActual === 'paso3' ? 100 : 0"></div>
+        </div>
+        <div class="progress-segment-wrap">
+          <div class="progress-segment-fill" [style.width.%]="pantallaActual === 'paso3' ? 100 : 0"></div>
+        </div>
+      </div>
+
+      <div class="footer-buttons-bar">
+        <button type="button" class="btn-footer-back" (click)="irPasoAnterior()">
+          Atrás
+        </button>
+
+        <button type="button" class="btn-footer-next" (click)="irPasoSiguiente()">
+          @if (pantallaActual === 'paso3') {
+            {{ idEditar !== null ? 'Guardar cambios del producto' : 'Publicar producto' }}
+          } @else {
+            Siguiente
+          }
+        </button>
+      </div>
+    </footer>
+  }
 </div>

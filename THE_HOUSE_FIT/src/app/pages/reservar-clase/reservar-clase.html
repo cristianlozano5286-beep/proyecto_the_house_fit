@@ -1,149 +1,608 @@
-<div class="reserva-container">
-    <div class="page-header">
-        <h1>Reservar clase</h1>
-        <p>Busca y reserva tu próximo cupo en los gimnasios afiliados</p>
+<div class="steam-page-shell">
+  <!-- Toast flotante -->
+  @if (toast) {
+    <div class="floating-toast" [ngClass]="'toast-' + toast.tipo" role="status">
+      <div class="toast-icon" aria-hidden="true">
+        @if (toast.tipo === 'exito') { ✓ } @else { ! }
+      </div>
+      <div class="toast-body">
+        <span class="toast-text">{{ toast.texto }}</span>
+      </div>
+      <button type="button" class="toast-close" (click)="cerrarToast()" aria-label="Cerrar aviso">✕</button>
+    </div>
+  }
+
+  <!-- 1. ESCAPARATE HERO SPLIT DE RESERVA DE CLASES -->
+  <section class="steam-hero-split" aria-label="Clase destacada y resumen">
+    <article class="steam-hero-banner">
+      <img
+        class="steam-hero-bg"
+        [src]="getMeta(clases[0]?.tipoClase || 'CrossFit').imagen"
+        alt="Entrenamiento en clase grupal The House Fit"
+      />
+      <div class="steam-hero-scrim" aria-hidden="true"></div>
+
+      <div class="steam-hero-top">
+        <div class="steam-hero-tags">
+          @for (t of tiposClase.slice(0, 4); track t) {
+            <button
+              type="button"
+              class="steam-tag-pill"
+              [class.is-active]="tipoClase === t"
+              (click)="filtroRapido(t)"
+            >
+              {{ t }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="steam-hero-bottom">
+        <h1 class="steam-hero-title">Reservar Clase</h1>
+        <p class="steam-hero-sub">
+          Busca sesiones disponibles en sedes afiliadas, filtra por fecha o disciplina y asegura tu cupo en tiempo real.
+        </p>
+        <span class="steam-members-pill">
+          <span class="steam-dot-ember" aria-hidden="true"></span>
+          {{ clases.length }} sesiones disponibles · {{ misReservas.length }} reservas activas · {{ gimnasios.length }} sedes
+        </span>
+      </div>
+    </article>
+
+    <div class="steam-hero-aside">
+      <article class="steam-featured-card">
+        @if (clases.length > 0) {
+          <div class="steam-featured-body">
+            <div class="steam-featured-eyebrow">PRÓXIMA SESIÓN SUGERIDA</div>
+            <h2>{{ clases[0].tipoClase }} · {{ nombreGimnasio(clases[0].gimnasioId) }}</h2>
+            <p class="steam-featured-desc">
+              Coach {{ clases[0].instructor }} · Horario {{ clases[0].hora }} ({{ clases[0].duracion }}) · {{ clases[0].cupos }} cupos libres.
+            </p>
+          </div>
+
+          <div class="steam-featured-meta">
+            <div class="steam-featured-price">{{ formatearPrecio(clases[0].precio) }} / persona</div>
+            <div class="steam-featured-foot">
+              <button type="button" class="steam-featured-btn" (click)="reservarClase(clases[0])">
+                <span>Reservar cupo</span>
+              </button>
+              <span class="steam-featured-mark" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </span>
+            </div>
+          </div>
+        } @else {
+          <div class="steam-featured-body">
+            <div class="steam-featured-eyebrow">FILTRO ACTIVO</div>
+            <h2>Sin resultados para esta vista</h2>
+            <p class="steam-featured-desc">
+              Restablece los filtros de búsqueda para ver todas las disciplinas y sedes activas.
+            </p>
+          </div>
+
+          <div class="steam-featured-meta">
+            <div class="steam-featured-price">{{ gimnasios.length }} sedes activas</div>
+            <div class="steam-featured-foot">
+              <button type="button" class="steam-featured-btn" (click)="limpiarBusqueda()">
+                <span>Ver todas</span>
+              </button>
+            </div>
+          </div>
+        }
+      </article>
+
+      <div class="steam-aside-tiles">
+        <button type="button" class="steam-mini-glass-tile" (click)="filtroRapido('Spinning')">
+          <span class="steam-mini-tile-label">Cardio indoor</span>
+          <strong class="steam-mini-tile-val">Spinning</strong>
+        </button>
+        <button type="button" class="steam-mini-glass-tile" (click)="filtroRapido('CrossFit')">
+          <span class="steam-mini-tile-label">Fuerza &amp; WOD</span>
+          <strong class="steam-mini-tile-val">CrossFit</strong>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. FILA DE 4 DISCIPLINAS DESTACADAS -->
+  <section class="steam-offers-section" aria-label="Disciplinas principales">
+    <div class="steam-section-head">
+      <h3>Disciplinas destacadas</h3>
+      <button type="button" class="steam-section-sublink" (click)="filtroRapido(null)">
+        Mostrar todas ({{ clases.length }}) →
+      </button>
     </div>
 
-    <mat-card class="search-card">
-        <mat-card-header>
-            <mat-card-title>Buscar clase</mat-card-title>
-            <mat-card-subtitle>Encuentra la clase que necesites</mat-card-subtitle>
-        </mat-card-header>
+    <div class="steam-offers-grid">
+      @for (disc of ['CrossFit', 'Spinning', 'Funcional', 'Boxeo']; track disc) {
+        <button
+          type="button"
+          class="steam-offer-card"
+          [class.is-active]="tipoClase === disc"
+          (click)="filtroRapido(disc)"
+        >
+          <img [src]="getMeta(disc).imagen" [alt]="disc" loading="lazy" />
+          <div class="steam-offer-scrim" aria-hidden="true"></div>
+          <span class="steam-offer-badge">{{ getMeta(disc).tag }}</span>
+          <div class="steam-offer-caption">
+            <strong>{{ disc }}</strong>
+            <span>Filtrar horarios disponibles</span>
+          </div>
+        </button>
+      }
+    </div>
+  </section>
 
-        <mat-card-content>
-            <div class="search-form">
-                <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Gimnasio</mat-label>
-                    <mat-select [(ngModel)]="gimnasioId">
-                        <mat-option [value]="null">Todos los gimnasios</mat-option>
-                        @for (g of gimnasios; track g.id) {
-                            <mat-option [value]="g.id">{{ g.nombre }}</mat-option>
-                        }
-                    </mat-select>
-                </mat-form-field>
+  <!-- 3. PANEL DE BÚSQUEDA -->
+  <section class="search-pod-section">
+    <div class="steam-glass-panel search-pod-card">
+      <div class="pod-header">
+        <div class="pod-header-title">
+          <div class="pod-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff7745" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+          <div>
+            <h3>Filtros de Búsqueda</h3>
+            <p>Encuentra la sesión ideal según tu disponibilidad y sede preferida</p>
+          </div>
+        </div>
+      </div>
 
-                <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Tipo de clase</mat-label>
-                    <mat-select [(ngModel)]="tipoClase">
-                        <mat-option [value]="null">Todas</mat-option>
-                        @for (t of tiposClase; track t) {
-                            <mat-option [value]="t">{{ t }}</mat-option>
-                        }
-                    </mat-select>
-                </mat-form-field>
+      <div class="pod-grid">
+        <div class="input-pod" [class.is-focused]="menuGimnasioAbierto">
+          <label class="pod-label">GIMNASIO / SEDE</label>
+          <div class="custom-dropdown-container" [class.is-open]="menuGimnasioAbierto">
+            <button
+              type="button"
+              class="pod-custom-trigger"
+              (click)="toggleMenuGimnasio($event)"
+              aria-haspopup="listbox"
+              [attr.aria-expanded]="menuGimnasioAbierto"
+            >
+              <div class="trigger-content">
+                <span class="trigger-text">{{ gimnasioSeleccionadoTexto }}</span>
+                @if (gimnasioId !== null) {
+                  <span class="trigger-subtext">{{ ciudadGimnasio(gimnasioId) }}</span>
+                }
+              </div>
+              <span class="trigger-chevron" [class.rotated]="menuGimnasioAbierto">
+                <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                  <path d="M1.5 1.75L6 6.25L10.5 1.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </button>
 
-                <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Fecha de asistencia</mat-label>
-                    <input matInput [matDatepicker]="picker" [(ngModel)]="fecha">
-                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                    <mat-datepicker #picker></mat-datepicker>
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Personas</mat-label>
-                    <input matInput type="number" min="1" [(ngModel)]="personas">
-                </mat-form-field>
-            </div>
-        </mat-card-content>
-
-        <mat-card-actions align="end" class="card-actions">
-            <button mat-stroked-button type="button" (click)="limpiarBusqueda()">Limpiar</button>
-            <button mat-raised-button color="primary" type="button" (click)="buscarClases()">Buscar clases</button>
-        </mat-card-actions>
-    </mat-card>
-
-    @if (cargando) {
-        <mat-card class="loading-card">
-            <mat-card-content>
-                <div class="loading-content">
-                    <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
-                    <div class="loading-text">
-                        <h3>Buscando clases</h3>
-                        <p>Estamos buscando los mejores cupos disponibles para ti</p>
-                    </div>
+            @if (menuGimnasioAbierto) {
+              <div class="custom-dropdown-menu" role="listbox">
+                <div
+                  class="custom-option"
+                  [class.selected]="gimnasioId === null"
+                  (click)="seleccionarGimnasio(null)"
+                  role="option"
+                >
+                  <div class="option-text-group">
+                    <span class="option-title">Todos los gimnasios</span>
+                    <span class="option-desc">Ver todas las sedes afiliadas</span>
+                  </div>
+                  @if (gimnasioId === null) {
+                    <span class="option-check">✓</span>
+                  }
                 </div>
-                <mat-progress-bar mode="determinate" [value]="progreso"></mat-progress-bar>
-            </mat-card-content>
-        </mat-card>
-    }
 
-    <section class="results-section">
-        <div class="section-header">
-            <div>
-                <h2>Clases disponibles</h2>
-                <p>Selecciona la clase que deseas reservar</p>
-            </div>
-            <span class="results-count">{{ clases.length }} clases</span>
+                <div class="dropdown-divider"></div>
+
+                @for (g of gimnasios; track g.id) {
+                  <div
+                    class="custom-option"
+                    [class.selected]="gimnasioId === g.id"
+                    (click)="seleccionarGimnasio(g.id)"
+                    role="option"
+                  >
+                    <div class="option-text-group">
+                      <span class="option-title">{{ g.nombre }}</span>
+                      <span class="option-desc">{{ g.ciudad }} · Sede Afiliada</span>
+                    </div>
+                    @if (gimnasioId === g.id) {
+                      <span class="option-check">✓</span>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
         </div>
 
-        <mat-card class="table-card">
-            <mat-card-content>
-                <div class="table-container">
-                    <table mat-table [dataSource]="clases" class="classes-table">
+        <div class="input-pod" [class.is-focused]="menuDisciplinaAbierto">
+          <label class="pod-label">DISCIPLINA</label>
+          <div class="custom-dropdown-container" [class.is-open]="menuDisciplinaAbierto">
+            <button
+              type="button"
+              class="pod-custom-trigger"
+              (click)="toggleMenuDisciplina($event)"
+              aria-haspopup="listbox"
+              [attr.aria-expanded]="menuDisciplinaAbierto"
+            >
+              <div class="trigger-content">
+                <span class="trigger-text">{{ tipoClase ? tipoClase : 'Todas las disciplinas' }}</span>
+                @if (tipoClase) {
+                  <span class="trigger-subtext">{{ getMeta(tipoClase).tag }}</span>
+                }
+              </div>
+              <span class="trigger-chevron" [class.rotated]="menuDisciplinaAbierto">
+                <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                  <path d="M1.5 1.75L6 6.25L10.5 1.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </button>
 
-                        <ng-container matColumnDef="gimnasio">
-                            <th mat-header-cell *matHeaderCellDef>Gimnasio</th>
-                            <td mat-cell *matCellDef="let clase"><strong>{{ nombreGimnasio(clase.gimnasioId) }}</strong></td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="tipoClase">
-                            <th mat-header-cell *matHeaderCellDef>Clase</th>
-                            <td mat-cell *matCellDef="let clase"><strong>{{ clase.tipoClase }}</strong></td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="instructor">
-                            <th mat-header-cell *matHeaderCellDef>Instructor</th>
-                            <td mat-cell *matCellDef="let clase">{{ clase.instructor }}</td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="hora">
-                            <th mat-header-cell *matHeaderCellDef>Hora</th>
-                            <td mat-cell *matCellDef="let clase">{{ clase.hora }}</td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="duracion">
-                            <th mat-header-cell *matHeaderCellDef>Duración</th>
-                            <td mat-cell *matCellDef="let clase">{{ clase.duracion }}</td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="precio">
-                            <th mat-header-cell *matHeaderCellDef>Precio</th>
-                            <td mat-cell *matCellDef="let clase"><strong>{{ formatearPrecio(clase.precio) }}</strong></td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="accion">
-                            <th mat-header-cell *matHeaderCellDef>Acción</th>
-                            <td mat-cell *matCellDef="let clase">
-                                <button mat-raised-button color="primary" type="button" (click)="reservarClase(clase)">
-                                    Reservar
-                                </button>
-                            </td>
-                        </ng-container>
-
-                        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-                        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-                    </table>
-
-                    @if (clases.length === 0) {
-                        <div class="empty-table">No hay clases disponibles con esos filtros.</div>
-                    }
+            @if (menuDisciplinaAbierto) {
+              <div class="custom-dropdown-menu" role="listbox">
+                <div
+                  class="custom-option"
+                  [class.selected]="tipoClase === null"
+                  (click)="seleccionarDisciplina(null)"
+                  role="option"
+                >
+                  <div class="option-text-group">
+                    <span class="option-title">Todas las disciplinas</span>
+                    <span class="option-desc">CrossFit, Spinning, Yoga y más</span>
+                  </div>
+                  @if (tipoClase === null) {
+                    <span class="option-check">✓</span>
+                  }
                 </div>
-            </mat-card-content>
-        </mat-card>
-    </section>
 
-    <section class="informacion-section">
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>Información importante</mat-panel-title>
-                <mat-panel-description>Cupos, cancelaciones y políticas</mat-panel-description>
-            </mat-expansion-panel-header>
-            <div class="information-content">
-                <h3>Cupos</h3>
-                <p>Cada clase tiene un número limitado de cupos; se asignan por orden de reserva.</p>
-                <h3>Cancelaciones</h3>
-                <p>Puedes cancelar tu reserva hasta 2 horas antes del inicio de la clase sin costo.</p>
+                <div class="dropdown-divider"></div>
+
+                @for (t of tiposClase; track t) {
+                  <div
+                    class="custom-option"
+                    [class.selected]="tipoClase === t"
+                    (click)="seleccionarDisciplina(t)"
+                    role="option"
+                  >
+                    <div class="option-text-group">
+                      <span class="option-title">{{ t }}</span>
+                      <span class="option-desc">{{ getMeta(t).tag }}</span>
+                    </div>
+                    @if (tipoClase === t) {
+                      <span class="option-check">✓</span>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="input-pod">
+          <label for="inputFecha" class="pod-label">FECHA DE ASISTENCIA</label>
+          <div class="pod-control-wrapper">
+            <input
+              id="inputFecha"
+              type="date"
+              [(ngModel)]="fechaStr"
+              [min]="minFechaStr"
+              (change)="onFechaChange()"
+              class="pod-input-date"
+            />
+          </div>
+        </div>
+
+        <div class="input-pod">
+          <label class="pod-label">PERSONAS / CUPOS</label>
+          <div class="pod-stepper">
+            <button
+              type="button"
+              class="stepper-btn"
+              (click)="cambiarPersonas(-1)"
+              [disabled]="personas <= 1"
+              aria-label="Disminuir asistentes"
+            >
+              −
+            </button>
+            <span class="stepper-val">{{ personas }} {{ personas === 1 ? 'persona' : 'personas' }}</span>
+            <button
+              type="button"
+              class="stepper-btn"
+              (click)="cambiarPersonas(1)"
+              [disabled]="personas >= 10"
+              aria-label="Aumentar asistentes"
+            >
+              +
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pod-actions">
+        <button type="button" class="btn-clear" (click)="limpiarBusqueda()">
+          Limpiar filtros
+        </button>
+        <button type="button" class="btn-search" (click)="buscarClases()">
+          Buscar clases disponibles
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filtros rápidos por chips -->
+  <section class="quick-chips-section">
+    <div class="chips-label">Filtro rápido:</div>
+    <div class="chips-list">
+      <button
+        type="button"
+        class="chip-btn"
+        [class.active]="tipoClase === null"
+        (click)="filtroRapido(null)"
+      >
+        Todas ({{ clases.length }})
+      </button>
+
+      @for (t of tiposClase; track t) {
+        <button
+          type="button"
+          class="chip-btn"
+          [class.active]="tipoClase === t"
+          (click)="filtroRapido(t)"
+        >
+          {{ t }}
+        </button>
+      }
+    </div>
+  </section>
+
+  @if (cargando) {
+    <div class="loading-panel">
+      <div class="loading-box">
+        <mat-progress-spinner mode="indeterminate" diameter="44" strokeWidth="4"></mat-progress-spinner>
+        <div class="loading-text">
+          <h4>Consultando disponibilidad en sedes...</h4>
+          <p>Verificando cupos libres y entrenadores de turno</p>
+        </div>
+      </div>
+      <mat-progress-bar mode="determinate" [value]="progreso"></mat-progress-bar>
+    </div>
+  }
+
+  @if (misReservas.length > 0) {
+    <section class="mis-reservas-section">
+      <div class="mis-reservas-header">
+        <div class="title-with-badge">
+          <h3>Mis Reservas Activas</h3>
+          <span class="reservas-count">{{ misReservas.length }}</span>
+        </div>
+        <p class="subtitle">Clases confirmadas en tu agenda</p>
+      </div>
+
+      <div class="mis-reservas-grid">
+        @for (r of misReservas; track r.id) {
+          <div class="mi-reserva-card">
+            <div class="reserva-status-badge">
+              <span class="status-dot"></span>
+              {{ r.estado }}
             </div>
-        </mat-expansion-panel>
+            <div class="reserva-info">
+              <span class="reserva-clase-tag">Reserva #{{ r.id }}</span>
+              <h4 class="reserva-fecha">{{ formatearFechaLegible(r.fecha) }}</h4>
+              <p class="reserva-cupos">{{ r.personas }} {{ r.personas === 1 ? 'cupo reservado' : 'cupos reservados' }}</p>
+            </div>
+          </div>
+        }
+      </div>
     </section>
+  }
+
+  <!-- Resultados -->
+  <section class="results-section">
+    <div class="results-bar">
+      <div class="results-title-group">
+        <h2>Clases disponibles</h2>
+        <p>Selecciona tu sesión y reserva tu cupo al instante</p>
+      </div>
+
+      <div class="results-controls">
+        <span class="results-badge">{{ clases.length }} {{ clases.length === 1 ? 'clase' : 'clases' }}</span>
+
+        <div class="view-switcher" role="group" aria-label="Cambiar vista">
+          <button
+            type="button"
+            class="switch-btn"
+            [class.active]="vista === 'cards'"
+            (click)="cambiarVista('cards')"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Tarjetas
+          </button>
+          <button
+            type="button"
+            class="switch-btn"
+            [class.active]="vista === 'tabla'"
+            (click)="cambiarVista('tabla')"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            Tabla
+          </button>
+        </div>
+      </div>
+    </div>
+
+    @if (vista === 'cards') {
+      <div class="cards-grid">
+        @for (clase of clases; track clase.id) {
+          <article class="class-card">
+            <div
+              class="card-banner"
+              [style.background-image]="'url(' + getMeta(clase.tipoClase).imagen + ')'"
+            >
+              <div class="banner-gradient"></div>
+
+              <div class="banner-top">
+                <span class="card-discipline-pill" [style.border-color]="getMeta(clase.tipoClase).color">
+                  {{ clase.tipoClase }}
+                </span>
+
+                <span class="card-spots-pill">{{ clase.cupos }} cupos</span>
+              </div>
+
+              <div class="banner-bottom">
+                <span class="discipline-tagline">{{ getMeta(clase.tipoClase).tag }}</span>
+              </div>
+            </div>
+
+            <div class="card-content">
+              <div class="gym-location-row">
+                <span class="gym-name">{{ nombreGimnasio(clase.gimnasioId) }}</span>
+                <span class="gym-city">· {{ ciudadGimnasio(clase.gimnasioId) }}</span>
+              </div>
+
+              <h3 class="class-headline">Entrenamiento {{ clase.tipoClase }} Pro</h3>
+
+              <div class="coach-banner">
+                <div class="coach-avatar-circle">{{ getIniciales(clase.instructor) }}</div>
+                <div class="coach-details">
+                  <span class="coach-role">Head Coach</span>
+                  <span class="coach-full-name">{{ clase.instructor }}</span>
+                </div>
+              </div>
+
+              <div class="schedule-pills-row">
+                <div class="metric-item">
+                  <div class="m-text">
+                    <span class="m-label">Hora</span>
+                    <span class="m-val">{{ clase.hora }}</span>
+                  </div>
+                </div>
+
+                <div class="metric-item">
+                  <div class="m-text">
+                    <span class="m-label">Duración</span>
+                    <span class="m-val">{{ clase.duracion }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-footer">
+                <div class="price-box">
+                  <span class="price-label">Tarifa por persona</span>
+                  <span class="price-amount">{{ formatearPrecio(clase.precio) }}</span>
+                </div>
+
+                <button type="button" class="btn-card-reserve" (click)="reservarClase(clase)">
+                  <span>Reservar</span>
+                  <span class="arrow-icon" aria-hidden="true">→</span>
+                </button>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    }
+
+    @if (vista === 'tabla') {
+      <div class="table-card-wrapper">
+        <div class="table-responsive">
+          <table class="luxury-table">
+            <thead>
+              <tr>
+                <th>Gimnasio</th>
+                <th>Disciplina</th>
+                <th>Instructor</th>
+                <th>Horario</th>
+                <th>Duración</th>
+                <th>Cupos</th>
+                <th>Precio</th>
+                <th class="text-right">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (clase of clases; track clase.id) {
+                <tr class="table-row-item">
+                  <td>
+                    <div class="table-gym-cell">
+                      <span class="gym-bold">{{ nombreGimnasio(clase.gimnasioId) }}</span>
+                      <span class="gym-sub">{{ ciudadGimnasio(clase.gimnasioId) }}</span>
+                    </div>
+                  </td>
+                  <td><span class="table-disc-badge">{{ clase.tipoClase }}</span></td>
+                  <td>
+                    <div class="table-coach-cell">
+                      <span class="mini-avatar">{{ getIniciales(clase.instructor) }}</span>
+                      <span>{{ clase.instructor }}</span>
+                    </div>
+                  </td>
+                  <td><span class="cell-time">{{ clase.hora }}</span></td>
+                  <td><span class="cell-duration">{{ clase.duracion }}</span></td>
+                  <td><span class="cell-spots">{{ clase.cupos }} libres</span></td>
+                  <td><strong class="cell-price">{{ formatearPrecio(clase.precio) }}</strong></td>
+                  <td class="text-right">
+                    <button type="button" class="btn-table-reserve" (click)="reservarClase(clase)">
+                      Reservar
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    @if (clases.length === 0 && !cargando) {
+      <div class="empty-state-box">
+        <h3>No encontramos clases disponibles</h3>
+        <p>No hay cupos que coincidan con los filtros seleccionados en este momento.</p>
+        <button type="button" class="btn-reset-filters" (click)="limpiarBusqueda()">
+          Restablecer todos los filtros
+        </button>
+      </div>
+    }
+  </section>
+
+  <!-- Información de asistencia -->
+  <section class="info-accordion-section">
+    <mat-expansion-panel class="dark-expansion-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Información de asistencia y políticas</mat-panel-title>
+        <mat-panel-description>Cupos, horarios, cancelaciones y vestimenta</mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="accordion-grid">
+        <div class="info-box">
+          <div class="info-box-title">Asignación de cupos</div>
+          <p>Cada clase cuenta con aforo limitado y confirmación inmediata en tiempo real.</p>
+        </div>
+
+        <div class="info-box">
+          <div class="info-box-title">Cancelaciones flexibles</div>
+          <p>Cancela tu reserva sin costo hasta 2 horas antes del inicio programado de la sesión.</p>
+        </div>
+
+        <div class="info-box">
+          <div class="info-box-title">Vestimenta y acceso</div>
+          <p>Llega 10 minutos antes con ropa deportiva cómoda, toalla y calzado adecuado para la disciplina.</p>
+        </div>
+      </div>
+    </mat-expansion-panel>
+  </section>
 </div>
