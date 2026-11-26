@@ -92,6 +92,8 @@
    1. CABECERA HERO
    ========================================================================== */
 .contabilidad-hero {
+  position: relative;
+  z-index: 20;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -224,6 +226,8 @@
    2. ESCÁNER / VERIFICADOR DE INGRESO POR CÉDULA
    ========================================================================== */
 .cedula-verifier-card {
+  position: relative;
+  z-index: 1;
   padding: 26px 30px;
   border-radius: 26px;
   background: linear-gradient(155deg, rgba(30, 34, 44, 0.78) 0%, rgba(19, 22, 29, 0.88) 100%);
@@ -1372,13 +1376,15 @@
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
-  right: 0;
+  min-width: 100%;
+  width: max-content;
+  max-width: 360px;
   z-index: 600;
-  background: rgba(18, 21, 30, 0.97);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(16, 19, 27, 0.99);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 16px;
   padding: 6px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 107, 43, 0.08);
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.78), 0 0 0 1px rgba(255, 107, 43, 0.12);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   animation: dropdown-appear 0.18s cubic-bezier(0.23, 1, 0.32, 1) both;
