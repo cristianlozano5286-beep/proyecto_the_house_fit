@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -81,6 +81,29 @@ export class ContabilidadMembresiasComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {
     this.sincronizarSedesYDatos();
+  }
+
+  // --- Dropdown personalizado de sede ---
+  sedeDropdownAbierto = false;
+
+  toggleSedeDropdown(): void {
+    this.sedeDropdownAbierto = !this.sedeDropdownAbierto;
+  }
+
+  seleccionarSede(id: number): void {
+    this.sedeDropdownAbierto = false;
+    this.cambiarGimnasioFiltro(id);
+  }
+
+  get nombreSedeActiva(): string {
+    if (this.gimnasioFiltroId === 0) return `Todas mis sedes (${this.misGimnasios.length})`;
+    const gym = this.misGimnasios.find((g) => g.id === this.gimnasioFiltroId);
+    return gym ? `${gym.nombre} — ${gym.ciudad}` : 'Seleccionar sede';
+  }
+
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    this.sedeDropdownAbierto = false;
   }
 
   salirAlPanel(): void {
