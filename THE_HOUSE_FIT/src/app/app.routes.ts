@@ -82,7 +82,8 @@ export const routes: Routes = [
       { path: 'rutina/:id', component: DetalleRutinasComponent },
       { path: 'rutinas/:id', component: DetalleRutinasComponent },
       { path: 'tienda', component: TiendaComponent },
-      { path: 'blog', component: BlogPublicoComponent },
+      { path: 'noticias', component: BlogPublicoComponent },
+      { path: 'blog', redirectTo: 'noticias', pathMatch: 'full' },
       { path: 'imc', component: CalculadoraImcComponent },
       { path: 'destacados', component: ContenidoDestacadoComponent },
       { path: 'nutricion', component: NutricionComponent }
