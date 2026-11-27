@@ -466,12 +466,29 @@
         <form class="modal-form-grid" (ngSubmit)="guardarPagoMembresia()">
           <div class="form-field span-2">
             <label for="form-gym-id">Gimnasio / Sede donde paga *</label>
-            <select id="form-gym-id" name="gimnasioId" [(ngModel)]="formMembresia.gimnasioId"
-              (ngModelChange)="actualizarMontoSugeridoPorGimnasio()" required>
-              @for (g of misGimnasios; track g.id) {
-              <option [ngValue]="g.id">{{ g.nombre }} ({{ g.ciudad }})</option>
-              }
-            </select>
+<div class="custom-select-wrapper" [class.open]="gymModalDropdownAbierto" (click)="$event.stopPropagation()">
+  <button type="button" class="custom-select-trigger" (click)="toggleGymModalDropdown()">
+    <span>{{ nombreGymModalActivo }}</span>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  @if (gymModalDropdownAbierto) {
+    <div class="custom-select-dropdown">
+      @for (g of misGimnasios; track g.id) {
+        <button type="button" class="custom-select-option"
+                [class.active]="formMembresia.gimnasioId === g.id"
+                (click)="seleccionarGymModal(g.id)">
+          <span class="option-icon">🏢</span>
+          <span>{{ g.nombre }} ({{ g.ciudad }})</span>
+          @if (formMembresia.gimnasioId === g.id) {
+            <svg class="option-check" width="14" height="14" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          }
+        </button>
+      }
+    </div>
+  }
+</div>
           </div>
 
           <div class="form-field">

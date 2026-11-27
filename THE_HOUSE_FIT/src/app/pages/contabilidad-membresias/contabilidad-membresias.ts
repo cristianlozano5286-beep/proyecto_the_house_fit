@@ -104,9 +104,70 @@ export class ContabilidadMembresiasComponent implements OnInit {
   @HostListener('document:click')
   onDocumentClick(): void {
     this.sedeDropdownAbierto = false;
+    this.metodoDropdownAbierto = false;
+    this.gymModalDropdownAbierto = false;
   }
 
-  salirAlPanel(): void {
+  // --- Dropdown personalizado de sede ---
+  sedeDropdownAbierto = false;
+
+  toggleSedeDropdown(): void {
+    this.sedeDropdownAbierto = !this.sedeDropdownAbierto;
+  }
+
+  seleccionarSede(id: number): void {
+    this.sedeDropdownAbierto = false;
+    this.cambiarGimnasioFiltro(id);
+  }
+
+  get nombreSedeActiva(): string {
+    if (this.gimnasioFiltroId === 0) return `Todas mis sedes (${this.misGimnasios.length})`;
+    const gym = this.misGimnasios.find((g) => g.id === this.gimnasioFiltroId);
+    return gym ? `${gym.nombre} — ${gym.ciudad}` : 'Seleccionar sede';
+  }
+
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    this.sedeDropdownAbierto = false;
+    this.metodoDropdownAbierto = false;
+  }
+
+  // --- Dropdown personalizado de método de pago (modal) ---
+  metodoDropdownAbierto = false;
+
+  toggleMetodoDropdown(): void {
+    this.metodoDropdownAbierto = !this.metodoDropdownAbierto;
+  }
+
+  seleccionarMetodo(metodo: string): void {
+    this.metodoDropdownAbierto = false;
+    this.formMembresia.metodoPago = metodo;
+  }
+
+  get nombreMetodoActivo(): string {
+    return this.formMembresia.metodoPago || 'Seleccionar método';
+  }
+
+  // Dropdown del gimnasio dentro del modal
+  gymModalDropdownAbierto = false;
+
+  toggleGymModalDropdown(): void {
+    this.gymModalDropdownAbierto = !this.gymModalDropdownAbierto;
+  }
+
+  seleccionarGymModal(id: number): void {
+    this.gymModalDropdownAbierto = false;
+    this.formMembresia.gimnasioId = id;
+    this.actualizarMontoSugeridoPorGimnasio();
+  }
+
+  get nombreGymModalActivo(): string {
+    const gym = this.misGimnasios.find(g => g.id === this.formMembresia.gimnasioId);
+    return gym ? `${gym.nombre} (${gym.ciudad})` : 'Seleccionar gimnasio';
+  }
+
+  // ya existente onDocumentClick() will also cerrar este dropdown
+
     this.router.navigate(['/panel/dashboard']);
   }
 
