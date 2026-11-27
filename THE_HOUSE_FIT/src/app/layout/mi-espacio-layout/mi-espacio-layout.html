@@ -4,9 +4,9 @@
     <div class="steam-brand-left">
       <a routerLink="/panel/dashboard" class="steam-brand-link" title="Volver al Dashboard">
         <div class="steam-logo-box">
-          <img src="assets/logo-icon-white.png" alt="The House Fit" />
+          <img src="assets/logo-icon-orange.png" alt="The House Fit" />
         </div>
-        <span class="steam-brand-name">THE HOUSE <strong>FIT</strong></span>
+        <span class="steam-brand-name">The House <strong>Fit</strong></span>
       </a>
       <span class="steam-role-chip">{{ rolUsuario }}</span>
     </div>
@@ -30,6 +30,7 @@
     </nav>
 
     <div class="steam-nav-actions">
+      <app-theme-toggle variante="compact"></app-theme-toggle>
       <a routerLink="/" class="steam-btn-ghost">Ir al inicio</a>
       <button type="button" class="steam-btn-ember-soft" (click)="salirAlPanel()">Salir al panel</button>
     </div>

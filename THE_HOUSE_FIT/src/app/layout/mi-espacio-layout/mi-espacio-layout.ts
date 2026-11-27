@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Subscription, filter } from 'rxjs';
 import { AuthService } from '../../services/auth';
+import { ThemeToggleComponent } from '../../shared/theme-toggle/theme-toggle';
 
 interface SeccionUsuario {
   id: 'perfil' | 'entrenamiento' | 'reservar-clase' | 'resenas' | 'pagos';
@@ -22,7 +23,7 @@ interface SeccionUsuario {
 @Component({
   selector: 'app-mi-espacio-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ThemeToggleComponent],
   templateUrl: './mi-espacio-layout.html',
   styleUrl: './mi-espacio-layout.css',
 })

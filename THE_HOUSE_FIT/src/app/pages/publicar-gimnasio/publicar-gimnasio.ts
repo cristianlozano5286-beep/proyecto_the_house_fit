@@ -6,6 +6,8 @@ import { mensajeDeError } from '../../services/api';
 import { AuthService } from '../../services/auth';
 import { GimnasiosService } from '../../services/gimnasios';
 import { Gimnasio } from '../../models/catalogo.models';
+import { Gym3dModelComponent } from '../../shared/gym-3d-model/gym-3d-model';
+import { ThemeToggleComponent } from '../../shared/theme-toggle/theme-toggle';
 
 export type PantallaWizard =
   | 'hub'
@@ -66,6 +68,15 @@ export interface AspectoDestacadoItem {
   icono: string;
 }
 
+export type ZonaVisualId = 'musculacion' | 'cardio' | 'yoga';
+
+export interface ZonaVisualItem {
+  id: ZonaVisualId;
+  cssClass: string;
+  nombre: string;
+  sugerencia: string;
+}
+
 interface BorradorGimnasio {
   fechaInicio: string;
   nombre: string;
@@ -86,6 +97,7 @@ interface BorradorGimnasio {
   lockersDisponibles?: number;
   comodidades?: string[];
   fotos?: FotoGimnasio[];
+  imagenesZonas?: Partial<Record<ZonaVisualId, string>>;
   tituloGimnasio?: string;
   aspectosDestacados?: string[];
   descripcionGimnasio?: string;
@@ -111,7 +123,7 @@ interface BorradorGimnasio {
 @Component({
   selector: 'app-publicar-gimnasio',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, Gym3dModelComponent, ThemeToggleComponent],
   templateUrl: './publicar-gimnasio.html',
   styleUrl: './publicar-gimnasio.css',
 })
@@ -135,8 +147,11 @@ export class PublicarGimnasioComponent implements OnInit {
   ciudad = 'Yopal';
   departamento = 'Casanare';
 
-  // Paso 1 - Pantallas
-  tipoEspacioSeleccionado: string = 'comercial';
+  // Paso 1 - Pantallas (permite seleccionar múltiples tipologías)
+  tiposEspacioSeleccionados: string[] = ['comercial'];
+  get tipoEspacioSeleccionado(): string {
+    return this.tiposEspacioSeleccionados.join(',');
+  }
   tiposEspacio: TipoEspacioItem[] = [
     { id: 'comercial', nombre: 'Gimnasio Comercial', icono: '🏋️‍♂️', descripcion: 'Sala de pesas, máquinas guiadas y zona de fuerza' },
     { id: 'crossfit', nombre: 'Box de CrossFit', icono: '⚡', descripcion: 'WODs, jaulas, barras olímpicas y kettlebells' },
@@ -217,6 +232,30 @@ export class PublicarGimnasioComponent implements OnInit {
   ];
 
   comodidadesSeleccionadas: string[] = ['aire', 'duchas', 'lockers', 'peso_libre', 'maquinas', 'cardio', 'wifi'];
+
+  // Paso 1 - Botones interactivos de zonas visuales con carga de imagen
+  readonly zonasVisuales: ZonaVisualItem[] = [
+    {
+      id: 'musculacion',
+      cssClass: 'weight-zone',
+      nombre: 'Zona de Musculación & Peso Libre',
+      sugerencia: 'Pesas libres, racks o sala principal',
+    },
+    {
+      id: 'cardio',
+      cssClass: 'cardio-zone',
+      nombre: 'Cardio & Cintas',
+      sugerencia: 'Caminadoras, bicicletas o elípticas',
+    },
+    {
+      id: 'yoga',
+      cssClass: 'lounge-zone',
+      nombre: 'Yoga & Calentamiento',
+      sugerencia: 'Zona funcional, tatami o estiramiento',
+    },
+  ];
+  imagenesZonas: Partial<Record<ZonaVisualId, string>> = {};
+  zonaDragSobre: ZonaVisualId | null = null;
 
   // Paso 2 - Fotos (Images 3, 4, 5)
   fotos: FotoGimnasio[] = [];
@@ -418,7 +457,7 @@ export class PublicarGimnasioComponent implements OnInit {
           ? 'Estados Unidos - US'
           : 'Colombia - CO';
 
-    this.tipoEspacioSeleccionado = gym.tipoEspacio || 'comercial';
+    this.tiposEspacioSeleccionados = this.parsearTiposEspacio(gym.tipoEspacio);
     this.tipoAccesoSeleccionado = gym.tipoAcceso || 'completo';
     this.marcadorX = gym.marcadorX ?? 50;
     this.marcadorY = gym.marcadorY ?? 50;
@@ -442,6 +481,11 @@ export class PublicarGimnasioComponent implements OnInit {
       titulo: idx === 0 ? `Portada de ${gym.nombre}` : `Instalaciones ${idx + 1}`,
       esPortada: idx === 0,
     }));
+    this.imagenesZonas = {
+      musculacion: urls[0],
+      cardio: urls[1],
+      yoga: urls[2],
+    };
 
     // Si tiene menos de 5 fotos, completamos con las de biblioteca para que el mosaico de 5 fotos luzca completo
     for (const sugerida of this.fotosSugeridasBiblioteca) {
@@ -824,6 +868,9 @@ export class PublicarGimnasioComponent implements OnInit {
   // --- NAVEGACIÓN Y PANTALLAS ---
   iniciarNuevoAnuncio(): void {
     this.borrador = null;
+    this.imagenesZonas = {};
+    this.fotos = [];
+    this.tiposEspacioSeleccionados = ['comercial'];
     localStorage.removeItem('thehousefit_borrador_gym');
     this.pantallaActual = 'describe-espacio';
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -844,7 +891,7 @@ export class PublicarGimnasioComponent implements OnInit {
       this.ciudad = this.borrador.ciudad;
       this.departamento = this.borrador.departamento;
       this.paisRegion = this.borrador.paisRegion;
-      this.tipoEspacioSeleccionado = this.borrador.tipoEspacio || this.tipoEspacioSeleccionado;
+      this.tiposEspacioSeleccionados = this.parsearTiposEspacio(this.borrador.tipoEspacio);
       this.tipoAccesoSeleccionado = this.borrador.tipoAcceso || this.tipoAccesoSeleccionado;
       this.mostrarUbicacionExacta = this.borrador.mostrarUbicacionExacta ?? true;
       this.aforoMaximo = this.borrador.aforoMaximo ?? 40;
@@ -854,6 +901,7 @@ export class PublicarGimnasioComponent implements OnInit {
       this.lockersDisponibles = this.borrador.lockersDisponibles ?? 25;
       this.comodidadesSeleccionadas = this.borrador.comodidades || this.comodidadesSeleccionadas;
       this.fotos = this.borrador.fotos || [];
+      this.imagenesZonas = this.borrador.imagenesZonas || {};
       this.tituloGimnasio = this.borrador.tituloGimnasio || '';
       this.aspectosDestacados = this.borrador.aspectosDestacados || ['equipamiento', 'central'];
       this.descripcionGimnasio = this.borrador.descripcionGimnasio || 'Rodéate de la mejor energía y equipamiento en este destacado espacio fitness.';
@@ -957,9 +1005,27 @@ export class PublicarGimnasioComponent implements OnInit {
   }
 
   // --- INTERACCIÓN PASO 1 ---
+  private parsearTiposEspacio(valor: string | undefined | null): string[] {
+    if (!valor) return ['comercial'];
+    const lista = valor
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+    return lista.length > 0 ? lista : ['comercial'];
+  }
+
+  estaTipoEspacioSeleccionado(id: string): boolean {
+    return this.tiposEspacioSeleccionados.includes(id);
+  }
+
   seleccionarTipoEspacio(id: string): void {
-    this.tipoEspacioSeleccionado = id;
+    if (this.tiposEspacioSeleccionados.includes(id)) {
+      this.tiposEspacioSeleccionados = this.tiposEspacioSeleccionados.filter((t) => t !== id);
+    } else {
+      this.tiposEspacioSeleccionados = [...this.tiposEspacioSeleccionados, id];
+    }
     this.guardarBorrador('tipo-espacio');
+    this.cdr.markForCheck();
   }
 
   seleccionarTipoAcceso(id: string): void {
@@ -1036,6 +1102,143 @@ export class PublicarGimnasioComponent implements OnInit {
     return this.comodidades.filter((c) => c.categoria === 'servicios');
   }
 
+  // --- INTERACCIÓN PASO 1: IMÁGENES POR ZONA ---
+  get conteoImagenesZonas(): number {
+    return this.zonasVisuales.filter((z) => Boolean(this.imagenesZonas[z.id])).length;
+  }
+
+  abrirSelectorImagenZona(inputEl: HTMLInputElement): void {
+    inputEl.value = '';
+    inputEl.click();
+  }
+
+  async onImagenZonaSeleccionada(zonaId: ZonaVisualId, event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const archivo = input.files?.[0];
+    if (!archivo) return;
+    await this.guardarImagenZonaDesdeArchivo(zonaId, archivo);
+    input.value = '';
+  }
+
+  onZonaDragOver(zonaId: ZonaVisualId, event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    if (this.zonaDragSobre !== zonaId) {
+      this.zonaDragSobre = zonaId;
+      this.cdr.markForCheck();
+    }
+  }
+
+  onZonaDragLeave(zonaId: ZonaVisualId): void {
+    if (this.zonaDragSobre === zonaId) {
+      this.zonaDragSobre = null;
+      this.cdr.markForCheck();
+    }
+  }
+
+  async onZonaDrop(zonaId: ZonaVisualId, event: DragEvent): Promise<void> {
+    event.preventDefault();
+    event.stopPropagation();
+    this.zonaDragSobre = null;
+    const archivo = event.dataTransfer?.files?.[0];
+    if (archivo && archivo.type.startsWith('image/')) {
+      await this.guardarImagenZonaDesdeArchivo(zonaId, archivo);
+    } else {
+      this.cdr.markForCheck();
+    }
+  }
+
+  quitarImagenZona(zonaId: ZonaVisualId, event: Event): void {
+    event.stopPropagation();
+    const copia = { ...this.imagenesZonas };
+    delete copia[zonaId];
+    this.imagenesZonas = copia;
+
+    const fotoZonaId = `zona-${zonaId}`;
+    const eraPortada = this.fotos.find((f) => f.id === fotoZonaId)?.esPortada;
+    this.fotos = this.fotos.filter((f) => f.id !== fotoZonaId);
+    if (eraPortada && this.fotos.length > 0) {
+      this.fotos[0].esPortada = true;
+    }
+
+    this.guardarBorrador(this.pantallaActual);
+    this.cdr.markForCheck();
+  }
+
+  private async guardarImagenZonaDesdeArchivo(zonaId: ZonaVisualId, archivo: File): Promise<void> {
+    if (!archivo.type.startsWith('image/')) return;
+    const urlOptimizada = await this.leerYOptimizarImagen(archivo);
+    if (!urlOptimizada) return;
+
+    this.imagenesZonas = { ...this.imagenesZonas, [zonaId]: urlOptimizada };
+    this.sincronizarFotoZonaEnGaleria(zonaId, urlOptimizada);
+    this.guardarBorrador(this.pantallaActual);
+    this.cdr.markForCheck();
+  }
+
+  private sincronizarFotoZonaEnGaleria(zonaId: ZonaVisualId, url: string): void {
+    const zona = this.zonasVisuales.find((z) => z.id === zonaId);
+    const titulo = zona?.nombre || 'Zona del gimnasio';
+    const fotoId = `zona-${zonaId}`;
+    const existenteIdx = this.fotos.findIndex((f) => f.id === fotoId);
+
+    if (existenteIdx > -1) {
+      this.fotos[existenteIdx] = { ...this.fotos[existenteIdx], url, titulo };
+      return;
+    }
+
+    const nueva: FotoGimnasio = {
+      id: fotoId,
+      url,
+      titulo,
+      esPortada: zonaId === 'musculacion' || this.fotos.length === 0,
+    };
+
+    if (nueva.esPortada) {
+      this.fotos.forEach((f) => (f.esPortada = false));
+      this.fotos.unshift(nueva);
+    } else {
+      this.fotos.push(nueva);
+    }
+  }
+
+  private leerYOptimizarImagen(archivo: File): Promise<string> {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const dataUrl = typeof ev.target?.result === 'string' ? ev.target.result : '';
+        if (!dataUrl || typeof Image === 'undefined') {
+          resolve(dataUrl);
+          return;
+        }
+        const img = new Image();
+        img.onload = () => {
+          const maxLado = 1280;
+          const { width, height } = img;
+          if (width <= maxLado && height <= maxLado && archivo.size <= 350_000) {
+            resolve(dataUrl);
+            return;
+          }
+          const escala = Math.min(1, maxLado / Math.max(width, height));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(width * escala));
+          canvas.height = Math.max(1, Math.round(height * escala));
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(dataUrl);
+            return;
+          }
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', 0.84));
+        };
+        img.onerror = () => resolve(dataUrl);
+        img.src = dataUrl;
+      };
+      reader.onerror = () => resolve('');
+      reader.readAsDataURL(archivo);
+    });
+  }
+
   // --- INTERACCIÓN PASO 2: FOTOS (IMAGES 3, 4, 5) ---
   abrirModalFotos(): void {
     this.modalFotosAbierto = true;
@@ -1090,6 +1293,14 @@ export class PublicarGimnasioComponent implements OnInit {
   eliminarFoto(id: string): void {
     const eraPortada = this.fotos.find((f) => f.id === id)?.esPortada;
     this.fotos = this.fotos.filter((f) => f.id !== id);
+    if (id.startsWith('zona-')) {
+      const zonaId = id.replace('zona-', '') as ZonaVisualId;
+      if (this.imagenesZonas[zonaId]) {
+        const copia = { ...this.imagenesZonas };
+        delete copia[zonaId];
+        this.imagenesZonas = copia;
+      }
+    }
     if (eraPortada && this.fotos.length > 0) {
       this.fotos[0].esPortada = true;
     }
@@ -1174,6 +1385,9 @@ export class PublicarGimnasioComponent implements OnInit {
     if (this.pantallaActual === 'describe-espacio') {
       this.pantallaActual = 'tipo-espacio';
     } else if (this.pantallaActual === 'tipo-espacio') {
+      if (this.tiposEspacioSeleccionados.length === 0) {
+        return;
+      }
       this.pantallaActual = 'tipo-acceso';
     } else if (this.pantallaActual === 'tipo-acceso') {
       this.pantallaActual = 'ubicacion-marcador';
@@ -1430,6 +1644,7 @@ export class PublicarGimnasioComponent implements OnInit {
       lockersDisponibles: this.lockersDisponibles,
       comodidades: this.comodidadesSeleccionadas,
       fotos: this.fotos,
+      imagenesZonas: this.imagenesZonas,
       tituloGimnasio: this.tituloGimnasio,
       aspectosDestacados: this.aspectosDestacados,
       descripcionGimnasio: this.descripcionGimnasio,
@@ -1464,7 +1679,7 @@ export class PublicarGimnasioComponent implements OnInit {
           if (this.borrador.pantallaGuardada) {
             this.borrador.pantallaGuardada = this.normalizarPantalla(this.borrador.pantallaGuardada);
           }
-          this.tipoEspacioSeleccionado = this.borrador.tipoEspacio || 'comercial';
+          this.tiposEspacioSeleccionados = this.parsearTiposEspacio(this.borrador.tipoEspacio);
           this.tipoAccesoSeleccionado = this.borrador.tipoAcceso || 'completo';
           this.mostrarUbicacionExacta = this.borrador.mostrarUbicacionExacta ?? true;
           this.aforoMaximo = this.borrador.aforoMaximo ?? 40;
@@ -1474,6 +1689,7 @@ export class PublicarGimnasioComponent implements OnInit {
           this.lockersDisponibles = this.borrador.lockersDisponibles ?? 25;
           this.comodidadesSeleccionadas = this.borrador.comodidades || this.comodidadesSeleccionadas;
           this.fotos = this.borrador.fotos || [];
+          this.imagenesZonas = this.borrador.imagenesZonas || {};
           this.tituloGimnasio = this.borrador.tituloGimnasio || '';
           this.aspectosDestacados = this.borrador.aspectosDestacados || ['equipamiento', 'central'];
           this.descripcionGimnasio = this.borrador.descripcionGimnasio || 'Rodéate de la mejor energía y equipamiento en este destacado espacio fitness.';

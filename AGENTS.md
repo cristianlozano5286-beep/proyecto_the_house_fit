@@ -1,5 +1,10 @@
 # The House Fit — Reglas compartidas del equipo (Antigravity + GitHub)
 
+## Idioma de comunicación
+
+- Comunícate siempre en **español** con el usuario en todas las respuestas, explicaciones, resúmenes, preguntas y mensajes de estado al trabajar en este proyecto.
+- Mantén los identificadores técnicos, comandos, rutas de archivos y fragmentos de código en su forma original cuando corresponda, explicándolos en español.
+
 Este repositorio es un **monorepo** con los 4 componentes de **The House Fit**:
 
 - `THE_HOUSE_FIT/` — Frontend Angular (puerto `4200`, proxy `/api` -> MID `8080`).

@@ -16,10 +16,11 @@ import { filter } from 'rxjs/operators';
 import { AuthService } from '../../services/auth';
 import { GimnasiosService } from '../../services/gimnasios';
 import { Gimnasio } from '../../models/catalogo.models';
+import { ThemeToggleComponent } from '../../shared/theme-toggle/theme-toggle';
 
 @Component({
   selector: 'app-public-nav',
-  imports: [RouterLink, RouterLinkActive, FormsModule],
+  imports: [RouterLink, RouterLinkActive, FormsModule, ThemeToggleComponent],
   templateUrl: './public-nav.html',
   styleUrl: './public-nav.css',
 })
@@ -73,6 +74,7 @@ export class PublicNavComponent implements OnInit, AfterViewInit, OnDestroy {
   ciudadFiltro = '';
   servicioFiltro = '';
   precioMaxFiltro: number | null = null;
+  precioManualTexto = '';
 
   private scrollRafId: number | null = null;
   private scrollAlAbrirBuscador = 0;
@@ -496,7 +498,7 @@ export class PublicNavComponent implements OnInit, AfterViewInit, OnDestroy {
         this.panelX = 0;
         this.panelOrigin = 'top center';
       } else if (this.seccionActiva === 'donde') {
-        this.panelWidth = Math.min(460, containerW);
+        this.panelWidth = Math.min(476, containerW);
         this.panelX = 0;
         this.panelOrigin = '18% top';
       } else if (this.seccionActiva === 'servicio') {
@@ -504,7 +506,7 @@ export class PublicNavComponent implements OnInit, AfterViewInit, OnDestroy {
         this.panelX = Math.max(0, Math.round((containerW - this.panelWidth) / 2));
         this.panelOrigin = '50% top';
       } else {
-        this.panelWidth = Math.min(460, containerW);
+        this.panelWidth = Math.min(476, containerW);
         this.panelX = Math.max(0, containerW - this.panelWidth);
         this.panelOrigin = '82% top';
       }
@@ -556,7 +558,32 @@ export class PublicNavComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   seleccionarPrecio(p: number | null): void {
-    this.precioMaxFiltro = this.precioMaxFiltro === p ? null : p;
+    const nuevo = this.precioMaxFiltro === p ? null : p;
+    this.precioMaxFiltro = nuevo;
+    this.precioManualTexto = nuevo !== null ? String(nuevo) : '';
+  }
+
+  onPrecioManualInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const soloDigitos = input.value.replace(/\D/g, '');
+    if (input.value !== soloDigitos) {
+      input.value = soloDigitos;
+    }
+    this.precioManualTexto = soloDigitos;
+    if (!soloDigitos) {
+      this.precioMaxFiltro = null;
+      return;
+    }
+    const numero = Number(soloDigitos);
+    this.precioMaxFiltro = Number.isFinite(numero) && numero > 0 ? numero : null;
+  }
+
+  limpiarPrecioManual(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.precioMaxFiltro = null;
+    this.precioManualTexto = '';
   }
 
   limpiarFiltros(event?: Event): void {
@@ -567,6 +594,7 @@ export class PublicNavComponent implements OnInit, AfterViewInit, OnDestroy {
     this.ciudadFiltro = '';
     this.servicioFiltro = '';
     this.precioMaxFiltro = null;
+    this.precioManualTexto = '';
   }
 
   get hayFiltrosActivos(): boolean {
@@ -584,8 +612,8 @@ export class PublicNavComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get etiquetaPrecio(): string {
-    if (this.precioMaxFiltro !== null) {
-      return `≤ $${(this.precioMaxFiltro / 1000).toLocaleString('es-CO')}k`;
+    if (this.precioMaxFiltro !== null && this.precioMaxFiltro > 0) {
+      return `≤ $${this.precioMaxFiltro.toLocaleString('es-CO')}`;
     }
     return 'Flexible';
   }

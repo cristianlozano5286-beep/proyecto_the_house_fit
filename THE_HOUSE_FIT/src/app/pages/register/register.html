@@ -5,694 +5,608 @@
   (mouseleave)="pausarAutoSlide = false"
 >
   <!-- =========================================================================
-       1. BARRA SUPERIOR APPLE LIQUID GLASS (IDÉNTICA EN ELEGANCIA A /LOGIN)
+       1. BARRA SUPERIOR INTEGRADA (MISMO LENGUAJE LIMPIO DE /LOGIN Y DASHBOARD)
        ========================================================================= -->
-  <header class="px-floating-header">
-    <nav class="px-glass-capsule" aria-label="Navegación principal">
-      <a routerLink="/login" class="px-capsule-brand" aria-label="Volver a The House Fit">
-        <img src="assets/logo-icon-orange.png" alt="The House Fit" class="px-capsule-logo" />
-        <span class="px-capsule-wordmark">THE HOUSE <span class="accent">FIT</span></span>
+  <header class="thf-integrated-topbar">
+    <div class="thf-topbar-left">
+      <a routerLink="/login" class="thf-brand-lockup" aria-label="Volver al inicio de The House Fit">
+        <img src="assets/logo-icon-orange.png" alt="The House Fit" class="thf-brand-icon" />
+        <span class="thf-brand-wordmark">The House <span class="accent">Fit</span></span>
       </a>
 
-      <div class="px-capsule-links">
+      <nav class="thf-nav-rail" aria-label="Secciones principales">
         <button
           type="button"
           (click)="intentarIrASeccion('/', 'Inicio')"
-          class="px-nav-item"
-          [class.is-active-target]="rutaDestinoPendiente === '/'"
+          class="thf-nav-tab"
+          [class.is-active]="rutaDestinoPendiente === '/'"
         >
-          INICIO
+          <span>Inicio</span>
         </button>
         <button
           type="button"
           (click)="intentarIrASeccion('/gimnasios', 'Sedes')"
-          class="px-nav-item"
-          [class.is-active-target]="rutaDestinoPendiente === '/gimnasios'"
+          class="thf-nav-tab"
+          [class.is-active]="rutaDestinoPendiente === '/gimnasios'"
         >
-          SEDES
+          <span>Sedes</span>
         </button>
         <button
           type="button"
           (click)="intentarIrASeccion('/rutinas', 'Rutinas')"
-          class="px-nav-item"
-          [class.is-active-target]="rutaDestinoPendiente === '/rutinas'"
+          class="thf-nav-tab"
+          [class.is-active]="rutaDestinoPendiente === '/rutinas'"
         >
-          RUTINAS
+          <span>Rutinas</span>
         </button>
         <button
           type="button"
           (click)="intentarIrASeccion('/tienda', 'Tienda')"
-          class="px-nav-item"
-          [class.is-active-target]="rutaDestinoPendiente === '/tienda'"
+          class="thf-nav-tab"
+          [class.is-active]="rutaDestinoPendiente === '/tienda'"
         >
-          TIENDA
+          <span>Tienda</span>
         </button>
         <button
           type="button"
           (click)="intentarIrASeccion('/imc', 'Lab IMC')"
-          class="px-nav-item"
-          [class.is-active-target]="rutaDestinoPendiente === '/imc'"
+          class="thf-nav-tab"
+          [class.is-active]="rutaDestinoPendiente === '/imc'"
         >
-          LAB IMC
+          <span>Lab IMC</span>
         </button>
-      </div>
+      </nav>
+    </div>
 
-      <div class="px-capsule-actions">
-        <a
-          href="/api/v1/apk/TheHouseFit.apk"
-          download="TheHouseFit.apk"
-          class="px-capsule-apk-btn"
-          title="Descargar aplicación oficial para Android (.APK)"
-        >
-          ⬇ APK ANDROID
-        </a>
-        <button
-          type="button"
-          (click)="cambiarModo(!esAnfitrion)"
-          class="px-capsule-host-btn"
-          [class.is-active-host]="esAnfitrion"
-        >
-          {{ esAnfitrion ? 'PUBLICA TU GYM ✓' : 'PUBLICA TU GYM' }}
-        </button>
-        <a routerLink="/login" class="px-capsule-access-btn">
-          INICIAR SESIÓN
-        </a>
-      </div>
-    </nav>
+    <div class="thf-topbar-actions">
+      <app-theme-toggle variante="compact"></app-theme-toggle>
+
+      <button
+        type="button"
+        (click)="cambiarModo(!esAnfitrion)"
+        class="thf-btn-secondary thf-btn-host"
+        [class.is-active-host]="esAnfitrion"
+        [attr.aria-pressed]="esAnfitrion"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 21h18M3 7l9-4 9 4M4 10h16v11H4zM9 14h6v7H9z" />
+        </svg>
+        <span>Publica tu gym</span>
+      </button>
+
+      <a
+        href="/api/v1/apk/TheHouseFit.apk"
+        download="TheHouseFit.apk"
+        class="thf-btn-secondary thf-btn-apk"
+        title="Descargar aplicación oficial para Android (.APK)"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span>APK</span>
+      </a>
+
+      <a routerLink="/login" class="thf-btn-primary">
+        <span>Iniciar sesión</span>
+      </a>
+    </div>
   </header>
 
   <!-- =========================================================================
-       2. FONDO ARQUITECTÓNICO ESTILO BLEAP (LÍNEAS 1PX + ARCOS PUNTEADOS + AURA)
+       2. ESCENARIO PRINCIPAL INTEGRADO (VITRINA LIMPIA + PANEL DE REGISTRO)
        ========================================================================= -->
-  <div class="bleap-stage-canvas" aria-hidden="true">
-    <div class="bleap-blueprint-grid">
-      <span class="grid-vline vline-1"></span>
-      <span class="grid-vline vline-2"></span>
-      <span class="grid-vline vline-3"></span>
-      <span class="grid-hline hline-1"></span>
-      <span class="grid-hline hline-2"></span>
-    </div>
-
-    <div class="bleap-dashed-arc arc-large"></div>
-    <div class="bleap-dashed-arc arc-medium"></div>
-
-    <div class="bleap-liquid-aura aura-bottom-left"></div>
-    <div class="bleap-liquid-aura aura-bottom-right"></div>
-    <div class="bleap-liquid-aura aura-center-horizon"></div>
-  </div>
-
-  <!-- =========================================================================
-       3. ESCENARIO PRINCIPAL EN UNA SOLA VISTA (BENTO MATRIX + TARJETA GLASS)
-       ========================================================================= -->
-  <main class="bleap-main-workspace">
-    <!-- COLUMNA IZQUIERDA: KINETIC TYPOGRAPHY + ARCHITECTURAL BENTO GRID -->
-    <section class="bleap-editorial-showcase" aria-label="Presentación interactiva The House Fit">
-      <div class="bleap-kinetic-header">
-        <div class="bleap-eyebrow-pill" [class.is-host-pill]="esAnfitrion">
-          <span class="eyebrow-pulse"></span>
-          <span>THE HOUSE FIT</span>
-          <span class="eyebrow-sep">•</span>
-          <em class="eyebrow-serif">
-            {{ esAnfitrion ? 'partner sanctuary' : 'beyond limits' }}
-          </em>
-          <span class="eyebrow-scene-counter">{{ escenaActual.numero }} / 04</span>
-        </div>
-
-        <div class="bleap-kinetic-title-stack">
-          @for (esc of escenasActivas; track esc.id; let i = $index) {
-            <h1
-              class="bleap-kinetic-title"
-              [class.is-active]="indiceEscena === i"
-              [attr.aria-hidden]="indiceEscena !== i"
-            >
-              <span class="kinetic-sans">{{ esc.tituloSans }}</span>
-              <span class="bleap-glow-dot" aria-hidden="true"></span>
-              <em class="kinetic-serif">{{ esc.tituloSerif }}</em>
-            </h1>
-          }
-        </div>
-
-        <div class="bleap-kinetic-subtitle-stack">
-          @for (esc of escenasActivas; track esc.id; let i = $index) {
-            <p
-              class="bleap-kinetic-subtitle"
-              [class.is-active]="indiceEscena === i"
-              [attr.aria-hidden]="indiceEscena !== i"
-            >
-              {{ esc.descripcionCorta }}
-            </p>
-          }
-        </div>
-      </div>
-
-      <!-- CUADRÍCULA BENTO ARQUITECTÓNICA (Armonizada al 100% con /login) -->
-      <div class="bleap-bento-matrix">
-        <div class="bento-internal-arc" aria-hidden="true"></div>
-
-        <!-- Celda Foto 1 -->
-        <button
-          type="button"
-          class="bento-cell bento-photo-tile"
-          [class.is-selected]="indiceEscena === 0"
-          (click)="seleccionarEscena(0)"
-        >
-          <img
-            [src]="escenasActivas[0].imagen"
-            [alt]="escenasActivas[0].etiqueta"
-            class="tile-img"
-            [style.object-position]="'center ' + escenasActivas[0].posicionY"
-          />
-          <div class="tile-overlay">
-            <span class="tile-num">01</span>
-            <span class="tile-tag">{{ escenasActivas[0].etiqueta }}</span>
-          </div>
-        </button>
-
-        <!-- Celda Micro-Ícono + Telemetría en Serif -->
-        <div class="bento-cell bento-telemetry-cell">
-          <div class="micro-icon-chip orange-chip" aria-hidden="true">
-            @if (esAnfitrion) {
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 21h18M3 7l9-4 9 4M4 10h16v11H4zM9 14h6v7H9z" />
-              </svg>
-            } @else {
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-              </svg>
-            }
-          </div>
-          <div class="telemetry-data">
-            <span class="telemetry-serif-num">{{ escenaActual.metricaValor }}</span>
-            <span class="telemetry-mono-label">{{ escenaActual.metricaLabel }}</span>
-          </div>
-        </div>
-
-        <!-- Celda Foto 2 -->
-        <button
-          type="button"
-          class="bento-cell bento-photo-tile"
-          [class.is-selected]="indiceEscena === 1"
-          (click)="seleccionarEscena(1)"
-        >
-          <img
-            [src]="escenasActivas[1].imagen"
-            [alt]="escenasActivas[1].etiqueta"
-            class="tile-img"
-            [style.object-position]="'center ' + escenasActivas[1].posicionY"
-          />
-          <div class="tile-overlay">
-            <span class="tile-num">02</span>
-            <span class="tile-tag">{{ escenasActivas[1].etiqueta }}</span>
-          </div>
-        </button>
-
-        <!-- CAJA CENTRAL PROTAGONISTA -->
-        <div class="bento-cell bento-hero-feature-box">
+  <main class="thf-integrated-workspace">
+    <!-- COLUMNA IZQUIERDA: HERO BANNER + FILA DE 4 TARJETAS (COMO DASHBOARD Y /LOGIN) -->
+    <section class="thf-showcase-stage" aria-label="Presentación de The House Fit">
+      <div class="thf-hero-stage-wrap">
+        <article class="thf-hero-banner">
           @for (esc of escenasActivas; track esc.id; let i = $index) {
             <img
               [src]="esc.imagen"
               [alt]="esc.palabraEditorial"
-              class="feature-box-bg-img"
+              class="thf-hero-bg"
               [class.is-active]="indiceEscena === i"
               [style.object-position]="'center ' + esc.posicionY"
             />
           }
-          <div class="feature-box-gradient"></div>
+          <div class="thf-hero-scrim" aria-hidden="true"></div>
 
-          <div class="feature-box-top-row">
-            <span class="feature-scene-pill">
-              {{ escenaActual.numero }} · {{ escenaActual.etiqueta }}
-            </span>
-            <div class="feature-brand-orb">
-              <img src="assets/logo-icon-white.png" alt="The House Fit" class="orb-symbol-img" />
+          <div class="thf-hero-top">
+            <div class="thf-hero-tags">
+              @if (esAnfitrion) {
+                <span class="thf-tag-pill">Vitrina 24/7</span>
+                <span class="thf-tag-pill">Sello verificado</span>
+                <span class="thf-tag-pill">Planes y horarios</span>
+                <span class="thf-tag-pill">Control multi-sede</span>
+              } @else {
+                <span class="thf-tag-pill">Sedes verificadas</span>
+                <span class="thf-tag-pill">Rutinas Pro</span>
+                <span class="thf-tag-pill">Biomecánica</span>
+                <span class="thf-tag-pill">Nutrición &amp; IMC</span>
+              }
             </div>
           </div>
 
-          <div class="feature-box-bottom-row">
-            <div class="feature-word-group">
-              <span class="feature-giant-word">{{ escenaActual.palabraEditorial }}</span>
-              <span class="feature-sub-caption">{{ escenaActual.subtituloEditorial }}</span>
+          <div class="thf-hero-bottom">
+            <div class="thf-hero-identity">
+              <h1 class="thf-hero-title">
+                {{ escenaActual.tituloSans }} {{ escenaActual.tituloSerif }}
+              </h1>
+              <p class="thf-hero-sub">{{ escenaActual.descripcionCorta }}</p>
+
+              <div class="thf-hero-members">
+                <div class="thf-avatar-stack" aria-hidden="true">
+                  <span class="thf-mini-avatar">{{ esAnfitrion ? 'G' : 'D' }}</span>
+                  <span class="thf-mini-avatar">{{ esAnfitrion ? 'Y' : 'M' }}</span>
+                  <span class="thf-mini-avatar">{{ esAnfitrion ? 'M' : 'L' }}</span>
+                </div>
+                <span class="thf-members-pill">
+                  {{ escenaActual.metricaValor }} · {{ escenaActual.subtituloEditorial }}
+                </span>
+              </div>
             </div>
 
-            <div class="feature-arrow-controls">
+            <div class="thf-hero-arrows">
               <button
                 type="button"
-                class="feature-nav-btn"
+                class="thf-arrow-btn"
                 (click)="escenaAnterior()"
                 aria-label="Escena anterior"
               >
-                ‹
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
               </button>
               <button
                 type="button"
-                class="feature-nav-btn"
+                class="thf-arrow-btn"
                 (click)="escenaSiguiente()"
                 aria-label="Siguiente escena"
               >
-                ›
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
               </button>
             </div>
           </div>
+        </article>
+
+        <div class="thf-hero-dots" role="tablist" aria-label="Cambiar escena destacada">
+          @for (esc of escenasActivas; track esc.id; let i = $index) {
+            <button
+              type="button"
+              role="tab"
+              class="thf-hero-dot"
+              [class.is-active]="indiceEscena === i"
+              [attr.aria-selected]="indiceEscena === i"
+              (click)="seleccionarEscena(i)"
+              [attr.aria-label]="'Escena ' + esc.etiqueta"
+            ></button>
+          }
+        </div>
+      </div>
+
+      <!-- FILA INFERIOR DE 4 TARJETAS LIMPIAS (ESTILO "SEDES DESTACADAS") -->
+      <div class="thf-pillars-section">
+        <div class="thf-section-head">
+          <h2>{{ esAnfitrion ? 'Beneficios para tu sede' : 'Explora el ecosistema' }}</h2>
+          <a routerLink="/login" class="thf-section-link">
+            ¿Ya tienes cuenta? Inicia sesión →
+          </a>
         </div>
 
-        <!-- Celda Foto 3 -->
-        <button
-          type="button"
-          class="bento-cell bento-photo-tile"
-          [class.is-selected]="indiceEscena === 2"
-          (click)="seleccionarEscena(2)"
-        >
-          <img
-            [src]="escenasActivas[2].imagen"
-            [alt]="escenasActivas[2].etiqueta"
-            class="tile-img"
-            [style.object-position]="'center ' + escenasActivas[2].posicionY"
-          />
-          <div class="tile-overlay">
-            <span class="tile-num">03</span>
-            <span class="tile-tag">{{ escenasActivas[2].etiqueta }}</span>
-          </div>
-        </button>
-
-        <!-- Celda Central Inferior -->
-        <div class="bento-cell bento-beyond-cell">
-          <div class="beyond-typographic-lockup">
-            <span class="beyond-line-1">{{ esAnfitrion ? 'partner' : 'beyond' }}</span>
-            <em class="beyond-line-2">{{ esAnfitrion ? 'empire.' : 'limits.' }}</em>
-          </div>
-          <div class="bento-dots-row" role="tablist" aria-label="Cambiar escena">
-            @for (esc of escenasActivas; track esc.id; let i = $index) {
-              <button
-                type="button"
-                role="tab"
-                class="bento-dot-btn"
-                [class.active]="indiceEscena === i"
-                (click)="seleccionarEscena(i)"
-                [attr.aria-label]="esc.etiqueta"
-              ></button>
-            }
-          </div>
+        <div class="thf-pillars-grid">
+          @for (esc of escenasActivas; track esc.id; let i = $index) {
+            <button
+              type="button"
+              class="thf-pillar-card"
+              [class.is-active]="indiceEscena === i"
+              (click)="seleccionarEscena(i)"
+              [attr.aria-label]="'Ver ' + esc.palabraEditorial"
+            >
+              <img
+                [src]="esc.imagen"
+                [alt]="esc.palabraEditorial"
+                [style.object-position]="'center ' + esc.posicionY"
+                loading="lazy"
+              />
+              <div class="thf-pillar-scrim" aria-hidden="true"></div>
+              <span class="thf-pillar-badge">{{ esc.etiqueta }}</span>
+              <div class="thf-pillar-caption">
+                <strong>{{ esc.palabraEditorial }}</strong>
+                <span>{{ esc.metricaValor }} · {{ esc.metricaLabel }}</span>
+              </div>
+            </button>
+          }
         </div>
-
-        <!-- Celda Foto 4 -->
-        <button
-          type="button"
-          class="bento-cell bento-photo-tile"
-          [class.is-selected]="indiceEscena === 3"
-          (click)="seleccionarEscena(3)"
-        >
-          <img
-            [src]="escenasActivas[3].imagen"
-            [alt]="escenasActivas[3].etiqueta"
-            class="tile-img"
-            [style.object-position]="'center ' + escenasActivas[3].posicionY"
-          />
-          <div class="tile-overlay">
-            <span class="tile-num">04</span>
-            <span class="tile-tag">{{ escenasActivas[3].etiqueta }}</span>
-          </div>
-        </button>
       </div>
     </section>
 
-    <!-- COLUMNA DERECHA: TARJETA DE REGISTRO APPLE LIQUID GLASS -->
-    <section class="bleap-auth-column" aria-label="Crear cuenta">
+    <!-- COLUMNA DERECHA: PANEL DE REGISTRO LIMPIO E INTEGRADO -->
+    <section class="thf-register-column" aria-label="Crear cuenta">
       <div
-        class="sanctuary-login-card"
+        class="thf-register-panel"
         [class.is-host-card]="esAnfitrion"
         [class.card-pulse-highlight]="resaltarFormulario"
       >
-        <!-- Selector minimalista de perfil (Usuario vs Anfitrión) -->
-        <div class="minimal-mode-switcher" role="tablist" aria-label="Tipo de registro">
-          <button
-            type="button"
-            role="tab"
-            class="mode-switch-btn"
-            [class.active]="!esAnfitrion"
-            (click)="cambiarModo(false)"
-          >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-            <span>Registro de Usuario</span>
-          </button>
-
-          <button
-            type="button"
-            role="tab"
-            class="mode-switch-btn is-host-tab"
-            [class.active]="esAnfitrion"
-            (click)="cambiarModo(true)"
-          >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 21h18M3 7l9-4 9 4M4 10h16v11H4zM9 14h6v7H9z" />
-            </svg>
-            <span>Anfitrión · Publica tu Gym</span>
-          </button>
-        </div>
-
-        @if (paso === 1) {
-          <!-- Encabezado con Logo APILADO ARRIBA del Título (Corregido!) -->
-          <div class="card-brand-header">
-            <div class="card-logo-glow-wrap">
-              <div class="logo-back-halo" aria-hidden="true"></div>
-              <img
-                src="assets/logo-full-orange.png"
-                alt="The House Fit"
-                class="card-official-logo"
-              />
-            </div>
-
-            @if (esAnfitrion) {
-              <h2 class="card-bleap-heading">
-                <span>Registro de</span>
-                <span class="heading-dot">•</span>
-                <em class="heading-serif">anfitrión</em>
-              </h2>
-              <p class="card-bleap-sub">
-                Crea tu cuenta oficial para publicar y gestionar tu gimnasio o sede deportiva.
-              </p>
-            } @else {
-              <h2 class="card-bleap-heading">
-                <span>Tu nuevo</span>
-                <span class="heading-dot">•</span>
-                <em class="heading-serif">santuario</em>
-              </h2>
-              <p class="card-bleap-sub">
-                Completa tus datos para desbloquear sedes, rutinas Pro y laboratorio IMC.
-              </p>
-            }
-          </div>
-
-          @if (mensajeVerificacion) {
-            <div
-              class="auth-error-alert"
-              [class.is-info-notice]="seccionBloqueadaNombre"
-              role="alert"
-            >
-              <div class="auth-error-content">
-                <svg class="auth-error-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
-                <span class="auth-error-text">{{ mensajeVerificacion }}</span>
-              </div>
-              @if (seccionBloqueadaNombre) {
-                <a routerLink="/login" class="btn-verify-inline">Acceder →</a>
-              }
-            </div>
-          }
-
-          <!-- Formulario Reactivo -->
-          <form [formGroup]="registerForm" (ngSubmit)="registrarUsuario()" class="thf-auth-form">
-            <div class="form-grid-2col">
-              <!-- Nombre -->
-              <div class="thf-field-group">
-                <label for="nombre" class="thf-field-label">Nombre</label>
-                <div
-                  class="thf-input-box"
-                  [class.has-error]="nombre?.touched && nombre?.invalid"
-                >
-                  <span class="input-leading-icon" aria-hidden="true">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                      <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                  </span>
-                  <input
-                    id="nombre"
-                    type="text"
-                    placeholder="Tu nombre"
-                    formControlName="nombre"
-                    autocomplete="given-name"
-                  />
-                </div>
-                @if (nombre?.touched && nombre?.invalid) {
-                  <small class="field-error-inline">
-                    @if (nombre?.errors?.['required']) { Obligatorio }
-                    @if (nombre?.errors?.['minlength']) { Mínimo 3 letras }
-                  </small>
-                }
-              </div>
-
-              <!-- Apellido -->
-              <div class="thf-field-group">
-                <label for="apellido" class="thf-field-label">Apellido</label>
-                <div
-                  class="thf-input-box"
-                  [class.has-error]="apellido?.touched && apellido?.invalid"
-                >
-                  <span class="input-leading-icon" aria-hidden="true">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                      <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                  </span>
-                  <input
-                    id="apellido"
-                    type="text"
-                    placeholder="Tu apellido"
-                    formControlName="apellido"
-                    autocomplete="family-name"
-                  />
-                </div>
-                @if (apellido?.touched && apellido?.invalid) {
-                  <small class="field-error-inline">
-                    @if (apellido?.errors?.['required']) { Obligatorio }
-                    @if (apellido?.errors?.['minlength']) { Mínimo 3 letras }
-                  </small>
-                }
-              </div>
-            </div>
-
-            <!-- Correo Electrónico -->
-            <div class="thf-field-group">
-              <label for="correo" class="thf-field-label">Correo electrónico</label>
-              <div
-                class="thf-input-box"
-                [class.has-error]="correo?.touched && correo?.invalid"
-              >
-                <span class="input-leading-icon" aria-hidden="true">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="4" width="20" height="16" rx="3"></rect>
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-                  </svg>
-                </span>
-                <input
-                  id="correo"
-                  type="email"
-                  placeholder="nombre@ejemplo.com"
-                  formControlName="correo"
-                  autocomplete="email"
-                  spellcheck="false"
-                />
-              </div>
-              @if (correo?.touched && correo?.invalid) {
-                <small class="field-error-inline">
-                  @if (correo?.errors?.['required']) { El correo es obligatorio }
-                  @if (correo?.errors?.['email']) { El correo no es válido }
-                </small>
-              }
-            </div>
-
-            <!-- Contraseña y Confirmación en 2 columnas con ícono de candado -->
-            <div class="form-grid-2col">
-              <div class="thf-field-group">
-                <label for="password" class="thf-field-label">Contraseña</label>
-                <div
-                  class="thf-input-box"
-                  [class.has-error]="password?.touched && password?.invalid"
-                >
-                  <span class="input-leading-icon" aria-hidden="true">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                    </svg>
-                  </span>
-                  <input
-                    [type]="mostrarPassword ? 'text' : 'password'"
-                    formControlName="password"
-                    id="password"
-                    placeholder="Mín. 8 caract."
-                    autocomplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    class="toggle-pwd-btn"
-                    (click)="mostrarPassword = !mostrarPassword"
-                    tabindex="-1"
-                    aria-label="Mostrar u ocultar contraseña"
-                  >
-                    @if (mostrarPassword) {
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"></path>
-                        <line x1="1" y1="1" x2="23" y2="23"></line>
-                      </svg>
-                    } @else {
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                      </svg>
-                    }
-                  </button>
-                </div>
-              </div>
-
-              <div class="thf-field-group">
-                <label for="confirmarPassword" class="thf-field-label">Confirmar</label>
-                <div
-                  class="thf-input-box"
-                  [class.has-error]="
-                    (confirmarPassword?.touched && confirmarPassword?.invalid) ||
-                    (registerForm.errors?.['passwordsNoCoinciden'] && confirmarPassword?.touched)
-                  "
-                >
-                  <span class="input-leading-icon" aria-hidden="true">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                    </svg>
-                  </span>
-                  <input
-                    id="confirmarPassword"
-                    [type]="mostrarConfirmarPassword ? 'text' : 'password'"
-                    placeholder="Repite clave"
-                    formControlName="confirmarPassword"
-                    autocomplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    class="toggle-pwd-btn"
-                    (click)="mostrarConfirmarPassword = !mostrarConfirmarPassword"
-                    tabindex="-1"
-                    aria-label="Mostrar u ocultar confirmación"
-                  >
-                    @if (mostrarConfirmarPassword) {
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"></path>
-                        <line x1="1" y1="1" x2="23" y2="23"></line>
-                      </svg>
-                    } @else {
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                      </svg>
-                    }
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Píldoras minimalistas de requisitos de contraseña -->
-            <div class="minimal-pwd-pills">
-              <span class="pwd-pill" [class.met]="tieneMin8">
-                <span class="pill-dot"></span> 8+ caracteres
-              </span>
-              <span class="pwd-pill" [class.met]="tieneMayusMinus">
-                <span class="pill-dot"></span> Mayúscula y minúscula
-              </span>
-              <span class="pwd-pill" [class.met]="tieneNumero">
-                <span class="pill-dot"></span> 1 número
-              </span>
-            </div>
-
-            @if (password?.touched && password?.invalid) {
-              <small class="field-error-inline">
-                @if (password?.errors?.['required']) { La contraseña es obligatoria }
-                @else if (password?.errors?.['minlength']) { Mínimo 8 caracteres }
-                @else if (password?.errors?.['pattern']) { Debe incluir mayúscula, minúscula y número }
-              </small>
-            }
-            @if (registerForm.errors?.['passwordsNoCoinciden'] && confirmarPassword?.touched) {
-              <small class="field-error-inline">Las contraseñas no coinciden</small>
-            }
-
-            <!-- Botón Principal Siempre Vibrante y Luminoso (Igual a /login) -->
+        <div class="thf-register-top">
+          <!-- Selector limpio de tipo de cuenta (Usuario vs Anfitrión) -->
+          <div class="thf-mode-switcher" role="tablist" aria-label="Tipo de registro">
             <button
-              type="submit"
-              class="px-sanctuary-submit-btn"
-              [disabled]="cargandoSubmit"
+              type="button"
+              role="tab"
+              class="thf-mode-btn"
+              [class.is-active]="!esAnfitrion"
+              [attr.aria-selected]="!esAnfitrion"
+              (click)="cambiarModo(false)"
             >
-              @if (cargandoSubmit) {
-                <span class="spinner-dot"></span>
-                <span>PROCESANDO...</span>
-              } @else if (esAnfitrion) {
-                <span>CREAR CUENTA Y PUBLICAR MI GYM</span>
-              } @else {
-                <span>REGISTRARME EN THE HOUSE FIT</span>
-              }
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span>Atleta / Usuario</span>
             </button>
-          </form>
-
-          <div class="auth-dialog-footer">
-            <span class="footer-prompt">¿Ya tienes cuenta?</span>
-            <a routerLink="/login" class="footer-register-link">Inicia sesión →</a>
-            <span class="footer-dot-sep">·</span>
-            <a href="/api/v1/apk/TheHouseFit.apk" download="TheHouseFit.apk" class="footer-apk-pill" title="Descargar APK Android">
-              📲 Descargar APK
-            </a>
-          </div>
-        } @else {
-          <!-- PASO 2: VERIFICACIÓN DE CORREO -->
-          <div class="card-brand-header">
-            <div class="card-logo-glow-wrap">
-              <div class="logo-back-halo" aria-hidden="true"></div>
-              <img
-                src="assets/logo-full-orange.png"
-                alt="The House Fit"
-                class="card-official-logo"
-              />
-            </div>
-
-            <h2 class="card-bleap-heading">
-              <span>Verifica tu</span>
-              <span class="heading-dot">•</span>
-              <em class="heading-serif">correo</em>
-            </h2>
-            <p class="card-bleap-sub">
-              Enviamos un código de 6 dígitos a <strong>{{ correoRegistrado }}</strong>
-            </p>
-          </div>
-
-          @if (mensajeVerificacion) {
-            <div class="auth-error-alert is-info-notice" role="status">
-              <span class="auth-error-text">{{ mensajeVerificacion }}</span>
-            </div>
-          }
-
-          <div class="thf-auth-form">
-            <div class="thf-field-group">
-              <label class="thf-field-label">Código de verificación</label>
-              <div class="thf-input-box verify-code-box">
-                <input
-                  type="text"
-                  placeholder="000000"
-                  [(ngModel)]="codigoIngresado"
-                  [ngModelOptions]="{ standalone: true }"
-                  class="verify-code-input"
-                />
-              </div>
-            </div>
 
             <button
               type="button"
-              class="px-sanctuary-submit-btn"
-              (click)="confirmarCodigo()"
+              role="tab"
+              class="thf-mode-btn is-host-tab"
+              [class.is-active]="esAnfitrion"
+              [attr.aria-selected]="esAnfitrion"
+              (click)="cambiarModo(true)"
             >
-              <span>{{ esAnfitrion ? 'VERIFICAR Y PUBLICAR GYM' : 'VERIFICAR Y CREAR CUENTA' }}</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 21h18M3 7l9-4 9 4M4 10h16v11H4zM9 14h6v7H9z" />
+              </svg>
+              <span>Anfitrión · Publica tu gym</span>
             </button>
-
-            <div class="verify-links-stack">
-              <button type="button" class="link-resend-btn" (click)="reenviarCodigo()">
-                ¿No te llegó? Enviar otro código
-              </button>
-              <a routerLink="/login" class="footer-register-link">
-                ← Volver al inicio de sesión
-              </a>
-            </div>
           </div>
-        }
+
+          @if (paso === 1) {
+            <div class="thf-register-header">
+              @if (esAnfitrion) {
+                <h2 class="thf-register-title">Registra tu gimnasio</h2>
+                <p class="thf-register-sub">
+                  Crea tu cuenta oficial de anfitrión para publicar y gestionar tu sede deportiva.
+                </p>
+              } @else {
+                <h2 class="thf-register-title">Crea tu cuenta</h2>
+                <p class="thf-register-sub">
+                  Completa tus datos para reservar sedes, seguir rutinas Pro y usar el laboratorio IMC.
+                </p>
+              }
+            </div>
+
+            @if (mensajeVerificacion) {
+              <div
+                class="thf-inline-notice"
+                [class.is-info-notice]="seccionBloqueadaNombre"
+                role="alert"
+              >
+                <div class="thf-notice-body">
+                  <svg class="thf-notice-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                  <span class="thf-notice-text">{{ mensajeVerificacion }}</span>
+                </div>
+                @if (seccionBloqueadaNombre) {
+                  <a routerLink="/login" class="thf-notice-cta">Acceder →</a>
+                }
+              </div>
+            }
+
+            <!-- Formulario Reactivo -->
+            <form
+              [formGroup]="registerForm"
+              method="POST"
+              (ngSubmit)="registrarUsuario()"
+              class="thf-register-form"
+            >
+              <div class="thf-grid-2col">
+                <!-- Nombre -->
+                <div class="thf-field-group">
+                  <label for="nombre" class="thf-field-label">Nombre</label>
+                  <div
+                    class="thf-input-wrap"
+                    [class.has-error]="nombre?.touched && nombre?.invalid"
+                  >
+                    <span class="thf-input-icon" aria-hidden="true">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                    </span>
+                    <input
+                      id="nombre"
+                      name="given-name"
+                      type="text"
+                      placeholder="Tu nombre"
+                      formControlName="nombre"
+                      autocomplete="given-name"
+                      enterkeyhint="next"
+                      required
+                      [attr.aria-invalid]="(nombre?.touched && nombre?.invalid) || null"
+                    />
+                  </div>
+                  @if (nombre?.touched && nombre?.invalid) {
+                    <small class="thf-field-error">
+                      @if (nombre?.errors?.['required']) { Obligatorio }
+                      @if (nombre?.errors?.['minlength']) { Mínimo 3 letras }
+                    </small>
+                  }
+                </div>
+
+                <!-- Apellido -->
+                <div class="thf-field-group">
+                  <label for="apellido" class="thf-field-label">Apellido</label>
+                  <div
+                    class="thf-input-wrap"
+                    [class.has-error]="apellido?.touched && apellido?.invalid"
+                  >
+                    <span class="thf-input-icon" aria-hidden="true">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                    </span>
+                    <input
+                      id="apellido"
+                      name="family-name"
+                      type="text"
+                      placeholder="Tu apellido"
+                      formControlName="apellido"
+                      autocomplete="family-name"
+                      enterkeyhint="next"
+                      required
+                      [attr.aria-invalid]="(apellido?.touched && apellido?.invalid) || null"
+                    />
+                  </div>
+                  @if (apellido?.touched && apellido?.invalid) {
+                    <small class="thf-field-error">
+                      @if (apellido?.errors?.['required']) { Obligatorio }
+                      @if (apellido?.errors?.['minlength']) { Mínimo 3 letras }
+                    </small>
+                  }
+                </div>
+              </div>
+
+              <!-- Correo electrónico -->
+              <div class="thf-field-group">
+                <label for="correo" class="thf-field-label">Correo electrónico</label>
+                <div
+                  class="thf-input-wrap"
+                  [class.has-error]="correo?.touched && correo?.invalid"
+                >
+                  <span class="thf-input-icon" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="4" width="20" height="16" rx="3"></rect>
+                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                    </svg>
+                  </span>
+                  <input
+                    id="correo"
+                    name="email"
+                    type="email"
+                    placeholder="nombre@ejemplo.com"
+                    formControlName="correo"
+                    autocomplete="username"
+                    spellcheck="false"
+                    enterkeyhint="next"
+                    required
+                    [attr.aria-invalid]="(correo?.touched && correo?.invalid) || null"
+                  />
+                </div>
+                @if (correo?.touched && correo?.invalid) {
+                  <small class="thf-field-error">
+                    @if (correo?.errors?.['required']) { El correo es obligatorio }
+                    @if (correo?.errors?.['email']) { Ingresa un correo válido }
+                  </small>
+                }
+              </div>
+
+              <!-- Contraseña y Confirmación -->
+              <div class="thf-grid-2col">
+                <div class="thf-field-group">
+                  <label for="password" class="thf-field-label">Contraseña</label>
+                  <div
+                    class="thf-input-wrap"
+                    [class.has-error]="password?.touched && password?.invalid"
+                  >
+                    <span class="thf-input-icon" aria-hidden="true">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                    </span>
+                    <input
+                      [type]="mostrarPassword ? 'text' : 'password'"
+                      formControlName="password"
+                      id="password"
+                      name="new-password"
+                      placeholder="Mín. 8 caract."
+                      autocomplete="new-password"
+                      minlength="8"
+                      enterkeyhint="next"
+                      required
+                      aria-describedby="pwd-requirements"
+                      [attr.aria-invalid]="(password?.touched && password?.invalid) || null"
+                    />
+                    <button
+                      type="button"
+                      class="thf-pwd-toggle"
+                      (click)="mostrarPassword = !mostrarPassword"
+                      [attr.aria-pressed]="mostrarPassword"
+                      [attr.aria-label]="mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                    >
+                      @if (mostrarPassword) {
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"></path>
+                          <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
+                      } @else {
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                          <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                      }
+                    </button>
+                  </div>
+                </div>
+
+                <div class="thf-field-group">
+                  <label for="confirmarPassword" class="thf-field-label">Confirmar</label>
+                  <div
+                    class="thf-input-wrap"
+                    [class.has-error]="
+                      (confirmarPassword?.touched && confirmarPassword?.invalid) ||
+                      (registerForm.errors?.['passwordsNoCoinciden'] && confirmarPassword?.touched)
+                    "
+                  >
+                    <span class="thf-input-icon" aria-hidden="true">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                    </span>
+                    <input
+                      id="confirmarPassword"
+                      name="confirm-password"
+                      [type]="mostrarConfirmarPassword ? 'text' : 'password'"
+                      placeholder="Repite clave"
+                      formControlName="confirmarPassword"
+                      autocomplete="new-password"
+                      enterkeyhint="done"
+                      required
+                      [attr.aria-invalid]="
+                        ((confirmarPassword?.touched && confirmarPassword?.invalid) ||
+                        (registerForm.errors?.['passwordsNoCoinciden'] && confirmarPassword?.touched)) || null
+                      "
+                    />
+                    <button
+                      type="button"
+                      class="thf-pwd-toggle"
+                      (click)="mostrarConfirmarPassword = !mostrarConfirmarPassword"
+                      [attr.aria-pressed]="mostrarConfirmarPassword"
+                      [attr.aria-label]="mostrarConfirmarPassword ? 'Ocultar confirmación' : 'Mostrar confirmación'"
+                    >
+                      @if (mostrarConfirmarPassword) {
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"></path>
+                          <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
+                      } @else {
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                          <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                      }
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Indicadores limpios de requisitos de contraseña -->
+              <div id="pwd-requirements" class="thf-pwd-rules">
+                <span class="thf-pwd-chip" [class.is-met]="tieneMin8">
+                  <span class="thf-chip-dot" aria-hidden="true"></span>
+                  8+ caracteres
+                </span>
+                <span class="thf-pwd-chip" [class.is-met]="tieneMayusMinus">
+                  <span class="thf-chip-dot" aria-hidden="true"></span>
+                  Mayúscula y minúscula
+                </span>
+                <span class="thf-pwd-chip" [class.is-met]="tieneNumero">
+                  <span class="thf-chip-dot" aria-hidden="true"></span>
+                  1 número
+                </span>
+              </div>
+
+              @if (password?.touched && password?.invalid) {
+                <small class="thf-field-error">
+                  @if (password?.errors?.['required']) { La contraseña es obligatoria }
+                  @else if (password?.errors?.['minlength']) { Mínimo 8 caracteres }
+                  @else if (password?.errors?.['pattern']) { Debe incluir mayúscula, minúscula y número }
+                </small>
+              }
+              @if (registerForm.errors?.['passwordsNoCoinciden'] && confirmarPassword?.touched) {
+                <small class="thf-field-error">Las contraseñas no coinciden</small>
+              }
+
+              <button
+                type="submit"
+                class="thf-submit-btn"
+                [disabled]="cargandoSubmit"
+              >
+                @if (cargandoSubmit) {
+                  <span class="thf-spinner" aria-hidden="true"></span>
+                  <span>Procesando...</span>
+                } @else if (esAnfitrion) {
+                  <span>Crear cuenta y publicar mi gym</span>
+                } @else {
+                  <span>Crear cuenta en The House Fit</span>
+                }
+              </button>
+            </form>
+          } @else {
+            <!-- PASO 2: VERIFICACIÓN DE CORREO -->
+            <div class="thf-register-header">
+              <span class="thf-step-eyebrow" aria-current="step">Paso 2 de 2 · Verificación</span>
+              <h2 class="thf-register-title" tabindex="-1">Verifica tu correo</h2>
+              <p class="thf-register-sub">
+                Enviamos un código numérico de 6 dígitos a <strong>{{ correoRegistrado }}</strong>.
+              </p>
+            </div>
+
+            @if (mensajeVerificacion) {
+              <div class="thf-inline-notice is-info-notice" role="status">
+                <span class="thf-notice-text">{{ mensajeVerificacion }}</span>
+              </div>
+            }
+
+            <form (ngSubmit)="confirmarCodigo()" class="thf-register-form">
+              <div class="thf-field-group">
+                <label for="verifyCodeInput" class="thf-field-label">Código de verificación (6 dígitos)</label>
+                <div class="thf-input-wrap thf-verify-box">
+                  <input
+                    id="verifyCodeInput"
+                    name="verification-code"
+                    type="text"
+                    inputmode="numeric"
+                    autocomplete="one-time-code"
+                    autocorrect="off"
+                    autocapitalize="none"
+                    spellcheck="false"
+                    maxlength="6"
+                    enterkeyhint="done"
+                    placeholder="000000"
+                    [(ngModel)]="codigoIngresado"
+                    [ngModelOptions]="{ standalone: true }"
+                    class="thf-verify-input"
+                    required
+                  />
+                </div>
+              </div>
+
+              <button type="submit" class="thf-submit-btn">
+                <span>{{ esAnfitrion ? 'Verificar y publicar mi gym' : 'Verificar y activar cuenta' }}</span>
+              </button>
+
+              <div class="thf-verify-actions">
+                <button type="button" class="thf-resend-btn" (click)="reenviarCodigo()">
+                  ¿No llegó el correo? Reenviar código
+                </button>
+              </div>
+            </form>
+          }
+        </div>
+
+        <div class="thf-register-footer">
+          <span class="thf-footer-prompt">¿Ya tienes una cuenta?</span>
+          <a routerLink="/login" class="thf-footer-link">Inicia sesión →</a>
+        </div>
       </div>
     </section>
   </main>

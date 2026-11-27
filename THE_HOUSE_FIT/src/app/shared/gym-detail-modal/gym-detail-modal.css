@@ -1,12 +1,12 @@
 :host {
   --thf-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-  --thf-surface: #0e1118;
-  --thf-surface-elevated: #141925;
-  --thf-surface-subtle: rgba(255, 255, 255, 0.04);
-  --thf-border-hairline: rgba(255, 255, 255, 0.09);
-  --thf-border-strong: rgba(255, 255, 255, 0.16);
-  --thf-ink: #f8fafc;
-  --thf-muted: #94a3b8;
+  --thf-surface: var(--thf-surface-1-solid);
+  --thf-surface-elevated: var(--thf-surface-2-solid);
+  --thf-surface-subtle: var(--thf-surface-2);
+  --thf-border-hairline: var(--thf-border-subtle);
+  --thf-border-strong: var(--thf-border-default);
+  --thf-ink: var(--thf-text-1);
+  --thf-muted: var(--thf-text-2);
   --thf-ember: #ff4d00;
   --thf-ember-glow: rgba(255, 77, 0, 0.24);
   display: contents;
@@ -24,12 +24,12 @@ dialog.thf-listing-dialog {
   border: 1px solid var(--thf-border-hairline);
   background:
     radial-gradient(640px circle at 14% 0%, rgba(255, 77, 0, 0.08), transparent 62%),
-    linear-gradient(165deg, #121622 0%, #0b0e15 100%);
+    linear-gradient(165deg, var(--thf-modal-bg-start) 0%, var(--thf-modal-bg-end) 100%);
   color: var(--thf-ink);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   box-shadow:
-    0 36px 96px rgba(0, 0, 0, 0.86),
-    0 12px 36px rgba(255, 77, 0, 0.1);
+    0 36px 96px var(--thf-shadow-color-lg),
+    0 12px 36px rgba(255, 77, 0, 0.08);
   overflow: hidden;
   opacity: 0;
   transition-property: opacity, transform, display, overlay;
@@ -77,7 +77,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing])) {
 }
 
 dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
-  background-color: rgba(4, 6, 12, 0.85);
+  background-color: var(--thf-surface-overlay);
 
   @starting-style {
     background-color: rgba(4, 6, 12, 0);
@@ -102,7 +102,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   contain: layout style;
   padding-bottom: 48px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+  scrollbar-color: var(--thf-border-strong) transparent;
 }
 
 .thf-scroll-sentinel {
@@ -119,7 +119,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
 }
 
 .thf-listing-scroller::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.16);
+  background: var(--thf-border-strong);
   border-radius: 999px;
 }
 
@@ -139,7 +139,9 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   justify-content: space-between;
   gap: 16px;
   padding: 12px 32px;
-  background: rgba(11, 14, 21, 0.98);
+  background: var(--thf-surface-glass-strong);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--thf-border-hairline);
   opacity: 0;
   transform: translate3d(0, -100%, 0);
@@ -295,8 +297,8 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   gap: 7px;
   padding: 4px 11px;
   border-radius: 999px;
-  background: rgba(255, 77, 0, 0.14);
-  color: #ff7a45;
+  background: var(--thf-accent-soft-bg);
+  color: var(--thf-accent-text);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -317,8 +319,8 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   gap: 5px;
   padding: 4px 10px;
   border-radius: 999px;
-  background: var(--thf-surface-subtle);
-  color: #cbd5e1;
+  background: var(--thf-surface-chip);
+  color: var(--thf-text-2);
   font-size: 11.5px;
   font-weight: 600;
 }
@@ -345,8 +347,8 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   gap: 7px;
   padding: 8px 14px;
   border-radius: 999px;
-  border: 1px solid var(--thf-border-hairline);
-  background: var(--thf-surface-subtle);
+  border: 1px solid var(--thf-border-default);
+  background: var(--thf-surface-2);
   color: var(--thf-ink);
   font-family: inherit;
   font-size: 13px;
@@ -364,21 +366,21 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
 .thf-action-pill.is-fav {
   border-color: rgba(255, 56, 92, 0.48);
   background: rgba(255, 56, 92, 0.14);
-  color: #ff6b81;
+  color: #e11d48;
 }
 
 .thf-circle-close-btn {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  border: 1px solid var(--thf-border-hairline);
-  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--thf-border-default);
+  background: var(--thf-surface-2);
   color: var(--thf-ink);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition-property: background-color, border-color, transform;
+  transition-property: background-color, border-color, transform, color;
   transition-duration: 0.18s;
   transition-timing-function: var(--thf-ease-out);
 }
@@ -394,12 +396,13 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
 
 @media (hover: hover) and (pointer: fine) {
   .thf-action-pill:hover {
-    background: rgba(255, 255, 255, 0.09);
+    background: var(--thf-surface-hover-strong);
     border-color: var(--thf-border-strong);
   }
   .thf-circle-close-btn:hover {
     background: var(--thf-ember);
     border-color: var(--thf-ember);
+    color: #ffffff;
   }
 }
 
@@ -418,7 +421,9 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   gap: 8px;
   border-radius: 18px;
   overflow: hidden;
-  background: #0a0c12;
+  background: var(--thf-surface-2-solid);
+  color-scheme: only dark;
+  color: #ffffff;
 }
 
 .thf-bento-tile {
@@ -547,7 +552,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   padding: 18px 22px;
   border-radius: 16px;
   border: 1px solid var(--thf-border-hairline);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--thf-surface-2);
   margin-bottom: 24px;
 }
 
@@ -555,7 +560,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #ff8552;
+  color: var(--thf-accent-text);
 }
 
 .thf-laurel-svg.flip {
@@ -574,7 +579,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
 .thf-gf-title span {
   font-size: 12px;
   font-weight: 600;
-  color: #cbd5e1;
+  color: var(--thf-text-2);
 }
 
 .thf-gf-title strong {
@@ -586,7 +591,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   margin: 0;
   font-size: 13.5px;
   line-height: 1.45;
-  color: #cbd5e1;
+  color: var(--thf-text-2);
 }
 
 .thf-gf-metrics {
@@ -628,7 +633,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
 .thf-gf-stars {
   font-size: 10px;
   letter-spacing: 1px;
-  color: #fbbf24;
+  color: #eab308;
 }
 
 .thf-gf-divider {
@@ -736,7 +741,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   margin: 0 0 12px;
   font-size: 15px;
   line-height: 1.65;
-  color: #cbd5e1;
+  color: var(--thf-text-2);
 }
 
 .thf-ed-body.is-collapsed {
@@ -791,7 +796,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   aspect-ratio: 4 / 3;
   border-radius: 12px;
   overflow: hidden;
-  background: #141925;
+  background: var(--thf-surface-2-solid);
   margin-bottom: 10px;
 }
 
@@ -834,12 +839,12 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   display: flex;
   align-items: center;
   gap: 14px;
-  color: #e2e8f0;
+  color: var(--thf-text-1);
   font-size: 14.5px;
 }
 
 .thf-amenity-svg {
-  color: #cbd5e1;
+  color: var(--thf-text-2);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -852,8 +857,8 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   justify-content: center;
   padding: 11px 20px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--thf-border-strong);
+  background: var(--thf-surface-1);
   color: var(--thf-ink);
   font-family: inherit;
   font-size: 14px;
@@ -870,8 +875,8 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
 
 @media (hover: hover) and (pointer: fine) {
   .thf-outline-btn:hover {
-    background: rgba(255, 255, 255, 0.09);
-    border-color: rgba(255, 255, 255, 0.42);
+    background: var(--thf-surface-hover-strong);
+    border-color: var(--thf-border-accent);
   }
 }
 
@@ -883,17 +888,15 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   overflow-y: auto;
   border-radius: 20px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+  scrollbar-color: var(--thf-border-strong) transparent;
 }
 
 .thf-booking-card {
   padding: 20px 22px;
   border-radius: 20px;
-  border: 1px solid var(--thf-border-hairline);
-  background: linear-gradient(160deg, rgba(24, 29, 42, 0.94) 0%, rgba(14, 17, 25, 0.98) 100%);
-  box-shadow:
-    0 24px 56px rgba(0, 0, 0, 0.56),
-    0 0 0 1px rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--thf-border-default);
+  background: var(--thf-surface-2);
+  box-shadow: 0 20px 48px var(--thf-shadow-color-md);
   display: flex;
   flex-direction: column;
   gap: 13px;
@@ -912,7 +915,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #ff7a45;
+  color: var(--thf-accent-text);
   margin-bottom: 4px;
 }
 
@@ -940,21 +943,22 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   gap: 5px;
   padding: 5px 10px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--thf-surface-1);
+  border: 1px solid var(--thf-border-subtle);
   color: var(--thf-ink);
   font-size: 13px;
 }
 
 .thf-booking-rating-pill svg {
-  color: #fbbf24;
+  color: #eab308;
 }
 
 /* Selector bordeado estilo Airbnb */
 .thf-airbnb-picker-box {
-  border: 1px solid var(--thf-border-strong);
+  border: 1px solid var(--thf-border-default);
   border-radius: 14px;
   overflow: hidden;
-  background: rgba(8, 10, 16, 0.5);
+  background: var(--thf-surface-1);
 }
 
 .thf-picker-mode-row {
@@ -984,7 +988,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
 }
 
 .thf-picker-cell.is-selected {
-  background: rgba(255, 77, 0, 0.13);
+  background: var(--thf-accent-soft-bg);
 }
 
 .thf-picker-cell .cell-kicker,
@@ -996,7 +1000,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
 }
 
 .thf-picker-cell.is-selected .cell-kicker {
-  color: #ff8a5b;
+  color: var(--thf-accent-text);
 }
 
 .thf-picker-cell strong,
@@ -1012,7 +1016,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   flex-direction: column;
   gap: 2px;
   padding: 10px 13px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid var(--thf-border-subtle);
 }
 
 .thf-picker-info-row:first-of-type {
@@ -1033,11 +1037,11 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   align-items: center;
   gap: 9px;
   font-size: 12.5px;
-  color: #cbd5e1;
+  color: var(--thf-text-2);
 }
 
 .thf-booking-perks svg {
-  color: #34d399;
+  color: var(--thf-success-text);
   flex-shrink: 0;
 }
 
@@ -1056,7 +1060,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   justify-content: center;
   gap: 9px;
   cursor: pointer;
-  box-shadow: 0 10px 26px rgba(255, 77, 0, 0.38);
+  box-shadow: 0 10px 26px rgba(255, 77, 0, 0.34);
   transition-property: transform;
   transition-duration: 0.18s;
   transition-timing-function: var(--thf-ease-out);
@@ -1076,8 +1080,8 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   width: 100%;
   padding: 11px 16px;
   border-radius: 13px;
-  border: 1px solid var(--thf-border-hairline);
-  background: var(--thf-surface-subtle);
+  border: 1px solid var(--thf-border-default);
+  background: var(--thf-surface-1);
   color: var(--thf-ink);
   font-family: inherit;
   font-size: 13px;
@@ -1098,7 +1102,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
 
 @media (hover: hover) and (pointer: fine) {
   .thf-secondary-map-btn:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--thf-surface-hover-strong);
     border-color: var(--thf-border-strong);
   }
 }
@@ -1117,8 +1121,8 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   gap: 11px;
   padding: 14px;
   border-radius: 14px;
-  background: rgba(8, 10, 16, 0.72);
-  border: 1px solid var(--thf-border-hairline);
+  background: var(--thf-surface-1);
+  border: 1px solid var(--thf-border-default);
 }
 
 .thf-checkout-head {
@@ -1136,11 +1140,11 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
 }
 
 .thf-checkout-cancel {
-  border: none;
+  border: 1px solid var(--thf-border-subtle);
   border-radius: 8px;
   padding: 4px 10px;
-  background: rgba(255, 255, 255, 0.08);
-  color: #cbd5e1;
+  background: var(--thf-surface-2);
+  color: var(--thf-text-2);
   font-family: inherit;
   font-size: 11.5px;
   font-weight: 600;
@@ -1166,17 +1170,17 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
 .thf-field label {
   font-size: 11px;
   font-weight: 600;
-  color: #cbd5e1;
+  color: var(--thf-text-2);
 }
 
 .thf-field input,
 .thf-field select {
   width: 100%;
   box-sizing: border-box;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--thf-border-input);
   border-radius: 9px;
   padding: 8px 10px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--thf-surface-input);
   color: var(--thf-ink);
   font-family: inherit;
   font-size: 12.5px;
@@ -1188,19 +1192,20 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
 .thf-field input:focus,
 .thf-field select:focus {
   border-color: var(--thf-ember);
-  background: rgba(255, 255, 255, 0.09);
+  background: var(--thf-surface-input-focus);
 }
 
 .thf-field select option {
-  background: #111521;
-  color: #f8fafc;
+  background: var(--thf-option-bg);
+  color: var(--thf-text-1);
 }
 
 .thf-checkout-error {
   padding: 8px 10px;
   border-radius: 9px;
-  background: rgba(239, 68, 68, 0.16);
-  color: #fca5a5;
+  background: var(--thf-danger-bg);
+  border: 1px solid var(--thf-danger-border);
+  color: var(--thf-danger-text);
   font-size: 12px;
   font-weight: 600;
 }
@@ -1208,8 +1213,9 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
 .thf-checkout-success {
   padding: 13px;
   border-radius: 13px;
-  background: rgba(16, 185, 129, 0.15);
-  color: #d1fae5;
+  background: var(--thf-success-bg);
+  border: 1px solid var(--thf-success-border);
+  color: var(--thf-text-1);
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -1217,7 +1223,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
 }
 
 .thf-checkout-success strong {
-  color: #34d399;
+  color: var(--thf-success-text);
 }
 
 /* Secciones Full-Width (Reseñas, Ubicación, Coaches/Políticas) */
@@ -1239,7 +1245,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #ff8552;
+  color: var(--thf-accent-text);
   margin-bottom: 8px;
 }
 
@@ -1291,7 +1297,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   justify-content: space-between;
   gap: 8px;
   font-size: 12.5px;
-  color: #cbd5e1;
+  color: var(--thf-text-2);
 }
 
 .thf-criteria-top strong {
@@ -1302,7 +1308,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
 .thf-criteria-track {
   height: 4px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--thf-surface-3);
   overflow: hidden;
 }
 
@@ -1334,7 +1340,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--thf-surface-3);
   color: var(--thf-ink);
   font-weight: 700;
   display: inline-flex;
@@ -1358,21 +1364,21 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
 .thf-review-stars {
   font-size: 11px;
   letter-spacing: 2px;
-  color: #fbbf24;
+  color: #eab308;
 }
 
 .thf-review-card p {
   margin: 0;
   font-size: 14px;
   line-height: 1.55;
-  color: #e2e8f0;
+  color: var(--thf-text-2);
 }
 
 .thf-empty-review-banner {
   grid-column: 1 / -1;
   padding: 18px 20px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--thf-surface-2);
   border: 1px solid var(--thf-border-hairline);
 }
 
@@ -1415,10 +1421,10 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   padding: 16px;
   border-radius: 18px;
   overflow: hidden;
-  border: 1px solid var(--thf-border-hairline);
+  border: 1px solid var(--thf-border-default);
   background:
-    radial-gradient(380px circle at 50% 48%, rgba(255, 77, 0, 0.16), transparent 65%),
-    linear-gradient(160deg, #151a28 0%, #0d111a 100%);
+    radial-gradient(380px circle at 50% 48%, rgba(255, 77, 0, 0.14), transparent 65%),
+    linear-gradient(160deg, var(--thf-surface-2-solid) 0%, var(--thf-surface-1-solid) 100%);
   color: var(--thf-ink);
   font-family: inherit;
   text-align: center;
@@ -1462,9 +1468,9 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   gap: 6px;
   padding: 6px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(12, 15, 22, 0.92);
-  color: #e2e8f0;
+  border: 1px solid var(--thf-border-default);
+  background: var(--thf-surface-1-solid);
+  color: var(--thf-text-1);
   font-size: 12px;
   font-weight: 600;
   transition-property: background-color, border-color, color;
@@ -1476,8 +1482,8 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    linear-gradient(to right, var(--thf-border-subtle) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--thf-border-subtle) 1px, transparent 1px);
   background-size: 38px 38px;
   pointer-events: none;
 }
@@ -1500,7 +1506,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 0 10px rgba(255, 77, 0, 0.2), 0 10px 28px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 10px rgba(255, 77, 0, 0.2), 0 10px 28px var(--thf-shadow-color-md);
   transition-property: transform;
   transition-duration: 0.18s;
   transition-timing-function: var(--thf-ease-out);
@@ -1510,8 +1516,9 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   text-align: center;
   padding: 8px 16px;
   border-radius: 12px;
-  background: rgba(12, 15, 22, 0.88);
-  border: 1px solid var(--thf-border-hairline);
+  background: var(--thf-surface-1-solid);
+  border: 1px solid var(--thf-border-default);
+  box-shadow: 0 6px 18px var(--thf-shadow-color-sm);
 }
 
 .thf-map-address-pill strong {
@@ -1537,9 +1544,10 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
 .thf-map-meta-chips span {
   padding: 5px 12px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--thf-surface-1);
+  border: 1px solid var(--thf-border-subtle);
   font-size: 12px;
-  color: #cbd5e1;
+  color: var(--thf-text-2);
 }
 
 /* Coaches y políticas */
@@ -1557,7 +1565,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   padding: 16px 18px;
   border-radius: 16px;
   border: 1px solid var(--thf-border-hairline);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--thf-surface-2);
 }
 
 .thf-coach-glass-card.full {
@@ -1568,8 +1576,8 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: rgba(255, 77, 0, 0.16);
-  color: #ff8552;
+  background: var(--thf-accent-soft-bg);
+  color: var(--thf-accent-text);
   font-weight: 800;
   font-size: 16px;
   display: inline-flex;
@@ -1587,7 +1595,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
 .thf-coach-glass-card span {
   display: block;
   font-size: 13px;
-  color: #cbd5e1;
+  color: var(--thf-text-2);
 }
 
 .thf-coach-glass-card small {
@@ -1615,12 +1623,14 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   color: var(--thf-muted);
 }
 
-/* Lightbox Pantalla Completa dentro del Dialog */
+/* Lightbox Pantalla Completa dentro del Dialog (siempre oscuro para fotos) */
 .thf-lightbox-overlay {
   position: fixed;
   inset: 0;
   z-index: 60;
   background: rgba(5, 7, 12, 0.96);
+  color-scheme: only dark;
+  color: #ffffff;
   display: flex;
   flex-direction: column;
   padding: 20px 28px;
@@ -1643,7 +1653,7 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
 .thf-lightbox-counter {
   font-size: 14px;
   font-weight: 600;
-  color: var(--thf-ink);
+  color: #ffffff;
 }
 
 .thf-lightbox-main {
@@ -1827,12 +1837,12 @@ dialog.thf-listing-dialog[open]:where(:not([data-closing]))::backdrop {
   z-index: 80;
   padding: 11px 20px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(15, 19, 29, 0.96);
-  color: #f8fafc;
+  border: 1px solid var(--thf-border-default);
+  background: var(--thf-surface-1-solid);
+  color: var(--thf-text-1);
   font-size: 13px;
   font-weight: 600;
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 14px 36px var(--thf-shadow-color-lg);
   pointer-events: none;
   opacity: 0;
   transform: translateX(-50%) translateY(10px);

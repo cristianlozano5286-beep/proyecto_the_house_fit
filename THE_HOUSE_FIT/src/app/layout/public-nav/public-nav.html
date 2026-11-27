@@ -162,6 +162,8 @@
         <a routerLink="/noticias" routerLinkActive="active-link">Noticias</a>
       </nav>
 
+      <app-theme-toggle variante="pill"></app-theme-toggle>
+
       <!-- User Menu Pill Dropdown -->
       <div class="user-menu-pill-wrapper" (click)="toggleMenu($event)">
         <button
@@ -457,7 +459,7 @@
           </div>
         </div>
 
-        <!-- FLOATING DROPDOWN PANEL (ANCLADO AL SEGMENTO Y CON ENTRADA/SALIDA SUAVE) -->
+        <!-- FLOATING DROPDOWN PANEL (LIMPIO E INTEGRADO AL ESTILO DEL PANEL) -->
         <div
           class="nav-search-dropdown-panel"
           [hidden]="!buscadorAbierto && !closingBuscador"
@@ -468,54 +470,65 @@
           [style.transform-origin]="panelOrigin"
           (click)="$event.stopPropagation()"
         >
-          <!-- Tab Headers -->
+          <!-- Tab Headers estilo Dashboard -->
           <div class="search-tabs-nav">
-            <button
-              type="button"
-              class="search-tab-btn"
-              [class.active]="seccionActiva === 'donde'"
-              (click)="cambiarSeccion('donde')"
-            >
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                <circle cx="12" cy="10" r="3"></circle>
-              </svg>
-              <span>Ubicación</span>
-              @if (ciudadFiltro || textoBusqueda.trim()) {
-                <span class="tab-indicator-dot"></span>
-              }
-            </button>
+            <div class="search-tabs-rail" role="tablist" aria-label="Filtros de búsqueda de gimnasios">
+              <button
+                type="button"
+                role="tab"
+                id="search-tab-donde"
+                class="search-tab-btn"
+                [class.active]="seccionActiva === 'donde'"
+                [attr.aria-selected]="seccionActiva === 'donde'"
+                (click)="cambiarSeccion('donde')"
+              >
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <span>Ubicación</span>
+                @if (ciudadFiltro || textoBusqueda.trim()) {
+                  <span class="tab-indicator-dot" aria-hidden="true"></span>
+                }
+              </button>
 
-            <button
-              type="button"
-              class="search-tab-btn"
-              [class.active]="seccionActiva === 'servicio'"
-              (click)="cambiarSeccion('servicio')"
-            >
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12z"/>
-              </svg>
-              <span>Disciplina</span>
-              @if (servicioFiltro) {
-                <span class="tab-indicator-dot"></span>
-              }
-            </button>
+              <button
+                type="button"
+                role="tab"
+                id="search-tab-servicio"
+                class="search-tab-btn"
+                [class.active]="seccionActiva === 'servicio'"
+                [attr.aria-selected]="seccionActiva === 'servicio'"
+                (click)="cambiarSeccion('servicio')"
+              >
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12z"/>
+                </svg>
+                <span>Disciplina</span>
+                @if (servicioFiltro) {
+                  <span class="tab-indicator-dot" aria-hidden="true"></span>
+                }
+              </button>
 
-            <button
-              type="button"
-              class="search-tab-btn"
-              [class.active]="seccionActiva === 'precio'"
-              (click)="cambiarSeccion('precio')"
-            >
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="1" x2="12" y2="23"></line>
-                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-              </svg>
-              <span>Presupuesto</span>
-              @if (precioMaxFiltro !== null) {
-                <span class="tab-indicator-dot"></span>
-              }
-            </button>
+              <button
+                type="button"
+                role="tab"
+                id="search-tab-precio"
+                class="search-tab-btn"
+                [class.active]="seccionActiva === 'precio'"
+                [attr.aria-selected]="seccionActiva === 'precio'"
+                (click)="cambiarSeccion('precio')"
+              >
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="12" y1="1" x2="12" y2="23"></line>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                <span>Presupuesto</span>
+                @if (precioMaxFiltro !== null) {
+                  <span class="tab-indicator-dot" aria-hidden="true"></span>
+                }
+              </button>
+            </div>
 
             <button
               type="button"
@@ -524,7 +537,10 @@
               aria-label="Cerrar panel de búsqueda"
               title="Cerrar"
             >
-              ✕
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
             </button>
           </div>
 
@@ -532,79 +548,150 @@
           <div class="search-modal-scrollable-content">
             <div class="search-tab-body">
               @if (seccionActiva === 'donde') {
-                <div class="tab-content-view animate-fade" [attr.data-dir]="tabDir">
-                  <div class="search-input-field-box">
-                    <svg class="input-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
-                      <circle cx="11" cy="11" r="8"></circle>
-                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                    <input
-                      type="text"
-                      class="search-live-input"
-                      placeholder="Buscar por gimnasio, barrio o ciudad..."
-                      [(ngModel)]="textoBusqueda"
-                      (keyup.enter)="ejecutarBusqueda()"
-                    />
+                <div
+                  class="tab-content-view animate-fade"
+                  role="tabpanel"
+                  aria-labelledby="search-tab-donde"
+                  [attr.data-dir]="tabDir"
+                >
+                  <div class="filter-field-block">
+                    <label for="nav-ubicacion-input" class="group-label">Ciudad, barrio o gimnasio</label>
+                    <div class="search-input-field-box">
+                      <svg class="input-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                      </svg>
+                      <input
+                        id="nav-ubicacion-input"
+                        name="ubicacion"
+                        type="text"
+                        class="search-live-input"
+                        placeholder="Buscar por gimnasio, barrio o ciudad..."
+                        [(ngModel)]="textoBusqueda"
+                        autocomplete="off"
+                        autocorrect="off"
+                        autocapitalize="none"
+                        spellcheck="false"
+                        enterkeyhint="search"
+                        (keyup.enter)="ejecutarBusqueda()"
+                      />
                       @if (textoBusqueda) {
-                        <button type="button" class="input-clear-btn" (click)="textoBusqueda = ''" aria-label="Borrar texto">✕</button>
+                        <button type="button" class="input-clear-btn" (click)="textoBusqueda = ''" aria-label="Borrar búsqueda">
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                          </svg>
+                        </button>
                       }
                     </div>
-
-                    <div class="quick-options-group">
-                      <span class="group-label">DESTINOS POPULARES</span>
-                      <div class="chips-wrap">
-                        <button
-                          type="button"
-                          class="quick-filter-chip"
-                          [class.chip-active]="!ciudadFiltro"
-                          (click)="seleccionarCiudad('')"
-                        >
-                          🌐 Todas
-                        </button>
-                        @for (c of ciudadesDisponibles; track c) {
-                          <button
-                            type="button"
-                            class="quick-filter-chip"
-                            [class.chip-active]="ciudadFiltro === c"
-                            (click)="seleccionarCiudad(c)"
-                          >
-                            📍 {{ c }}
-                          </button>
-                        }
-                      </div>
-                    </div>
                   </div>
-                }
 
-                @if (seccionActiva === 'servicio') {
-                  <div class="tab-content-view animate-fade" [attr.data-dir]="tabDir">
-                    <span class="group-label">¿QUÉ TIPO DE ENTRENAMIENTO BUSCAS?</span>
+                  <div class="quick-options-group">
+                    <span class="group-label">Destinos populares</span>
                     <div class="chips-wrap">
                       <button
                         type="button"
                         class="quick-filter-chip"
-                        [class.chip-active]="!servicioFiltro"
-                        (click)="seleccionarServicio('')"
+                        [class.chip-active]="!ciudadFiltro"
+                        (click)="seleccionarCiudad('')"
                       >
-                        ⚡ Cualquier disciplina
+                        Todas
                       </button>
-                      @for (s of serviciosDisponibles; track s) {
+                      @for (c of ciudadesDisponibles; track c) {
                         <button
                           type="button"
                           class="quick-filter-chip"
-                          [class.chip-active]="servicioFiltro === s"
-                          (click)="seleccionarServicio(s)"
+                          [class.chip-active]="ciudadFiltro === c"
+                          (click)="seleccionarCiudad(c)"
                         >
-                          {{ obtenerIconoServicio(s) }} {{ s }}
+                          {{ c }}
                         </button>
                       }
                     </div>
                   </div>
-                }
+                </div>
+              }
 
-                @if (seccionActiva === 'precio') {
-                  <div class="tab-content-view animate-fade" [attr.data-dir]="tabDir">
-                    <span class="group-label">PRECIO MÁXIMO DE MENSUALIDAD</span>
+              @if (seccionActiva === 'servicio') {
+                <div
+                  class="tab-content-view animate-fade"
+                  role="tabpanel"
+                  aria-labelledby="search-tab-servicio"
+                  [attr.data-dir]="tabDir"
+                >
+                  <span class="group-label">Tipo de entrenamiento</span>
+                  <div class="chips-wrap">
+                    <button
+                      type="button"
+                      class="quick-filter-chip"
+                      [class.chip-active]="!servicioFiltro"
+                      (click)="seleccionarServicio('')"
+                    >
+                      Cualquier disciplina
+                    </button>
+                    @for (s of serviciosDisponibles; track s) {
+                      <button
+                        type="button"
+                        class="quick-filter-chip"
+                        [class.chip-active]="servicioFiltro === s"
+                        (click)="seleccionarServicio(s)"
+                      >
+                        {{ s }}
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+
+              @if (seccionActiva === 'precio') {
+                <div
+                  class="tab-content-view animate-fade"
+                  role="tabpanel"
+                  aria-labelledby="search-tab-precio"
+                  [attr.data-dir]="tabDir"
+                >
+                  <div class="filter-field-block">
+                    <label for="nav-precio-max-input" class="group-label">
+                      Precio máximo de mensualidad
+                    </label>
+                    <div class="search-input-field-box price-input-box">
+                      <span class="price-currency-prefix" aria-hidden="true">$</span>
+                      <input
+                        id="nav-precio-max-input"
+                        name="precioMax"
+                        type="text"
+                        inputmode="numeric"
+                        pattern="[0-9]*"
+                        class="search-live-input price-numeric-input"
+                        placeholder="Ej. 120000"
+                        [value]="precioManualTexto"
+                        (input)="onPrecioManualInput($event)"
+                        (keydown.enter)="ejecutarBusqueda()"
+                        autocomplete="off"
+                        autocorrect="off"
+                        autocapitalize="none"
+                        spellcheck="false"
+                        enterkeyhint="search"
+                      />
+                      <span class="price-unit-badge" aria-hidden="true">COP / mes</span>
+                      @if (precioManualTexto) {
+                        <button
+                          type="button"
+                          class="input-clear-btn"
+                          (click)="limpiarPrecioManual($event)"
+                          aria-label="Quitar límite de precio"
+                        >
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                          </svg>
+                        </button>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="quick-options-group">
+                    <span class="group-label">Sugerencias rápidas</span>
                     <div class="chips-wrap">
                       <button
                         type="button"
@@ -620,7 +707,7 @@
                         [class.chip-active]="precioMaxFiltro === 100000"
                         (click)="seleccionarPrecio(100000)"
                       >
-                        ≤ $100.000 COP
+                        Hasta $100.000
                       </button>
                       <button
                         type="button"
@@ -628,7 +715,7 @@
                         [class.chip-active]="precioMaxFiltro === 140000"
                         (click)="seleccionarPrecio(140000)"
                       >
-                        ≤ $140.000 COP
+                        Hasta $140.000
                       </button>
                       <button
                         type="button"
@@ -636,75 +723,90 @@
                         [class.chip-active]="precioMaxFiltro === 180000"
                         (click)="seleccionarPrecio(180000)"
                       >
-                        ≤ $180.000 COP
+                        Hasta $180.000
                       </button>
                     </div>
                   </div>
+                </div>
+              }
+            </div>
+
+            <!-- LIVE PREVIEWS LIST -->
+            <div class="search-live-preview">
+              <div class="preview-header">
+                <span class="preview-count">
+                  @if (totalResultados > 0) {
+                    <span class="pulse-dot" aria-hidden="true"></span>
+                    <strong>{{ totalResultados }}</strong>
+                    <span>{{ totalResultados === 1 ? 'gimnasio encontrado' : 'gimnasios encontrados' }}</span>
+                  } @else {
+                    <span class="no-results-warn">Sin coincidencias con estos filtros</span>
+                  }
+                </span>
+
+                @if (hayFiltrosActivos) {
+                  <button type="button" class="btn-clear-all" (click)="limpiarFiltros($event)">
+                    Limpiar filtros
+                  </button>
                 }
               </div>
 
-              <!-- LIVE PREVIEWS LIST -->
-              <div class="search-live-preview">
-                <div class="preview-header">
-                  <span class="preview-count">
-                    @if (totalResultados > 0) {
-                      <span class="pulse-dot"></span>
-                      <strong>{{ totalResultados }}</strong> gimnasio(s) encontrado(s)
-                    } @else {
-                      <span class="no-results-warn">⚠️ Sin coincidencias directas</span>
-                    }
-                  </span>
-
-                  @if (hayFiltrosActivos) {
-                    <button type="button" class="btn-clear-all" (click)="limpiarFiltros($event)">
-                      Limpiar filtros
+              @if (totalResultados > 0) {
+                <div class="preview-cards-list">
+                  @for (gym of gimnasiosFiltradosPreview.slice(0, 2); track gym.id) {
+                    <button type="button" class="preview-gym-card" (click)="irAGimnasio(gym)">
+                      <img [src]="gym.fotos[0]" [alt]="gym.nombre" class="preview-gym-thumb" />
+                      <div class="preview-gym-info">
+                        <div class="preview-gym-title-row">
+                          <span class="preview-gym-name">{{ gym.nombre }}</span>
+                          <span class="preview-gym-rating">★ 4.9</span>
+                        </div>
+                        <p class="preview-gym-meta">
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                          </svg>
+                          <span>{{ gym.ciudad }} · {{ gym.barrio }}</span>
+                        </p>
+                        <div class="preview-gym-bottom">
+                          <span class="preview-gym-services">{{ gym.servicios.slice(0, 2).join(' · ') }}</span>
+                          <span class="preview-gym-price">{{ formatoPrecio(gym) }}</span>
+                        </div>
+                      </div>
+                      <svg class="preview-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                      </svg>
                     </button>
                   }
                 </div>
-
-                @if (totalResultados > 0) {
-                  <div class="preview-cards-list">
-                    @for (gym of gimnasiosFiltradosPreview.slice(0, 2); track gym.id) {
-                      <div class="preview-gym-card" (click)="irAGimnasio(gym)">
-                        <img [src]="gym.fotos[0]" [alt]="gym.nombre" class="preview-gym-thumb" />
-                        <div class="preview-gym-info">
-                          <div class="preview-gym-title-row">
-                            <span class="preview-gym-name">{{ gym.nombre }}</span>
-                            <span class="preview-gym-rating">★ 4.9</span>
-                          </div>
-                          <p class="preview-gym-meta">📍 {{ gym.ciudad }} • {{ gym.barrio }}</p>
-                          <div class="preview-gym-bottom">
-                            <span class="preview-gym-services">{{ gym.servicios.slice(0, 2).join(' • ') }}</span>
-                            <span class="preview-gym-price">{{ formatoPrecio(gym) }}</span>
-                          </div>
-                        </div>
-                        <span class="preview-arrow">→</span>
-                      </div>
-                    }
-                  </div>
-                } @else {
-                  <div class="preview-empty-state">
-                    <p>No encontramos gimnasios con estos criterios exactos.</p>
-                    <button type="button" class="btn-reset-filters" (click)="limpiarFiltros($event)">Ver todos los gimnasios</button>
-                  </div>
-                }
-              </div>
+              } @else {
+                <div class="preview-empty-state">
+                  <p>No encontramos gimnasios con ese presupuesto o criterios.</p>
+                  <button type="button" class="btn-reset-filters" (click)="limpiarFiltros($event)">
+                    Ver todos los gimnasios
+                  </button>
+                </div>
+              }
             </div>
+          </div>
 
-            <!-- FOOTER ACTION BUTTON -->
-            <div class="search-panel-footer">
-              <button
-                type="button"
-                class="btn-submit-search"
-                (click)="ejecutarBusqueda()"
-              >
-                <span>Ver los {{ totalResultados }} gimnasios disponibles</span>
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-              </button>
-            </div>
+          <!-- FOOTER ACTION BUTTON -->
+          <div class="search-panel-footer">
+            <button
+              type="button"
+              class="btn-submit-search"
+              (click)="ejecutarBusqueda()"
+            >
+              <span>
+                Ver {{ totalResultados === 1 ? '1 gimnasio disponible' : 'los ' + totalResultados + ' gimnasios disponibles' }}
+              </span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 

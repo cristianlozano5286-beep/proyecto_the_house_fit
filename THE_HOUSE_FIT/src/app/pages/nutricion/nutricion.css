@@ -25,7 +25,7 @@
     position: relative;
     z-index: 1;
     background-color: transparent;
-    color: #fff;
+    color: var(--thf-text-1);
     min-height: 100vh;
     padding: 36px 20px 80px;
 }
@@ -43,7 +43,7 @@
 }
 
 .hero .eyebrow {
-    color: #ff5722;
+    color: var(--thf-accent-text);
     font-size: 14px;
     font-weight: 700;
     text-transform: uppercase;
@@ -53,23 +53,23 @@
 .hero h1 {
     font-size: 28px;
     font-weight: 800;
-    color: #fff;
+    color: var(--thf-text-1);
     margin: 8px 0;
 }
 
 .hero h1 span {
-    color: #ff5722;
+    color: var(--thf-accent-text);
 }
 
 .hero p {
-    color: #aaa;
+    color: var(--thf-text-2);
     font-size: 14px;
 }
 
 /* --- SECCIONES Y TARJETAS DEL FORMULARIO --- */
 .card-section {
-    background: #141414;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--thf-surface-1);
+    border: 1px solid var(--thf-border-subtle);
     border-radius: 12px;
     padding: 24px;
     margin-bottom: 20px;
@@ -78,7 +78,7 @@
 .section-title {
     font-size: 16px;
     font-weight: 700;
-    color: #fff;
+    color: var(--thf-text-1);
     margin-bottom: 16px;
     display: flex;
     align-items: center;
@@ -87,7 +87,7 @@
 
 .label-subtitle {
     font-size: 13px;
-    color: #aaa;
+    color: var(--thf-text-2);
     display: block;
     margin-bottom: 12px;
     font-weight: 500;
@@ -103,26 +103,32 @@
 
 .field label {
     font-size: 12px;
-    color: #aaa;
+    color: var(--thf-text-2);
     text-transform: uppercase;
     font-weight: 600;
 }
 
 .field input,
 .field select {
-    background: #1f1f1f;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: var(--thf-surface-input);
+    border: 1px solid var(--thf-border-input);
     border-radius: 6px;
     padding: 10px 12px;
-    color: #fff;
+    color: var(--thf-text-1);
     font-size: 14px;
     width: 100%;
     box-sizing: border-box;
 }
 
+.field select option {
+    background: var(--thf-option-bg);
+    color: var(--thf-text-1);
+}
+
 .field input:focus,
 .field select:focus {
-    border-color: #ff5722;
+    background: var(--thf-surface-input-focus);
+    border-color: var(--color-primary);
     outline: none;
 }
 
@@ -153,9 +159,9 @@
 
 .btn-goal,
 .chip-btn {
-    background: #1f1f1f;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: #ccc;
+    background: var(--thf-surface-chip);
+    border: 1px solid var(--thf-border-default);
+    color: var(--thf-text-2);
     padding: 8px 14px;
     border-radius: 6px;
     cursor: pointer;
@@ -165,15 +171,15 @@
 
 .btn-goal:hover,
 .chip-btn:hover {
-    border-color: #ff5722;
-    color: #fff;
+    border-color: var(--color-primary);
+    color: var(--thf-text-1);
 }
 
 .btn-goal.active,
 .chip-btn.active {
-    background: #ff5722;
-    color: #fff;
-    border-color: #ff5722;
+    background: var(--color-primary);
+    color: #ffffff;
+    border-color: var(--color-primary);
     font-weight: 600;
 }
 
@@ -197,12 +203,12 @@
     align-items: center;
     gap: 8px;
     font-size: 13px;
-    color: #ddd;
+    color: var(--thf-text-2);
     cursor: pointer;
 }
 
 .checkbox-label input {
-    accent-color: #ff5722;
+    accent-color: var(--color-primary);
     width: 16px;
     height: 16px;
 }
@@ -211,13 +217,13 @@
 .privacy-box {
     display: flex;
     gap: 12px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--thf-surface-2);
+    border: 1px solid var(--thf-border-subtle);
     padding: 14px;
     border-radius: 8px;
     margin-bottom: 20px;
     font-size: 13px;
-    color: #aaa;
+    color: var(--thf-text-2);
     align-items: center;
 }
 
@@ -226,7 +232,7 @@
 }
 
 .privacy-box strong {
-    color: #fff;
+    color: var(--thf-text-1);
 }
 
 .privacy-box p {
@@ -237,8 +243,8 @@
 /* --- BOTÓN PRINCIPAL --- */
 .btn-generar-dieta {
     width: 100%;
-    background: #ff5722;
-    color: #fff;
+    background: var(--color-primary);
+    color: #ffffff;
     border: none;
     padding: 14px;
     border-radius: 8px;
@@ -272,7 +278,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.75);
+    background: var(--thf-surface-overlay);
     backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
@@ -291,51 +297,51 @@
 }
 
 .modal-card-content {
-    background: #181818;
-    border: 1px solid rgba(255, 87, 34, 0.4);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    background: var(--thf-surface-1-solid);
+    border: 1px solid var(--thf-border-accent);
+    box-shadow: 0 10px 30px var(--thf-shadow-color-lg);
 }
 
 .user-summary-tag {
     display: flex;
     justify-content: space-between;
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--thf-surface-2);
     padding: 10px 14px;
     border-radius: 6px;
     margin-bottom: 16px;
     font-size: 13px;
-    color: #ccc;
+    color: var(--thf-text-2);
 }
 
 .dieta-seccion {
     margin-bottom: 16px;
-    background: rgba(0, 0, 0, 0.2);
+    background: var(--thf-surface-2);
     padding: 12px;
     border-radius: 6px;
-    border-left: 3px solid #ff5722;
+    border-left: 3px solid var(--color-primary);
 }
 
 .dieta-seccion h3 {
     font-size: 14px;
-    color: #fff;
+    color: var(--thf-text-1);
     margin: 0 0 4px 0;
 }
 
 .dieta-seccion p {
     font-size: 13px;
-    color: #bbb;
+    color: var(--thf-text-2);
     margin: 0;
 }
 
 .dieta-recomendacion-clinica {
     display: flex;
     gap: 10px;
-    background: rgba(255, 193, 7, 0.1);
-    border: 1px solid rgba(255, 193, 7, 0.3);
+    background: var(--thf-warning-bg);
+    border: 1px solid var(--thf-warning-border);
     padding: 10px;
     border-radius: 6px;
     font-size: 12px;
-    color: #ffd54f;
+    color: var(--thf-warning-text);
     margin-bottom: 16px;
     align-items: center;
 }
@@ -358,13 +364,13 @@
 }
 
 .btn-primary-custom {
-    background: #ff5722;
-    color: #fff;
+    background: var(--color-primary);
+    color: #ffffff;
 }
 
 .btn-secondary-custom {
-    background: #2a2a2a;
-    color: #ddd;
+    background: var(--thf-surface-3);
+    color: var(--thf-text-1);
     text-decoration: none;
     display: inline-flex;
     align-items: center;

@@ -16,7 +16,7 @@
   gap: 20px;
   padding: 12px 32px 0;
   background: transparent;
-  color: #ffffff;
+  color: var(--thf-text-1);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   border-bottom: none;
   box-shadow: none;
@@ -41,9 +41,10 @@
   height: 40px;
   padding: 0 14px;
   border-radius: 11px;
-  background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  color: #8c91a1;
+  background: var(--thf-surface-1);
+  border: 1px solid var(--thf-border-default);
+  color: var(--thf-text-3);
+  box-shadow: 0 2px 8px var(--thf-shadow-color-sm);
   transition:
     background-color 0.18s ease,
     border-color 0.18s ease,
@@ -51,9 +52,9 @@
 }
 
 .topbar-search-form:focus-within {
-  background: rgba(255, 255, 255, 0.085);
-  border-color: rgba(255, 107, 53, 0.45);
-  color: #ffffff;
+  background: var(--thf-surface-input-focus);
+  border-color: rgba(255, 107, 53, 0.55);
+  color: var(--thf-text-1);
 }
 
 .topbar-search-form input {
@@ -61,13 +62,13 @@
   background: transparent;
   border: none;
   outline: none;
-  color: #ffffff;
+  color: var(--thf-text-1);
   font-size: 13px;
   font-family: inherit;
 }
 
 .topbar-search-form input::placeholder {
-  color: #858a99;
+  color: var(--thf-text-3);
 }
 
 .breadcrumb-nav {
@@ -79,22 +80,23 @@
 }
 
 .crumb-root {
-  color: #7c8090;
+  color: var(--thf-text-3);
   font-weight: 500;
   text-decoration: none;
   transition: color 0.16s ease;
 }
 
 .crumb-root:hover {
-  color: #ffffff;
+  color: var(--thf-text-1);
 }
 
 .crumb-sep {
-  color: #4f5463;
+  color: var(--thf-text-3);
+  opacity: 0.65;
 }
 
 .crumb-current {
-  color: #d4d6de;
+  color: var(--thf-text-1);
   font-weight: 600;
 }
 
@@ -110,9 +112,10 @@
   width: 38px;
   height: 38px;
   border-radius: 11px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  color: #c7cad4;
+  background: var(--thf-surface-1);
+  border: 1px solid var(--thf-border-default);
+  color: var(--thf-text-2);
+  box-shadow: 0 2px 8px var(--thf-shadow-color-sm);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -126,9 +129,9 @@
 }
 
 .topbar-icon-btn:hover {
-  background: rgba(255, 255, 255, 0.09);
-  border-color: rgba(255, 255, 255, 0.16);
-  color: #ffffff;
+  background: var(--thf-accent-soft-bg);
+  border-color: var(--thf-border-accent);
+  color: var(--thf-accent-text);
 }
 
 .topbar-icon-btn:active {
@@ -144,7 +147,7 @@
   height: 6px;
   border-radius: 50%;
   background: #ff5520;
-  border: 1.5px solid #181a22;
+  border: 1.5px solid var(--thf-surface-1-solid);
 }
 
 .user-profile-badge {
@@ -164,8 +167,8 @@
 }
 
 .user-profile-badge:hover {
-  background: rgba(255, 255, 255, 0.055);
-  border-color: rgba(255, 255, 255, 0.08);
+  background: var(--thf-surface-hover);
+  border-color: var(--thf-border-subtle);
 }
 
 .user-avatar-circle {
@@ -201,14 +204,14 @@
 .user-display-name {
   font-size: 13px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--thf-text-1);
   white-space: nowrap;
 }
 
 .user-role-tag {
   font-size: 10.5px;
   font-weight: 500;
-  color: #8c91a1;
+  color: var(--thf-text-3);
   white-space: nowrap;
 }
 
@@ -216,9 +219,10 @@
   width: 38px;
   height: 38px;
   border-radius: 11px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  color: #9ca3af;
+  background: var(--thf-surface-1);
+  border: 1px solid var(--thf-border-default);
+  color: var(--thf-text-2);
+  box-shadow: 0 2px 8px var(--thf-shadow-color-sm);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -231,9 +235,9 @@
 }
 
 .logout-btn:hover {
-  background: rgba(239, 68, 68, 0.12);
-  border-color: rgba(239, 68, 68, 0.4);
-  color: #f87171;
+  background: var(--thf-danger-bg);
+  border-color: var(--thf-danger-border);
+  color: var(--thf-danger-text);
 }
 
 .logout-btn:active {

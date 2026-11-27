@@ -244,16 +244,51 @@ func (c *AuthController) Recuperar() {
 	}
 
 	correo := limpiarCorreo(solicitud.Correo)
+	if _, err := mail.ParseAddress(correo); err != nil {
+		responderError(&c.Controller, 400, "Ingresa un correo electrónico con formato válido.")
+		return
+	}
 
 	usuario, err := buscarUsuarioPorCorreo(correo)
 	if err != nil {
 		errorCrud(&c.Controller, err)
 		return
 	}
-	if usuario != nil {
-		enviarCodigo(claveCodigo{correo, recuperacion}, usuario.Nombre)
+	if usuario == nil {
+		responderError(&c.Controller, 404, "No existe ninguna cuenta registrada con ese correo.")
+		return
 	}
-	responder(&c.Controller, 200, map[string]interface{}{"ok": true, "mensaje": "Si existe una cuenta con ese correo, recibirás un código de recuperación."})
+
+	if errEnvio := enviarCodigo(claveCodigo{correo, recuperacion}, usuario.Nombre); errEnvio != nil {
+		responderError(&c.Controller, errEnvio.estado, errEnvio.mensaje)
+		return
+	}
+
+	responder(&c.Controller, 200, map[string]interface{}{
+		"ok":      true,
+		"mensaje": "Te enviamos un código de 6 dígitos a tu correo electrónico.",
+	})
+}
+
+// POST /api/v1/auth/recuperar/verificar
+// Valida que el codigo de recuperacion sea correcto y vigente sin consumirlo todavia,
+// para que el paso siguiente (POST /api/v1/auth/restablecer) guarde la nueva contraseña.
+func (c *AuthController) VerificarRecuperacion() {
+	var solicitud models.SolicitudVerificar
+
+	if !leerCuerpo(&c.Controller, &solicitud) {
+		return
+	}
+
+	correo := limpiarCorreo(solicitud.Correo)
+	if !comprobarCodigoModo(&c.Controller, claveCodigo{correo, recuperacion}, solicitud.Codigo, false) {
+		return
+	}
+
+	responder(&c.Controller, 200, map[string]interface{}{
+		"ok":      true,
+		"mensaje": "Código verificado correctamente. Ahora ingresa tu nueva contraseña.",
+	})
 }
 
 // POST /api/v1/auth/restablecer
@@ -463,7 +498,12 @@ func enviarCodigo(clave claveCodigo, nombre string) *errorEnvio {
 	codigos[clave] = models.CodigoVerificacion{Codigo: codigo, Creado: ahora, Vence: ahora.Add(10 * time.Minute)}
 	candadoCodigos.Unlock()
 
-	if err := mandarCodigo(clave.correo, codigo, nombre); err != nil {
+	if err := mandarCodigo(clave.correo, codigo, nombre, clave.proposito); err != nil {
+		candadoCodigos.Lock()
+		if guardado := codigos[clave]; guardado.Creado == ahora {
+			delete(codigos, clave)
+		}
+		candadoCodigos.Unlock()
 		fmt.Printf("Error de entrega de código: %v\n", err)
 		return &errorEnvio{502, "No pudimos enviar el código. Inténtalo de nuevo."}
 	}
@@ -478,6 +518,10 @@ func enviarCodigo(clave claveCodigo, nombre string) *errorEnvio {
 }
 
 func comprobarCodigo(c *beego.Controller, clave claveCodigo, codigo string) bool {
+	return comprobarCodigoModo(c, clave, codigo, true)
+}
+
+func comprobarCodigoModo(c *beego.Controller, clave claveCodigo, codigo string, consumirSiCoincide bool) bool {
 	codigo = strings.TrimSpace(codigo)
 	if clave.correo == "" || codigo == "" {
 		responderError(c, 400, "El correo y el código son obligatorios.")
@@ -488,13 +532,19 @@ func comprobarCodigo(c *beego.Controller, clave claveCodigo, codigo string) bool
 	guardado := codigos[clave]
 	if !guardado.Activo || !guardado.Vence.After(time.Now()) {
 		candadoCodigos.Unlock()
-		responderError(c, 401, "Ese código ya no sirve. Pide uno nuevo.")
+		responderError(c, 401, "Ese código ya no sirve o venció. Pide uno nuevo.")
 		return false
 	}
 
 	coincide := subtle.ConstantTimeCompare([]byte(codigo), []byte(guardado.Codigo)) == 1
-	guardado.Intentos++
-	guardado.Activo = !coincide && guardado.Intentos < maximoIntentos
+	if coincide {
+		if consumirSiCoincide {
+			guardado.Activo = false
+		}
+	} else {
+		guardado.Intentos++
+		guardado.Activo = guardado.Intentos < maximoIntentos
+	}
 	codigos[clave] = guardado
 	candadoCodigos.Unlock()
 
@@ -512,7 +562,7 @@ func generarCodigo() (string, error) {
 	return fmt.Sprintf("%06d", numero.Int64()+100000), nil
 }
 
-func mandarCodigo(correo string, codigo string, nombre string) error {
+func mandarCodigo(correo string, codigo string, nombre string, proposito string) error {
 	if !beego.AppConfig.DefaultBool("enviar_correo", false) {
 		if beego.BConfig.RunMode == "dev" && beego.AppConfig.DefaultBool("codigos_en_consola", false) {
 			fmt.Printf("Código de desarrollo para %s: %s\n", correo, codigo)
@@ -520,10 +570,7 @@ func mandarCodigo(correo string, codigo string, nombre string) error {
 		}
 		return fmt.Errorf("el correo de verificación está deshabilitado")
 	}
-	servicioGmail, err := services.NuevoServicioGmail()
-	if err != nil {
-		return err
-	}
+
 	plantilla, err := os.ReadFile("templates/correo_codigo.html")
 	if err != nil {
 		return err
@@ -531,14 +578,44 @@ func mandarCodigo(correo string, codigo string, nombre string) error {
 
 	saludo := "Hola,"
 	if strings.TrimSpace(nombre) != "" {
-		saludo = "Hola, " + html.EscapeString(strings.Fields(nombre)[0]) + ","
+		saludo = "Hola, " + html.EscapeString(strings.Fields(nombre)[0])
 	}
 
-	cuerpo := strings.ReplaceAll(string(plantilla), "{{CODIGO}}", codigo)
-	cuerpo = strings.ReplaceAll(cuerpo, "{{SALUDO}}", saludo)
+	asunto := "Confirma tu correo · The House Fit"
+	etiqueta := "Verificación de cuenta"
+	subtitulo := "Gracias por unirte a The House Fit. Ingresa este código de 6 dígitos para confirmar tu correo electrónico y activar tu acceso:"
+	if proposito == recuperacion {
+		asunto = "Código para restablecer tu contraseña · The House Fit"
+		etiqueta = "Recuperación segura"
+		subtitulo = "Recibimos una solicitud para cambiar la contraseña de tu cuenta. Ingresa este código de 6 dígitos en la plataforma para continuar:"
+	}
 
-	_, err = servicioGmail.EnviarCorreo(correo, "Tu código de The House Fit", cuerpo, nil)
-	return err
+	cuerpo := string(plantilla)
+	cuerpo = strings.ReplaceAll(cuerpo, "{{ASUNTO}}", html.EscapeString(asunto))
+	cuerpo = strings.ReplaceAll(cuerpo, "{{ETIQUETA}}", html.EscapeString(etiqueta))
+	cuerpo = strings.ReplaceAll(cuerpo, "{{SALUDO}}", saludo)
+	cuerpo = strings.ReplaceAll(cuerpo, "{{SUBTITULO}}", html.EscapeString(subtitulo))
+	cuerpo = strings.ReplaceAll(cuerpo, "{{CODIGO}}", codigo)
+
+	if services.SmtpConfigurado() {
+		return services.EnviarCorreoSMTP(correo, asunto, cuerpo)
+	}
+
+	if os.Getenv("THF_GMAIL_CREDENTIALS") != "" && os.Getenv("THF_GMAIL_TOKEN") != "" {
+		servicioGmail, err := services.NuevoServicioGmail()
+		if err != nil {
+			return err
+		}
+		_, err = servicioGmail.EnviarCorreo(correo, asunto, cuerpo, nil)
+		return err
+	}
+
+	if beego.BConfig.RunMode == "dev" && beego.AppConfig.DefaultBool("codigos_en_consola", false) {
+		fmt.Printf("Código de desarrollo para %s (configura SMTP para enviarlo al correo): %s\n", correo, codigo)
+		return nil
+	}
+
+	return fmt.Errorf("configura SMTP (smtp_usuario / smtp_clave) o Gmail OAuth para enviar correos")
 }
 
 // GET /api/v1/apk/TheHouseFit.apk
