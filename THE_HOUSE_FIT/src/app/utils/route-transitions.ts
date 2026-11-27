@@ -9,6 +9,7 @@ const PUBLIC_ROUTE_ORDER: Record<string, number> = {
   imc: 4,
   destacados: 5,
   blog: 6,
+  noticias: 6,
   nutricion: 7,
 };
 

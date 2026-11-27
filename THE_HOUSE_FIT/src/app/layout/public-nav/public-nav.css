@@ -1360,11 +1360,24 @@
 }
 
 /* Cuando la barra está expandida arriba, ocultamos suavemente sin usar display:none
-   para nunca alterar el flujo ni desplazar el centro de la barra */
+   para nunca alterar el flujo ni desplazar el centro de la barra, y evitamos
+   que .nav-right bloquee los clics sobre las pestañas centrales (.nav-hero-tabs) */
+.airbnb-nav.is-expanded .nav-right {
+  pointer-events: none;
+}
+
+.airbnb-nav.is-expanded .user-menu-pill-wrapper {
+  pointer-events: auto;
+}
+
 .airbnb-nav.is-expanded .compact-quick-links {
   opacity: 0;
   transform: translate3d(10px, 0, 0);
   pointer-events: none;
+}
+
+.airbnb-nav.is-compact .nav-right {
+  pointer-events: auto;
 }
 
 .airbnb-nav.is-compact .compact-quick-links {
@@ -2121,9 +2134,20 @@
 /* ==========================================================================
    Media Queries
    ========================================================================== */
-@media (max-width: 1220px) {
+@media (max-width: 1320px) {
   .compact-quick-links {
     display: none;
+  }
+}
+
+@media (max-width: 1180px) {
+  .hero-tabs-list {
+    gap: 2px;
+  }
+  .hero-tab-item {
+    padding: 9px 11px;
+    gap: 7px;
+    font-size: 13.5px;
   }
 }
 
