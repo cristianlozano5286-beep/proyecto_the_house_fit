@@ -620,6 +620,57 @@
   color: var(--text-white);
 }
 
+/* SELECTOR DE OBJETIVO PRINCIPAL */
+.goal-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.goal-card-btn {
+  background: #141414;
+  border: 1px solid #262626;
+  border-radius: 13px;
+  padding: 11px 11px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-family: inherit;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.goal-card-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.22);
+  transform: translateY(-2px);
+}
+
+.goal-card-btn.active {
+  border-color: #ff5722;
+  background: linear-gradient(145deg, rgba(255, 87, 34, 0.2) 0%, rgba(255, 87, 34, 0.06) 100%), #141414;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.22), 0 8px 22px rgba(255, 87, 34, 0.22);
+}
+
+.goal-card-btn strong {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-white);
+  line-height: 1.25;
+}
+
+.goal-card-btn span {
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.3;
+}
+
+.goal-card-btn.active span {
+  color: #e4e4e7;
+}
+
 .activity-chip span {
   font-size: 11px;
   color: var(--text-dim);
@@ -1021,10 +1072,25 @@
   flex-shrink: 0;
 }
 
-.dot-u { background: #38bdf8; box-shadow: 0 0 10px rgba(56, 189, 248, 0.7); }
-.dot-n { background: #34d399; box-shadow: 0 0 10px rgba(52, 211, 153, 0.7); }
-.dot-o { background: #fbbf24; box-shadow: 0 0 10px rgba(251, 191, 36, 0.7); }
-.dot-ob { background: #f87171; box-shadow: 0 0 10px rgba(248, 113, 113, 0.7); }
+.dot-u {
+  background: #38bdf8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
+}
+
+.dot-n {
+  background: #34d399;
+  box-shadow: 0 0 10px rgba(52, 211, 153, 0.7);
+}
+
+.dot-o {
+  background: #fbbf24;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.7);
+}
+
+.dot-ob {
+  background: #f87171;
+  box-shadow: 0 0 10px rgba(248, 113, 113, 0.7);
+}
 
 .zone-info {
   display: flex;
@@ -1115,6 +1181,99 @@
 .meta-kpi-sub {
   font-size: 11px;
   color: var(--text-dim);
+}
+
+/* DESGLOSE DE MACRONUTRIENTES */
+.macros-breakdown-box {
+  background: #141414;
+  border: 1px solid #262626;
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.macros-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.macros-title {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.macros-total {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #e4e4e7;
+  font-variant-numeric: tabular-nums;
+}
+
+.macros-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+}
+
+.macro-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: #d4d4d8;
+  font-variant-numeric: tabular-nums;
+}
+
+.macro-legend-item strong {
+  color: var(--text-white);
+  font-weight: 700;
+}
+
+.macro-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-protein,
+.seg-protein {
+  background: #ff5722;
+}
+
+.dot-carbs,
+.seg-carbs {
+  background: #06b6d4;
+}
+
+.dot-fats,
+.seg-fats {
+  background: #eab308;
+}
+
+.macros-bar-track {
+  display: flex;
+  width: 100%;
+  height: 12px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #0a0a0a;
+  border: 1px solid #262626;
+}
+
+.macro-seg {
+  height: 100%;
+  transition: width 0.35s ease;
 }
 
 .plan-description {
@@ -1280,13 +1439,16 @@
   .imc-hero {
     padding: 24px 28px 36px;
   }
+
   .imc-hero-split {
     grid-template-columns: 1fr;
     gap: 24px;
   }
+
   .imc-main-container {
     padding: 28px 28px 0;
   }
+
   .imc-workspace-grid {
     grid-template-columns: 1fr;
   }
@@ -1296,34 +1458,49 @@
   .imc-hero {
     padding: 20px 18px 28px;
   }
+
   .imc-main-container {
     padding: 22px 18px 0;
   }
+
   .imc-hero-kpis,
-  .metabolic-kpis-grid {
+  .metabolic-kpis-grid,
+  .goal-selector-grid {
     grid-template-columns: 1fr;
   }
+
+  .macros-legend {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
   .bmi-zones-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .gauge-readout-row {
     grid-template-columns: 1fr;
     gap: 16px;
   }
+
   .imc-number-block {
     border-right: none;
     border-bottom: 1px solid var(--thf-border-subtle);
     padding-right: 0;
     padding-bottom: 16px;
   }
+
   .meal-row {
     grid-template-columns: 1fr;
     gap: 8px;
   }
+
   .meal-time-badge {
     justify-self: start;
     width: auto;
   }
+
   .nutrition-cta-row {
     grid-template-columns: 1fr;
   }

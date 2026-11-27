@@ -225,10 +225,8 @@ progress.progress-ring {
   border-radius: 50%;
   appearance: none;
   -webkit-appearance: none;
-  background: conic-gradient(
-    var(--fill-color) calc(var(--value) * 1%),
-    var(--track-color) 0
-  );
+  background: conic-gradient(var(--fill-color) calc(var(--value) * 1%),
+      var(--track-color) 0);
   background-clip: border-area;
   border: var(--thickness) solid transparent;
   background-origin: border-box;
@@ -248,10 +246,8 @@ progress.progress-ring {
 @supports not (background-clip: border-area) {
   progress.progress-ring {
     border: 0;
-    mask-image: radial-gradient(
-      transparent calc(50% - var(--thickness)),
-      black calc(50% - var(--thickness) + 0.5px)
-    );
+    mask-image: radial-gradient(transparent calc(50% - var(--thickness)),
+        black calc(50% - var(--thickness) + 0.5px));
   }
 }
 
@@ -493,7 +489,7 @@ progress.progress-ring[value='100'] {
 
 .exercise-row-card {
   display: grid;
-  grid-template-columns: 184px minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 20px;
   padding: 18px;
   border-radius: 18px;
@@ -501,8 +497,8 @@ progress.progress-ring[value='100'] {
   background: var(--thf-surface);
   align-items: start;
   cursor: pointer;
-  transition-property: border-color, background-color;
-  transition-duration: 0.18s;
+  transition-property: border-color, background-color, box-shadow;
+  transition-duration: 0.22s;
   transition-timing-function: var(--thf-ease-out);
 }
 
@@ -511,26 +507,84 @@ progress.progress-ring[value='100'] {
   background: var(--thf-surface-2);
 }
 
+.exercise-row-card.is-playing-card {
+  border-color: rgba(255, 87, 34, 0.65);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+}
+
 .exercise-row-card.is-done {
   border-color: var(--thf-success-border);
 }
 
-.exercise-thumb-wrap {
+.exercise-media {
   position: relative;
-  width: 100%;
-  aspect-ratio: 3 / 2;
-  border-radius: 12px;
+  width: 180px;
+  height: 125px;
+  border-radius: 10px;
   overflow: hidden;
   background: #0c0f16;
   color-scheme: only dark;
   color: #ffffff;
+  border: 1px solid #262626;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: width 0.32s cubic-bezier(0.22, 1, 0.36, 1), height 0.32s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease, box-shadow 0.25s ease;
 }
 
-.exercise-thumb-wrap img {
+.exercise-media.is-playing {
+  width: 440px;
+  height: 320px;
+  border-color: #ff5722;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55), 0 0 20px rgba(255, 87, 34, 0.35);
+}
+
+.exercise-media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
+}
+
+.exercise-media.has-demo img {
+  object-fit: contain;
+  padding: 6px;
+  background: #0c0f16;
+}
+
+.badge-tecnica {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(10, 10, 10, 0.82);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  padding: 4px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #f5f5f5;
+  line-height: 1.2;
+}
+
+.badge-tecnica .badge-icon {
+  color: #ff5722;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.badge-tecnica.is-playing {
+  background: #ff5722;
+  border-color: #ff5722;
+  color: #ffffff;
+}
+
+.badge-tecnica.is-playing .badge-icon {
+  color: #ffffff;
 }
 
 .exercise-num {
@@ -897,6 +951,7 @@ progress.progress-ring[value='100'] {
 }
 
 @media (hover: hover) and (pointer: fine) {
+
   .back-btn-pill:hover,
   .btn-session-bulk:hover,
   .state-pill:hover,
@@ -905,21 +960,31 @@ progress.progress-ring[value='100'] {
     background: var(--thf-surface-hover-strong);
     color: var(--thf-ink);
   }
+
   .complete-exercise-btn:hover {
     border-color: var(--thf-ember);
     background: var(--thf-accent-soft-bg);
   }
+
   .complete-exercise-btn.done:hover {
     border-color: var(--thf-success-border);
     background: var(--thf-success-bg);
   }
+
   .related-card:hover {
     transform: translateY(-2px);
     border-color: var(--thf-border-strong);
   }
+
+  .exercise-media.has-demo:not(.is-playing):hover {
+    transform: translateY(-1px) scale(1.02);
+    border-color: rgba(255, 87, 34, 0.65);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  }
 }
 
 @media (max-width: 960px) {
+
   .session-header-band,
   .session-main-container {
     padding-left: 18px;
@@ -940,5 +1005,17 @@ progress.progress-ring[value='100'] {
 
   .related-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .exercise-media {
+    width: 100%;
+    height: 180px;
+  }
+
+  .exercise-media.is-playing {
+    width: 100%;
+    height: 340px;
   }
 }
