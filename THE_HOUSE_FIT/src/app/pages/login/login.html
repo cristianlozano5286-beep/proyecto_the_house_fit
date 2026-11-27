@@ -156,508 +156,392 @@
   }
 
   <!-- =========================================================================
-       1. BARRA SUPERIOR APPLE LIQUID GLASS (EN UNA SOLA LÍNEA, LIMPIA)
+       1. BARRA SUPERIOR INTEGRADA (MISMO LENGUAJE LIMPIO DEL PANEL DASHBOARD)
        ========================================================================= -->
-  <header class="px-floating-header">
-    <nav class="px-glass-capsule" aria-label="Navegación principal">
+  <header class="thf-integrated-topbar">
+    <div class="thf-topbar-left">
       <button
         type="button"
         (click)="reproducirIntroBleap()"
-        class="px-capsule-brand"
+        class="thf-brand-lockup"
         aria-label="Repetir animación de bienvenida The House Fit"
-        title="Clic para repetir la animación de introducción"
+        title="Repetir intro de bienvenida"
       >
-        <img src="assets/logo-icon-orange.png" alt="The House Fit" class="px-capsule-logo" />
-        <span class="px-capsule-wordmark">THE HOUSE <span class="accent">FIT</span></span>
+        <img src="assets/logo-icon-orange.png" alt="The House Fit" class="thf-brand-icon" />
+        <span class="thf-brand-wordmark">The House <span class="accent">Fit</span></span>
       </button>
 
-      <div class="px-capsule-links">
+      <nav class="thf-nav-rail" aria-label="Secciones principales">
         <button
           type="button"
           (click)="intentarIrASeccion('/', 'Inicio')"
-          class="px-nav-item"
-          [class.is-active-target]="rutaDestinoPendiente === '/'"
+          class="thf-nav-tab"
+          [class.is-active]="rutaDestinoPendiente === '/'"
         >
-          INICIO
+          <span>Inicio</span>
         </button>
         <button
           type="button"
           (click)="intentarIrASeccion('/gimnasios', 'Sedes')"
-          class="px-nav-item"
-          [class.is-active-target]="rutaDestinoPendiente === '/gimnasios'"
+          class="thf-nav-tab"
+          [class.is-active]="rutaDestinoPendiente === '/gimnasios'"
         >
-          SEDES
+          <span>Sedes</span>
         </button>
         <button
           type="button"
           (click)="intentarIrASeccion('/rutinas', 'Rutinas')"
-          class="px-nav-item"
-          [class.is-active-target]="rutaDestinoPendiente === '/rutinas'"
+          class="thf-nav-tab"
+          [class.is-active]="rutaDestinoPendiente === '/rutinas'"
         >
-          RUTINAS
+          <span>Rutinas</span>
         </button>
         <button
           type="button"
           (click)="intentarIrASeccion('/tienda', 'Tienda')"
-          class="px-nav-item"
-          [class.is-active-target]="rutaDestinoPendiente === '/tienda'"
+          class="thf-nav-tab"
+          [class.is-active]="rutaDestinoPendiente === '/tienda'"
         >
-          TIENDA
+          <span>Tienda</span>
         </button>
         <button
           type="button"
           (click)="intentarIrASeccion('/imc', 'Lab IMC')"
-          class="px-nav-item"
-          [class.is-active-target]="rutaDestinoPendiente === '/imc'"
+          class="thf-nav-tab"
+          [class.is-active]="rutaDestinoPendiente === '/imc'"
         >
-          LAB IMC
+          <span>Lab IMC</span>
         </button>
-      </div>
+      </nav>
+    </div>
 
-      <div class="px-capsule-actions">
-        <a
-          href="/api/v1/apk/TheHouseFit.apk"
-          download="TheHouseFit.apk"
-          class="px-capsule-apk-btn"
-          title="Descargar aplicación oficial para Android (.APK)"
-        >
-          ⬇ APK ANDROID
-        </a>
-        <button
-          type="button"
-          (click)="reproducirIntroBleap()"
-          class="px-capsule-replay-btn"
-          title="Repetir animación de entrada"
-        >
-          ▶ INTRO
-        </button>
-        <button type="button" (click)="irAPublicaTuGym()" class="px-capsule-host-btn">
-          PUBLICA TU GYM
-        </button>
-        <button type="button" (click)="irAlFormulario()" class="px-capsule-access-btn">
-          ACCEDER
-        </button>
-      </div>
-    </nav>
+    <div class="thf-topbar-actions">
+      <app-theme-toggle variante="compact"></app-theme-toggle>
+
+      <button
+        type="button"
+        (click)="reproducirIntroBleap()"
+        class="thf-btn-secondary thf-btn-intro"
+        title="Ver animación de entrada"
+      >
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <polygon points="6 4 20 12 6 20 6 4"></polygon>
+        </svg>
+        <span>Intro</span>
+      </button>
+
+      <button type="button" (click)="irAPublicaTuGym()" class="thf-btn-secondary thf-btn-host">
+        <span>Publica tu gym</span>
+      </button>
+
+      <a
+        href="/api/v1/apk/TheHouseFit.apk"
+        download="TheHouseFit.apk"
+        class="thf-btn-secondary thf-btn-apk"
+        title="Descargar aplicación oficial para Android (.APK)"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span>APK</span>
+      </a>
+
+      <a routerLink="/register" class="thf-btn-primary">
+        <span>Crear cuenta</span>
+      </a>
+    </div>
   </header>
 
   <!-- =========================================================================
-       2. FONDO ARQUITECTÓNICO ESTILO BLEAP (LÍNEAS 1PX + ARCOS PUNTEADOS + AURA)
+       2. ESCENARIO PRINCIPAL INTEGRADO (VITRINA LIMPIA + PANEL DE ACCESO)
        ========================================================================= -->
-  <div class="bleap-stage-canvas" aria-hidden="true">
-    <div class="bleap-blueprint-grid">
-      <span class="grid-vline vline-1"></span>
-      <span class="grid-vline vline-2"></span>
-      <span class="grid-vline vline-3"></span>
-      <span class="grid-hline hline-1"></span>
-      <span class="grid-hline hline-2"></span>
-    </div>
-
-    <div class="bleap-dashed-arc arc-large"></div>
-    <div class="bleap-dashed-arc arc-medium"></div>
-
-    <div class="bleap-liquid-aura aura-bottom-left"></div>
-    <div class="bleap-liquid-aura aura-bottom-right"></div>
-    <div class="bleap-liquid-aura aura-center-horizon"></div>
-  </div>
-
-  <!-- =========================================================================
-       3. ESCENARIO PRINCIPAL EN UNA SOLA VISTA (BENTO KINETIC + LOGIN GLASS)
-       ========================================================================= -->
-  <main class="bleap-main-workspace">
-    <!-- COLUMNA IZQUIERDA: KINETIC TYPOGRAPHY + ARCHITECTURAL BENTO GRID -->
-    <section class="bleap-editorial-showcase" aria-label="Presentación interactiva The House Fit">
-      <div class="bleap-kinetic-header">
-        <div class="bleap-eyebrow-pill">
-          <span class="eyebrow-pulse"></span>
-          <span>THE HOUSE FIT</span>
-          <span class="eyebrow-sep">•</span>
-          <em class="eyebrow-serif">beyond limits</em>
-          <span class="eyebrow-scene-counter">{{ escenaActual.numero }} / 04</span>
-        </div>
-
-        <div class="bleap-kinetic-title-stack">
-          @for (esc of escenasHero; track esc.id; let i = $index) {
-            <h1
-              class="bleap-kinetic-title"
-              [class.is-active]="indiceEscenaActiva === i"
-              [attr.aria-hidden]="indiceEscenaActiva !== i"
-            >
-              <span class="kinetic-sans">{{ esc.palabraSans }}</span>
-              <span class="bleap-glow-dot" aria-hidden="true"></span>
-              <em class="kinetic-serif">{{ esc.palabraSerif }}</em>
-            </h1>
-          }
-        </div>
-
-        <div class="bleap-kinetic-subtitle-stack">
-          @for (esc of escenasHero; track esc.id; let i = $index) {
-            <p
-              class="bleap-kinetic-subtitle"
-              [class.is-active]="indiceEscenaActiva === i"
-              [attr.aria-hidden]="indiceEscenaActiva !== i"
-            >
-              {{ esc.descripcion }}
-            </p>
-          }
-        </div>
-      </div>
-
-      <!-- CUADRÍCULA BENTO ARQUITECTÓNICA (Inspirada en 0:10 - 0:13 de Bleap) -->
-      <div class="bleap-bento-matrix">
-        <div class="bento-internal-arc" aria-hidden="true"></div>
-
-        <!-- Celda Foto 1: FOCUS -->
-        <button
-          type="button"
-          class="bento-cell bento-photo-tile"
-          [class.is-selected]="indiceEscenaActiva === 0"
-          (click)="seleccionarEscena(0)"
-          aria-label="Escena 01 Focus"
-        >
-          <img src="assets/login/focus-athlete.jpg" alt="Focus" class="tile-img" />
-          <span class="tile-active-pip" aria-hidden="true"></span>
-          <div class="tile-overlay">
-            <span class="tile-num">01</span>
-            <span class="tile-tag">FOCUS</span>
-          </div>
-        </button>
-
-        <!-- Celda Micro-Ícono + Telemetría en Serif -->
-        <div class="bento-cell bento-telemetry-cell">
-          <div class="telemetry-top-row">
-            <div class="micro-icon-chip orange-chip" aria-hidden="true">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-              </svg>
-            </div>
-            <span class="telemetry-live-pill">
-              <span class="telemetry-live-dot"></span>
-              LIVE
-            </span>
-          </div>
-          <div class="telemetry-data-stack">
-            @for (esc of escenasHero; track esc.id; let i = $index) {
-              <div
-                class="telemetry-data"
-                [class.is-active]="indiceEscenaActiva === i"
-                [attr.aria-hidden]="indiceEscenaActiva !== i"
-              >
-                <span class="telemetry-serif-num">{{ esc.metricaValor }}</span>
-                <span class="telemetry-mono-label">{{ esc.metricaLabel }}</span>
-              </div>
-            }
-          </div>
-        </div>
-
-        <!-- Celda Foto 2: AESTHETICS -->
-        <button
-          type="button"
-          class="bento-cell bento-photo-tile"
-          [class.is-selected]="indiceEscenaActiva === 1"
-          (click)="seleccionarEscena(1)"
-          aria-label="Escena 02 Aesthetics"
-        >
-          <img src="assets/login/winged-statue.jpg" alt="Aesthetics" class="tile-img" />
-          <span class="tile-active-pip" aria-hidden="true"></span>
-          <div class="tile-overlay">
-            <span class="tile-num">02</span>
-            <span class="tile-tag">AESTHETICS</span>
-          </div>
-        </button>
-
-        <!-- CAJA CENTRAL PROTAGONISTA -->
-        <div class="bento-cell bento-hero-feature-box">
+  <main class="thf-integrated-workspace">
+    <!-- COLUMNA IZQUIERDA: HERO BANNER + FILA DE 4 PILARES (COMO EL DASHBOARD) -->
+    <section class="thf-showcase-stage" aria-label="Presentación de The House Fit">
+      <div class="thf-hero-stage-wrap">
+        <article class="thf-hero-banner">
           @for (esc of escenasHero; track esc.id; let i = $index) {
             <img
               [src]="esc.imagenPrincipal"
               [alt]="esc.palabraBento"
-              class="feature-box-bg-img"
+              class="thf-hero-bg"
               [class.is-active]="indiceEscenaActiva === i"
               [style.object-position]="'center ' + esc.posicionY"
             />
           }
-          <div class="feature-box-gradient"></div>
+          <div class="thf-hero-scrim" aria-hidden="true"></div>
 
-          <div class="feature-box-top-row">
-            <span class="feature-scene-pill">
-              <span class="scene-pill-dot" aria-hidden="true"></span>
-              <span>{{ escenaActual.numero }} · {{ escenaActual.etiquetaCorta }}</span>
-            </span>
-            <div class="feature-brand-orb">
-              <img src="assets/logo-icon-white.png" alt="The House Fit" class="orb-symbol-img" />
+          <div class="thf-hero-top">
+            <div class="thf-hero-tags">
+              <span class="thf-tag-pill">Sedes verificadas</span>
+              <span class="thf-tag-pill">Rutinas Pro</span>
+              <span class="thf-tag-pill">Biomecánica</span>
+              <span class="thf-tag-pill">Nutrición &amp; IMC</span>
+              <button
+                type="button"
+                class="thf-tag-pill thf-tag-plus"
+                (click)="irAlFormulario()"
+                title="Iniciar sesión para explorar todo"
+                aria-label="Ir al formulario de inicio de sesión"
+              >
+                +
+              </button>
             </div>
           </div>
 
-          <div class="feature-box-bottom-row">
-            <div class="feature-word-stack">
-              @for (esc of escenasHero; track esc.id; let i = $index) {
-                <div
-                  class="feature-word-group"
-                  [class.is-active]="indiceEscenaActiva === i"
-                  [attr.aria-hidden]="indiceEscenaActiva !== i"
-                >
-                  <span class="feature-giant-word">{{ esc.palabraBento }}</span>
-                  <span class="feature-sub-caption">{{ esc.subtituloBento }}</span>
+          <div class="thf-hero-bottom">
+            <div class="thf-hero-identity">
+              <h1 class="thf-hero-title">
+                {{ escenaActual.palabraSans }} {{ escenaActual.palabraSerif }}
+              </h1>
+              <p class="thf-hero-sub">{{ escenaActual.descripcion }}</p>
+
+              <div class="thf-hero-members">
+                <div class="thf-avatar-stack" aria-hidden="true">
+                  <span class="thf-mini-avatar">D</span>
+                  <span class="thf-mini-avatar">M</span>
+                  <span class="thf-mini-avatar">L</span>
                 </div>
-              }
+                <span class="thf-members-pill">
+                  {{ escenaActual.metricaValor }} · {{ escenaActual.subtituloBento }} · ★ 4.9
+                </span>
+              </div>
             </div>
 
-            <div class="feature-arrow-controls">
+            <div class="thf-hero-arrows">
               <button
                 type="button"
-                class="feature-nav-btn"
+                class="thf-arrow-btn"
                 (click)="escenaAnterior()"
                 aria-label="Escena anterior"
               >
-                ‹
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
               </button>
               <button
                 type="button"
-                class="feature-nav-btn"
+                class="thf-arrow-btn"
                 (click)="escenaSiguiente()"
                 aria-label="Siguiente escena"
               >
-                ›
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
               </button>
             </div>
           </div>
+        </article>
 
-          <div class="feature-progress-rail" aria-hidden="true">
-            @for (esc of escenasHero; track esc.id; let i = $index) {
-              <span
-                class="feature-progress-seg"
-                [class.is-active]="indiceEscenaActiva === i"
-              ></span>
-            }
-          </div>
+        <div class="thf-hero-dots" role="tablist" aria-label="Cambiar escena destacada">
+          @for (esc of escenasHero; track esc.id; let i = $index) {
+            <button
+              type="button"
+              role="tab"
+              class="thf-hero-dot"
+              [class.is-active]="indiceEscenaActiva === i"
+              [attr.aria-selected]="indiceEscenaActiva === i"
+              (click)="seleccionarEscena(i)"
+              [attr.aria-label]="'Escena ' + esc.etiquetaCorta"
+            ></button>
+          }
+        </div>
+      </div>
+
+      <!-- FILA INFERIOR DE 4 TARJETAS LIMPIAS (ESTILO "SEDES DESTACADAS") -->
+      <div class="thf-pillars-section">
+        <div class="thf-section-head">
+          <h2>Explora el ecosistema</h2>
+          <button type="button" class="thf-section-link" (click)="irAlFormulario()">
+            Desbloquear catálogo →
+          </button>
         </div>
 
-        <!-- Celda Foto 3: YOU VS YOU -->
-        <button
-          type="button"
-          class="bento-cell bento-photo-tile"
-          [class.is-selected]="indiceEscenaActiva === 2"
-          (click)="seleccionarEscena(2)"
-          aria-label="Escena 03 You vs You"
-        >
-          <img src="assets/login/you-vs-you-gym.jpg" alt="You vs You" class="tile-img" />
-          <span class="tile-active-pip" aria-hidden="true"></span>
-          <div class="tile-overlay">
-            <span class="tile-num">03</span>
-            <span class="tile-tag">YOU VS YOU</span>
-          </div>
-        </button>
-
-        <!-- Celda Central Inferior: "beyond limits." -->
-        <div class="bento-cell bento-beyond-cell">
-          <div class="beyond-typographic-lockup">
-            <span class="beyond-line-1">beyond</span>
-            <em class="beyond-line-2">limits.</em>
-          </div>
-          <div class="bento-dots-row" role="tablist" aria-label="Cambiar escena">
-            @for (esc of escenasHero; track esc.id; let i = $index) {
-              <button
-                type="button"
-                role="tab"
-                class="bento-dot-btn"
-                [class.active]="indiceEscenaActiva === i"
-                (click)="seleccionarEscena(i)"
-                [attr.aria-label]="esc.etiquetaCorta"
-              ></button>
-            }
-          </div>
+        <div class="thf-pillars-grid">
+          @for (esc of escenasHero; track esc.id; let i = $index) {
+            <button
+              type="button"
+              class="thf-pillar-card"
+              [class.is-active]="indiceEscenaActiva === i"
+              (click)="seleccionarEscena(i)"
+              [attr.aria-label]="'Ver ' + esc.palabraBento"
+            >
+              <img [src]="esc.imagenPrincipal" [alt]="esc.palabraBento" loading="lazy" />
+              <div class="thf-pillar-scrim" aria-hidden="true"></div>
+              <span class="thf-pillar-badge">{{ esc.etiquetaCorta }}</span>
+              <div class="thf-pillar-caption">
+                <strong>{{ esc.palabraBento }}</strong>
+                <span>{{ esc.metricaValor }} · {{ esc.metricaLabel }}</span>
+              </div>
+            </button>
+          }
         </div>
-
-        <!-- Celda Foto 4: LEGADO -->
-        <button
-          type="button"
-          class="bento-cell bento-photo-tile"
-          [class.is-selected]="indiceEscenaActiva === 3"
-          (click)="seleccionarEscena(3)"
-          aria-label="Escena 04 Legado"
-        >
-          <img src="assets/login/legend-pose.jpg" alt="Legado" class="tile-img" />
-          <span class="tile-active-pip" aria-hidden="true"></span>
-          <div class="tile-overlay">
-            <span class="tile-num">04</span>
-            <span class="tile-tag">LEGADO</span>
-          </div>
-        </button>
       </div>
     </section>
 
-    <!-- COLUMNA DERECHA: TARJETA DE ACCESO APPLE GLASS -->
-    <section id="thf-login-sanctuary" class="bleap-auth-column" aria-label="Iniciar sesión">
-      <div class="sanctuary-login-card" [class.card-pulse-highlight]="resaltarFormulario">
-        <div class="card-brand-header">
-          <div class="card-logo-glow-wrap">
-            <div class="logo-back-halo" aria-hidden="true"></div>
-            <img
-              src="assets/logo-full-orange.png"
-              alt="The House Fit"
-              class="card-official-logo"
-            />
+    <!-- COLUMNA DERECHA: PANEL DE ACCESO LIMPIO E INTEGRADO -->
+    <section id="thf-login-sanctuary" class="thf-login-column" aria-label="Iniciar sesión">
+      <div class="thf-login-panel" [class.card-pulse-highlight]="resaltarFormulario">
+        <div class="thf-login-top">
+          <div class="thf-login-header">
+            <span class="thf-access-eyebrow">
+              <span class="thf-access-dot" aria-hidden="true"></span>
+              Acceso directo
+            </span>
+            <h2 class="thf-login-title">Inicia sesión</h2>
+            <p class="thf-login-sub">
+              Gestiona tus reservas, sedes favoritas, rutinas y métricas en tu panel personal.
+            </p>
           </div>
 
-          <h2 class="card-bleap-heading">
-            <span>Tu santuario</span>
-            <span class="heading-dot">•</span>
-            <em class="heading-serif">personal</em>
-          </h2>
-          <p class="card-bleap-sub">
-            Inicia sesión o crea tu cuenta para desbloquear todo el ecosistema.
-          </p>
-        </div>
-
-        @if (mensaje) {
-          <div
-            class="auth-error-alert"
-            [class.is-info-notice]="seccionBloqueadaNombre && !faltaVerificar"
-            role="alert"
-          >
-            <div class="auth-error-content">
-              <svg class="auth-error-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-              </svg>
-              <span class="auth-error-text">{{ mensaje }}</span>
-            </div>
-            @if (faltaVerificar) {
-              <button type="button" class="btn-verify-inline" (click)="irAVerificar()">
-                Verificar →
-              </button>
-            } @else if (seccionBloqueadaNombre) {
-              <a routerLink="/register" class="btn-verify-inline">
-                Registrarse →
-              </a>
-            }
-          </div>
-        }
-
-        <form (ngSubmit)="login()" class="thf-auth-form">
-          <div class="thf-field-group">
-            <div class="field-label-row">
-              <label for="emailInput" class="thf-field-label">Correo electrónico</label>
-            </div>
-            <div class="thf-input-box">
-              <span class="input-leading-icon" aria-hidden="true">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="2" y="4" width="20" height="16" rx="3"></rect>
-                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-                </svg>
-              </span>
-              <input
-                type="email"
-                id="emailInput"
-                name="email"
-                [(ngModel)]="email"
-                placeholder="nombre@ejemplo.com"
-                required
-                autocomplete="username"
-                spellcheck="false"
-                enterkeyhint="next"
-              />
-            </div>
-          </div>
-
-          <div class="thf-field-group">
-            <div class="field-label-row">
-              <label for="passwordInput" class="thf-field-label">Contraseña</label>
-              <a routerLink="/recuperar-password" class="forgot-inline-link">¿Olvidaste tu contraseña?</a>
-            </div>
-            <div class="thf-input-box">
-              <span class="input-leading-icon" aria-hidden="true">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          @if (mensaje) {
+            <div
+              class="thf-inline-notice"
+              [class.is-info-notice]="seccionBloqueadaNombre && !faltaVerificar"
+              role="alert"
+            >
+              <div class="thf-notice-body">
+                <svg class="thf-notice-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                   <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                 </svg>
-              </span>
-              <input
-                [type]="mostrarPassword ? 'text' : 'password'"
-                id="passwordInput"
-                name="password"
-                [(ngModel)]="password"
-                placeholder="Ingresa tu contraseña"
-                required
-                autocomplete="current-password"
-                enterkeyhint="done"
-              />
-              <button
-                type="button"
-                class="toggle-pwd-btn"
-                (click)="toggleMostrarPassword()"
-                [attr.aria-label]="mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
-              >
-                @if (mostrarPassword) {
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                    <line x1="1" y1="1" x2="23" y2="23"></line>
-                  </svg>
-                } @else {
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
-                }
-              </button>
+                <span class="thf-notice-text">{{ mensaje }}</span>
+              </div>
+              @if (faltaVerificar) {
+                <button type="button" class="thf-notice-cta" (click)="irAVerificar()">
+                  Verificar →
+                </button>
+              } @else if (seccionBloqueadaNombre) {
+                <a routerLink="/register" class="thf-notice-cta">
+                  Registrarse →
+                </a>
+              }
             </div>
+          }
+
+          <form (ngSubmit)="login()" class="thf-login-form">
+            <div class="thf-field-group">
+              <div class="thf-label-row">
+                <label for="emailInput" class="thf-field-label">Correo electrónico</label>
+              </div>
+              <div class="thf-input-wrap">
+                <span class="thf-input-icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="3"></rect>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                  </svg>
+                </span>
+                <input
+                  type="email"
+                  id="emailInput"
+                  name="email"
+                  [(ngModel)]="email"
+                  placeholder="nombre@ejemplo.com"
+                  required
+                  autocomplete="username"
+                  spellcheck="false"
+                  enterkeyhint="next"
+                />
+              </div>
+            </div>
+
+            <div class="thf-field-group">
+              <div class="thf-label-row">
+                <label for="passwordInput" class="thf-field-label">Contraseña</label>
+                <a routerLink="/recuperar-password" class="thf-forgot-link">¿Olvidaste tu contraseña?</a>
+              </div>
+              <div class="thf-input-wrap">
+                <span class="thf-input-icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </span>
+                <input
+                  [type]="mostrarPassword ? 'text' : 'password'"
+                  id="passwordInput"
+                  name="password"
+                  [(ngModel)]="password"
+                  placeholder="Ingresa tu contraseña"
+                  required
+                  autocomplete="current-password"
+                  enterkeyhint="done"
+                />
+                <button
+                  type="button"
+                  class="thf-pwd-toggle"
+                  (click)="toggleMostrarPassword()"
+                  [attr.aria-pressed]="mostrarPassword"
+                  [attr.aria-label]="mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                >
+                  @if (mostrarPassword) {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                      <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                  } @else {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  }
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              class="thf-submit-btn"
+              [disabled]="cargando"
+            >
+              @if (cargando) {
+                <span class="thf-spinner" aria-hidden="true"></span>
+                <span>Verificando...</span>
+              } @else {
+                <span>Iniciar sesión</span>
+              }
+            </button>
+          </form>
+
+          <div class="thf-or-divider">
+            <span>o continúa con</span>
           </div>
 
-          <button
-            type="submit"
-            class="px-sanctuary-submit-btn"
-            [disabled]="cargando"
-          >
-            @if (cargando) {
-              <span class="spinner-dot"></span>
-              <span>VERIFICANDO...</span>
-            } @else {
-              <span>ENTRAR A THE HOUSE FIT</span>
-            }
-          </button>
-        </form>
+          <div class="thf-social-grid">
+            <button
+              type="button"
+              class="thf-social-btn"
+              (click)="loginSocial('google')"
+              aria-label="Continuar con Google"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"/>
+                <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"/>
+                <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.8s.2-2.1.4-2.8L1.9 6.3C.7 8.7 0 10.3 0 12s.7 3.3 1.9 5.7l3.7-2.9z"/>
+                <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"/>
+              </svg>
+              <span>Google</span>
+            </button>
 
-        <div class="dialog-or-divider">
-          <span>o continúa con</span>
+            <button
+              type="button"
+              class="thf-social-btn"
+              (click)="loginSocial('apple')"
+              aria-label="Continuar con Apple"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#ffffff" aria-hidden="true">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.92-2.85-.9.04-1.99.6-2.63 1.35-.57.65-1.06 1.72-.93 2.74 1 .08 2.02-.49 2.64-1.24z"/>
+              </svg>
+              <span>Apple</span>
+            </button>
+          </div>
         </div>
 
-        <div class="social-login-grid">
-          <button
-            type="button"
-            class="social-login-btn"
-            (click)="loginSocial('google')"
-            aria-label="Continuar con Google"
-          >
-            <svg width="17" height="17" viewBox="0 0 24 24">
-              <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"/>
-              <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"/>
-              <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.8s.2-2.1.4-2.8L1.9 6.3C.7 8.7 0 10.3 0 12s.7 3.3 1.9 5.7l3.7-2.9z"/>
-              <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"/>
-            </svg>
-            <span>Google</span>
-          </button>
-
-          <button
-            type="button"
-            class="social-login-btn"
-            (click)="loginSocial('apple')"
-            aria-label="Continuar con Apple"
-          >
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="#ffffff">
-              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.92-2.85-.9.04-1.99.6-2.63 1.35-.57.65-1.06 1.72-.93 2.74 1 .08 2.02-.49 2.64-1.24z"/>
-            </svg>
-            <span>Apple</span>
-          </button>
-        </div>
-
-        <div class="auth-dialog-footer">
-          <span class="footer-prompt">¿No tienes cuenta?</span>
-          <a routerLink="/register" class="footer-register-link">Regístrate gratis →</a>
-          <span class="footer-dot-sep">·</span>
-          <a href="/api/v1/apk/TheHouseFit.apk" download="TheHouseFit.apk" class="footer-apk-pill" title="Descargar APK Android">
-            📲 Descargar APK
-          </a>
+        <div class="thf-login-footer">
+          <span class="thf-footer-prompt">¿No tienes una cuenta?</span>
+          <a routerLink="/register" class="thf-footer-link">Crear cuenta gratis →</a>
         </div>
       </div>
     </section>

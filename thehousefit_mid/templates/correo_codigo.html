@@ -3,15 +3,141 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tu código de The House Fit</title>
+  <meta name="color-scheme" content="dark">
+  <title>{{ASUNTO}}</title>
 </head>
-<body style="margin: 0; padding: 24px 12px; background-color: #f1f3f5; font-family: 'Trebuchet MS', 'Segoe UI', Verdana, sans-serif;">
-  <div style="max-width: 480px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; padding: 32px 28px; text-align: center; font-family: 'Trebuchet MS', 'Segoe UI', Verdana, sans-serif;">
-    <h1 style="margin: 0 0 8px 0; font-size: 26px; color: #1f2937;">The House Fit</h1>
-    <p style="margin: 0 0 24px 0; font-size: 16px; color: #374151;">{{SALUDO}}</p>
-    <p style="margin: 0 0 12px 0; font-size: 15px; color: #374151;">Tu código de verificación es:</p>
-    <p style="margin: 0 0 24px 0; font-size: 38px; font-weight: bold; letter-spacing: 8px; color: #111827;">{{CODIGO}}</p>
-    <p style="margin: 0; font-size: 13px; color: #6b7280;">Sirve por 10 minutos. Si no lo pediste, ignora este mensaje.</p>
-  </div>
+<body style="margin:0; padding:0; background-color:#121110; font-family:'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif; color:#f5f4f1;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#121110; background:radial-gradient(circle at 20% 15%, #2e241b 0%, #151412 55%, #0e0d0c 100%); padding:32px 14px;">
+    <tr>
+      <td align="center">
+        <!-- Ventana principal estilo Spatial Glass cálido (inspirada en tu referencia) -->
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:600px; background-color:#26231e; background:linear-gradient(145deg, #353029 0%, #24211c 48%, #1a1815 100%); border:1px solid #4e473e; border-radius:26px; overflow:hidden; box-shadow:0 28px 64px rgba(0,0,0,0.65);">
+          <tr>
+            <td style="padding:20px 22px 22px 22px;">
+
+              <!-- Barra superior tipo cápsula glass -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom:16px;">
+                <tr>
+                  <td align="left" valign="middle">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                      <tr>
+                        <td valign="middle" style="padding-right:10px;">
+                          <img src="https://cristianlozano5286-beep.github.io/proyecto_the_house_fit/assets/logo-icon-orange.png" alt="The House Fit" width="34" height="34" style="display:block; width:34px; height:34px; border:0;" />
+                        </td>
+                        <td valign="middle">
+                          <div style="font-size:20px; font-weight:800; letter-spacing:-0.4px; color:#ffffff; line-height:1.1;">
+                            The House <span style="color:#ff4500;">Fit</span>
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td align="right" valign="middle">
+                    <span style="display:inline-block; padding:6px 13px; border-radius:999px; background-color:#1b1916; border:1px solid #464038; color:#e6dfd5; font-size:11px; font-weight:600;">
+                      {{ETIQUETA}}
+                    </span>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Tarjeta Hero interior (fondo oscuro cálido + borde luminoso) -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#171513; background:linear-gradient(155deg, #211c17 0%, #151413 55%, #11100f 100%); border:1px solid #413a32; border-radius:20px; overflow:hidden;">
+                <tr>
+                  <td style="padding:26px 26px 24px 26px;">
+                    <!-- Cápsula superior de estado -->
+                    <div style="margin-bottom:14px;">
+                      <span style="display:inline-block; padding:4px 11px; border-radius:999px; background-color:#2b1c14; border:1px solid #7c3b1d; color:#ffa274; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase;">
+                        ● Validación de identidad
+                      </span>
+                    </div>
+
+                    <h1 style="margin:0 0 8px 0; font-size:25px; font-weight:700; color:#ffffff; letter-spacing:-0.4px; line-height:1.15;">
+                      {{SALUDO}}
+                    </h1>
+                    <p style="margin:0 0 20px 0; font-size:14.5px; line-height:1.6; color:#cfc9c0;">
+                      {{SUBTITULO}}
+                    </p>
+
+                    <!-- Caja del código OTP en texto seleccionable -->
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#100f0e; border:1px solid #ff5500; border-radius:16px;">
+                      <tr>
+                        <td align="center" style="padding:22px 18px 20px 18px;">
+                          <div style="font-size:10.5px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#ff9057; margin-bottom:10px;">
+                            Código de verificación
+                          </div>
+                          <div style="font-family:'Cascadia Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; font-size:36px; font-weight:800; letter-spacing:10px; color:#ffffff; line-height:1.15; padding-left:10px;">
+                            {{CODIGO}}
+                          </div>
+                          <div style="margin-top:14px;">
+                            <span style="display:inline-block; padding:5px 12px; border-radius:999px; background-color:#162821; border:1px solid #245743; color:#7ef0be; font-size:11.5px; font-weight:600;">
+                              Vigencia de 10 minutos · Un solo uso
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Fila inferior de 3 mini-tarjetas estilo Bento Glass -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top:12px;">
+                <tr>
+                  <td width="33%" valign="top" style="padding-right:5px;">
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#201d19; border:1px solid #3f3932; border-radius:14px;">
+                      <tr>
+                        <td style="padding:12px 12px;">
+                          <div style="font-size:10px; font-weight:700; letter-spacing:0.8px; text-transform:uppercase; color:#ff8e53; margin-bottom:4px;">PIN Único</div>
+                          <div style="font-size:12px; font-weight:700; color:#ffffff;">6 dígitos</div>
+                          <div style="font-size:11px; color:#a8a196; margin-top:2px;">Copia o escribe en la web</div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td width="34%" valign="top" style="padding:0 3px;">
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#201d19; border:1px solid #3f3932; border-radius:14px;">
+                      <tr>
+                        <td style="padding:12px 12px;">
+                          <div style="font-size:10px; font-weight:700; letter-spacing:0.8px; text-transform:uppercase; color:#ff8e53; margin-bottom:4px;">Expiración</div>
+                          <div style="font-size:12px; font-weight:700; color:#ffffff;">10 minutos</div>
+                          <div style="font-size:11px; color:#a8a196; margin-top:2px;">Límite anti-intrusos</div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td width="33%" valign="top" style="padding-left:5px;">
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#201d19; border:1px solid #3f3932; border-radius:14px;">
+                      <tr>
+                        <td style="padding:12px 12px;">
+                          <div style="font-size:10px; font-weight:700; letter-spacing:0.8px; text-transform:uppercase; color:#ff8e53; margin-bottom:4px;">Seguridad</div>
+                          <div style="font-size:12px; font-weight:700; color:#ffffff;">Cifrado real</div>
+                          <div style="font-size:11px; color:#a8a196; margin-top:2px;">No compartas tu clave</div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Aviso final + pie -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top:12px;">
+                <tr>
+                  <td style="padding:12px 14px; background-color:#1b1916; border:1px solid #353029; border-radius:12px; font-size:12px; line-height:1.5; color:#b3aca1;">
+                    Si tú no solicitaste esta verificación, ignora este mensaje; tu cuenta en <strong style="color:#ffffff;">The House Fit</strong> sigue protegida.
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="padding-top:14px; font-size:11px; color:#8d867c;">
+                    The House Fit · Correo automático de seguridad · No responder
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>
-</html>   
+</html>

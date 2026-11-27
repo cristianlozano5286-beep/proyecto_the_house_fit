@@ -215,9 +215,26 @@ export class AuthService {
   }
 
   // ------------------- RECUPERAR CONTRASEÑA -------------------
-  async solicitarRecuperacion(correo: string): Promise<string | null> {
+  async solicitarRecuperacion(correo: string): Promise<{ error: string | null; mensaje?: string }> {
     try {
-      await this.api.crear('/auth/recuperar', { correo: correo.trim().toLowerCase() });
+      const resp = await this.api.crear<{ mensaje?: string }>('/auth/recuperar', {
+        correo: correo.trim().toLowerCase(),
+      });
+      return {
+        error: null,
+        mensaje: resp?.mensaje || 'Te enviamos un código de 6 dígitos a tu correo.',
+      };
+    } catch (error) {
+      return { error: mensajeDeError(error) };
+    }
+  }
+
+  async verificarCodigoRecuperacion(correo: string, codigo: string): Promise<string | null> {
+    try {
+      await this.api.crear('/auth/recuperar/verificar', {
+        correo: correo.trim().toLowerCase(),
+        codigo: codigo.trim(),
+      });
       return null;
     } catch (error) {
       return mensajeDeError(error);

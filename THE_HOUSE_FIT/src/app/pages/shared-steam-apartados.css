@@ -7,7 +7,7 @@
 :host {
   display: block;
   width: 100%;
-  color: #f4f5f8;
+  color: var(--thf-text-1);
   font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -22,11 +22,11 @@
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  background: rgba(20, 21, 27, 0.74);
+  background: var(--thf-surface-glass-strong);
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
   border: none;
-  border-bottom: none;
+  border-bottom: 1px solid var(--thf-border-subtle);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -45,7 +45,7 @@
   align-items: center;
   gap: 11px;
   text-decoration: none;
-  color: #ffffff;
+  color: var(--thf-text-1);
   white-space: nowrap;
   transition: transform 0.16s ease;
 }
@@ -55,16 +55,14 @@
 }
 
 .steam-logo-box {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #ff5d28 0%, #d94112 100%);
+  width: 34px;
+  height: 34px;
+  background: transparent;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
+  padding: 0;
   box-sizing: border-box;
-  box-shadow: 0 6px 18px -6px rgba(255, 91, 36, 0.55);
   flex-shrink: 0;
 }
 
@@ -72,26 +70,27 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(255, 69, 0, 0.55));
 }
 
 .steam-brand-name {
   font-family: 'Plus Jakarta Sans', inherit;
-  font-size: 14.5px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  color: #ffffff;
+  font-size: 18.5px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--thf-text-1);
 }
 
 .steam-brand-name strong {
-  color: #ff6a33;
+  color: #ff4500;
 }
 
 .steam-role-chip {
   padding: 4px 10px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #a9afbf;
+  background: var(--thf-surface-chip);
+  border: 1px solid var(--thf-border-default);
+  color: var(--thf-text-2);
   font-size: 10.5px;
   font-weight: 600;
   letter-spacing: 0.05em;
@@ -130,7 +129,7 @@
   height: 38px;
   padding: 0 13px;
   border-radius: 10px;
-  color: #9fa4b5;
+  color: var(--thf-text-2);
   font-size: 13px;
   font-weight: 500;
   text-decoration: none;
@@ -140,8 +139,8 @@
 }
 
 .steam-nav-link:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.05);
+  color: var(--thf-text-1);
+  background: var(--thf-surface-hover);
 }
 
 .steam-nav-link:focus-visible {
@@ -150,25 +149,25 @@
 }
 
 .steam-nav-link svg {
-  color: #7c8194;
+  color: var(--thf-text-3);
   flex-shrink: 0;
   transition: color 0.16s ease;
 }
 
 .steam-nav-link:hover svg {
-  color: #e4e6ed;
+  color: var(--thf-text-1);
 }
 
 .steam-nav-link.active,
 .steam-nav-link[aria-current="page"] {
-  color: #ff7745;
+  color: var(--thf-accent-text);
   font-weight: 600;
-  background: rgba(255, 91, 36, 0.09);
+  background: var(--thf-accent-soft-bg);
 }
 
 .steam-nav-link.active svg,
 .steam-nav-link[aria-current="page"] svg {
-  color: #ff7745;
+  color: var(--thf-accent-text);
 }
 
 .steam-nav-link.active::after,
@@ -217,26 +216,26 @@
 }
 
 .steam-btn-ghost {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.08);
-  color: #d6dae4;
+  background: var(--thf-surface-1);
+  border-color: var(--thf-border-default);
+  color: var(--thf-text-1);
 }
 
 .steam-btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.095);
-  border-color: rgba(255, 255, 255, 0.18);
-  color: #ffffff;
+  background: var(--thf-surface-hover-strong);
+  border-color: var(--thf-border-strong);
+  color: var(--thf-text-1);
 }
 
 .steam-btn-ember-soft {
-  background: rgba(255, 91, 36, 0.12);
-  border-color: rgba(255, 91, 36, 0.26);
-  color: #ff9c78;
+  background: var(--thf-accent-soft-bg);
+  border-color: var(--thf-border-accent);
+  color: var(--thf-accent-text);
 }
 
 .steam-btn-ember-soft:hover {
-  background: rgba(255, 91, 36, 0.22);
-  border-color: rgba(255, 119, 69, 0.48);
+  background: #ff4500;
+  border-color: #ff4500;
   color: #ffffff;
 }
 
@@ -314,14 +313,17 @@
   min-height: 290px;
   border-radius: 16px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.085);
+  background: #14161e;
+  border: 1px solid var(--thf-border-subtle);
   box-shadow:
-    0 24px 48px -18px rgba(0, 0, 0, 0.72),
+    0 24px 48px -18px var(--thf-shadow-color-lg),
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  /* Fotografía + scrim oscuro: aislar siempre en dark scheme */
+  color-scheme: only dark;
+  color: #ffffff;
 }
 
 .steam-hero-bg {
@@ -474,8 +476,10 @@ button.steam-tag-pill.is-active {
   background: linear-gradient(135deg, #9d6f18 0%, #ba4914 48%, #8d131a 100%);
   border: 1px solid rgba(255, 214, 158, 0.24);
   box-shadow:
-    0 22px 44px -16px rgba(175, 48, 14, 0.45),
+    0 22px 44px -16px rgba(175, 48, 14, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.26);
+  color-scheme: only dark;
+  color: #ffffff;
 }
 
 .steam-featured-eyebrow {
@@ -577,15 +581,16 @@ button.steam-tag-pill.is-active {
   border-radius: 12px;
   overflow: hidden;
   padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--thf-surface-1);
+  border: 1px solid var(--thf-border-default);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 6px 18px -10px var(--thf-shadow-color-sm);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   text-decoration: none;
-  color: #f4f5f8;
+  color: var(--thf-text-1);
   cursor: pointer;
   text-align: left;
   font-family: inherit;
@@ -594,15 +599,15 @@ button.steam-tag-pill.is-active {
 }
 
 .steam-mini-glass-tile:hover {
-  border-color: rgba(255, 119, 69, 0.42);
-  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--thf-border-accent);
+  background: var(--thf-surface-hover-strong);
   transform: translateY(-1px);
 }
 
 .steam-mini-tile-label {
   font-size: 11px;
   font-weight: 500;
-  color: #9fa4b5;
+  color: var(--thf-text-2);
 }
 
 .steam-mini-tile-val {
@@ -610,7 +615,7 @@ button.steam-tag-pill.is-active {
   font-size: 17px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  color: #ffffff;
+  color: var(--thf-text-1);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -618,14 +623,14 @@ button.steam-tag-pill.is-active {
 
 /* Superficie base Steam Glass reutilizable */
 .steam-glass-panel {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--thf-surface-1);
+  border: 1px solid var(--thf-border-default);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-radius: 16px;
   box-shadow:
-    0 16px 34px -14px rgba(0, 0, 0, 0.48),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    0 16px 34px -14px var(--thf-shadow-color-md),
+    inset 0 1px 0 var(--thf-specular-inset);
 }
 
 /* Fila visual de 4 tarjetas estilo Steam ("Special offers") */
@@ -641,14 +646,14 @@ button.steam-tag-pill.is-active {
   font-family: 'Plus Jakarta Sans', inherit;
   font-size: 16px;
   font-weight: 600;
-  color: #f4f5f8;
+  color: var(--thf-text-1);
   letter-spacing: -0.01em;
 }
 
 .steam-section-sublink {
   font-size: 12.5px;
   font-weight: 500;
-  color: #9fa4b5;
+  color: var(--thf-text-2);
   background: transparent;
   border: none;
   padding: 0;
@@ -659,7 +664,7 @@ button.steam-tag-pill.is-active {
 }
 
 .steam-section-sublink:hover {
-  color: #ffffff;
+  color: var(--thf-text-1);
 }
 
 .steam-offers-grid {
@@ -675,12 +680,14 @@ button.steam-tag-pill.is-active {
   overflow: hidden;
   text-decoration: none;
   background: #181a22;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--thf-border-subtle);
   padding: 0;
   cursor: pointer;
   text-align: left;
-  box-shadow: 0 18px 34px -16px rgba(0, 0, 0, 0.68);
+  box-shadow: 0 18px 34px -16px var(--thf-shadow-color-lg);
   transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+  color-scheme: only dark;
+  color: #ffffff;
 }
 
 .steam-offer-card:hover {

@@ -3,10 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { CargaInicialService } from '../../services/carga-inicial';
+import { ThemeToggleComponent } from '../../shared/theme-toggle/theme-toggle';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, ThemeToggleComponent],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })

@@ -1,7 +1,7 @@
 :host {
   display: block;
-  background: #141416;
-  color: #f3f4f6;
+  background: var(--thf-surface-1-solid);
+  color: var(--thf-text-1);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   border-radius: 16px;
   overflow: hidden;
@@ -9,9 +9,9 @@
 
 .modal-reserva-wrapper {
   padding: 24px;
-  background: #141416;
+  background: linear-gradient(180deg, var(--thf-modal-bg-start) 0%, var(--thf-modal-bg-end) 100%);
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--thf-border-default);
 }
 
 /* Cabecera */
@@ -21,15 +21,15 @@
   gap: 14px;
   position: relative;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--thf-border-subtle);
 }
 
 .header-icon-box {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: linear-gradient(135deg, rgba(255, 69, 0, 0.2), rgba(255, 107, 0, 0.05));
-  border: 1px solid rgba(255, 69, 0, 0.3);
+  background: var(--thf-accent-soft-bg);
+  border: 1px solid var(--thf-border-accent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -49,20 +49,20 @@
   font-weight: 800 !important;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #ffffff;
+  color: var(--thf-text-1);
   line-height: 1.2;
 }
 
 .dialog-subtitle {
   margin: 2px 0 0 0;
   font-size: 13px;
-  color: #9ca3af;
+  color: var(--thf-text-2);
 }
 
 .btn-close {
   background: transparent;
   border: none;
-  color: #6b7280;
+  color: var(--thf-text-3);
   font-size: 18px;
   cursor: pointer;
   width: 32px;
@@ -75,8 +75,8 @@
 }
 
 .btn-close:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
+  background: var(--thf-surface-hover);
+  color: var(--thf-text-1);
 }
 
 /* Contenido */
@@ -88,8 +88,8 @@
 }
 
 .resumen-card {
-  background: #1c1c1f;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--thf-surface-2-solid);
+  border: 1px solid var(--thf-border-default);
   border-radius: 14px;
   padding: 18px;
   position: relative;
@@ -103,7 +103,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #ff4500, #ff8533);
+  background: var(--color-primary-gradient);
 }
 
 .resumen-top {
@@ -114,9 +114,9 @@
 }
 
 .discipline-tag {
-  background: rgba(255, 69, 0, 0.15);
-  color: #ff6b00;
-  border: 1px solid rgba(255, 69, 0, 0.3);
+  background: var(--thf-accent-soft-bg);
+  color: var(--thf-accent-text);
+  border: 1px solid var(--thf-border-accent);
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 12px;
@@ -127,7 +127,7 @@
 
 .spots-badge {
   font-size: 12px;
-  color: #10b981;
+  color: var(--thf-success-text);
   display: flex;
   align-items: center;
   gap: 4px;
@@ -139,7 +139,7 @@
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 24px;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--thf-text-1);
   letter-spacing: 0.02em;
 }
 
@@ -148,9 +148,9 @@
   align-items: center;
   gap: 12px;
   padding: 10px 12px;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--thf-surface-1);
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--thf-border-subtle);
   margin-bottom: 16px;
 }
 
@@ -158,7 +158,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #ff4500, #ff8533);
+  background: var(--color-primary-gradient);
   color: #ffffff;
   font-weight: 800;
   font-size: 13px;
@@ -174,14 +174,14 @@
 
 .coach-label {
   font-size: 11px;
-  color: #9ca3af;
+  color: var(--thf-text-3);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .coach-name {
   font-size: 14px;
-  color: #f3f4f6;
+  color: var(--thf-text-1);
   font-weight: 600;
 }
 
@@ -193,8 +193,8 @@
 }
 
 .info-item {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: var(--thf-surface-1);
+  border: 1px solid var(--thf-border-subtle);
   border-radius: 8px;
   padding: 8px 12px;
   display: flex;
@@ -204,19 +204,19 @@
 
 .item-label {
   font-size: 11px;
-  color: #9ca3af;
+  color: var(--thf-text-3);
   font-weight: 500;
 }
 
 .item-value {
   font-size: 13px;
-  color: #ffffff;
+  color: var(--thf-text-1);
   font-weight: 600;
 }
 
 .divider {
   height: 1px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--thf-border-subtle);
   margin: 14px 0;
 }
 
@@ -237,28 +237,28 @@
   font-size: 18px;
   font-weight: 700;
   text-transform: uppercase;
-  color: #ffffff;
+  color: var(--thf-text-1);
   letter-spacing: 0.03em;
 }
 
 .total-sub {
   font-size: 11px;
-  color: #9ca3af;
+  color: var(--thf-text-2);
 }
 
 .total-val {
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 26px;
   font-weight: 800;
-  color: #ff6b00;
+  color: var(--thf-accent-text);
   letter-spacing: 0.02em;
 }
 
 /* Tarjeta de política */
 .policy-card {
   margin-top: 14px;
-  background: rgba(16, 185, 129, 0.06);
-  border: 1px solid rgba(16, 185, 129, 0.18);
+  background: var(--thf-success-bg);
+  border: 1px solid var(--thf-success-border);
   border-radius: 10px;
   padding: 12px 14px;
   display: flex;
@@ -274,12 +274,12 @@
 .policy-text {
   margin: 0;
   font-size: 12px;
-  color: #a7f3d0;
+  color: var(--thf-success-text);
   line-height: 1.4;
 }
 
 .policy-text strong {
-  color: #ffffff;
+  color: var(--thf-text-1);
 }
 
 /* Acciones */
@@ -289,12 +289,12 @@
   gap: 12px;
   padding-top: 16px !important;
   margin: 0 !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid var(--thf-border-subtle);
 }
 
 .btn-cancelar {
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  color: #9ca3af !important;
+  border: 1px solid var(--thf-border-default) !important;
+  color: var(--thf-text-2) !important;
   background: transparent !important;
   border-radius: 8px !important;
   padding: 0 18px !important;
@@ -304,13 +304,13 @@
 }
 
 .btn-cancelar:hover {
-  border-color: #ffffff !important;
-  color: #ffffff !important;
-  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: var(--thf-border-strong) !important;
+  color: var(--thf-text-1) !important;
+  background: var(--thf-surface-hover) !important;
 }
 
 .btn-confirmar {
-  background: linear-gradient(135deg, #ff4500, #ff6b00) !important;
+  background: var(--color-primary-gradient) !important;
   color: #ffffff !important;
   border-radius: 8px !important;
   padding: 0 22px !important;
@@ -325,7 +325,7 @@
 }
 
 .btn-confirmar:hover {
-  background: linear-gradient(135deg, #ff5714, #ff8533) !important;
+  filter: brightness(1.06);
   box-shadow: 0 6px 20px rgba(255, 69, 0, 0.5) !important;
   transform: translateY(-1px);
 }

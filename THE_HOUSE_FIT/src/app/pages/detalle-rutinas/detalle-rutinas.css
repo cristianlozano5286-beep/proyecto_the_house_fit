@@ -6,12 +6,11 @@
 
 :host {
   --thf-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-  --thf-surface: #111520;
-  --thf-surface-soft: rgba(255, 255, 255, 0.035);
-  --thf-border: rgba(255, 255, 255, 0.08);
-  --thf-border-strong: rgba(255, 255, 255, 0.16);
-  --thf-ink: #f8fafc;
-  --thf-muted: #94a3b8;
+  --thf-surface: var(--thf-surface-1);
+  --thf-surface-soft: var(--thf-surface-chip);
+  --thf-border: var(--thf-border-subtle);
+  --thf-ink: var(--thf-text-1);
+  --thf-muted: var(--thf-text-2);
   --thf-ember: #ff4500;
   display: block;
   color: var(--thf-ink);
@@ -64,6 +63,7 @@
 .back-btn-pill.primary {
   background: var(--thf-ember);
   border-color: var(--thf-ember);
+  color: #ffffff;
 }
 
 .back-btn-pill:active {
@@ -111,13 +111,13 @@
 }
 
 .badge-disc {
-  background: rgba(255, 69, 0, 0.14);
-  color: #ff7a45;
+  background: var(--thf-accent-soft-bg);
+  color: var(--thf-accent-text);
 }
 
 .badge-lvl {
-  background: rgba(255, 255, 255, 0.06);
-  color: #e2e8f0;
+  background: var(--thf-surface-chip);
+  color: var(--thf-text-2);
 }
 
 .session-title {
@@ -217,7 +217,7 @@ progress.progress-ring::slider-fill {
 progress.progress-ring {
   --size: 86px;
   --thickness: 8px;
-  --track-color: rgba(255, 255, 255, 0.1);
+  --track-color: var(--thf-border-default);
   --fill-color: #ff4500;
   --value: attr(value type(<number>));
   width: var(--size);
@@ -294,7 +294,7 @@ progress.progress-ring[value='100'] {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #ff7a45;
+  color: var(--thf-accent-text);
 }
 
 .cockpit-status-col strong {
@@ -327,15 +327,15 @@ progress.progress-ring[value='100'] {
   padding: 13px 14px;
   border-radius: 14px;
   border: 1px solid var(--thf-border);
-  background: rgba(8, 10, 16, 0.72);
+  background: var(--thf-surface-2);
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
 .rest-timer-panel.finished {
-  border-color: rgba(16, 185, 129, 0.55);
-  background: rgba(16, 185, 129, 0.09);
+  border-color: var(--thf-success-border);
+  background: var(--thf-success-bg);
 }
 
 .rest-timer-head {
@@ -348,11 +348,11 @@ progress.progress-ring[value='100'] {
 .timer-title {
   font-size: 12px;
   font-weight: 600;
-  color: #cbd5e1;
+  color: var(--thf-text-2);
 }
 
 .rest-timer-panel.finished .timer-title {
-  color: #34d399;
+  color: var(--thf-success-text);
 }
 
 .timer-presets {
@@ -363,7 +363,7 @@ progress.progress-ring[value='100'] {
 .preset-chip {
   padding: 3px 8px;
   border-radius: 7px;
-  border: 1px solid var(--thf-border);
+  border: 1px solid var(--thf-border-default);
   background: transparent;
   color: var(--thf-muted);
   font-family: inherit;
@@ -373,9 +373,9 @@ progress.progress-ring[value='100'] {
 }
 
 .preset-chip.active {
-  background: rgba(255, 69, 0, 0.16);
-  border-color: rgba(255, 69, 0, 0.5);
-  color: #ffffff;
+  background: var(--thf-accent-soft-bg);
+  border-color: var(--thf-border-accent);
+  color: var(--thf-accent-text);
 }
 
 .rest-timer-controls {
@@ -421,9 +421,9 @@ progress.progress-ring[value='100'] {
   width: 34px;
   height: 34px;
   border-radius: 9px;
-  border: 1px solid var(--thf-border);
+  border: 1px solid var(--thf-border-default);
   background: var(--thf-surface-soft);
-  color: #cbd5e1;
+  color: var(--thf-text-2);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -469,9 +469,9 @@ progress.progress-ring[value='100'] {
 .state-pill {
   padding: 7px 13px;
   border-radius: 999px;
-  border: 1px solid var(--thf-border);
-  background: rgba(255, 255, 255, 0.03);
-  color: #cbd5e1;
+  border: 1px solid var(--thf-border-default);
+  background: var(--thf-surface-chip);
+  color: var(--thf-text-2);
   font-family: inherit;
   font-size: 12.5px;
   font-weight: 600;
@@ -479,9 +479,9 @@ progress.progress-ring[value='100'] {
 }
 
 .state-pill.active {
-  background: rgba(255, 69, 0, 0.16);
-  border-color: rgba(255, 69, 0, 0.52);
-  color: #ffffff;
+  background: var(--thf-accent-soft-bg);
+  border-color: var(--thf-border-accent);
+  color: var(--thf-accent-text);
 }
 
 /* Stack de ejercicios */
@@ -507,12 +507,12 @@ progress.progress-ring[value='100'] {
 }
 
 .exercise-row-card.is-active {
-  border-color: rgba(255, 69, 0, 0.45);
-  background: #141926;
+  border-color: var(--thf-border-accent);
+  background: var(--thf-surface-2);
 }
 
 .exercise-row-card.is-done {
-  border-color: rgba(16, 185, 129, 0.35);
+  border-color: var(--thf-success-border);
 }
 
 .exercise-thumb-wrap {
@@ -522,6 +522,8 @@ progress.progress-ring[value='100'] {
   border-radius: 12px;
   overflow: hidden;
   background: #0c0f16;
+  color-scheme: only dark;
+  color: #ffffff;
 }
 
 .exercise-thumb-wrap img {
@@ -567,13 +569,13 @@ progress.progress-ring[value='100'] {
 }
 
 .pill-muscle {
-  background: rgba(255, 255, 255, 0.05);
-  color: #cbd5e1;
+  background: var(--thf-surface-chip);
+  color: var(--thf-text-2);
 }
 
 .pill-sets {
-  background: rgba(255, 69, 0, 0.12);
-  color: #ff8a5b;
+  background: var(--thf-accent-soft-bg);
+  color: var(--thf-accent-text);
 }
 
 .exercise-title {
@@ -588,7 +590,7 @@ progress.progress-ring[value='100'] {
   margin: 0;
   font-size: 14px;
   line-height: 1.55;
-  color: #cbd5e1;
+  color: var(--thf-text-2);
 }
 
 /* Series interactivas */
@@ -619,8 +621,8 @@ progress.progress-ring[value='100'] {
   padding: 5px 10px;
   border-radius: 8px;
   border: 1px solid var(--thf-border-strong);
-  background: rgba(255, 255, 255, 0.04);
-  color: #e2e8f0;
+  background: var(--thf-surface-chip);
+  color: var(--thf-text-1);
   font-family: inherit;
   font-size: 12px;
   font-weight: 700;
@@ -634,9 +636,9 @@ progress.progress-ring[value='100'] {
 }
 
 .set-pill-btn.checked {
-  background: rgba(16, 185, 129, 0.16);
-  border-color: rgba(16, 185, 129, 0.6);
-  color: #34d399;
+  background: var(--thf-success-bg);
+  border-color: var(--thf-success-border);
+  color: var(--thf-success-text);
 }
 
 .rest-quick-btn {
@@ -645,9 +647,9 @@ progress.progress-ring[value='100'] {
   gap: 5px;
   padding: 5px 10px;
   border-radius: 8px;
-  border: 1px solid var(--thf-border);
+  border: 1px solid var(--thf-border-default);
   background: transparent;
-  color: #94a3b8;
+  color: var(--thf-text-2);
   font-family: inherit;
   font-size: 12px;
   font-weight: 600;
@@ -682,14 +684,14 @@ progress.progress-ring[value='100'] {
   padding: 10px 12px;
   border-radius: 10px;
   border: 1px solid var(--thf-border);
-  background: rgba(8, 10, 16, 0.62);
+  background: var(--thf-surface-2);
   font-size: 13px;
   line-height: 1.5;
-  color: #cbd5e1;
+  color: var(--thf-text-2);
 }
 
 .biomech-cue-note strong {
-  color: #ff8a5b;
+  color: var(--thf-accent-text);
 }
 
 .exercise-complete-col {
@@ -707,7 +709,7 @@ progress.progress-ring[value='100'] {
   padding: 10px 16px;
   border-radius: 11px;
   border: 1px solid var(--thf-border-strong);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--thf-surface-chip);
   color: var(--thf-ink);
   font-family: inherit;
   font-size: 13px;
@@ -722,9 +724,9 @@ progress.progress-ring[value='100'] {
 }
 
 .complete-exercise-btn.done {
-  background: rgba(16, 185, 129, 0.18);
-  border-color: rgba(16, 185, 129, 0.6);
-  color: #34d399;
+  background: var(--thf-success-bg);
+  border-color: var(--thf-success-border);
+  color: var(--thf-success-text);
 }
 
 .empty-filter-banner {
@@ -777,7 +779,7 @@ progress.progress-ring[value='100'] {
 .related-all-link {
   font-size: 13.5px;
   font-weight: 600;
-  color: #ff7a45;
+  color: var(--thf-accent-text);
   text-decoration: none;
 }
 
@@ -804,7 +806,7 @@ progress.progress-ring[value='100'] {
 .related-img-wrap {
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  background: #0c0f16;
+  background: var(--thf-surface-2-solid);
 }
 
 .related-img-wrap img {
@@ -831,7 +833,7 @@ progress.progress-ring[value='100'] {
 }
 
 .related-type {
-  color: #ff7a45;
+  color: var(--thf-accent-text);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -863,7 +865,7 @@ progress.progress-ring[value='100'] {
   padding-top: 8px;
   font-size: 12px;
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--thf-text-2);
 }
 
 .missing-routine-shell {
@@ -900,16 +902,16 @@ progress.progress-ring[value='100'] {
   .state-pill:hover,
   .rest-quick-btn:hover {
     border-color: var(--thf-border-strong);
-    background: rgba(255, 255, 255, 0.07);
+    background: var(--thf-surface-hover-strong);
     color: var(--thf-ink);
   }
   .complete-exercise-btn:hover {
     border-color: var(--thf-ember);
-    background: rgba(255, 69, 0, 0.14);
+    background: var(--thf-accent-soft-bg);
   }
   .complete-exercise-btn.done:hover {
-    border-color: rgba(16, 185, 129, 0.8);
-    background: rgba(16, 185, 129, 0.24);
+    border-color: var(--thf-success-border);
+    background: var(--thf-success-bg);
   }
   .related-card:hover {
     transform: translateY(-2px);

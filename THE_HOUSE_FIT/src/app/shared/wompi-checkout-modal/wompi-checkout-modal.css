@@ -8,11 +8,11 @@ dialog.wmp-dialog {
   width: min(490px, calc(100vw - 24px));
   max-width: 490px;
   border-radius: 22px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: linear-gradient(165deg, #131824 0%, #0b0e15 100%);
-  color: #f8fafc;
+  border: 1px solid var(--thf-border-default);
+  background: linear-gradient(165deg, var(--thf-modal-bg-start) 0%, var(--thf-modal-bg-end) 100%);
+  color: var(--thf-text-1);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  box-shadow: 0 32px 84px rgba(0, 0, 0, 0.85);
+  box-shadow: 0 32px 84px var(--thf-shadow-color-lg);
   overflow: hidden;
   opacity: 0;
   transition-property: opacity, transform, display, overlay;
@@ -34,7 +34,7 @@ dialog.wmp-dialog:modal {
 dialog.wmp-dialog::backdrop {
   overflow: hidden;
   overscroll-behavior: contain;
-  background-color: rgba(3, 5, 10, 0.82);
+  background-color: var(--thf-surface-overlay);
 }
 
 dialog.wmp-dialog[open] {
@@ -96,13 +96,15 @@ dialog.wmp-dialog[open] {
 .wmp-title-row strong {
   font-size: 15.5px;
   font-weight: 700;
+  color: var(--thf-text-1);
 }
 
 .wmp-sandbox-pill {
   padding: 2px 8px;
   border-radius: 999px;
-  background: rgba(16, 185, 129, 0.16);
-  color: #34d399;
+  background: var(--thf-success-bg);
+  color: var(--thf-success-text);
+  border: 1px solid var(--thf-success-border);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -111,16 +113,16 @@ dialog.wmp-dialog[open] {
 .wmp-sub {
   display: block;
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--thf-text-2);
 }
 
 .wmp-close-btn {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.05);
-  color: #f8fafc;
+  border: 1px solid var(--thf-border-default);
+  background: var(--thf-surface-2);
+  color: var(--thf-text-1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -134,8 +136,8 @@ dialog.wmp-dialog[open] {
   gap: 14px;
   padding: 14px 16px;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--thf-border-subtle);
+  background: var(--thf-surface-2);
 }
 
 .wmp-summary-copy {
@@ -150,17 +152,17 @@ dialog.wmp-dialog[open] {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #ff7a45;
+  color: var(--thf-accent-text);
 }
 
 .wmp-summary-copy strong {
   font-size: 13.5px;
-  color: #f8fafc;
+  color: var(--thf-text-1);
 }
 
 .wmp-summary-copy small {
   font-size: 11.5px;
-  color: #94a3b8;
+  color: var(--thf-text-2);
 }
 
 .wmp-summary-price {
@@ -171,13 +173,13 @@ dialog.wmp-dialog[open] {
 .wmp-summary-price span {
   display: block;
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--thf-text-2);
 }
 
 .wmp-summary-price strong {
   font-size: 17px;
   font-weight: 800;
-  color: #34d399;
+  color: var(--thf-success-text);
 }
 
 .wmp-methods-grid {
@@ -189,9 +191,9 @@ dialog.wmp-dialog[open] {
 .wmp-method-btn {
   padding: 11px 12px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.03);
-  color: #f8fafc;
+  border: 1px solid var(--thf-border-default);
+  background: var(--thf-surface-2);
+  color: var(--thf-text-1);
   font-family: inherit;
   text-align: left;
   cursor: pointer;
@@ -203,24 +205,25 @@ dialog.wmp-dialog[open] {
 }
 
 .wmp-method-btn.active {
-  border-color: #10b981;
-  background: rgba(16, 185, 129, 0.12);
+  border-color: var(--thf-success-border);
+  background: var(--thf-success-bg);
 }
 
 .wmp-method-btn strong {
   font-size: 13px;
+  color: var(--thf-text-1);
 }
 
 .wmp-method-btn span {
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--thf-text-2);
 }
 
 .wmp-form-panel {
   padding: 14px;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(8, 10, 16, 0.65);
+  border: 1px solid var(--thf-border-subtle);
+  background: var(--thf-surface-2);
 }
 
 .wmp-card-grid {
@@ -242,42 +245,49 @@ dialog.wmp-dialog[open] {
 .wmp-field label {
   font-size: 11.5px;
   font-weight: 600;
-  color: #cbd5e1;
+  color: var(--thf-text-2);
 }
 
 .wmp-field input,
 .wmp-field select {
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--thf-border-input);
   border-radius: 10px;
   padding: 9px 11px;
-  background: rgba(255, 255, 255, 0.05);
-  color: #f8fafc;
+  background: var(--thf-surface-input);
+  color: var(--thf-text-1);
   font-family: inherit;
   font-size: 13px;
   outline: none;
 }
 
+.wmp-field input:focus,
+.wmp-field select:focus {
+  background: var(--thf-surface-input-focus);
+  border-color: var(--color-primary);
+}
+
 .wmp-field select option {
-  background: #111521;
-  color: #f8fafc;
+  background: var(--thf-option-bg);
+  color: var(--thf-text-1);
 }
 
 .wmp-field small {
   font-size: 11.5px;
-  color: #94a3b8;
+  color: var(--thf-text-2);
   line-height: 1.4;
 }
 
 .wmp-info-note strong {
   display: block;
   font-size: 13px;
+  color: var(--thf-text-1);
   margin-bottom: 4px;
 }
 
 .wmp-info-note p {
   margin: 0;
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--thf-text-2);
   line-height: 1.45;
 }
 
@@ -310,7 +320,7 @@ dialog.wmp-dialog[open] {
   background: transparent;
   border: none;
   padding: 6px;
-  color: #94a3b8;
+  color: var(--thf-text-2);
   font-family: inherit;
   font-size: 12.5px;
   cursor: pointer;
@@ -330,7 +340,7 @@ dialog.wmp-dialog[open] {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 3px solid rgba(16, 185, 129, 0.2);
+  border: 3px solid var(--thf-success-border);
   border-top-color: #10b981;
   animation: wmpSpin 0.8s linear infinite;
 }
@@ -345,8 +355,8 @@ dialog.wmp-dialog[open] {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: rgba(16, 185, 129, 0.16);
-  color: #34d399;
+  background: var(--thf-success-bg);
+  color: var(--thf-success-text);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -356,13 +366,13 @@ dialog.wmp-dialog[open] {
   margin: 0;
   font-size: 17px;
   font-weight: 800;
-  color: #34d399;
+  color: var(--thf-success-text);
 }
 
 .wmp-approved-box p {
   margin: 0;
   font-size: 13px;
-  color: #cbd5e1;
+  color: var(--thf-text-2);
   line-height: 1.45;
 }
 
@@ -371,8 +381,8 @@ dialog.wmp-dialog[open] {
   margin: 4px 0 6px;
   padding: 12px 14px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--thf-surface-2);
+  border: 1px solid var(--thf-border-subtle);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -386,15 +396,15 @@ dialog.wmp-dialog[open] {
 }
 
 .wmp-receipt-list dt {
-  color: #94a3b8;
+  color: var(--thf-text-2);
 }
 
 .wmp-receipt-list dd {
   margin: 0;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--thf-text-1);
 }
 
 .wmp-receipt-list dd.ok {
-  color: #34d399;
+  color: var(--thf-success-text);
 }

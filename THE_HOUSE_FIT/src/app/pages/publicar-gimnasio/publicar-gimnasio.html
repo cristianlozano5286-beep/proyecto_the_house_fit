@@ -6,9 +6,9 @@
         <div class="navbar-left">
             <a routerLink="/panel/dashboard" class="brand-link" title="Volver al Dashboard">
                 <div class="logo-circle">
-                    <img src="assets/logo-icon-white.png" alt="The House Fit" class="wizard-brand-logo-img" />
+                    <img src="assets/logo-icon-orange.png" alt="The House Fit" class="wizard-brand-logo-img" />
                 </div>
-                <span class="brand-text">THE HOUSE <strong>FIT</strong></span>
+                <span class="brand-text">The House <strong>Fit</strong></span>
             </a>
             <span class="portal-badge">{{ esModoEdicion ? 'CREADOR GYM · EDICIÓN DE SEDE' : 'CREADOR GYM · PUBLICACIÓN' }}</span>
         </div>
@@ -53,6 +53,7 @@
         }
 
         <div class="navbar-right">
+            <app-theme-toggle variante="compact"></app-theme-toggle>
             @if (esModoEdicion && pantallaActual !== 'hub') {
                 <button type="button" class="btn-nav-pill-subtle" (click)="volverASeleccionGimnasio()" title="Elegir otro gimnasio para editar">
                     Cambiar gimnasio
@@ -280,18 +281,90 @@
                         <div class="space-cutaway-art">
                             <div class="cutaway-room">
                                 <div class="room-floor">
-                                    <div class="gym-equipment-zone weight-zone">
-                                        <span class="zone-label">🏋️ Zona de Musculación & Peso Libre</span>
-                                    </div>
-                                    <div class="gym-equipment-zone cardio-zone">
-                                        <span class="zone-label">🏃 Cardio & Cintas</span>
-                                    </div>
-                                    <div class="gym-equipment-zone lounge-zone">
-                                        <span class="zone-label">🧘 Yoga & Calentamiento</span>
-                                    </div>
+                                    @for (zona of zonasVisuales; track zona.id) {
+                                        <article
+                                            class="gym-equipment-zone"
+                                            [class.weight-zone]="zona.id === 'musculacion'"
+                                            [class.cardio-zone]="zona.id === 'cardio'"
+                                            [class.lounge-zone]="zona.id === 'yoga'"
+                                            [class.has-image]="!!imagenesZonas[zona.id]"
+                                            [class.is-drag-over]="zonaDragSobre === zona.id"
+                                            (dragover)="onZonaDragOver(zona.id, $event)"
+                                            (dragleave)="onZonaDragLeave(zona.id)"
+                                            (drop)="onZonaDrop(zona.id, $event)"
+                                        >
+                                            @if (imagenesZonas[zona.id]; as imgUrl) {
+                                                <img [src]="imgUrl" [alt]="zona.nombre" />
+                                            }
+                                            <div class="zone-scrim" aria-hidden="true"></div>
+
+                                            <header class="zone-card-top">
+                                                <span class="zone-action-badge">
+                                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                        @if (imagenesZonas[zona.id]) {
+                                                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                                            <circle cx="12" cy="13" r="4"></circle>
+                                                        } @else {
+                                                            <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+                                                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                                            <polyline points="21 15 16 10 5 21"></polyline>
+                                                        }
+                                                    </svg>
+                                                    <span>{{ imagenesZonas[zona.id] ? 'Cambiar foto' : 'Subir foto' }}</span>
+                                                </span>
+
+                                                @if (imagenesZonas[zona.id]) {
+                                                    <button
+                                                        type="button"
+                                                        class="zone-remove-btn"
+                                                        (click)="quitarImagenZona(zona.id, $event)"
+                                                        [attr.aria-label]="'Quitar foto de ' + zona.nombre"
+                                                    >
+                                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" aria-hidden="true">
+                                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                                        </svg>
+                                                    </button>
+                                                }
+                                            </header>
+
+                                            <footer class="zone-card-bottom">
+                                                <button
+                                                    type="button"
+                                                    class="zone-card-trigger"
+                                                    (click)="abrirSelectorImagenZona(zonaFileInput)"
+                                                    [attr.aria-describedby]="'zone-hint-' + zona.id"
+                                                >
+                                                    <span class="zone-label">{{ zona.nombre }}</span>
+                                                </button>
+                                                <p class="zone-sub-hint" [id]="'zone-hint-' + zona.id">
+                                                    {{ imagenesZonas[zona.id] ? 'Cargada · Se incluirá en tu galería' : zona.sugerencia }}
+                                                </p>
+                                            </footer>
+
+                                            <input
+                                                #zonaFileInput
+                                                type="file"
+                                                accept="image/*"
+                                                tabindex="-1"
+                                                class="visually-hidden-zone-input"
+                                                [attr.aria-label]="'Subir imagen para ' + zona.nombre"
+                                                (change)="onImagenZonaSeleccionada(zona.id, $event)"
+                                            />
+                                        </article>
+                                    }
                                 </div>
                             </div>
                         </div>
+
+                        <p class="zones-helper-caption">
+                            @if (conteoImagenesZonas > 0) {
+                                <span class="zones-ready-dot" aria-hidden="true"></span>
+                                <span>{{ conteoImagenesZonas }} de 3 zonas con imagen · También aparecerán en la galería del Paso 2</span>
+                            } @else {
+                                <span>Haz clic en cada zona para colocar una imagen real de tu gimnasio (opcional).</span>
+                            }
+                        </p>
                     </div>
                 </div>
             </div>
@@ -305,29 +378,43 @@
         <main class="step-content-container">
             <div class="step-header-center">
                 <span class="step-mini-tag">Paso 1 &middot; Tipología de Centro</span>
-                <h1 class="step-large-heading">¿Cuál de estas opciones describe mejor tu espacio?</h1>
+                <h1 class="step-large-heading">¿Cuáles de estas opciones describen mejor tu espacio?</h1>
                 <p class="step-description-text">
-                    Selecciona la categoría principal de tu gimnasio para que los atletas encuentren el entrenamiento adecuado.
+                    Puedes seleccionar una o varias categorías para que los atletas encuentren todas las disciplinas de tu sede.
                 </p>
+                <div class="selection-count-pill" [class.is-empty]="tiposEspacioSeleccionados.length === 0">
+                    <span class="count-dot" aria-hidden="true"></span>
+                    @if (tiposEspacioSeleccionados.length === 0) {
+                        <span>Elige al menos una categoría para continuar</span>
+                    } @else {
+                        <span>
+                            {{ tiposEspacioSeleccionados.length }}
+                            {{ tiposEspacioSeleccionados.length === 1 ? 'categoría seleccionada' : 'categorías seleccionadas' }}
+                        </span>
+                    }
+                </div>
             </div>
 
             <div class="spaces-grid-cards">
                 @for (item of tiposEspacio; track item.id) {
-                    <div
+                    <label
                         class="space-select-card"
-                        [class.selected]="tipoEspacioSeleccionado === item.id"
-                        (click)="seleccionarTipoEspacio(item.id)"
-                        role="button"
-                        tabindex="0">
-                        <div class="space-card-icon">{{ item.icono }}</div>
+                        [class.selected]="estaTipoEspacioSeleccionado(item.id)">
+                        <input
+                            type="checkbox"
+                            class="visually-hidden-choice"
+                            [checked]="estaTipoEspacioSeleccionado(item.id)"
+                            (change)="seleccionarTipoEspacio(item.id)"
+                        />
+                        <div class="space-card-icon" aria-hidden="true">{{ item.icono }}</div>
                         <div class="space-card-info">
                             <h3 class="space-card-name">{{ item.nombre }}</h3>
                             <p class="space-card-desc">{{ item.descripcion }}</p>
                         </div>
-                        @if (tipoEspacioSeleccionado === item.id) {
-                            <div class="selected-check-indicator">✓</div>
+                        @if (estaTipoEspacioSeleccionado(item.id)) {
+                            <div class="selected-check-indicator" aria-hidden="true">✓</div>
                         }
-                    </div>
+                    </label>
                 }
             </div>
         </main>
@@ -610,85 +697,10 @@
 
                 <div class="step-graphic-col">
                     <div class="isometric-illustration-box">
-                        <!-- MAQUETA ISOMÉTRICA DEPORTIVA 3D THE HOUSE FIT -->
-                        <div class="isometric-cutaway-wrapper">
-                            <svg class="isometric-gym-svg" viewBox="0 0 600 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <linearGradient id="gymWallGrad" x1="0" y1="0" x2="1" y2="1">
-                                        <stop offset="0%" stop-color="#1e293b" />
-                                        <stop offset="100%" stop-color="#0f172a" />
-                                    </linearGradient>
-                                    <linearGradient id="gymFloorGrad" x1="0" y1="0" x2="1" y2="0">
-                                        <stop offset="0%" stop-color="#161f30" />
-                                        <stop offset="100%" stop-color="#0d1424" />
-                                    </linearGradient>
-                                    <linearGradient id="orangeNeonGlow" x1="0" y1="0" x2="1" y2="1">
-                                        <stop offset="0%" stop-color="#ff7a45" />
-                                        <stop offset="100%" stop-color="#ff5722" />
-                                    </linearGradient>
-                                    <filter id="neonBlur" x="-20%" y="-20%" width="140%" height="140%">
-                                        <feGaussianBlur stdDeviation="6" result="blur" />
-                                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                                    </filter>
-                                </defs>
-
-                                <!-- Base de piso isométrico del gimnasio -->
-                                <polygon points="300,90 530,220 300,350 70,220" fill="url(#gymFloorGrad)" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
-                                <!-- Cuadrícula de suelo deportivo / losas de caucho -->
-                                <path d="M185,155 L415,285 M125,190 L355,320 M240,125 L470,255" stroke="rgba(255,87,34,0.12)" stroke-width="1.5"/>
-                                <path d="M185,285 L415,155 M125,255 L355,125 M240,320 L470,190" stroke="rgba(255,87,34,0.12)" stroke-width="1.5"/>
-
-                                <!-- Pared trasera izquierda (espejos y logo neón) -->
-                                <polygon points="70,220 300,90 300,10 70,140" fill="url(#gymWallGrad)" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-                                <!-- Espejo con reflejos -->
-                                <polygon points="85,200 285,85 285,30 85,145" fill="rgba(56,189,248,0.08)" stroke="rgba(56,189,248,0.3)" stroke-width="1.5"/>
-                                <!-- Tira LED Neón The House Fit -->
-                                <line x1="85" y1="28" x2="285" y2="83" stroke="#ff5722" stroke-width="4" filter="url(#neonBlur)"/>
-                                <text x="185" y="115" fill="#ffffff" font-size="11" font-weight="800" letter-spacing="3" transform="rotate(-26 185 115)">THE HOUSE FIT</text>
-
-                                <!-- Pared trasera derecha (loft de cardio y ventanal) -->
-                                <polygon points="300,90 530,220 530,140 300,10" fill="#141c2e" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-                                <!-- Ventanales con luz exterior -->
-                                <polygon points="315,85 515,200 515,155 315,40" fill="rgba(255,87,34,0.06)" stroke="rgba(255,87,34,0.3)" stroke-width="1.5"/>
-
-                                <!-- Mezzanine / Loft Cardio (Nivel superior) -->
-                                <polygon points="310,130 490,230 430,265 250,165" fill="#1e293b" stroke="rgba(255,87,34,0.4)" stroke-width="2"/>
-                                <!-- Baranda de cristal templado en loft -->
-                                <polygon points="250,165 430,265 430,240 250,140" fill="rgba(56,189,248,0.18)" stroke="#38bdf8" stroke-width="1.5"/>
-                                <!-- Cintas de correr en loft -->
-                                <rect x="330" y="170" width="30" height="15" rx="3" fill="#ff5722" transform="rotate(-30 330 170)"/>
-                                <rect x="375" y="195" width="30" height="15" rx="3" fill="#ff5722" transform="rotate(-30 375 195)"/>
-
-                                <!-- Escalera isométrica de acceso -->
-                                <path d="M250,165 L270,177 L270,220 L250,208 Z" fill="#334155" stroke="rgba(255,255,255,0.2)"/>
-                                <path d="M230,177 L250,189 L250,232 L230,220 Z" fill="#1e293b" stroke="rgba(255,255,255,0.2)"/>
-                                <path d="M210,189 L230,201 L230,244 L210,232 Z" fill="#334155" stroke="rgba(255,255,255,0.2)"/>
-
-                                <!-- Zona de musculación en planta baja -->
-                                <!-- Banco de press de banca -->
-                                <rect x="180" y="240" width="45" height="18" rx="4" fill="#090d16" stroke="#ff7a45" stroke-width="2" transform="rotate(30 180 240)"/>
-                                <!-- Barra olímpica con discos -->
-                                <line x1="150" y1="230" x2="235" y2="280" stroke="#94a3b8" stroke-width="4"/>
-                                <circle cx="160" cy="235" r="9" fill="#ff5722" stroke="#ffffff" stroke-width="1.5"/>
-                                <circle cx="225" cy="275" r="9" fill="#ff5722" stroke="#ffffff" stroke-width="1.5"/>
-
-                                <!-- Rack piramidal de mancuernas -->
-                                <polygon points="260,250 310,280 310,260 260,230" fill="#090d16" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
-                                <circle cx="275" cy="245" r="5" fill="#f8fafc"/>
-                                <circle cx="295" cy="257" r="6" fill="#f8fafc"/>
-
-                                <!-- Lockers / Casilleros vestidor -->
-                                <polygon points="120,240 160,263 160,210 120,187" fill="#1e293b" stroke="#ff5722" stroke-width="1.5"/>
-                                <line x1="140" y1="200" x2="140" y2="250" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
-
-                                <!-- Glow decorativo inferior -->
-                                <ellipse cx="300" cy="400" rx="160" ry="25" fill="rgba(255,87,34,0.12)" filter="url(#neonBlur)"/>
-                            </svg>
-                            <div class="cutaway-badge-floating">
-                                <span class="badge-dot-live"></span>
-                                Maqueta 3D · Instalaciones The House Fit
-                            </div>
-                        </div>
+                        <app-gym-3d-model
+                            [nombreSede]="tituloGimnasio || 'The House Fit'"
+                            modeloGlbUrl="assets/models/the-house-fit-gym.glb"
+                        />
                     </div>
                 </div>
             </div>
@@ -1271,60 +1283,11 @@
 
                 <div class="step-graphic-col">
                     <div class="isometric-illustration-box">
-                        <!-- MAQUETA 3D ISOMÉTRICA PASO 3 THE HOUSE FIT (RECEPCIÓN & PUBLICACIÓN) -->
-                        <div class="isometric-cutaway-wrapper">
-                            <svg class="isometric-gym-svg" viewBox="0 0 600 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <linearGradient id="receptionWallGrad" x1="0" y1="0" x2="1" y2="1">
-                                        <stop offset="0%" stop-color="#1e293b" />
-                                        <stop offset="100%" stop-color="#0b111e" />
-                                    </linearGradient>
-                                    <linearGradient id="receptionFloorGrad" x1="0" y1="0" x2="1" y2="0">
-                                        <stop offset="0%" stop-color="#1a2436" />
-                                        <stop offset="100%" stop-color="#0d1424" />
-                                    </linearGradient>
-                                    <linearGradient id="neonOrangePaso3" x1="0" y1="0" x2="1" y2="1">
-                                        <stop offset="0%" stop-color="#ff7a45" />
-                                        <stop offset="100%" stop-color="#ff5722" />
-                                    </linearGradient>
-                                    <filter id="neonGlowPaso3" x="-20%" y="-20%" width="140%" height="140%">
-                                        <feGaussianBlur stdDeviation="6" result="blur" />
-                                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                                    </filter>
-                                </defs>
-
-                                <!-- Suelo de la recepción -->
-                                <polygon points="300,100 520,225 300,350 80,225" fill="url(#receptionFloorGrad)" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
-                                <path d="M190,162 L410,287 M135,193 L355,318 M245,131 L465,256" stroke="rgba(255,87,34,0.14)" stroke-width="1.5"/>
-
-                                <!-- Paredes traseras -->
-                                <polygon points="80,225 300,100 300,20 80,145" fill="url(#receptionWallGrad)" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-                                <polygon points="300,100 520,225 520,145 300,20" fill="#131c2d" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-
-                                <!-- Cartel Neón THE HOUSE FIT · RECEPCIÓN -->
-                                <rect x="120" y="55" width="130" height="35" rx="6" fill="#090d16" stroke="#ff5722" stroke-width="1.5" transform="rotate(-26 120 55)" filter="url(#neonGlowPaso3)"/>
-                                <text x="135" y="77" fill="#ffffff" font-size="10" font-weight="800" letter-spacing="2" transform="rotate(-26 120 55)">THE HOUSE FIT</text>
-
-                                <!-- Mostrador de recepción moderno -->
-                                <polygon points="210,195 310,250 310,215 210,160" fill="#1e293b" stroke="#ff5722" stroke-width="2"/>
-                                <polygon points="210,160 310,215 360,185 260,130" fill="#334155" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-                                <polygon points="310,250 360,220 360,185 310,215" fill="#0f172a" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
-                                <!-- Monitor en mostrador -->
-                                <rect x="270" y="150" width="22" height="15" rx="2" fill="#0284c7" stroke="#ffffff" stroke-width="1" transform="rotate(-15 270 150)"/>
-
-                                <!-- Torniquete de acceso biométrico / QR -->
-                                <rect x="360" y="240" width="18" height="40" rx="3" fill="#475569" stroke="#94a3b8" stroke-width="1.5"/>
-                                <circle cx="369" cy="245" r="4" fill="#22c55e" filter="url(#neonGlowPaso3)"/>
-                                <line x1="378" y1="260" x2="415" y2="245" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round"/>
-
-                                <!-- Badge Flotante "¡Paso 3 Listo para Publicar!" -->
-                                <ellipse cx="300" cy="410" rx="140" ry="20" fill="rgba(255,87,34,0.15)" filter="url(#neonGlowPaso3)"/>
-                            </svg>
-                            <div class="cutaway-badge-floating">
-                                <span class="badge-dot-live"></span>
-                                Recepción y Tarifas · The House Fit
-                            </div>
-                        </div>
+                        <app-gym-3d-model
+                            [nombreSede]="tituloGimnasio || 'The House Fit'"
+                            modoEscena="recepcion"
+                            modeloGlbUrl="assets/models/the-house-fit-reception.glb"
+                        />
                     </div>
                 </div>
             </div>
@@ -2101,7 +2064,7 @@
                     type="button"
                     class="btn-footer-next"
                     (click)="irPasoSiguiente()"
-                    [disabled]="(pantallaActual === 'fotos' && fotos.length < 5) || (pantallaActual === 'titulo-gimnasio' && (!tituloGimnasio || tituloGimnasio.trim().length === 0)) || (pantallaActual === 'datos-fiscales' && (!direccionFiscal?.trim() || !ciudadFiscal?.trim() || esEmpresa === null)) || publicandoEnProceso">
+                    [disabled]="(pantallaActual === 'tipo-espacio' && tiposEspacioSeleccionados.length === 0) || (pantallaActual === 'fotos' && fotos.length < 5) || (pantallaActual === 'titulo-gimnasio' && (!tituloGimnasio || tituloGimnasio.trim().length === 0)) || (pantallaActual === 'datos-fiscales' && (!direccionFiscal?.trim() || !ciudadFiscal?.trim() || esEmpresa === null)) || publicandoEnProceso">
                     @if (publicandoEnProceso) {
                         {{ esModoEdicion ? 'Guardando cambios...' : 'Creando anuncio...' }}
                     } @else if (pantallaActual === 'fotos') {

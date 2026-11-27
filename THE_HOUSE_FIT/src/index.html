@@ -5,8 +5,32 @@
   <title>The House Fit</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
-  <meta name="theme-color" content="#000000">
-  <meta name="background-color" content="#000000">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#12141a">
+  <meta name="background-color" content="#12141a">
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem('color-scheme');
+        var meta = document.querySelector('meta[name="color-scheme"]');
+        var resolved;
+        if (stored === 'light' || stored === 'dark') {
+          if (meta) meta.content = stored;
+          resolved = stored;
+        } else {
+          if (meta) meta.content = 'light dark';
+          var sysDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          resolved = sysDark ? 'dark' : 'light';
+        }
+        document.documentElement.dataset.theme = resolved;
+        var bg = resolved === 'light' ? '#f4f3ee' : '#12141a';
+        var tc = document.querySelector('meta[name="theme-color"]');
+        var bc = document.querySelector('meta[name="background-color"]');
+        if (tc) tc.content = bg;
+        if (bc) bc.content = bg;
+      } catch (e) {}
+    })();
+  </script>
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">

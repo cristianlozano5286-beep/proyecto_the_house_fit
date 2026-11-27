@@ -6,3 +6,10 @@ url_crud=http://localhost:3000
 enviar_correo=false
 codigos_en_consola=false
 origen_cliente=http://localhost:4200
+
+# Envio de correos por SMTP (recomendado con Gmail + Contraseña de Aplicacion)
+smtp_host=smtp.gmail.com
+smtp_puerto=587
+smtp_usuario=
+smtp_clave=
+smtp_remitente=

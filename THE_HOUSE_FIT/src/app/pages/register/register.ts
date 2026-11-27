@@ -18,6 +18,7 @@ import {
 } from '@angular/forms';
 import { AuthService } from '../../services/auth';
 import { CargaInicialService } from '../../services/carga-inicial';
+import { ThemeToggleComponent } from '../../shared/theme-toggle/theme-toggle';
 
 export interface EscenaMinimalRegister {
   id: string;
@@ -36,7 +37,7 @@ export interface EscenaMinimalRegister {
 
 @Component({
   selector: 'app-register',
-  imports: [FormsModule, ReactiveFormsModule, RouterLink],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink, ThemeToggleComponent],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })

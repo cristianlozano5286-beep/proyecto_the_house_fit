@@ -22,8 +22,10 @@
     </nav>
   </div>
 
-  <!-- DERECHA: ACCESOS RÁPIDOS, TIENDA, PERFIL CON ARO EMBER Y SALIDA -->
+  <!-- DERECHA: ACCESOS RÁPIDOS, TEMA CLARO/OSCURO, PERFIL CON ARO EMBER Y SALIDA -->
   <div class="topbar-right">
+    <app-theme-toggle variante="panel"></app-theme-toggle>
+
     <a routerLink="/mi-espacio/reservar-clase" class="topbar-icon-btn has-indicator" title="Agenda y reservas">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>

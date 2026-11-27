@@ -22,6 +22,7 @@ func init() {
 	beego.Router("/api/v1/auth/codigo", &controllers.AuthController{}, "post:PedirCodigo")
 	beego.Router("/api/v1/auth/verificar", &controllers.AuthController{}, "post:VerificarCodigo")
 	beego.Router("/api/v1/auth/recuperar", &controllers.AuthController{}, "post:Recuperar")
+	beego.Router("/api/v1/auth/recuperar/verificar", &controllers.AuthController{}, "post:VerificarRecuperacion")
 	beego.Router("/api/v1/auth/restablecer", &controllers.AuthController{}, "post:Restablecer")
 	beego.Router("/api/v1/auth/perfil", &controllers.AuthController{}, "get:Perfil;put:ActualizarPerfil")
 	beego.Router("/api/v1/apk/TheHouseFit.apk", &controllers.AuthController{}, "get:DescargarApk")

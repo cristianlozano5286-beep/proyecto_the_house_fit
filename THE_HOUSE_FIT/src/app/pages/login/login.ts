@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { CargaInicialService } from '../../services/carga-inicial';
+import { ThemeToggleComponent } from '../../shared/theme-toggle/theme-toggle';
 
 export interface EscenaBleap {
   id: string;
@@ -29,7 +30,7 @@ export interface EscenaBleap {
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, ThemeToggleComponent],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
