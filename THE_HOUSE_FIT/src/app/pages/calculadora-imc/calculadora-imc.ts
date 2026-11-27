@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
+type ObjetivoPrincipal = 'deficit' | 'mantenimiento' | 'superavit';
+
 interface ComidaEjemplo {
   momento: string;
   detalle: string;
@@ -30,6 +32,7 @@ export class CalculadoraImcComponent implements OnInit {
   peso: number | null = 72;
   estatura: number | null = 1.75;
   nivelActividad: 'sedentario' | 'ligero' | 'moderado' | 'intenso' = 'moderado';
+  objetivoPrincipal: ObjetivoPrincipal = 'mantenimiento';
 
   imc: number | null = null;
   categoria = '';
@@ -45,24 +48,30 @@ export class CalculadoraImcComponent implements OnInit {
   diferenciaPesoTexto = 'Dentro de tu rango óptimo';
   caloriasMantenimiento = 2450;
   caloriasObjetivo = 2450;
-  proteinaDiaria = 144;
+  ingestaSubtitulo = 'Mantenimiento: 2450 kcal';
+  proteinaDiaria = 137;
+  carbosGramos = 280;
+  grasasGramos = 76;
+  proteinaPct = 22;
+  carbosPct = 50;
+  grasasPct = 28;
   aguaDiaria = '2.5';
 
-  private planes: Record<string, PlanNutricional> = {
-    underweight: {
-      titulo: 'Plan de Superávit Limpio e Hipertrofia',
-      enfoque: 'Superávit calórico (+350 kcal)',
-      desc: 'Incrementa tu ingesta calórica con alimentos densos en micronutrientes, priorizando proteína de alto valor biológico y carbohidratos complejos alrededor del entrenamiento.',
+  private planesPorObjetivo: Record<ObjetivoPrincipal, PlanNutricional> = {
+    deficit: {
+      titulo: 'Plan de Definición y Oxidación de Grasa',
+      enfoque: 'Déficit calórico (-400 kcal)',
+      desc: 'Prioriza saciedad mediante alto volumen de vegetales fibrosos, proteínas magras y carbohidratos moderados alrededor del entrenamiento para proteger tu masa muscular.',
       ejemplo:
-        'Desayuno: avena con fruta y frutos secos. Almuerzo: pollo, arroz y aguacate. Cena: pescado con pasta integral.',
+        'Desayuno: claras con espinaca. Almuerzo: pollo a la plancha, arroz moderado y brócoli. Cena: pescado blanco con ensalada.',
       comidas: [
-        { momento: 'Desayuno', detalle: 'Avena en hojuelas con banano, mantequilla de maní y 3 huevos enteros.' },
-        { momento: 'Almuerzo', detalle: 'Pechuga de pollo (180g), arroz jazmín, aguacate Hass y ensalada fresca.' },
-        { momento: 'Cena / Post-entreno', detalle: 'Salmón o tilapia con pasta integral, aceite de oliva y batido de proteína.' },
+        { momento: 'Desayuno', detalle: 'Omelette de 3 claras y 1 huevo entero con espinaca, tomate cherry y 1 rebanada de pan integral.' },
+        { momento: 'Almuerzo', detalle: 'Pechuga de pollo a la plancha (180g), porción moderada de arroz integral y ensalada abundante de brócoli.' },
+        { momento: 'Cena / Post-entreno', detalle: 'Filete de pescado blanco al horno con espárragos, calabacín salteado y aguacate.' },
       ],
-      enfoqueEntrenamiento: 'Fuerza progresiva en ejercicios compuestos (sentadilla, press, peso muerto) 4 días/semana.',
+      enfoqueEntrenamiento: 'Fuerza 3–4 días/semana para preservar masa muscular + acondicionamiento metabólico / HIIT.',
     },
-    normal: {
+    mantenimiento: {
       titulo: 'Plan de Recomposición y Rendimiento Atlético',
       enfoque: 'Mantenimiento normocalórico',
       desc: 'Mantén una nutrición balanceada con distribución óptima de macronutrientes para sostener energía alta, mejorar definición muscular y optimizar la recuperación.',
@@ -75,31 +84,18 @@ export class CalculadoraImcComponent implements OnInit {
       ],
       enfoqueEntrenamiento: 'Combinación de hipertrofia + acondicionamiento metabólico 4 a 5 días/semana.',
     },
-    overweight: {
-      titulo: 'Plan de Definición y Oxidación de Grasa',
-      enfoque: 'Déficit ligero controlado (-400 kcal)',
-      desc: 'Prioriza saciedad mediante proteína magra y vegetales fibrosos, reduciendo azúcares simples y manteniendo el entrenamiento de fuerza para proteger tu masa muscular.',
+    superavit: {
+      titulo: 'Plan de Superávit Limpio e Hipertrofia',
+      enfoque: 'Superávit limpio (+300 kcal)',
+      desc: 'Incrementa tu ingesta con superávit limpio y mayor aporte de carbohidratos complejos, proteína de alto valor biológico y grasas saludables para ganar masa muscular.',
       ejemplo:
-        'Desayuno: yogur natural con fruta. Almuerzo: pechuga a la plancha con ensalada. Cena: sopa de vegetales.',
+        'Desayuno: avena con fruta y huevos. Almuerzo: pollo, arroz integral/quinoa y aguacate. Cena: salmón con pasta y batido.',
       comidas: [
-        { momento: 'Desayuno', detalle: 'Yogur griego sin azúcar con semillas de chía, fresas y 2 huevos cocidos.' },
-        { momento: 'Almuerzo', detalle: 'Pechuga de pollo a la plancha (180g), porción moderada de arroz integral y brócoli.' },
-        { momento: 'Cena / Post-entreno', detalle: 'Filete de pescado blanco al horno con espárragos y ensalada verde.' },
+        { momento: 'Desayuno', detalle: 'Avena en hojuelas con banano, mantequilla de maní natural y 3 huevos enteros.' },
+        { momento: 'Almuerzo', detalle: 'Pechuga de pollo o res magra (180g), arroz integral o quinoa, aguacate Hass y vegetales.' },
+        { momento: 'Cena / Post-entreno', detalle: 'Salmón o tilapia con pasta integral, aceite de oliva y batido post-entreno.' },
       ],
-      enfoqueEntrenamiento: 'Entrenamiento de fuerza 3-4 días/semana + sesiones de cardio LISS/HIIT post-sesión.',
-    },
-    obese: {
-      titulo: 'Plan Metabólico de Control y Reducción Progresiva',
-      enfoque: 'Déficit estructurado (-500 kcal)',
-      desc: 'Enfoque progresivo de déficit calórico sostenible, control glucémico y actividad física de bajo impacto articular acompañado de trabajo de fuerza guiado.',
-      ejemplo:
-        'Desayuno: claras de huevo y espinaca. Almuerzo: pescado al vapor y vegetales. Cena: caldo ligero con proteína magra.',
-      comidas: [
-        { momento: 'Desayuno', detalle: 'Revuelto de claras y 1 huevo entero con espinaca, tomate cherry y té verde.' },
-        { momento: 'Almuerzo', detalle: 'Pescado o pavo al vapor con mix de vegetales al grill y porción de legumbres.' },
-        { momento: 'Cena / Post-entreno', detalle: 'Crema natural de vegetales con pollo desmechado y aguacate.' },
-      ],
-      enfoqueEntrenamiento: 'Fuerza guiada en máquinas y poleas + caminatas en inclinación y movilidad diaria.',
+      enfoqueEntrenamiento: 'Hipertrofia progresiva en ejercicios compuestos (sentadilla, press, peso muerto y remos) 4–5 días/semana.',
     },
   };
 
@@ -109,24 +105,24 @@ export class CalculadoraImcComponent implements OnInit {
 
   cambiarGenero(nuevoGenero: 'masculino' | 'femenino'): void {
     this.genero = nuevoGenero;
-    this.calcularIMC(true);
   }
 
   cambiarActividad(nivel: 'sedentario' | 'ligero' | 'moderado' | 'intenso'): void {
     this.nivelActividad = nivel;
-    this.calcularIMC(true);
+  }
+
+  cambiarObjetivo(objetivo: ObjetivoPrincipal): void {
+    this.objetivoPrincipal = objetivo;
   }
 
   ajustarEdad(delta: number): void {
     const actual = this.edad || 25;
     this.edad = Math.max(12, Math.min(100, actual + delta));
-    this.calcularIMC(true);
   }
 
   ajustarPeso(delta: number): void {
     const actual = this.peso || 70;
     this.peso = Math.round(Math.max(30, Math.min(250, actual + delta)) * 10) / 10;
-    this.calcularIMC(true);
   }
 
   ajustarEstatura(delta: number): void {
@@ -135,7 +131,6 @@ export class CalculadoraImcComponent implements OnInit {
       actual = actual / 100;
     }
     this.estatura = Math.round(Math.max(1.2, Math.min(2.3, actual + delta)) * 100) / 100;
-    this.calcularIMC(true);
   }
 
   calcularIMC(silencioso = false): void {
@@ -219,20 +214,43 @@ export class CalculadoraImcComponent implements OnInit {
     const tdee = Math.round(tmb * (factores[this.nivelActividad] || 1.55));
     this.caloriasMantenimiento = tdee;
 
-    if (this.categoriaKey === 'underweight') {
-      this.caloriasObjetivo = tdee + 350;
-    } else if (this.categoriaKey === 'overweight') {
-      this.caloriasObjetivo = Math.max(1350, tdee - 400);
-    } else if (this.categoriaKey === 'obese') {
-      this.caloriasObjetivo = Math.max(1400, tdee - 500);
+    let factorProteina = 1.9;
+    let pctGrasasObjetivo = 0.28;
+
+    if (this.objetivoPrincipal === 'deficit') {
+      this.caloriasObjetivo = Math.max(1200, tdee - 400);
+      this.ingestaSubtitulo = '-400 kcal de déficit aplicado';
+      factorProteina = 2.0;
+      pctGrasasObjetivo = 0.25;
+    } else if (this.objetivoPrincipal === 'superavit') {
+      this.caloriasObjetivo = tdee + 300;
+      this.ingestaSubtitulo = '+300 kcal de superávit limpio';
+      factorProteina = 1.8;
+      pctGrasasObjetivo = 0.25;
     } else {
       this.caloriasObjetivo = tdee;
+      this.ingestaSubtitulo = `Mantenimiento: ${tdee} kcal`;
+      factorProteina = 1.9;
+      pctGrasasObjetivo = 0.28;
     }
 
-    this.proteinaDiaria = Math.round(this.peso * 1.9);
+    // Cálculo nutricional (1g P = 4 kcal, 1g C = 4 kcal, 1g G = 9 kcal)
+    this.proteinaDiaria = Math.round(this.peso * factorProteina);
+    const proteinaKcal = this.proteinaDiaria * 4;
+    const grasasKcalObjetivo = this.caloriasObjetivo * pctGrasasObjetivo;
+    this.grasasGramos = Math.round(grasasKcalObjetivo / 9);
+    const grasasKcalReales = this.grasasGramos * 9;
+    const carbosKcal = Math.max(0, this.caloriasObjetivo - proteinaKcal - grasasKcalReales);
+    this.carbosGramos = Math.round(carbosKcal / 4);
+
+    const totalKcal = Math.max(1, this.caloriasObjetivo);
+    this.proteinaPct = Math.min(100, Math.round((proteinaKcal / totalKcal) * 100));
+    this.grasasPct = Math.min(100 - this.proteinaPct, Math.round((grasasKcalReales / totalKcal) * 100));
+    this.carbosPct = Math.max(0, 100 - this.proteinaPct - this.grasasPct);
+
     this.aguaDiaria = (this.peso * 0.038).toFixed(1);
 
-    this.planActual = this.planes[this.categoriaKey];
+    this.planActual = this.planesPorObjetivo[this.objetivoPrincipal];
     this.mostrarResultado = true;
   }
 
@@ -242,6 +260,7 @@ export class CalculadoraImcComponent implements OnInit {
     this.peso = 72;
     this.estatura = 1.75;
     this.nivelActividad = 'moderado';
+    this.objetivoPrincipal = 'mantenimiento';
     this.mensajeError = '';
     this.calcularIMC(true);
   }

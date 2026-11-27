@@ -15,7 +15,8 @@ import { Rutina } from '../../models/contenido.models';
 
 export interface InfoEjercicio {
   instrucciones: string;
-  imagen: string;
+  imagenUrl: string;
+  secuenciaUrls: string[];
   musculoObjetivo: string;
   seriesReps: string;
   tipTecnico: string;
@@ -262,7 +263,7 @@ const IMAGENES_EJERCICIO: Record<string, string> = {
   'trote': 'https://images.unsplash.com/photo-1434608519344-49d77a699e1d?w=600&h=400&fit=crop&auto=format',
   'bicicleta': 'https://images.unsplash.com/photo-1534258936925-c58bed479fcb?w=600&h=400&fit=crop&auto=format',
   'cuerda': 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=600&h=400&fit=crop&auto=format',
-  'burpee': 'https://images.unsplash.com/photo-1549060279-7e168fcee0c2?w=600&h=400&fit=crop&auto=format',
+  'burpee': 'https://i.imgur.com/FkBKMxW.png',
   'mountain-climber': 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=600&h=400&fit=crop&auto=format',
   'jumping-jack': 'https://images.unsplash.com/photo-1549576490-b0b4831ef60a?w=600&h=400&fit=crop&auto=format',
   'hiit': 'https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?w=600&h=400&fit=crop&auto=format',
@@ -280,6 +281,120 @@ const IMAGENES_EJERCICIO: Record<string, string> = {
   'isquiotibiales': 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&h=400&fit=crop&auto=format',
   'cadera': 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&h=400&fit=crop&auto=format',
   'yoga-flow': 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&h=400&fit=crop&auto=format',
+};
+
+// Secuencias ordenadas de ejecución paso a paso (al hacer clic/tap se intercalan en orden)
+const SECUENCIAS_EJERCICIO: Record<string, string[]> = {
+  'burpee': [
+    'https://i.imgur.com/FkBKMxW.png', // Paso 1 (https://imgur.com/a/fNS0r8l)
+    'https://i.imgur.com/OLI885i.png', // Paso 2 (https://imgur.com/a/cTq6pwK)
+    'https://i.imgur.com/Qp60Vkx.png', // Paso 3 (https://imgur.com/a/9rhdbBx)
+  ],
+  'trote': [
+    IMAGENES_EJERCICIO['trote'],
+    IMAGENES_EJERCICIO['cuerda'],
+    IMAGENES_EJERCICIO['jumping-jack'],
+  ],
+  'bicicleta': [
+    IMAGENES_EJERCICIO['bicicleta'],
+    IMAGENES_EJERCICIO['trote'],
+    IMAGENES_EJERCICIO['hiit'],
+  ],
+  'cuerda': [
+    IMAGENES_EJERCICIO['cuerda'],
+    IMAGENES_EJERCICIO['jumping-jack'],
+    IMAGENES_EJERCICIO['sentadilla-salto'],
+  ],
+  'mountain-climber': [
+    IMAGENES_EJERCICIO['mountain-climber'],
+    IMAGENES_EJERCICIO['plancha'],
+    IMAGENES_EJERCICIO['hiit'],
+  ],
+  'jumping-jack': [
+    IMAGENES_EJERCICIO['jumping-jack'],
+    IMAGENES_EJERCICIO['cuerda'],
+    IMAGENES_EJERCICIO['sentadilla-salto'],
+  ],
+  'hiit': [
+    IMAGENES_EJERCICIO['hiit'],
+    IMAGENES_EJERCICIO['sentadilla-salto'],
+    IMAGENES_EJERCICIO['mountain-climber'],
+  ],
+  'kettlebell': [
+    IMAGENES_EJERCICIO['kettlebell'],
+    IMAGENES_EJERCICIO['peso-muerto'],
+    IMAGENES_EJERCICIO['sentadilla'],
+  ],
+  'sentadilla-salto': [
+    IMAGENES_EJERCICIO['sentadilla-salto'],
+    IMAGENES_EJERCICIO['sentadilla'],
+    IMAGENES_EJERCICIO['zancada'],
+  ],
+  'sentadilla': [
+    IMAGENES_EJERCICIO['sentadilla'],
+    IMAGENES_EJERCICIO['sentadilla-salto'],
+    IMAGENES_EJERCICIO['zancada'],
+  ],
+  'press-banca': [
+    IMAGENES_EJERCICIO['press-banca'],
+    IMAGENES_EJERCICIO['press-militar'],
+    IMAGENES_EJERCICIO['remo'],
+  ],
+  'peso-muerto': [
+    IMAGENES_EJERCICIO['peso-muerto'],
+    IMAGENES_EJERCICIO['kettlebell'],
+    IMAGENES_EJERCICIO['remo'],
+  ],
+  'dominada': [
+    IMAGENES_EJERCICIO['dominada'],
+    IMAGENES_EJERCICIO['remo'],
+    IMAGENES_EJERCICIO['curl'],
+  ],
+  'plancha': [
+    IMAGENES_EJERCICIO['plancha'],
+    IMAGENES_EJERCICIO['mountain-climber'],
+    IMAGENES_EJERCICIO['yoga-flow'],
+  ],
+  'zancada': [
+    IMAGENES_EJERCICIO['zancada'],
+    IMAGENES_EJERCICIO['sentadilla'],
+    IMAGENES_EJERCICIO['sentadilla-salto'],
+  ],
+  'remo': [
+    IMAGENES_EJERCICIO['remo'],
+    IMAGENES_EJERCICIO['dominada'],
+    IMAGENES_EJERCICIO['peso-muerto'],
+  ],
+  'curl': [
+    IMAGENES_EJERCICIO['curl'],
+    IMAGENES_EJERCICIO['press-militar'],
+    IMAGENES_EJERCICIO['press-banca'],
+  ],
+  'press-militar': [
+    IMAGENES_EJERCICIO['press-militar'],
+    IMAGENES_EJERCICIO['press-banca'],
+    IMAGENES_EJERCICIO['curl'],
+  ],
+  'isquiotibiales': [
+    IMAGENES_EJERCICIO['isquiotibiales'],
+    IMAGENES_EJERCICIO['cadera'],
+    IMAGENES_EJERCICIO['yoga-flow'],
+  ],
+  'cadera': [
+    IMAGENES_EJERCICIO['cadera'],
+    IMAGENES_EJERCICIO['isquiotibiales'],
+    IMAGENES_EJERCICIO['yoga-flow'],
+  ],
+  'yoga-flow': [
+    IMAGENES_EJERCICIO['yoga-flow'],
+    IMAGENES_EJERCICIO['cadera'],
+    IMAGENES_EJERCICIO['plancha'],
+  ],
+  'default': [
+    FOTO_RESPALDO_EJ,
+    IMAGENES_EJERCICIO['sentadilla'],
+    IMAGENES_EJERCICIO['plancha'],
+  ],
 };
 
 @Component({
@@ -301,6 +416,8 @@ export class DetalleRutinasComponent implements OnInit, AfterViewInit, OnDestroy
   readonly completadosSet = signal<Set<number>>(new Set());
   readonly seriesChecked = signal<Map<number, Set<number>>>(new Map());
   readonly ejercicioActivo = signal(0);
+  readonly ejercicioReproduciendo = signal<number | null>(null);
+  readonly frameSecuencia = signal(0);
   readonly tecnicasAbiertas = signal<Set<number>>(new Set([0]));
   readonly filtroEstado = signal<'todos' | 'pendientes' | 'completados'>('todos');
 
@@ -311,6 +428,7 @@ export class DetalleRutinasComponent implements OnInit, AfterViewInit, OnDestroy
   readonly descansoTerminado = signal(false);
 
   private timerInterval: ReturnType<typeof setInterval> | null = null;
+  private secuenciaInterval: ReturnType<typeof setInterval> | null = null;
   private ringObserver: MutationObserver | null = null;
 
   ngOnInit(): void {
@@ -322,6 +440,7 @@ export class DetalleRutinasComponent implements OnInit, AfterViewInit, OnDestroy
         this.rutina = rutinas.find((r) => r.id === id);
         this.otrasRutinas = rutinas.filter((r) => r.id !== id).slice(0, 3);
         this.ejercicioActivo.set(0);
+        this.detenerDemoMedia();
         this.tecnicasAbiertas.set(new Set([0]));
         this.filtroEstado.set('todos');
         this.reiniciarTimer(this.duracionDescanso());
@@ -341,8 +460,43 @@ export class DetalleRutinasComponent implements OnInit, AfterViewInit, OnDestroy
 
   ngOnDestroy(): void {
     this.detenerInterval();
+    this.detenerDemoMedia();
     this.ringObserver?.disconnect();
     this.ringObserver = null;
+  }
+
+  toggleDemoMedia(event: Event, idx: number, totalFrames: number): void {
+    event.stopPropagation();
+    this.ejercicioActivo.set(idx);
+    if (totalFrames <= 1) return;
+
+    if (this.ejercicioReproduciendo() === idx) {
+      this.detenerDemoMedia();
+      return;
+    }
+
+    this.detenerDemoMedia();
+    this.ejercicioReproduciendo.set(idx);
+    this.frameSecuencia.set(1 % totalFrames);
+    this.secuenciaInterval = setInterval(() => {
+      this.frameSecuencia.update((actual) => (actual + 1) % totalFrames);
+    }, 750);
+  }
+
+  private detenerDemoMedia(): void {
+    if (this.secuenciaInterval) {
+      clearInterval(this.secuenciaInterval);
+      this.secuenciaInterval = null;
+    }
+    this.ejercicioReproduciendo.set(null);
+    this.frameSecuencia.set(0);
+  }
+
+  imagenActiva(idx: number, info: InfoEjercicio): string {
+    if (this.ejercicioReproduciendo() === idx && info.secuenciaUrls.length > 1) {
+      return info.secuenciaUrls[this.frameSecuencia() % info.secuenciaUrls.length];
+    }
+    return info.imagenUrl;
   }
 
   private conectarProgressObserver(): void {
@@ -632,9 +786,13 @@ export class DetalleRutinasComponent implements OnInit, AfterViewInit, OnDestroy
     const ref = encontrado ?? INFO_GENERICA;
     const claveImg = encontrado ? encontrado.claveImagen : 'default';
 
+    const imagenUrl = IMAGENES_EJERCICIO[claveImg] || FOTO_RESPALDO_EJ;
+    const secuenciaUrls = SECUENCIAS_EJERCICIO[claveImg] ?? [];
+
     return {
       instrucciones: ref.instrucciones,
-      imagen: IMAGENES_EJERCICIO[claveImg] || FOTO_RESPALDO_EJ,
+      imagenUrl,
+      secuenciaUrls,
       musculoObjetivo: ref.musculoObjetivo,
       seriesReps: ref.seriesReps,
       tipTecnico: ref.tipTecnico,

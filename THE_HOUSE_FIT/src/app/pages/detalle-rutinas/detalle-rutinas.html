@@ -1,357 +1,302 @@
 @if (rutina; as r) {
-  <div class="workout-player-shell">
-    <!-- 1. CABECERA DE SESIÓN CON ANILLO SEMÁNTICO DE PROGRESO Y CRONÓMETRO -->
-    <section class="session-header-band">
-      <div class="session-header-inner">
-        <div class="session-nav-row">
-          <a routerLink="/rutinas" class="back-btn-pill">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <line x1="19" y1="12" x2="5" y2="12" />
-              <polyline points="12 19 5 12 12 5" />
-            </svg>
-            <span>Volver a rutinas</span>
-          </a>
+<div class="workout-player-shell">
+  <!-- 1. CABECERA DE SESIÓN CON ANILLO SEMÁNTICO DE PROGRESO Y CRONÓMETRO -->
+  <section class="session-header-band">
+    <div class="session-header-inner">
+      <div class="session-nav-row">
+        <a routerLink="/rutinas" class="back-btn-pill">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="19" y1="12" x2="5" y2="12" />
+            <polyline points="12 19 5 12 12 5" />
+          </svg>
+          <span>Volver a rutinas</span>
+        </a>
 
-          <nav class="crumbs-trail" aria-label="Ruta de navegación">
-            <a routerLink="/">Inicio</a>
-            <span aria-hidden="true">/</span>
-            <a routerLink="/rutinas">Rutinas</a>
-            <span aria-hidden="true">/</span>
-            <span class="current">{{ r.nombre }}</span>
-          </nav>
-        </div>
+        <nav class="crumbs-trail" aria-label="Ruta de navegación">
+          <a routerLink="/">Inicio</a>
+          <span aria-hidden="true">/</span>
+          <a routerLink="/rutinas">Rutinas</a>
+          <span aria-hidden="true">/</span>
+          <span class="current">{{ r.nombre }}</span>
+        </nav>
+      </div>
 
-        <div class="session-hero-split">
-          <!-- Columna izquierda: título, tags y telemetría tipográfica -->
-          <div class="session-copy-col">
-            <div class="session-badges">
-              <span class="badge-disc">{{ r.tipoEntrenamiento }}</span>
-              <span class="badge-lvl">{{ r.nivel }}</span>
-            </div>
-
-            <h1 class="session-title">{{ r.nombre }}</h1>
-            <p class="session-desc">{{ r.descripcion }}</p>
-
-            <!-- Telemetría inline limpia (sin cajas pesadas repetidas) -->
-            <dl class="telemetry-inline-strip">
-              <div class="tel-metric">
-                <dt>Duración</dt>
-                <dd>{{ r.duracionSemanas }} semanas</dd>
-              </div>
-              <div class="tel-metric">
-                <dt>Nivel</dt>
-                <dd>{{ r.nivel }}</dd>
-              </div>
-              <div class="tel-metric">
-                <dt>Volumen</dt>
-                <dd>{{ r.ejercicios.length }} ejercicios</dd>
-              </div>
-              <div class="tel-metric">
-                <dt>Tiempo</dt>
-                <dd>~{{ tiempoEstimadoMin }} min</dd>
-              </div>
-              <div class="tel-metric">
-                <dt>Gasto est.</dt>
-                <dd>~{{ caloriasEstimadas }} kcal</dd>
-              </div>
-            </dl>
+      <div class="session-hero-split">
+        <!-- Columna izquierda: título, tags y telemetría tipográfica -->
+        <div class="session-copy-col">
+          <div class="session-badges">
+            <span class="badge-disc">{{ r.tipoEntrenamiento }}</span>
+            <span class="badge-lvl">{{ r.nivel }}</span>
           </div>
 
-          <!-- Columna derecha: Anillo de progreso + Temporizador de descanso -->
-          <aside class="session-cockpit-card" aria-label="Control de sesión en vivo">
-            <div class="cockpit-top-row">
-              <!-- Semántica <progress> styled as conic progress ring -->
-              <div class="progress-ring-wrapper">
-                <progress
-                  #sessionProgressRing
-                  class="progress-ring"
-                  [value]="porcentajeProgreso"
-                  max="100"
-                  aria-label="Progreso de ejercicios completados"
-                  [attr.aria-valuetext]="completadosCount + ' de ' + r.ejercicios.length + ' ejercicios completados (' + porcentajeProgreso + '%)'"
-                ></progress>
-                <div class="progress-ring-content" aria-hidden="true">
-                  <strong>{{ porcentajeProgreso }}%</strong>
-                  <span>{{ completadosCount }}/{{ r.ejercicios.length }}</span>
-                </div>
-              </div>
+          <h1 class="session-title">{{ r.nombre }}</h1>
+          <p class="session-desc">{{ r.descripcion }}</p>
 
-              <div class="cockpit-status-col">
-                <span class="cockpit-label">Sesión en progreso</span>
-                <strong>
-                  {{ porcentajeProgreso === 100
-                    ? 'Rutina completada'
-                    : completadosCount + ' de ' + r.ejercicios.length + ' ejercicios listos' }}
-                </strong>
-                <button type="button" class="btn-session-bulk" (click)="marcarTodos()">
-                  {{ completadosCount === r.ejercicios.length ? 'Reiniciar sesión' : 'Completar todos' }}
-                </button>
+          <!-- Telemetría inline limpia (sin cajas pesadas repetidas) -->
+          <dl class="telemetry-inline-strip">
+            <div class="tel-metric">
+              <dt>Duración</dt>
+              <dd>{{ r.duracionSemanas }} semanas</dd>
+            </div>
+            <div class="tel-metric">
+              <dt>Nivel</dt>
+              <dd>{{ r.nivel }}</dd>
+            </div>
+            <div class="tel-metric">
+              <dt>Volumen</dt>
+              <dd>{{ r.ejercicios.length }} ejercicios</dd>
+            </div>
+            <div class="tel-metric">
+              <dt>Tiempo</dt>
+              <dd>~{{ tiempoEstimadoMin }} min</dd>
+            </div>
+            <div class="tel-metric">
+              <dt>Gasto est.</dt>
+              <dd>~{{ caloriasEstimadas }} kcal</dd>
+            </div>
+          </dl>
+        </div>
+
+        <!-- Columna derecha: Anillo de progreso + Temporizador de descanso -->
+        <aside class="session-cockpit-card" aria-label="Control de sesión en vivo">
+          <div class="cockpit-top-row">
+            <!-- Semántica <progress> styled as conic progress ring -->
+            <div class="progress-ring-wrapper">
+              <progress #sessionProgressRing class="progress-ring" [value]="porcentajeProgreso" max="100"
+                aria-label="Progreso de ejercicios completados"
+                [attr.aria-valuetext]="completadosCount + ' de ' + r.ejercicios.length + ' ejercicios completados (' + porcentajeProgreso + '%)'"></progress>
+              <div class="progress-ring-content" aria-hidden="true">
+                <strong>{{ porcentajeProgreso }}%</strong>
+                <span>{{ completadosCount }}/{{ r.ejercicios.length }}</span>
               </div>
             </div>
 
-            <!-- Cronómetro integrado de descanso -->
-            <div class="rest-timer-panel" [class.finished]="descansoTerminado()">
-              <div class="rest-timer-head">
-                <span class="timer-title">
-                  {{ descansoTerminado() ? 'Descanso finalizado' : 'Temporizador de descanso' }}
-                </span>
-                <div class="timer-presets" role="group" aria-label="Duración rápida de descanso">
-                  <button
-                    type="button"
-                    class="preset-chip"
-                    [class.active]="duracionDescanso() === 45"
-                    (click)="reiniciarTimer(45)"
-                  >45s</button>
-                  <button
-                    type="button"
-                    class="preset-chip"
-                    [class.active]="duracionDescanso() === 60"
-                    (click)="reiniciarTimer(60)"
-                  >60s</button>
-                  <button
-                    type="button"
-                    class="preset-chip"
-                    [class.active]="duracionDescanso() === 90"
-                    (click)="reiniciarTimer(90)"
-                  >90s</button>
-                </div>
-              </div>
-
-              <div class="rest-timer-controls">
-                <strong class="timer-clock">{{ formatoTiempo(tiempoRestante()) }}</strong>
-                <div class="timer-btns">
-                  <button type="button" class="timer-play-btn" (click)="pausarReanudarTimer()">
-                    {{ timerActivo() ? 'Pausar' : (tiempoRestante() === 0 ? 'Repetir' : 'Iniciar') }}
-                  </button>
-                  <button
-                    type="button"
-                    class="timer-reset-btn"
-                    (click)="reiniciarTimer()"
-                    aria-label="Reiniciar temporizador"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                      <polyline points="23 4 23 10 17 10" />
-                      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </aside>
-        </div>
-      </div>
-    </section>
-
-    <!-- 2. SECUENCIA INTERACTIVA DE EJERCICIOS -->
-    <main class="session-main-container">
-      <div class="sequence-toolbar">
-        <div>
-          <h2 class="sequence-heading">Secuencia de ejercicios</h2>
-          <p class="sequence-sub">Marca tus series individuales o abre el descanso automático tras cada bloque.</p>
-        </div>
-
-        <div class="status-filter-pills" role="tablist" aria-label="Filtrar ejercicios por estado">
-          <button
-            type="button"
-            role="tab"
-            [attr.aria-selected]="filtroEstado() === 'todos'"
-            class="state-pill"
-            [class.active]="filtroEstado() === 'todos'"
-            (click)="filtroEstado.set('todos')"
-          >
-            Todos ({{ r.ejercicios.length }})
-          </button>
-          <button
-            type="button"
-            role="tab"
-            [attr.aria-selected]="filtroEstado() === 'pendientes'"
-            class="state-pill"
-            [class.active]="filtroEstado() === 'pendientes'"
-            (click)="filtroEstado.set('pendientes')"
-          >
-            Pendientes ({{ pendientesCount }})
-          </button>
-          <button
-            type="button"
-            role="tab"
-            [attr.aria-selected]="filtroEstado() === 'completados'"
-            class="state-pill"
-            [class.active]="filtroEstado() === 'completados'"
-            (click)="filtroEstado.set('completados')"
-          >
-            Completados ({{ completadosCount }})
-          </button>
-        </div>
-      </div>
-
-      <div class="exercise-stack">
-        @for (i of ejerciciosFiltradosIndices(); track i) {
-          @let ejercicio = r.ejercicios[i];
-          @let info = infoEjercicio(ejercicio);
-          <article
-            class="exercise-row-card"
-            [class.is-active]="ejercicioActivo() === i"
-            [class.is-done]="esCompletado(i)"
-            (click)="ejercicioActivo.set(i)"
-          >
-            <div class="exercise-thumb-wrap">
-              <span class="exercise-num">#0{{ i + 1 }}</span>
-              <img
-                [src]="info.imagen"
-                [alt]="ejercicio"
-                loading="lazy"
-                decoding="async"
-                (error)="onImgError($event)"
-              />
-            </div>
-
-            <div class="exercise-body">
-              <div class="exercise-meta-pills">
-                <span class="pill-muscle">{{ info.musculoObjetivo }}</span>
-                <span class="pill-sets">{{ info.seriesReps }}</span>
-              </div>
-
-              <h3 class="exercise-title">{{ ejercicio }}</h3>
-              <p class="exercise-brief">{{ info.instrucciones }}</p>
-
-              <!-- Tira interactiva de series individuales + acceso rápido descanso -->
-              <div class="sets-interactive-row">
-                <span class="sets-label">Series:</span>
-                <div class="sets-pills">
-                  @for (sNum of seriesIndices(info.totalSeries); track sNum) {
-                    <button
-                      type="button"
-                      class="set-pill-btn"
-                      [class.checked]="esSerieLista(i, sNum)"
-                      [attr.aria-pressed]="esSerieLista(i, sNum)"
-                      (click)="toggleSerie($event, i, sNum, info.totalSeries)"
-                    >
-                      @if (esSerieLista(i, sNum)) {
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                      }
-                      <span>S{{ sNum }}</span>
-                    </button>
-                  }
-                </div>
-
-                <button
-                  type="button"
-                  class="rest-quick-btn"
-                  (click)="$event.stopPropagation(); iniciarDescanso()"
-                >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
-                  <span>Descansar {{ duracionDescanso() }}s</span>
-                </button>
-              </div>
-
-              <!-- Clave técnica expandible -->
-              <button
-                type="button"
-                class="cue-toggle-btn"
-                (click)="toggleTecnica($event, i)"
-                [attr.aria-expanded]="tecnicaAbierta(i)"
-              >
-                <span>{{ tecnicaAbierta(i) ? 'Ocultar clave técnica' : 'Ver clave técnica' }}</span>
-                <svg
-                  width="13"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.2"
-                  stroke-linecap="round"
-                  [class.rotated]="tecnicaAbierta(i)"
-                  aria-hidden="true"
-                >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
+            <div class="cockpit-status-col">
+              <span class="cockpit-label">Sesión en progreso</span>
+              <strong>
+                {{ porcentajeProgreso === 100
+                ? 'Rutina completada'
+                : completadosCount + ' de ' + r.ejercicios.length + ' ejercicios listos' }}
+              </strong>
+              <button type="button" class="btn-session-bulk" (click)="marcarTodos()">
+                {{ completadosCount === r.ejercicios.length ? 'Reiniciar sesión' : 'Completar todos' }}
               </button>
+            </div>
+          </div>
 
-              @if (tecnicaAbierta(i)) {
-                <div class="biomech-cue-note">
-                  <strong>Clave biomecánica:</strong> {{ info.tipTecnico }}
-                </div>
+          <!-- Cronómetro integrado de descanso -->
+          <div class="rest-timer-panel" [class.finished]="descansoTerminado()">
+            <div class="rest-timer-head">
+              <span class="timer-title">
+                {{ descansoTerminado() ? 'Descanso finalizado' : 'Temporizador de descanso' }}
+              </span>
+              <div class="timer-presets" role="group" aria-label="Duración rápida de descanso">
+                <button type="button" class="preset-chip" [class.active]="duracionDescanso() === 45"
+                  (click)="reiniciarTimer(45)">45s</button>
+                <button type="button" class="preset-chip" [class.active]="duracionDescanso() === 60"
+                  (click)="reiniciarTimer(60)">60s</button>
+                <button type="button" class="preset-chip" [class.active]="duracionDescanso() === 90"
+                  (click)="reiniciarTimer(90)">90s</button>
+              </div>
+            </div>
+
+            <div class="rest-timer-controls">
+              <strong class="timer-clock">{{ formatoTiempo(tiempoRestante()) }}</strong>
+              <div class="timer-btns">
+                <button type="button" class="timer-play-btn" (click)="pausarReanudarTimer()">
+                  {{ timerActivo() ? 'Pausar' : (tiempoRestante() === 0 ? 'Repetir' : 'Iniciar') }}
+                </button>
+                <button type="button" class="timer-reset-btn" (click)="reiniciarTimer()"
+                  aria-label="Reiniciar temporizador">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="23 4 23 10 17 10" />
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. SECUENCIA INTERACTIVA DE EJERCICIOS -->
+  <main class="session-main-container">
+    <div class="sequence-toolbar">
+      <div>
+        <h2 class="sequence-heading">Secuencia de ejercicios</h2>
+        <p class="sequence-sub">Marca tus series individuales o abre el descanso automático tras cada bloque.</p>
+      </div>
+
+      <div class="status-filter-pills" role="tablist" aria-label="Filtrar ejercicios por estado">
+        <button type="button" role="tab" [attr.aria-selected]="filtroEstado() === 'todos'" class="state-pill"
+          [class.active]="filtroEstado() === 'todos'" (click)="filtroEstado.set('todos')">
+          Todos ({{ r.ejercicios.length }})
+        </button>
+        <button type="button" role="tab" [attr.aria-selected]="filtroEstado() === 'pendientes'" class="state-pill"
+          [class.active]="filtroEstado() === 'pendientes'" (click)="filtroEstado.set('pendientes')">
+          Pendientes ({{ pendientesCount }})
+        </button>
+        <button type="button" role="tab" [attr.aria-selected]="filtroEstado() === 'completados'" class="state-pill"
+          [class.active]="filtroEstado() === 'completados'" (click)="filtroEstado.set('completados')">
+          Completados ({{ completadosCount }})
+        </button>
+      </div>
+    </div>
+
+    <div class="exercise-stack">
+      @for (i of ejerciciosFiltradosIndices(); track i) {
+      @let ejercicio = r.ejercicios[i];
+      @let info = infoEjercicio(ejercicio);
+      <article class="exercise-row-card" [class.is-active]="ejercicioActivo() === i"
+        [class.is-playing-card]="ejercicioReproduciendo() === i" [class.is-done]="esCompletado(i)"
+        (click)="ejercicioActivo.set(i)">
+        <div class="exercise-media" [class.is-playing]="ejercicioReproduciendo() === i"
+          [class.has-demo]="info.secuenciaUrls.length > 1" role="button" tabindex="0"
+          [attr.aria-pressed]="ejercicioReproduciendo() === i"
+          [attr.aria-label]="(ejercicioReproduciendo() === i ? 'Pausar demostración de ' : 'Ver técnica de ') + ejercicio"
+          (click)="toggleDemoMedia($event, i, info.secuenciaUrls.length)"
+          (keydown.enter)="toggleDemoMedia($event, i, info.secuenciaUrls.length)"
+          (keydown.space)="$event.preventDefault(); toggleDemoMedia($event, i, info.secuenciaUrls.length)">
+          <span class="exercise-num">#0{{ i + 1 }}</span>
+          <img [src]="imagenActiva(i, info)" [alt]="ejercicio" loading="lazy" decoding="async"
+            (error)="onImgError($event)" />
+          @if (info.secuenciaUrls.length > 1) {
+          <span class="badge-tecnica" [class.is-playing]="ejercicioReproduciendo() === i">
+            @if (ejercicioReproduciendo() === i) {
+            <span class="badge-icon" aria-hidden="true">⏸</span>
+            <span>Pausar ({{ (frameSecuencia() % info.secuenciaUrls.length) + 1 }}/{{ info.secuenciaUrls.length
+              }})</span>
+            } @else {
+            <span class="badge-icon" aria-hidden="true">▶</span>
+            <span>Técnica</span>
+            }
+          </span>
+          }
+        </div>
+
+        <div class="exercise-body">
+          <div class="exercise-meta-pills">
+            <span class="pill-muscle">{{ info.musculoObjetivo }}</span>
+            <span class="pill-sets">{{ info.seriesReps }}</span>
+          </div>
+
+          <h3 class="exercise-title">{{ ejercicio }}</h3>
+          <p class="exercise-brief">{{ info.instrucciones }}</p>
+
+          <!-- Tira interactiva de series individuales + acceso rápido descanso -->
+          <div class="sets-interactive-row">
+            <span class="sets-label">Series:</span>
+            <div class="sets-pills">
+              @for (sNum of seriesIndices(info.totalSeries); track sNum) {
+              <button type="button" class="set-pill-btn" [class.checked]="esSerieLista(i, sNum)"
+                [attr.aria-pressed]="esSerieLista(i, sNum)" (click)="toggleSerie($event, i, sNum, info.totalSeries)">
+                @if (esSerieLista(i, sNum)) {
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                  stroke-linecap="round" aria-hidden="true">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                }
+                <span>S{{ sNum }}</span>
+              </button>
               }
             </div>
 
-            <div class="exercise-complete-col">
-              <button
-                type="button"
-                class="complete-exercise-btn"
-                [class.done]="esCompletado(i)"
-                (click)="$event.stopPropagation(); toggleCompletado(i)"
-              >
-                @if (esCompletado(i)) {
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  <span>Completado</span>
-                } @else {
-                  <span>Marcar listo</span>
-                }
-              </button>
-            </div>
-          </article>
-        } @empty {
-          <div class="empty-filter-banner">
-            <strong>Sin ejercicios en esta pestaña</strong>
-            <p>Cambia el filtro superior o reinicia la sesión para revisar todos los bloques.</p>
+            <button type="button" class="rest-quick-btn" (click)="$event.stopPropagation(); iniciarDescanso()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              <span>Descansar {{ duracionDescanso() }}s</span>
+            </button>
           </div>
-        }
+
+          <!-- Clave técnica expandible -->
+          <button type="button" class="cue-toggle-btn" (click)="toggleTecnica($event, i)"
+            [attr.aria-expanded]="tecnicaAbierta(i)">
+            <span>{{ tecnicaAbierta(i) ? 'Ocultar clave técnica' : 'Ver clave técnica' }}</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" [class.rotated]="tecnicaAbierta(i)" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+
+          @if (tecnicaAbierta(i)) {
+          <div class="biomech-cue-note">
+            <strong>Clave biomecánica:</strong> {{ info.tipTecnico }}
+          </div>
+          }
+        </div>
+
+        <div class="exercise-complete-col">
+          <button type="button" class="complete-exercise-btn" [class.done]="esCompletado(i)"
+            (click)="$event.stopPropagation(); toggleCompletado(i)">
+            @if (esCompletado(i)) {
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"
+              stroke-linecap="round" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            <span>Completado</span>
+            } @else {
+            <span>Marcar listo</span>
+            }
+          </button>
+        </div>
+      </article>
+      } @empty {
+      <div class="empty-filter-banner">
+        <strong>Sin ejercicios en esta pestaña</strong>
+        <p>Cambia el filtro superior o reinicia la sesión para revisar todos los bloques.</p>
+      </div>
+      }
+    </div>
+
+    <!-- 3. OTRAS RUTINAS RELACIONADAS -->
+    @if (otrasRutinas.length > 0) {
+    <section class="related-routines-band">
+      <div class="related-head">
+        <div>
+          <h2>Otras rutinas recomendadas</h2>
+          <p>Explora el resto del catálogo según tu objetivo semanal.</p>
+        </div>
+        <a routerLink="/rutinas" class="related-all-link">Ver todas →</a>
       </div>
 
-      <!-- 3. OTRAS RUTINAS RELACIONADAS -->
-      @if (otrasRutinas.length > 0) {
-        <section class="related-routines-band">
-          <div class="related-head">
-            <div>
-              <h2>Otras rutinas recomendadas</h2>
-              <p>Explora el resto del catálogo según tu objetivo semanal.</p>
+      <div class="related-grid">
+        @for (otra of otrasRutinas; track otra.id) {
+        <a [routerLink]="['/rutina', otra.id]" class="related-card">
+          <div class="related-img-wrap">
+            <img [src]="imagenOtraRutina(otra)" [alt]="otra.nombre" loading="lazy" decoding="async"
+              (error)="onImgError($event)" />
+          </div>
+          <div class="related-body">
+            <div class="related-meta-top">
+              <span class="related-type">{{ otra.tipoEntrenamiento }}</span>
+              <span class="related-lvl">{{ otra.nivel }}</span>
             </div>
-            <a routerLink="/rutinas" class="related-all-link">Ver todas →</a>
+            <h3>{{ otra.nombre }}</h3>
+            <p>{{ otra.descripcion }}</p>
+            <span class="related-foot">
+              {{ otra.duracionSemanas }} semanas · {{ otra.ejercicios.length }} ejercicios →
+            </span>
           </div>
-
-          <div class="related-grid">
-            @for (otra of otrasRutinas; track otra.id) {
-              <a [routerLink]="['/rutina', otra.id]" class="related-card">
-                <div class="related-img-wrap">
-                  <img
-                    [src]="imagenOtraRutina(otra)"
-                    [alt]="otra.nombre"
-                    loading="lazy"
-                    decoding="async"
-                    (error)="onImgError($event)"
-                  />
-                </div>
-                <div class="related-body">
-                  <div class="related-meta-top">
-                    <span class="related-type">{{ otra.tipoEntrenamiento }}</span>
-                    <span class="related-lvl">{{ otra.nivel }}</span>
-                  </div>
-                  <h3>{{ otra.nombre }}</h3>
-                  <p>{{ otra.descripcion }}</p>
-                  <span class="related-foot">
-                    {{ otra.duracionSemanas }} semanas · {{ otra.ejercicios.length }} ejercicios →
-                  </span>
-                </div>
-              </a>
-            }
-          </div>
-        </section>
-      }
-    </main>
-  </div>
+        </a>
+        }
+      </div>
+    </section>
+    }
+  </main>
+</div>
 } @else {
-  <div class="missing-routine-shell">
-    <div class="missing-routine-card">
-      <h2>No encontramos esta rutina</h2>
-      <p>Es posible que el programa haya cambiado. Regresa al catálogo para elegir otro plan disponible.</p>
-      <a routerLink="/rutinas" class="back-btn-pill primary">← Volver al catálogo de rutinas</a>
-    </div>
+<div class="missing-routine-shell">
+  <div class="missing-routine-card">
+    <h2>No encontramos esta rutina</h2>
+    <p>Es posible que el programa haya cambiado. Regresa al catálogo para elegir otro plan disponible.</p>
+    <a routerLink="/rutinas" class="back-btn-pill primary">← Volver al catálogo de rutinas</a>
   </div>
+</div>
 }
