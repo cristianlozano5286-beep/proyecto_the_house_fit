@@ -103,11 +103,11 @@
 }
 
 .nav-container {
-  max-width: 1360px;
+  max-width: 1440px;
   width: 100%;
   margin: 0 auto;
   height: 76px;
-  padding: 0 28px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -244,7 +244,19 @@
   pointer-events: auto;
 }
 
+.airbnb-nav.is-compact .nav-center-morph-slot {
+  position: relative;
+  left: auto;
+  top: auto;
+  bottom: auto;
+  transform: none;
+  flex: 1 1 auto;
+  min-width: 0;
+  pointer-events: auto;
+}
+
 .airbnb-nav.is-compact .nav-hero-tabs {
+  position: absolute;
   opacity: 0;
   transform: translate3d(0, -18px, 0) scale(0.86);
   pointer-events: none;
@@ -370,8 +382,9 @@
   grid-area: 1 / 1;
   display: inline-flex;
   align-items: center;
-  height: 46px;
-  padding: 0 6px 0 16px;
+  max-width: 100%;
+  height: 44px;
+  padding: 0 6px 0 12px;
   border-radius: 999px;
   background: var(--thf-surface-1-solid);
   border: 1px solid var(--thf-border-default);
@@ -405,11 +418,13 @@
   background: transparent;
   border: none;
   color: var(--thf-text-1);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
-  padding: 6px 12px;
+  padding: 6px 10px;
   cursor: pointer;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-family: inherit;
   transition: color 0.18s ease;
 }
