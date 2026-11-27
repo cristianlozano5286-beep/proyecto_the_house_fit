@@ -11,177 +11,466 @@
 
   <!-- ESTADÍSTICAS -->
   <div class="stats-row">
-    <div class="stat-box"><span class="stat-number">{{ totalNoticias }}</span><span class="stat-label">Noticias</span></div>
-    <div class="stat-box"><span class="stat-number">{{ totalResenas }}</span><span class="stat-label">Reseñas</span></div>
-    <div class="stat-box"><span class="stat-number">{{ calificacionPromedio }}</span><span class="stat-label">Calificación</span></div>
-    <div class="stat-box"><span class="stat-number">{{ totalComentarios }}</span><span class="stat-label">Comentarios</span></div>
+    <div class="stat-box st-news">
+      <span class="stat-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 0 1 2 2v14H6a2 2 0 0 1-2-2V4z"/><path d="M19 8h1a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2"/><line x1="8" y1="8" x2="15" y2="8"/><line x1="8" y1="12" x2="15" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>
+      </span>
+      <span class="stat-info"><span class="stat-number">{{ cuenta.noticias }}</span><span class="stat-label">Noticias</span></span>
+      <span class="stat-trend">Actualizadas</span>
+    </div>
+    <div class="stat-box st-reviews">
+      <span class="stat-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 20l1.1-4.8A8.4 8.4 0 1 1 21 11.5z"/></svg>
+      </span>
+      <span class="stat-info"><span class="stat-number">{{ cuenta.resenas }}</span><span class="stat-label">Reseñas</span></span>
+      <span class="stat-trend">De la comunidad</span>
+    </div>
+    <div class="stat-box st-rating">
+      <span class="stat-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><polygon points="12 2 15.1 8.6 22 9.3 16.8 14 18.2 21 12 17.5 5.8 21 7.2 14 2 9.3 8.9 8.6 12 2"/></svg>
+      </span>
+      <span class="stat-info"><span class="stat-number">{{ cuenta.calificacion.toFixed(1) }}</span><span class="stat-label">Calificación</span></span>
+      <span class="stat-stars" aria-hidden="true">
+        <span *ngFor="let llena of getEstrellas(calificacionPromedio)" [class.on]="llena">★</span>
+      </span>
+    </div>
+    <div class="stat-box st-comments">
+      <span class="stat-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </span>
+      <span class="stat-info"><span class="stat-number">{{ cuenta.comentarios }}</span><span class="stat-label">Comentarios</span></span>
+      <span class="stat-trend">Conversación activa</span>
+    </div>
   </div>
 
   <!-- TABS -->
   <div class="filter-tabs">
-    <button class="tab" [class.active]="vistaActual === 'noticias'" (click)="cambiarVista('noticias')">📰 NOTICIAS</button>
-    <button class="tab" [class.active]="vistaActual === 'resenas'" (click)="cambiarVista('resenas')">⭐ RESEÑAS</button>
+    <div class="nw-segment" [attr.data-activa]="vistaActual">
+      <span class="nw-segment-thumb"></span>
+      <button class="tab" [class.active]="vistaActual === 'noticias'" (click)="cambiarVista('noticias')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 0 1 2 2v14H6a2 2 0 0 1-2-2V4z"/><line x1="8" y1="9" x2="15" y2="9"/><line x1="8" y1="13" x2="15" y2="13"/></svg>
+        Noticias <span class="tab-count">{{ totalNoticias }}</span>
+      </button>
+      <button class="tab" [class.active]="vistaActual === 'resenas'" (click)="cambiarVista('resenas')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><polygon points="12 2 15.1 8.6 22 9.3 16.8 14 18.2 21 12 17.5 5.8 21 7.2 14 2 9.3 8.9 8.6 12 2"/></svg>
+        Reseñas <span class="tab-count">{{ totalResenas }}</span>
+      </button>
+    </div>
   </div>
 
   <!-- ===== VISTA NOTICIAS ===== -->
-  <div class="content-grid" *ngIf="vistaActual === 'noticias'">
-    <div class="news-card" *ngFor="let n of noticias; let i = index" [style.animation-delay.ms]="i * 50">
-      <div class="news-top">
-        <span class="badge-categoria">{{ n.categoria }}</span>
-        <span class="news-comment-count" *ngIf="n.comentarios.length > 0">💬 {{ n.comentarios.length }}</span>
+  <div class="nw-wrap" *ngIf="vistaActual === 'noticias'">
+
+    <!-- Buscador + categorías -->
+    <div class="nw-toolbar">
+      <label class="nw-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Buscar noticias, gimnasios…" [(ngModel)]="busqueda" />
+        <button type="button" class="nw-search-clear" *ngIf="busqueda" (click)="busqueda = ''" aria-label="Limpiar búsqueda">✕</button>
+      </label>
+      <div class="nw-chips">
+        <button type="button" class="nw-chip" *ngFor="let c of categorias"
+          [class.active]="categoriaFiltro === c" (click)="seleccionarCategoria(c)">
+          {{ c === 'TODAS' ? 'Todas' : c }}
+          <span class="nw-chip-count">{{ conteoCategoria(c) }}</span>
+        </button>
       </div>
-      <div class="news-icon">{{ n.icono }}</div>
-      <h3>{{ n.titulo }}</h3>
-      <p class="news-summary">{{ n.resumen }}</p>
-      <div class="news-meta">
-        <span class="news-fuente">{{ n.fuente }}</span>
-        <span class="news-dot">·</span>
-        <span class="news-fecha">{{ formatearFecha(n.fecha) }}</span>
+    </div>
+
+    <!-- Noticia destacada -->
+    <article class="nw-featured" *ngIf="destacada as d" [ngClass]="categoriaClase(d.categoria)" (click)="verNoticia(d)" tabindex="0" (keydown.enter)="verNoticia(d)">
+      <div class="nw-featured-art">
+        <img class="nw-photo" [src]="imagenDe(d)" [alt]="d.titulo" loading="eager" />
+        <span class="nw-featured-flag">⭐ Destacada</span>
       </div>
-      <button class="btn-primary" (click)="verNoticia(n)">📖 Leer noticia completa</button>
+      <div class="nw-featured-body">
+        <div class="nw-card-top">
+          <span class="badge-categoria">{{ d.categoria }}</span>
+          <span class="nw-read-time">⏱ {{ tiempoLectura(d) }} min de lectura</span>
+        </div>
+        <h2>{{ d.titulo }}</h2>
+        <p>{{ d.resumen }}</p>
+        <div class="news-meta">
+          <span class="news-fuente">{{ d.fuente }}</span>
+          <span class="news-dot">·</span>
+          <span class="news-fecha">{{ formatearFecha(d.fecha) }}</span>
+        </div>
+        <div class="nw-featured-actions">
+          <button class="btn-primary nw-read-btn" (click)="verNoticia(d); $event.stopPropagation()">
+            Leer noticia completa <span class="nw-arrow">→</span>
+          </button>
+          <button type="button" class="nw-like" [class.liked]="meGusta(d)" (click)="toggleLike(d, $event)" aria-label="Me gusta">
+            <span class="nw-heart">{{ meGusta(d) ? '❤️' : '🤍' }}</span> {{ likesDe(d) }}
+          </button>
+          <span class="nw-stat-pill">💬 {{ d.comentarios.length }}</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- Grid de noticias -->
+    <div class="nw-grid">
+      <article class="nw-card" *ngFor="let n of noticiasGrid; let i = index"
+        [ngClass]="categoriaClase(n.categoria)" [style.animation-delay.ms]="i * 70"
+        (click)="verNoticia(n)" tabindex="0" (keydown.enter)="verNoticia(n)">
+        <div class="nw-card-art">
+          <img class="nw-photo" [src]="imagenDe(n)" [alt]="n.titulo" loading="lazy" />
+          <span class="badge-categoria nw-card-badge">{{ n.categoria }}</span>
+          <span class="nw-card-comments" *ngIf="n.comentarios.length > 0">💬 {{ n.comentarios.length }}</span>
+        </div>
+        <div class="nw-card-body">
+          <h3>{{ n.titulo }}</h3>
+          <p class="news-summary">{{ n.resumen }}</p>
+          <div class="news-meta">
+            <span class="news-fuente">{{ n.fuente }}</span>
+            <span class="news-dot">·</span>
+            <span class="news-fecha">{{ formatearFecha(n.fecha) }}</span>
+          </div>
+          <div class="nw-card-foot">
+            <span class="nw-read-time">⏱ {{ tiempoLectura(n) }} min</span>
+            <button type="button" class="nw-like nw-like-sm" [class.liked]="meGusta(n)" (click)="toggleLike(n, $event)" aria-label="Me gusta">
+              <span class="nw-heart">{{ meGusta(n) ? '❤️' : '🤍' }}</span> {{ likesDe(n) }}
+            </button>
+            <span class="nw-more">Leer más <span class="nw-arrow">→</span></span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Sin resultados -->
+    <div class="nw-empty" *ngIf="noticiasFiltradas.length === 0">
+      <span class="nw-empty-emoji">🔎</span>
+      <h3>No encontramos noticias</h3>
+      <p>Prueba con otra palabra o quita los filtros.</p>
+      <button class="btn-primary btn-small" (click)="limpiarFiltros()">Limpiar filtros</button>
     </div>
   </div>
 
   <!-- ===== VISTA RESEÑAS ===== -->
   <div class="resenas-section" *ngIf="vistaActual === 'resenas'">
-    <div class="resenas-toolbar">
-      <span class="resenas-count"><strong>{{ totalResenas }}</strong> reseñas de la comunidad</span>
-      <button class="btn-primary btn-small" (click)="abrirFormularioResena()">✍️ Escribir una reseña</button>
-    </div>
 
-    <div class="content-grid">
-      <div class="review-card" *ngFor="let r of resenas; let i = index" [style.animation-delay.ms]="i * 50">
-        <div class="review-top">
-          <div class="review-avatar">{{ r.avatar }}</div>
-          <div class="review-author-block">
-            <span class="review-author">{{ r.autor }}</span>
-            <span class="review-gym">{{ r.gimnasio }}</span>
+    <!-- Panel Resumen de Calificaciones -->
+    <div class="rv-summary">
+      <div class="rv-score-col">
+        <span class="rv-kicker">OPINIONES VERIFICADAS</span>
+        <div class="rv-big-row">
+          <span class="rv-big-score">{{ calificacionPromedio.toFixed(1) }}</span>
+          <div class="rv-big-meta">
+            <div class="rv-big-stars" aria-hidden="true">
+              <span *ngFor="let llena of getEstrellas(calificacionPromedio)" [class.filled]="llena">★</span>
+            </div>
+            <span class="rv-big-count">Basado en <strong>{{ totalResenas }}</strong> reseñas de la comunidad</span>
           </div>
         </div>
-        <div class="review-stars">
-          <span class="star" *ngFor="let llena of getEstrellas(r.calificacion)" [class.filled]="llena">★</span>
-        </div>
-        <p class="review-text">{{ r.texto }}</p>
-        <span class="review-fecha">{{ formatearFecha(r.fecha) }}</span>
+        <button type="button" class="rv-write-btn" (click)="abrirFormularioResena()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          <span>Escribir una reseña</span>
+        </button>
       </div>
+
+      <div class="rv-bars-col">
+        <div class="rv-bar-row" *ngFor="let item of distribucionEstrellas">
+          <span class="rv-bar-label">{{ item.estrellas }} ★</span>
+          <div class="rv-bar-track"><div class="rv-bar-fill" [style.width.%]="item.porcentaje"></div></div>
+          <span class="rv-bar-pct">{{ item.porcentaje }}%</span>
+          <span class="rv-bar-cnt">({{ item.conteo }})</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros por gimnasio -->
+    <div class="rv-filters">
+      <button type="button" class="nw-chip" *ngFor="let g of gimnasiosConFiltro"
+        [class.active]="filtroGymResena === g" (click)="filtroGymResena = g">
+        {{ g === 'TODOS' ? 'Todos los gimnasios' : g }}
+        <span class="nw-chip-count">{{ conteoResenasGym(g) }}</span>
+      </button>
+    </div>
+
+    <!-- Grid de reseñas -->
+    <div class="rv-grid">
+      <article class="rv-card" *ngFor="let r of resenasFiltradas; let i = index"
+        [ngClass]="claseGym(r.gimnasio)" [style.animation-delay.ms]="i * 60">
+        <span class="rv-quote-mark" aria-hidden="true">“</span>
+
+        <div class="rv-card-head">
+          <div class="rv-avatar">{{ inicialesDe(r.autor) }}</div>
+          <div class="rv-author-info">
+            <div class="rv-name-row">
+              <strong class="rv-author">{{ r.autor }}</strong>
+              <span class="rv-verified" title="Miembro verificado">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Verificada
+              </span>
+            </div>
+            <span class="rv-gym-pill">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              {{ r.gimnasio }}
+            </span>
+          </div>
+        </div>
+
+        <div class="rv-rating-row">
+          <div class="rv-stars">
+            <span *ngFor="let llena of getEstrellas(r.calificacion)" [class.filled]="llena">★</span>
+          </div>
+          <span class="rv-score-badge">{{ r.calificacion }}.0</span>
+        </div>
+
+        <p class="rv-text">{{ r.texto }}</p>
+
+        <div class="rv-card-foot">
+          <span class="rv-date">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            {{ formatearFecha(r.fecha) }}
+          </span>
+          <button type="button" class="rv-useful" [class.active]="meGustaResena(r.id)" (click)="toggleLikeResena(r.id)">
+            <svg width="13" height="13" viewBox="0 0 24 24" [attr.fill]="meGustaResena(r.id) ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+            <span>Útil</span>
+            <strong>{{ likesResena(r.id) }}</strong>
+          </button>
+        </div>
+      </article>
     </div>
   </div>
 
-  <!-- ===== MODAL: NOTICIA COMPLETA + COMENTARIOS ===== -->
-  <div class="modal-overlay" *ngIf="noticiaSeleccionada" (click)="cerrarNoticia()">
-    <div class="modal article-modal" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <span class="badge-categoria modal-badge">{{ noticiaSeleccionada.categoria }}</span>
-        <button (click)="cerrarNoticia()">✕</button>
+  <!-- ===== LECTOR DE NOTICIA COMPLETA ===== -->
+  <div class="nw-overlay" *ngIf="noticiaSeleccionada as ns" (click)="cerrarNoticia()">
+    <div class="nw-reader" #lector [ngClass]="categoriaClase(ns.categoria)" (click)="$event.stopPropagation()" (scroll)="onLectorScroll($event)" role="dialog" aria-modal="true">
+
+      <!-- Barra superior fija con progreso -->
+      <div class="nw-reader-bar">
+        <div class="nw-reader-bar-row">
+          <span class="badge-categoria">{{ ns.categoria }}</span>
+          <span class="nw-reader-bar-title">{{ ns.titulo }}</span>
+          <button type="button" class="nw-close" (click)="cerrarNoticia()" aria-label="Cerrar">✕</button>
+        </div>
+        <div class="nw-progress"><div class="nw-progress-fill" [style.width.%]="progresoLectura"></div></div>
       </div>
-      <div class="modal-body">
-        <div class="article-icon">{{ noticiaSeleccionada.icono }}</div>
-        <h2 class="article-title">{{ noticiaSeleccionada.titulo }}</h2>
-        <div class="article-meta">
-          <span>{{ noticiaSeleccionada.autor }}</span>
-          <span class="news-dot">·</span>
-          <span>{{ noticiaSeleccionada.fuente }}</span>
-          <span class="news-dot">·</span>
-          <span>{{ formatearFecha(noticiaSeleccionada.fecha) }}</span>
+
+      <!-- Portada con foto -->
+      <div class="nw-reader-hero">
+        <img class="nw-photo" [src]="imagenDe(ns)" [alt]="ns.titulo" />
+        <div class="nw-reader-hero-text">
+          <span class="badge-categoria nw-hero-badge">{{ ns.icono }} {{ ns.categoria }}</span>
+          <h2 class="nw-reader-title">{{ ns.titulo }}</h2>
+          <p class="nw-reader-lead">{{ ns.resumen }}</p>
+        </div>
+      </div>
+
+      <div class="nw-reader-inner">
+        <!-- Meta + acciones -->
+        <div class="nw-reader-meta">
+          <div class="nw-author">
+            <div class="nw-author-avatar">{{ ns.autor.charAt(0).toUpperCase() }}</div>
+            <div>
+              <strong>{{ ns.autor }}</strong>
+              <span>{{ ns.fuente }} · {{ formatearFecha(ns.fecha) }} · ⏱ {{ tiempoLectura(ns) }} min</span>
+            </div>
+          </div>
+          <div class="nw-reader-actions">
+            <button type="button" class="nw-like" [class.liked]="meGusta(ns)" (click)="toggleLike(ns)">
+              <span class="nw-heart">{{ meGusta(ns) ? '❤️' : '🤍' }}</span> {{ likesDe(ns) }}
+            </button>
+            <button type="button" class="nw-share" (click)="compartir(ns)">
+              {{ copiado ? '✅ Enlace copiado' : '🔗 Compartir' }}
+            </button>
+          </div>
         </div>
 
-        <div class="article-content">
-          <p *ngFor="let parrafo of noticiaSeleccionada.contenido">{{ parrafo }}</p>
+        <!-- Contenido -->
+        <div class="nw-article">
+          <ng-container *ngFor="let parrafo of ns.contenido; let pi = index">
+            <blockquote *ngIf="esCita(parrafo); else normal" class="nw-quote">{{ parrafo }}</blockquote>
+            <ng-template #normal><p [class.nw-dropcap]="pi === 0">{{ parrafo }}</p></ng-template>
+          </ng-container>
         </div>
 
-        <!-- COMENTARIOS -->
-        <div class="comments-section">
-          <h4 class="comments-title">💬 Comentarios ({{ noticiaSeleccionada.comentarios.length }})</h4>
-
-          <div class="comment-item" *ngFor="let c of noticiaSeleccionada.comentarios">
-            <div class="comment-avatar">{{ c.nombre.charAt(0).toUpperCase() }}</div>
-            <div class="comment-body">
-              <div class="comment-head">
-                <span class="comment-name">{{ c.nombre }}</span>
-                <span class="comment-fecha">{{ formatearFecha(c.fecha) }}</span>
-              </div>
-              <p class="comment-text">{{ c.texto }}</p>
+        <!-- Comentarios -->
+        <div class="nw-comments">
+          <div class="nw-sec-head">
+            <div class="nw-sec-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+            </div>
+            <div>
+              <h4 class="nw-section-title">Comentarios <span class="nw-count">{{ ns.comentarios.length }}</span></h4>
+              <span class="nw-sec-sub">Opiniones y preguntas de la comunidad</span>
             </div>
           </div>
 
-          <div class="comments-empty" *ngIf="noticiaSeleccionada.comentarios.length === 0">
-            Sé el primero en comentar esta noticia.
+          <div class="nw-comment-list" *ngIf="ns.comentarios.length > 0">
+            <div class="nw-comment-card" *ngFor="let c of ns.comentarios; let ci = index" [style.animation-delay.ms]="ci * 60">
+              <div class="nw-c-avatar">{{ c.nombre.charAt(0).toUpperCase() }}</div>
+              <div class="nw-c-main">
+                <div class="nw-c-top">
+                  <div class="nw-c-user">
+                    <span class="nw-c-name">{{ c.nombre }}</span>
+                    <span class="nw-c-role">Miembro</span>
+                  </div>
+                  <span class="nw-c-date">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    {{ formatearFecha(c.fecha) }}
+                  </span>
+                </div>
+                <p class="nw-c-text">{{ c.texto }}</p>
+                <div class="nw-c-actions">
+                  <button type="button" class="nw-c-like" [class.active]="meGustaComentario(ns.id, c.id)" (click)="toggleLikeComentario(ns.id, c.id)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" [attr.fill]="meGustaComentario(ns.id, c.id) ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                    <span>Útil</span>
+                    <span class="nw-c-like-num">{{ likesComentario(ns.id, c.id) }}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <!-- FORMULARIO NUEVO COMENTARIO -->
-          <div class="comment-form">
-            <span class="comment-form-title">Deja tu comentario</span>
-            <input
-              type="text"
-              class="comment-input"
-              placeholder="Tu nombre"
-              [(ngModel)]="nuevoComentarioNombre"
-              maxlength="40"
-            />
-            <textarea
-              class="comment-textarea"
-              placeholder="Escribe tu comentario..."
-              [(ngModel)]="nuevoComentarioTexto"
-              rows="3"
-              maxlength="300"
-            ></textarea>
-            <button
-              class="btn-primary btn-small"
-              (click)="agregarComentario()"
-              [disabled]="nuevoComentarioNombre.trim().length < 2 || nuevoComentarioTexto.trim().length < 3"
-            >
-              💬 Publicar comentario
+          <div class="nw-comments-empty" *ngIf="ns.comentarios.length === 0">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <p>Sé el primero en compartir tu opinión sobre esta noticia.</p>
+          </div>
+
+          <div class="nw-comment-form">
+            <div class="nw-cf-head">
+              <div class="nw-cf-avatar">{{ nuevoComentarioNombre.trim() ? nuevoComentarioNombre.trim().charAt(0).toUpperCase() : '?' }}</div>
+              <div>
+                <span class="nw-cf-title">Únete a la conversación</span>
+                <span class="nw-cf-sub">Tu comentario aparecerá de inmediato en el artículo</span>
+              </div>
+            </div>
+
+            <div class="nw-cf-field">
+              <svg class="nw-cf-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <input type="text" class="nw-cf-input" placeholder="Tu nombre o apodo" [(ngModel)]="nuevoComentarioNombre" maxlength="40" />
+            </div>
+
+            <textarea class="nw-cf-textarea" placeholder="¿Qué opinas de esta noticia? Escribe tu comentario aquí..." [(ngModel)]="nuevoComentarioTexto" rows="3" maxlength="300"></textarea>
+
+            <div class="nw-form-foot">
+              <div class="nw-chars-wrap">
+                <div class="nw-chars-bar"><div class="nw-chars-fill" [style.width.%]="(nuevoComentarioTexto.length / 300) * 100"></div></div>
+                <span class="nw-chars">{{ nuevoComentarioTexto.length }} / 300</span>
+              </div>
+              <button type="button" class="nw-cf-submit" (click)="agregarComentario()"
+                [disabled]="nuevoComentarioNombre.trim().length < 2 || nuevoComentarioTexto.trim().length < 3">
+                <span>Publicar comentario</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Relacionadas -->
+        <div class="nw-related" *ngIf="relacionadas.length">
+          <div class="nw-sec-head">
+            <div class="nw-sec-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
+            <div>
+              <h4 class="nw-section-title">Sigue leyendo</h4>
+              <span class="nw-sec-sub">Otras noticias recomendadas de la comunidad</span>
+            </div>
+          </div>
+
+          <div class="nw-related-grid">
+            <button type="button" class="nw-related-card" *ngFor="let r of relacionadas" [ngClass]="categoriaClase(r.categoria)" (click)="abrirRelacionada(r, lector)">
+              <span class="nw-related-cover">
+                <img [src]="imagenDe(r)" [alt]="r.titulo" loading="lazy" />
+                <span class="nw-related-badge">{{ r.categoria }}</span>
+              </span>
+              <span class="nw-related-body">
+                <strong>{{ r.titulo }}</strong>
+                <span class="nw-related-meta">
+                  <span>{{ r.fuente }}</span>
+                  <span class="nw-related-go">Leer →</span>
+                </span>
+              </span>
             </button>
           </div>
+        </div>
+
+        <!-- Anterior / siguiente -->
+        <div class="nw-pager">
+          <button type="button" class="nw-pager-card nw-pager-prev" [disabled]="!noticiaAnterior" (click)="navegarNoticia(-1, lector)">
+            <span class="nw-pager-dir">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+              Noticia anterior
+            </span>
+            <strong class="nw-pager-title">{{ noticiaAnterior ? noticiaAnterior.titulo : 'Estás en la primera noticia' }}</strong>
+          </button>
+
+          <button type="button" class="nw-pager-card nw-pager-next" [disabled]="!noticiaSiguiente" (click)="navegarNoticia(1, lector)">
+            <span class="nw-pager-dir">
+              Siguiente noticia
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+            <strong class="nw-pager-title">{{ noticiaSiguiente ? noticiaSiguiente.titulo : 'Llegaste a la última noticia' }}</strong>
+          </button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- ===== MODAL: NUEVA RESEÑA ===== -->
-  <div class="modal-overlay" *ngIf="mostrarFormularioResena" (click)="cerrarFormularioResena()">
-    <div class="modal review-modal" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h2>✍️ Escribe tu reseña</h2>
-        <button (click)="cerrarFormularioResena()">✕</button>
+  <div class="nw-overlay" *ngIf="mostrarFormularioResena" (click)="cerrarFormularioResena()">
+    <div class="rv-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+      <div class="rv-modal-head">
+        <div class="rv-modal-title-wrap">
+          <span class="rv-modal-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </span>
+          <div>
+            <h2>Comparte tu experiencia</h2>
+            <span>Tu reseña ayuda a otros miembros de la comunidad</span>
+          </div>
+        </div>
+        <button type="button" class="nw-close" (click)="cerrarFormularioResena()" aria-label="Cerrar">✕</button>
       </div>
-      <div class="modal-body">
-        <div class="review-form-field">
-          <label>Gimnasio</label>
-          <select [(ngModel)]="nuevaResena.gimnasio">
-            <option *ngFor="let g of gimnasiosDisponibles" [value]="g">{{ g }}</option>
-          </select>
-        </div>
 
-        <div class="review-form-field">
-          <label>Tu nombre</label>
-          <input type="text" placeholder="Nombre completo" [(ngModel)]="nuevaResena.autor" maxlength="40" />
-        </div>
-
-        <div class="review-form-field">
-          <label>Calificación</label>
-          <div class="star-picker">
-            <span
-              class="star star-picker-item"
-              *ngFor="let n of [1,2,3,4,5]"
-              [class.filled]="n <= nuevaResena.calificacion"
-              (click)="seleccionarCalificacion(n)"
-            >★</span>
+      <div class="rv-modal-body">
+        <div class="rv-field">
+          <label>Selecciona el gimnasio</label>
+          <div class="rv-gym-picker">
+            <button type="button" class="rv-gym-opt" *ngFor="let g of gimnasiosDisponibles"
+              [class.selected]="nuevaResena.gimnasio === g" (click)="nuevaResena.gimnasio = g">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>{{ g }}</span>
+            </button>
           </div>
         </div>
 
-        <div class="review-form-field">
-          <label>Tu reseña</label>
-          <textarea
-            placeholder="Cuéntanos tu experiencia..."
-            [(ngModel)]="nuevaResena.texto"
-            rows="4"
-            maxlength="400"
-          ></textarea>
+        <div class="rv-field">
+          <label>Tu nombre</label>
+          <div class="nw-cf-field">
+            <svg class="nw-cf-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <input type="text" class="nw-cf-input" placeholder="Ej. Camilo Ramírez" [(ngModel)]="nuevaResena.autor" maxlength="40" />
+          </div>
         </div>
 
-        <button class="btn-primary" style="width:100%;" [disabled]="!resenaValida" (click)="enviarResena()">
-          ✅ Publicar reseña
+        <div class="rv-field">
+          <label>Calificación</label>
+          <div class="rv-star-box">
+            <div class="rv-star-picker" (mouseleave)="hoverEstrella = 0">
+              <button type="button" class="rv-star-btn" *ngFor="let n of [1,2,3,4,5]"
+                [class.filled]="n <= (hoverEstrella || nuevaResena.calificacion)"
+                (mouseenter)="hoverEstrella = n" (click)="seleccionarCalificacion(n)"
+                [attr.aria-label]="n + ' estrellas'">★</button>
+            </div>
+            <span class="rv-star-label">{{ etiquetaCalificacion(hoverEstrella || nuevaResena.calificacion) }}</span>
+          </div>
+        </div>
+
+        <div class="rv-field">
+          <label>Tu reseña</label>
+          <textarea class="nw-cf-textarea" placeholder="Cuéntanos qué te gustó de las instalaciones, entrenadores, ambiente..."
+            [(ngModel)]="nuevaResena.texto" rows="4" maxlength="400"></textarea>
+          <div class="nw-chars-wrap">
+            <div class="nw-chars-bar"><div class="nw-chars-fill" [style.width.%]="(nuevaResena.texto.length / 400) * 100"></div></div>
+            <span class="nw-chars">{{ nuevaResena.texto.length }} / 400 (mín. 11 caracteres)</span>
+          </div>
+        </div>
+
+        <button type="button" class="rv-submit-btn" [disabled]="!resenaValida" (click)="enviarResena()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Publicar reseña</span>
         </button>
       </div>
     </div>

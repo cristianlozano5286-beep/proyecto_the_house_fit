@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -39,7 +39,7 @@ interface Resena {
   templateUrl: './blog-publico.html',
   styleUrls: ['./blog-publico.css'],
 })
-export class BlogPublicoComponent {
+export class BlogPublicoComponent implements OnInit, OnDestroy {
   // ===== NOTICIAS — toda la información vive acá, el HTML solo la muestra =====
   noticias: Noticia[] = [
     {
@@ -260,14 +260,232 @@ export class BlogPublicoComponent {
   }
 
   // ===== NOTICIAS =====
+  // --- Filtros y búsqueda ---
+  busqueda = '';
+  categoriaFiltro = 'TODAS';
+
+  get categorias(): string[] {
+    return ['TODAS', ...Array.from(new Set(this.noticias.map(n => n.categoria)))];
+  }
+
+  conteoCategoria(cat: string): number {
+    return cat === 'TODAS' ? this.noticias.length : this.noticias.filter(n => n.categoria === cat).length;
+  }
+
+  seleccionarCategoria(cat: string): void {
+    this.categoriaFiltro = cat;
+  }
+
+  limpiarFiltros(): void {
+    this.busqueda = '';
+    this.categoriaFiltro = 'TODAS';
+  }
+
+  get hayFiltros(): boolean {
+    return this.busqueda.trim().length > 0 || this.categoriaFiltro !== 'TODAS';
+  }
+
+  get noticiasFiltradas(): Noticia[] {
+    const q = this.busqueda.trim().toLowerCase();
+    return this.noticias.filter(n =>
+      (this.categoriaFiltro === 'TODAS' || n.categoria === this.categoriaFiltro) &&
+      (!q || (n.titulo + ' ' + n.resumen + ' ' + n.fuente).toLowerCase().includes(q))
+    );
+  }
+
+  /** La noticia destacada solo se muestra cuando no hay filtros activos */
+  get destacada(): Noticia | null {
+    return !this.hayFiltros && this.noticias.length > 0 ? this.noticias[0] : null;
+  }
+
+  get noticiasGrid(): Noticia[] {
+    const lista = this.noticiasFiltradas;
+    return this.destacada ? lista.filter(n => n.id !== this.destacada!.id) : lista;
+  }
+
+  // Fotos reales (public/assets/news). Si una noticia nueva no tiene foto, se usa la de cardio.
+  private readonly imagenes: Record<number, string> = {
+    1: 'cardio',
+    2: 'promocion',
+    3: 'powerlifting',
+    4: 'nocturno',
+    5: 'nutricion',
+    6: 'atleta',
+  };
+
+  imagenDe(n: Noticia): string {
+    return `assets/news/${this.imagenes[n.id] ?? 'cardio'}.jpg`;
+  }
+
+  categoriaClase(cat: string): string {
+    return 'cat-' + cat.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  tiempoLectura(n: Noticia): number {
+    const palabras = n.contenido.join(' ').split(/\s+/).length;
+    return Math.max(1, Math.round(palabras / 200));
+  }
+
+  // --- Me gusta / compartir ---
+  private likesSet = new Set<number>();
+  copiado = false;
+
+  likesDe(n: Noticia): number {
+    return 12 + n.id * 7 + (this.likesSet.has(n.id) ? 1 : 0);
+  }
+
+  meGusta(n: Noticia): boolean {
+    return this.likesSet.has(n.id);
+  }
+
+  toggleLike(n: Noticia, ev?: Event): void {
+    ev?.stopPropagation();
+    if (this.likesSet.has(n.id)) this.likesSet.delete(n.id);
+    else this.likesSet.add(n.id);
+  }
+
+  async compartir(n: Noticia): Promise<void> {
+    const texto = `${n.titulo} — The House Fit\n${window.location.href}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: n.titulo, text: n.resumen, url: window.location.href });
+        return;
+      }
+      await navigator.clipboard.writeText(texto);
+    } catch {
+      return;
+    }
+    this.copiado = true;
+    setTimeout(() => (this.copiado = false), 2200);
+  }
+
+  // --- Lector de noticia ---
+  progresoLectura = 0;
+
   verNoticia(noticia: Noticia): void {
     this.noticiaSeleccionada = noticia;
     this.nuevoComentarioNombre = '';
     this.nuevoComentarioTexto = '';
+    this.progresoLectura = 0;
+    document.body.style.overflow = 'hidden';
   }
 
   cerrarNoticia(): void {
     this.noticiaSeleccionada = null;
+    document.body.style.overflow = '';
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.noticiaSeleccionada) this.cerrarNoticia();
+    else if (this.mostrarFormularioResena) this.cerrarFormularioResena();
+  }
+
+  // --- Contadores animados de las estadísticas ---
+  cuenta = { noticias: 0, resenas: 0, calificacion: 0, comentarios: 0 };
+  private rafId = 0;
+
+  ngOnInit(): void {
+    const meta = {
+      noticias: this.totalNoticias,
+      resenas: this.totalResenas,
+      calificacion: this.calificacionPromedio,
+      comentarios: this.totalComentarios,
+    };
+    const inicio = performance.now();
+    const duracion = 1000;
+    const paso = (t: number) => {
+      const p = Math.min(1, (t - inicio) / duracion);
+      const e = 1 - Math.pow(1 - p, 3); // ease-out
+      this.cuenta = {
+        noticias: Math.round(meta.noticias * e),
+        resenas: Math.round(meta.resenas * e),
+        calificacion: meta.calificacion * e,
+        comentarios: Math.round(meta.comentarios * e),
+      };
+      if (p < 1) this.rafId = requestAnimationFrame(paso);
+    };
+    this.rafId = requestAnimationFrame(paso);
+  }
+
+  ngOnDestroy(): void {
+    cancelAnimationFrame(this.rafId);
+    document.body.style.overflow = '';
+  }
+
+  onLectorScroll(ev: Event): void {
+    const el = ev.target as HTMLElement;
+    const max = el.scrollHeight - el.clientHeight;
+    this.progresoLectura = max > 0 ? Math.min(100, (el.scrollTop / max) * 100) : 0;
+  }
+
+  navegarNoticia(delta: number, lector: HTMLElement): void {
+    if (!this.noticiaSeleccionada) return;
+    const i = this.noticias.findIndex(n => n.id === this.noticiaSeleccionada!.id);
+    const destino = this.noticias[i + delta];
+    if (!destino) return;
+    this.verNoticia(destino);
+    lector.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  get noticiaAnterior(): Noticia | null {
+    if (!this.noticiaSeleccionada) return null;
+    const i = this.noticias.findIndex(n => n.id === this.noticiaSeleccionada!.id);
+    return i > 0 ? this.noticias[i - 1] : null;
+  }
+
+  get noticiaSiguiente(): Noticia | null {
+    if (!this.noticiaSeleccionada) return null;
+    const i = this.noticias.findIndex(n => n.id === this.noticiaSeleccionada!.id);
+    return i >= 0 && i < this.noticias.length - 1 ? this.noticias[i + 1] : null;
+  }
+
+  get hayAnterior(): boolean {
+    return !!this.noticiaAnterior;
+  }
+
+  get haySiguiente(): boolean {
+    return !!this.noticiaSiguiente;
+  }
+
+  // --- Likes en comentarios ---
+  private commentLikes = new Set<string>();
+
+  private keyComentario(noticiaId: number, comentarioId: number): string {
+    return `${noticiaId}-${comentarioId}`;
+  }
+
+  meGustaComentario(noticiaId: number, comentarioId: number): boolean {
+    return this.commentLikes.has(this.keyComentario(noticiaId, comentarioId));
+  }
+
+  likesComentario(noticiaId: number, comentarioId: number): number {
+    const base = ((noticiaId * 3 + comentarioId * 5) % 9) + 2;
+    return base + (this.meGustaComentario(noticiaId, comentarioId) ? 1 : 0);
+  }
+
+  toggleLikeComentario(noticiaId: number, comentarioId: number): void {
+    const k = this.keyComentario(noticiaId, comentarioId);
+    if (this.commentLikes.has(k)) this.commentLikes.delete(k);
+    else this.commentLikes.add(k);
+  }
+
+  get relacionadas(): Noticia[] {
+    if (!this.noticiaSeleccionada) return [];
+    const actual = this.noticiaSeleccionada;
+    return [...this.noticias]
+      .filter(n => n.id !== actual.id)
+      .sort((a, b) => Number(b.fuente === actual.fuente) - Number(a.fuente === actual.fuente))
+      .slice(0, 3);
+  }
+
+  abrirRelacionada(n: Noticia, lector: HTMLElement): void {
+    this.verNoticia(n);
+    lector.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  esCita(parrafo: string): boolean {
+    return parrafo.trim().startsWith('"');
   }
 
   agregarComentario(): void {
@@ -284,20 +502,82 @@ export class BlogPublicoComponent {
       texto: this.nuevoComentarioTexto.trim(),
       fecha: new Date().toISOString().split('T')[0]
     });
+    this.cuenta.comentarios = this.totalComentarios;
 
     this.nuevoComentarioNombre = '';
     this.nuevoComentarioTexto = '';
   }
 
   // ===== RESEÑAS =====
+  filtroGymResena = 'TODOS';
+  hoverEstrella = 0;
+  private resenaLikes = new Set<number>();
+
+  get gimnasiosConFiltro(): string[] {
+    return ['TODOS', ...this.gimnasiosDisponibles];
+  }
+
+  conteoResenasGym(gym: string): number {
+    return gym === 'TODOS'
+      ? this.resenas.length
+      : this.resenas.filter(r => r.gimnasio === gym).length;
+  }
+
+  get resenasFiltradas(): Resena[] {
+    return this.filtroGymResena === 'TODOS'
+      ? this.resenas
+      : this.resenas.filter(r => r.gimnasio === this.filtroGymResena);
+  }
+
+  get distribucionEstrellas(): { estrellas: number; conteo: number; porcentaje: number }[] {
+    const total = this.resenas.length || 1;
+    return [5, 4, 3, 2, 1].map(estrellas => {
+      const conteo = this.resenas.filter(r => r.calificacion === estrellas).length;
+      return { estrellas, conteo, porcentaje: Math.round((conteo / total) * 100) };
+    });
+  }
+
+  inicialesDe(nombre: string): string {
+    const partes = nombre.trim().split(/\s+/).filter(Boolean);
+    if (partes.length === 0) return '?';
+    if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();
+    return (partes[0][0] + partes[1][0]).toUpperCase();
+  }
+
+  claseGym(gym: string): string {
+    const g = gym.toLowerCase();
+    if (g.includes('vital')) return 'gym-vital';
+    if (g.includes('iron')) return 'gym-iron';
+    return 'gym-powerzone';
+  }
+
+  meGustaResena(id: number): boolean {
+    return this.resenaLikes.has(id);
+  }
+
+  likesResena(id: number): number {
+    return ((id * 5 + 3) % 14) + 4 + (this.resenaLikes.has(id) ? 1 : 0);
+  }
+
+  toggleLikeResena(id: number): void {
+    if (this.resenaLikes.has(id)) this.resenaLikes.delete(id);
+    else this.resenaLikes.add(id);
+  }
+
+  etiquetaCalificacion(valor: number): string {
+    const textos = ['', 'Muy malo', 'Regular', 'Bueno', 'Muy bueno', '¡Excelente!'];
+    return textos[valor] || 'Selecciona una calificación';
+  }
+
   getEstrellas(calificacion: number): boolean[] {
     return [1, 2, 3, 4, 5].map(n => n <= calificacion);
   }
 
   abrirFormularioResena(): void {
     this.mostrarFormularioResena = true;
+    this.hoverEstrella = 0;
     this.nuevaResena = {
-      gimnasio: this.gimnasiosDisponibles[0],
+      gimnasio: this.filtroGymResena !== 'TODOS' ? this.filtroGymResena : this.gimnasiosDisponibles[0],
       autor: '',
       calificacion: 0,
       texto: ''
@@ -333,6 +613,8 @@ export class BlogPublicoComponent {
       fecha: new Date().toISOString().split('T')[0]
     });
 
+    this.cuenta.resenas = this.totalResenas;
+    this.cuenta.calificacion = this.calificacionPromedio;
     this.mostrarFormularioResena = false;
   }
 
