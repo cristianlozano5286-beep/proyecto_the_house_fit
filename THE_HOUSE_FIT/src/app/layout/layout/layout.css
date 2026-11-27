@@ -22,8 +22,8 @@
     width: 224px;
     height: 100vh;
     flex-shrink: 0;
-    background: var(--thf-surface-glass);
-    border-right: 1px solid var(--thf-border-subtle);
+    background: transparent;
+    border-right: none;
     box-shadow: none;
     z-index: 50;
     overflow-y: auto;

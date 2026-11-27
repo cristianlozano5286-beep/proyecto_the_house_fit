@@ -114,6 +114,7 @@
   gap: 16px;
   position: relative;
   z-index: 140;
+  container: nav-row / inline-size;
 }
 
 .airbnb-nav:has(.airbnb-user-dropdown:not([hidden])) .nav-container {
@@ -174,11 +175,10 @@
    SLOT CENTRAL CON ANIMACIÓN MORPH (TABS HERO <-> PILL COMPACTO)
    ========================================================================== */
 .nav-center-morph-slot {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  bottom: 0;
-  transform: translate3d(-50%, 0, 0);
+  position: relative;
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  block-size: 100%;
   display: grid;
   place-items: center;
   z-index: 1;
@@ -187,9 +187,12 @@
 
 /* CAPA A: TABS HERO CON ICONOS Y SUBRAYADO ANCLADO DESLIZANTE (Visibles cuando is-expanded) */
 .nav-hero-tabs {
-  grid-area: 1 / 1;
+  position: absolute;
+  inset-block: 0;
+  inset-inline: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
   will-change: transform, opacity;
   transition:
     opacity 0.28s var(--ease-out),
@@ -370,8 +373,10 @@
   grid-area: 1 / 1;
   display: inline-flex;
   align-items: center;
+  max-inline-size: 100%;
+  min-inline-size: 0;
   height: 46px;
-  padding: 0 6px 0 16px;
+  padding: 0 6px 0 14px;
   border-radius: 999px;
   background: var(--thf-surface-1-solid);
   border: 1px solid var(--thf-border-default);
@@ -407,7 +412,10 @@
   color: var(--thf-text-1);
   font-size: 13px;
   font-weight: 600;
-  padding: 6px 12px;
+  padding: 6px 10px;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   cursor: pointer;
   white-space: nowrap;
   font-family: inherit;
@@ -1497,6 +1505,7 @@
   pointer-events: auto;
 }
 .airbnb-nav.is-expanded .compact-quick-links {
+  display: none;
   opacity: 0;
   transform: translate3d(10px, 0, 0);
   pointer-events: none;
@@ -1507,9 +1516,17 @@
 }
 
 .airbnb-nav.is-compact .compact-quick-links {
+  display: flex;
   opacity: 1;
   transform: translate3d(0, 0, 0);
   pointer-events: auto;
+}
+
+@starting-style {
+  .airbnb-nav.is-compact .compact-quick-links {
+    opacity: 0;
+    transform: translate3d(10px, 0, 0);
+  }
 }
 
 .nav-links a {
@@ -2264,13 +2281,10 @@
 /* ==========================================================================
    Media Queries
    ========================================================================== */
-@media (max-width: 1320px) {
-  .compact-quick-links {
+@container nav-row (inline-size <= 1180px) {
+  .airbnb-nav.is-compact .compact-quick-links {
     display: none;
   }
-}
-
-@media (max-width: 1180px) {
   .hero-tabs-list {
     gap: 2px;
   }
@@ -2278,6 +2292,29 @@
     padding: 9px 11px;
     gap: 7px;
     font-size: 13.5px;
+  }
+}
+
+@container nav-row (inline-size <= 1040px) {
+  .hero-tab-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+  }
+  .hero-tab-item {
+    padding: 7px 9px;
+    gap: 6px;
+    font-size: 12.5px;
+  }
+}
+
+@container nav-row (inline-size <= 900px) {
+  .hero-tab-icon {
+    display: none;
+  }
+  .hero-tab-item {
+    padding: 7px 8px;
+    font-size: 12px;
   }
 }
 
@@ -2364,6 +2401,7 @@
   .nav-search-backdrop,
   .nav-search-dropdown-panel,
   .airbnb-user-dropdown,
+  .nav-links,
   .hero-tab-item,
   .hero-tab-icon,
   .quick-filter-chip,
