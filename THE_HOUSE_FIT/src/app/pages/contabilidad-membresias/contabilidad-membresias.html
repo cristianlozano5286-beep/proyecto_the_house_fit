@@ -1,10 +1,10 @@
 <div class="wizard-viewport">
   @if (toast) {
-    <div class="contabilidad-toast" [attr.data-tipo]="toast.tipo" role="status" aria-live="polite">
-      <span class="toast-dot"></span>
-      <span class="toast-msg">{{ toast.texto }}</span>
-      <button type="button" class="toast-close" (click)="toast = null" aria-label="Cerrar notificación">✕</button>
-    </div>
+  <div class="contabilidad-toast" [attr.data-tipo]="toast.tipo" role="status" aria-live="polite">
+    <span class="toast-dot"></span>
+    <span class="toast-msg">{{ toast.texto }}</span>
+    <button type="button" class="toast-close" (click)="toast = null" aria-label="Cerrar notificación">✕</button>
+  </div>
   }
 
   <!-- ── CABECERA EN PANTALLA COMPLETA (ESTILO STUDIO DEDICADO) ── -->
@@ -40,345 +40,304 @@
         <h1>Hola de nuevo, {{ nombreUsuario }} · Contabilidad e Ingreso por Cédula</h1>
         <p>
           Lleva el control financiero de las personas que han pagado su <strong>membresía mensual</strong> o
-          <strong>pase diario</strong>, consulta su ficha completa (nombre, cédula, correo, celular y dirección de residencia)
+          <strong>pase diario</strong>, consulta su ficha completa (nombre, cédula, correo, celular y dirección de
+          residencia)
           y valida su ingreso en portería digitando su cédula.
         </p>
       </div>
 
       <div class="hero-actions-col">
-        <div class="gym-selector-box">
-          <label for="select-sede-contable">Sede activa:</label>
-          <select
-            id="select-sede-contable"
-            name="sedeContable"
-            class="glass-select"
-            [ngModel]="gimnasioFiltroId"
-            (ngModelChange)="cambiarGimnasioFiltro($event)"
-          >
-            <option [ngValue]="0">Todas mis sedes ({{ misGimnasios.length }})</option>
-            @for (g of misGimnasios; track g.id) {
-              <option [ngValue]="g.id">{{ g.nombre }} — {{ g.ciudad }}</option>
+        <div class="gym-selector-box" (click)="$event.stopPropagation()">
+          <label>Sede activa:</label>
+          <div class="custom-select-wrapper" [class.open]="sedeDropdownAbierto">
+            <button type="button" class="custom-select-trigger" (click)="toggleSedeDropdown()">
+              <span>{{ nombreSedeActiva }}</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            @if (sedeDropdownAbierto) {
+              <div class="custom-select-dropdown">
+                <button type="button" class="custom-select-option" [class.active]="gimnasioFiltroId === 0" (click)="seleccionarSede(0)">
+                  <svg class="option-icon-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+                  <span>Todas mis sedes ({{ misGimnasios.length }})</span>
+                  @if (gimnasioFiltroId === 0) {
+                    <svg class="option-check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  }
+                </button>
+                @for (g of misGimnasios; track g.id) {
+                  <button type="button" class="custom-select-option" [class.active]="gimnasioFiltroId === g.id" (click)="seleccionarSede(g.id)">
+                    <svg class="option-icon-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                    <span>{{ g.nombre }} — {{ g.ciudad }}</span>
+                    @if (gimnasioFiltroId === g.id) {
+                      <svg class="option-check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    }
+                  </button>
+                }
+              </div>
             }
-          </select>
+          </div>
         </div>
 
         <button type="button" class="btn-new-member" (click)="abrirModalNuevoPago()">
-          <span>＋ Registrar Pago de Membresía</span>
+          <span> Registro de Usuarios </span>
         </button>
       </div>
     </header>
 
-  <!-- ── 2. ESCÁNER / VERIFICADOR DE INGRESO POR CÉDULA EN TIEMPO REAL ── -->
-  <section class="cedula-verifier-card" aria-labelledby="verifier-heading">
-    <div class="verifier-top-bar">
-      <div class="verifier-title-group">
-        <div class="verifier-icon-badge">🪪</div>
-        <div>
-          <h2 id="verifier-heading">Control de Ingreso por Número de Cédula</h2>
-          <p>Digita la cédula del atleta para verificar si pagó su membresía mensual o diaria y autorizar su entrada.</p>
+    <!-- ── 2. ESCÁNER / VERIFICADOR DE INGRESO POR CÉDULA EN TIEMPO REAL ── -->
+    <section class="cedula-verifier-card" aria-labelledby="verifier-heading">
+      <div class="verifier-top-bar">
+        <div class="verifier-title-group">
+          <div class="verifier-icon-badge">🪪</div>
+          <div>
+            <h2 id="verifier-heading">Control de Ingreso por Número de Cédula</h2>
+            <p>Digita la cédula del atleta para verificar si pagó su membresía mensual o diaria y autorizar su entrada.
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div class="quick-demo-cedulas">
-        <span class="demo-label">Probar cédulas registradas:</span>
-        @for (af of afiliados.slice(0, 4); track af.id) {
-          <button
-            type="button"
-            class="demo-cedula-chip"
-            (click)="cedulaBusquedaIngreso = af.cedula; consultarCedulaIngreso()"
-          >
+        <div class="quick-demo-cedulas">
+          <span class="demo-label">Probar cédulas registradas:</span>
+          @for (af of afiliados.slice(0, 4); track af.id) {
+          <button type="button" class="demo-cedula-chip"
+            (click)="cedulaBusquedaIngreso = af.cedula; consultarCedulaIngreso()">
             <span>CC {{ af.cedula }}</span>
             <small>({{ af.tipoMembresia === 'mensual' ? 'Mensual' : 'Diaria' }})</small>
           </button>
-        }
+          }
+        </div>
       </div>
-    </div>
 
-    <search aria-label="Verificar ingreso de afiliado por número de cédula">
-      <form class="verifier-search-row" (ngSubmit)="consultarCedulaIngreso()">
-        <div class="cedula-input-wrap">
-          <label for="input-verificar-cedula" class="sr-only-label">Número de cédula del afiliado</label>
-          <span class="input-prefix-icon">🔎</span>
-          <input
-            id="input-verificar-cedula"
-            name="cedulaIngreso"
-            type="text"
-            inputmode="numeric"
-            autocorrect="off"
-            autocapitalize="none"
-            spellcheck="false"
-            enterkeyhint="search"
-            placeholder="Ingresa el número de cédula (ej. 1118542390)..."
-            [(ngModel)]="cedulaBusquedaIngreso"
-            class="cedula-search-input"
-          />
-          @if (cedulaBusquedaIngreso) {
+      <search aria-label="Verificar ingreso de afiliado por número de cédula">
+        <form class="verifier-search-row" (ngSubmit)="consultarCedulaIngreso()">
+          <div class="cedula-input-wrap">
+            <label for="input-verificar-cedula" class="sr-only-label">Número de cédula del afiliado</label>
+            <span class="input-prefix-icon">🔎</span>
+            <input id="input-verificar-cedula" name="cedulaIngreso" type="text" inputmode="numeric" autocorrect="off"
+              autocapitalize="none" spellcheck="false" enterkeyhint="search"
+              placeholder="Ingresa el número de cédula (ej. 1118542390)..." [(ngModel)]="cedulaBusquedaIngreso"
+              class="cedula-search-input" />
+            @if (cedulaBusquedaIngreso) {
             <button type="button" class="btn-clear-cedula" (click)="limpiarVerificador()" aria-label="Limpiar cédula">
               ✕
             </button>
-          }
-        </div>
+            }
+          </div>
 
-        <button type="submit" class="btn-verify-cedula">
-          <span>Verificar Cédula e Ingreso</span>
-        </button>
-      </form>
-    </search>
+          <button type="submit" class="btn-verify-cedula">
+            <span>Verificar Cédula e Ingreso</span>
+          </button>
+        </form>
+      </search>
 
-    <!-- RESULTADO DE LA CONSULTA POR CÉDULA -->
-    @if (resultadoVerificacion?.buscado) {
+      <!-- RESULTADO DE LA CONSULTA POR CÉDULA -->
+      @if (resultadoVerificacion?.buscado) {
       @if (resultadoVerificacion?.afiliado; as persona) {
-        <div
-          class="verification-result-panel"
-          [class.status-active]="resultadoVerificacion?.estado === 'Activa'"
-          [class.status-expired]="resultadoVerificacion?.estado === 'Vencida'"
-        >
-          <div class="result-status-banner">
-            <div class="status-badge-main">
-              @if (resultadoVerificacion?.estado === 'Activa') {
-                <span class="status-icon">✅</span>
-                <div>
-                  <strong>ACCESO AUTORIZADO · {{ persona.tipoMembresia === 'mensual' ? 'MEMBRESÍA MENSUAL PAGADA' : 'PASE DIARIO PAGADO' }}</strong>
-                  <p>
-                    @if (persona.tipoMembresia === 'mensual') {
-                      Plan mensual vigente hasta el {{ persona.fechaVencimiento }} ({{ resultadoVerificacion?.diasRestantes }} día(s) restantes).
-                    } @else {
-                      Pase diario pagado y activo para la jornada de hoy ({{ persona.fechaVencimiento }}).
-                    }
-                  </p>
-                </div>
-              } @else {
-                <span class="status-icon">⚠️</span>
-                <div>
-                  <strong>ACCESO DENEGADO · MEMBRESÍA VENCIDA</strong>
-                  <p>
-                    El último pago ({{ persona.tipoMembresia === 'mensual' ? 'Membresía Mensual' : 'Pase Diario' }}) venció el
-                    {{ persona.fechaVencimiento }}. Renueva el pago para autorizar el ingreso.
-                  </p>
-                </div>
-              }
+      <div class="verification-result-panel" [class.status-active]="resultadoVerificacion?.estado === 'Activa'"
+        [class.status-expired]="resultadoVerificacion?.estado === 'Vencida'">
+        <div class="result-status-banner">
+          <div class="status-badge-main">
+            @if (resultadoVerificacion?.estado === 'Activa') {
+            <span class="status-icon">✅</span>
+            <div>
+              <strong>ACCESO AUTORIZADO · {{ persona.tipoMembresia === 'mensual' ? 'MEMBRESÍA MENSUAL PAGADA' : 'PASE
+                DIARIO PAGADO' }}</strong>
+              <p>
+                @if (persona.tipoMembresia === 'mensual') {
+                Plan mensual vigente hasta el {{ persona.fechaVencimiento }} ({{ resultadoVerificacion?.diasRestantes }}
+                día(s) restantes).
+                } @else {
+                Pase diario pagado y activo para la jornada de hoy ({{ persona.fechaVencimiento }}).
+                }
+              </p>
             </div>
-
-            <div class="result-cta-group">
-              @if (resultadoVerificacion?.estado === 'Activa') {
-                <button
-                  type="button"
-                  class="btn-confirm-checkin"
-                  (click)="confirmarIngresoEnPorteria(persona)"
-                >
-                  <span>🚪 Registrar Ingreso a Sede</span>
-                </button>
-              } @else {
-                <button
-                  type="button"
-                  class="btn-renew-now"
-                  (click)="renovarRapido(persona, 'mensual')"
-                >
-                  <span>⚡ Renovar Mensualidad</span>
-                </button>
-                <button
-                  type="button"
-                  class="btn-renew-daily"
-                  (click)="renovarRapido(persona, 'diaria')"
-                >
-                  <span>🎟️ Pagar Pase Diario</span>
-                </button>
-              }
+            } @else {
+            <span class="status-icon">⚠️</span>
+            <div>
+              <strong>ACCESO DENEGADO · MEMBRESÍA VENCIDA</strong>
+              <p>
+                El último pago ({{ persona.tipoMembresia === 'mensual' ? 'Membresía Mensual' : 'Pase Diario' }}) venció
+                el
+                {{ persona.fechaVencimiento }}. Renueva el pago para autorizar el ingreso.
+              </p>
             </div>
+            }
           </div>
 
-          <!-- FICHA DE DATOS DE LA PERSONA -->
-          <div class="person-data-grid">
-            <div class="person-data-item">
-              <span class="data-kicker">NOMBRE COMPLETO</span>
-              <strong>{{ persona.nombre }}</strong>
-            </div>
-            <div class="person-data-item">
-              <span class="data-kicker">NÚMERO DE CÉDULA</span>
-              <strong class="mono-highlight">CC {{ persona.cedula }}</strong>
-            </div>
-            <div class="person-data-item">
-              <span class="data-kicker">CORREO ELECTRÓNICO</span>
-              <strong>{{ persona.correo }}</strong>
-            </div>
-            <div class="person-data-item">
-              <span class="data-kicker">NÚMERO DE CELULAR</span>
-              <strong>📞 {{ persona.celular }}</strong>
-            </div>
-            <div class="person-data-item span-2">
-              <span class="data-kicker">DIRECCIÓN DE RESIDENCIA</span>
-              <strong>🏠 {{ persona.direccionResidencia }}</strong>
-            </div>
-            <div class="person-data-item">
-              <span class="data-kicker">MODALIDAD & VALOR PAGADO</span>
-              <strong class="orange-highlight">
-                {{ persona.tipoMembresia === 'mensual' ? 'Membresía Mensual' : 'Pase Diario' }} ·
-                {{ formatearMoneda(persona.monto, persona.moneda) }}
-              </strong>
-            </div>
-            <div class="person-data-item">
-              <span class="data-kicker">SEDE & ASISTENCIAS</span>
-              <strong>{{ persona.gimnasioNombre }} ({{ persona.totalIngresos }} ingresos · Último: {{ persona.ultimoIngreso || 'Hoy' }})</strong>
-            </div>
+          <div class="result-cta-group">
+            @if (resultadoVerificacion?.estado === 'Activa') {
+            <button type="button" class="btn-confirm-checkin" (click)="confirmarIngresoEnPorteria(persona)">
+              <span>🚪 Registrar Ingreso a Sede</span>
+            </button>
+            } @else {
+            <button type="button" class="btn-renew-now" (click)="renovarRapido(persona, 'mensual')">
+              <span>⚡ Renovar Mensualidad</span>
+            </button>
+            <button type="button" class="btn-renew-daily" (click)="renovarRapido(persona, 'diaria')">
+              <span>🎟️ Pagar Pase Diario</span>
+            </button>
+            }
           </div>
         </div>
+
+        <!-- FICHA DE DATOS DE LA PERSONA -->
+        <div class="person-data-grid">
+          <div class="person-data-item">
+            <span class="data-kicker">NOMBRE COMPLETO</span>
+            <strong>{{ persona.nombre }}</strong>
+          </div>
+          <div class="person-data-item">
+            <span class="data-kicker">NÚMERO DE CÉDULA</span>
+            <strong class="mono-highlight">CC {{ persona.cedula }}</strong>
+          </div>
+          <div class="person-data-item">
+            <span class="data-kicker">CORREO ELECTRÓNICO</span>
+            <strong>{{ persona.correo }}</strong>
+          </div>
+          <div class="person-data-item">
+            <span class="data-kicker">NÚMERO DE CELULAR</span>
+            <strong>📞 {{ persona.celular }}</strong>
+          </div>
+          <div class="person-data-item span-2">
+            <span class="data-kicker">DIRECCIÓN DE RESIDENCIA</span>
+            <strong>🏠 {{ persona.direccionResidencia }}</strong>
+          </div>
+          <div class="person-data-item">
+            <span class="data-kicker">MODALIDAD & VALOR PAGADO</span>
+            <strong class="orange-highlight">
+              {{ persona.tipoMembresia === 'mensual' ? 'Membresía Mensual' : 'Pase Diario' }} ·
+              {{ formatearMoneda(persona.monto, persona.moneda) }}
+            </strong>
+          </div>
+          <div class="person-data-item">
+            <span class="data-kicker">SEDE & ASISTENCIAS</span>
+            <strong>{{ persona.gimnasioNombre }} ({{ persona.totalIngresos }} ingresos · Último: {{
+              persona.ultimoIngreso || 'Hoy' }})</strong>
+          </div>
+        </div>
+      </div>
       } @else {
-        <div class="verification-result-panel status-not-found">
-          <div class="result-status-banner">
-            <div class="status-badge-main">
-              <span class="status-icon">❌</span>
-              <div>
-                <strong>CÉDULA {{ resultadoVerificacion?.cedulaConsultada }} NO REGISTRADA</strong>
-                <p>Esta persona aún no registra pago de membresía mensual ni pase diario en tus gimnasios.</p>
-              </div>
+      <div class="verification-result-panel status-not-found">
+        <div class="result-status-banner">
+          <div class="status-badge-main">
+            <span class="status-icon">❌</span>
+            <div>
+              <strong>CÉDULA {{ resultadoVerificacion?.cedulaConsultada }} NO REGISTRADA</strong>
+              <p>Esta persona aún no registra pago de membresía mensual ni pase diario en tus gimnasios.</p>
             </div>
-            <button
-              type="button"
-              class="btn-new-member"
-              (click)="abrirRegistroConCedula(resultadoVerificacion!.cedulaConsultada)"
-            >
-              <span>＋ Registrar Pago para Cédula {{ resultadoVerificacion?.cedulaConsultada }}</span>
+          </div>
+          <button type="button" class="btn-new-member"
+            (click)="abrirRegistroConCedula(resultadoVerificacion!.cedulaConsultada)">
+            <span>＋ Registrar Pago para Cédula {{ resultadoVerificacion?.cedulaConsultada }}</span>
+          </button>
+        </div>
+      </div>
+      }
+      }
+    </section>
+
+    <!-- ── 3. TARJETAS KPI DE CONTABILIDAD (MENSUAL VS DIARIA) ── -->
+    <section class="accounting-kpis-grid" aria-label="Resumen contable del gimnasio">
+      <article class="kpi-glass-card">
+        <div class="kpi-icon-box kpi-emerald">💰</div>
+        <div class="kpi-meta">
+          <span class="kpi-label">Recaudo Total Contabilizado</span>
+          <strong class="kpi-amount">{{ formatearMoneda(totalRecaudadoGeneral) }}</strong>
+          <span class="kpi-sub">{{ afiliados.length }} pagos registrados en base de datos</span>
+        </div>
+      </article>
+
+      <article class="kpi-glass-card">
+        <div class="kpi-icon-box kpi-orange">📅</div>
+        <div class="kpi-meta">
+          <span class="kpi-label">Contabilidad Membresías Mensuales</span>
+          <strong class="kpi-amount">{{ formatearMoneda(totalRecaudadoMensual) }}</strong>
+          <span class="kpi-sub">{{ cantidadMensuales }} personas con plan mensual</span>
+        </div>
+      </article>
+
+      <article class="kpi-glass-card">
+        <div class="kpi-icon-box kpi-sky">🎟️</div>
+        <div class="kpi-meta">
+          <span class="kpi-label">Contabilidad Pases Diarios</span>
+          <strong class="kpi-amount">{{ formatearMoneda(totalRecaudadoDiario) }}</strong>
+          <span class="kpi-sub">{{ cantidadDiarios }} personas con pase diario</span>
+        </div>
+      </article>
+
+      <article class="kpi-glass-card">
+        <div class="kpi-icon-box kpi-purple">🪪</div>
+        <div class="kpi-meta">
+          <span class="kpi-label">Estado de Afiliados por Cédula</span>
+          <strong class="kpi-amount">{{ cantidadActivos }} Activos</strong>
+          <span class="kpi-sub">{{ cantidadVencidos }} vencidos pendientes de renovación</span>
+        </div>
+      </article>
+    </section>
+
+    <!-- ── 4. TABLA CONTABLE DE PERSONAS Y DATOS PERSONALES ── -->
+    <section class="accounting-table-card" aria-labelledby="accounting-table-title">
+      <div class="table-header-toolbar">
+        <div>
+          <h2 id="accounting-table-title">Directorio Contable de Afiliados y Pagos</h2>
+          <p>Base de datos completa con nombre, cédula, correo, celular, dirección de residencia y estado de pago.</p>
+        </div>
+
+        <div class="table-filters-bar">
+          <div class="filter-pills-group" role="group" aria-label="Filtrar por modalidad">
+            <button type="button" class="filter-pill" [class.active]="filtroTipo === 'todos'"
+              (click)="filtroTipo = 'todos'">
+              Todos ({{ afiliados.length }})
+            </button>
+            <button type="button" class="filter-pill" [class.active]="filtroTipo === 'mensual'"
+              (click)="filtroTipo = 'mensual'">
+              Mensual ({{ cantidadMensuales }})
+            </button>
+            <button type="button" class="filter-pill" [class.active]="filtroTipo === 'diaria'"
+              (click)="filtroTipo = 'diaria'">
+              Pase Diario ({{ cantidadDiarios }})
             </button>
           </div>
-        </div>
-      }
-    }
-  </section>
 
-  <!-- ── 3. TARJETAS KPI DE CONTABILIDAD (MENSUAL VS DIARIA) ── -->
-  <section class="accounting-kpis-grid" aria-label="Resumen contable del gimnasio">
-    <article class="kpi-glass-card">
-      <div class="kpi-icon-box kpi-emerald">💰</div>
-      <div class="kpi-meta">
-        <span class="kpi-label">Recaudo Total Contabilizado</span>
-        <strong class="kpi-amount">{{ formatearMoneda(totalRecaudadoGeneral) }}</strong>
-        <span class="kpi-sub">{{ afiliados.length }} pagos registrados en base de datos</span>
-      </div>
-    </article>
+          <div class="filter-pills-group" role="group" aria-label="Filtrar por estado">
+            <button type="button" class="filter-pill" [class.active]="filtroEstado === 'todos'"
+              (click)="filtroEstado = 'todos'">
+              Cualquier estado
+            </button>
+            <button type="button" class="filter-pill" [class.active]="filtroEstado === 'Activa'"
+              (click)="filtroEstado = 'Activa'">
+              Activas ({{ cantidadActivos }})
+            </button>
+            <button type="button" class="filter-pill" [class.active]="filtroEstado === 'Vencida'"
+              (click)="filtroEstado = 'Vencida'">
+              Vencidas ({{ cantidadVencidos }})
+            </button>
+          </div>
 
-    <article class="kpi-glass-card">
-      <div class="kpi-icon-box kpi-orange">📅</div>
-      <div class="kpi-meta">
-        <span class="kpi-label">Contabilidad Membresías Mensuales</span>
-        <strong class="kpi-amount">{{ formatearMoneda(totalRecaudadoMensual) }}</strong>
-        <span class="kpi-sub">{{ cantidadMensuales }} personas con plan mensual</span>
-      </div>
-    </article>
-
-    <article class="kpi-glass-card">
-      <div class="kpi-icon-box kpi-sky">🎟️</div>
-      <div class="kpi-meta">
-        <span class="kpi-label">Contabilidad Pases Diarios</span>
-        <strong class="kpi-amount">{{ formatearMoneda(totalRecaudadoDiario) }}</strong>
-        <span class="kpi-sub">{{ cantidadDiarios }} personas con pase diario</span>
-      </div>
-    </article>
-
-    <article class="kpi-glass-card">
-      <div class="kpi-icon-box kpi-purple">🪪</div>
-      <div class="kpi-meta">
-        <span class="kpi-label">Estado de Afiliados por Cédula</span>
-        <strong class="kpi-amount">{{ cantidadActivos }} Activos</strong>
-        <span class="kpi-sub">{{ cantidadVencidos }} vencidos pendientes de renovación</span>
-      </div>
-    </article>
-  </section>
-
-  <!-- ── 4. TABLA CONTABLE DE PERSONAS Y DATOS PERSONALES ── -->
-  <section class="accounting-table-card" aria-labelledby="accounting-table-title">
-    <div class="table-header-toolbar">
-      <div>
-        <h2 id="accounting-table-title">Directorio Contable de Afiliados y Pagos</h2>
-        <p>Base de datos completa con nombre, cédula, correo, celular, dirección de residencia y estado de pago.</p>
-      </div>
-
-      <div class="table-filters-bar">
-        <div class="filter-pills-group" role="group" aria-label="Filtrar por modalidad">
-          <button
-            type="button"
-            class="filter-pill"
-            [class.active]="filtroTipo === 'todos'"
-            (click)="filtroTipo = 'todos'"
-          >
-            Todos ({{ afiliados.length }})
-          </button>
-          <button
-            type="button"
-            class="filter-pill"
-            [class.active]="filtroTipo === 'mensual'"
-            (click)="filtroTipo = 'mensual'"
-          >
-            Mensual ({{ cantidadMensuales }})
-          </button>
-          <button
-            type="button"
-            class="filter-pill"
-            [class.active]="filtroTipo === 'diaria'"
-            (click)="filtroTipo = 'diaria'"
-          >
-            Pase Diario ({{ cantidadDiarios }})
-          </button>
-        </div>
-
-        <div class="filter-pills-group" role="group" aria-label="Filtrar por estado">
-          <button
-            type="button"
-            class="filter-pill"
-            [class.active]="filtroEstado === 'todos'"
-            (click)="filtroEstado = 'todos'"
-          >
-            Cualquier estado
-          </button>
-          <button
-            type="button"
-            class="filter-pill"
-            [class.active]="filtroEstado === 'Activa'"
-            (click)="filtroEstado = 'Activa'"
-          >
-            Activas ({{ cantidadActivos }})
-          </button>
-          <button
-            type="button"
-            class="filter-pill"
-            [class.active]="filtroEstado === 'Vencida'"
-            (click)="filtroEstado = 'Vencida'"
-          >
-            Vencidas ({{ cantidadVencidos }})
-          </button>
-        </div>
-
-        <div class="table-search-box">
-          <label for="buscar-tabla-afiliado" class="sr-only-label">Buscar en la tabla contable</label>
-          <input
-            id="buscar-tabla-afiliado"
-            name="filtroTexto"
-            type="search"
-            autocorrect="off"
-            autocapitalize="none"
-            spellcheck="false"
-            placeholder="Buscar por cédula, nombre, celular o dirección..."
-            [(ngModel)]="filtroTexto"
-          />
+          <div class="table-search-box">
+            <label for="buscar-tabla-afiliado" class="sr-only-label">Buscar en la tabla contable</label>
+            <input id="buscar-tabla-afiliado" name="filtroTexto" type="search" autocorrect="off" autocapitalize="none"
+              spellcheck="false" placeholder="Buscar por cédula, nombre, celular o dirección..."
+              [(ngModel)]="filtroTexto" />
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="table-responsive-wrap" tabindex="0" role="region" aria-labelledby="accounting-table-title">
-      <table class="accounting-table">
-        <thead>
-          <tr>
-            <th>Persona (Nombre & Correo)</th>
-            <th>Cédula</th>
-            <th>Celular & Dirección de Residencia</th>
-            <th>Gimnasio / Sede</th>
-            <th>Membresía & Pago</th>
-            <th>Vigencia & Estado</th>
-            <th>Ingresos</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (item of afiliadosFiltrados; track item.id) {
+      <div class="table-responsive-wrap" tabindex="0" role="region" aria-labelledby="accounting-table-title">
+        <table class="accounting-table">
+          <thead>
+            <tr>
+              <th>Persona (Nombre & Correo)</th>
+              <th>Cédula</th>
+              <th>Celular & Dirección de Residencia</th>
+              <th>Gimnasio / Sede</th>
+              <th>Membresía & Pago</th>
+              <th>Vigencia & Estado</th>
+              <th>Ingresos</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of afiliadosFiltrados; track item.id) {
             <tr>
               <td>
                 <div class="member-identity-cell">
@@ -391,12 +350,8 @@
               </td>
 
               <td>
-                <button
-                  type="button"
-                  class="cedula-badge-btn"
-                  (click)="verificarRapidoDesdeTabla(item)"
-                  title="Haz clic para verificar esta cédula en el escáner superior"
-                >
+                <button type="button" class="cedula-badge-btn" (click)="verificarRapidoDesdeTabla(item)"
+                  title="Haz clic para verificar esta cédula en el escáner superior">
                   <span>🪪 {{ item.cedula }}</span>
                 </button>
               </td>
@@ -414,11 +369,8 @@
 
               <td>
                 <div class="plan-payment-cell">
-                  <span
-                    class="plan-type-badge"
-                    [class.plan-mensual]="item.tipoMembresia === 'mensual'"
-                    [class.plan-diaria]="item.tipoMembresia === 'diaria'"
-                  >
+                  <span class="plan-type-badge" [class.plan-mensual]="item.tipoMembresia === 'mensual'"
+                    [class.plan-diaria]="item.tipoMembresia === 'diaria'">
                     {{ item.tipoMembresia === 'mensual' ? 'Membresía Mensual' : 'Pase Diario' }}
                   </span>
                   <strong class="payment-amount">{{ formatearMoneda(item.monto, item.moneda) }}</strong>
@@ -428,11 +380,8 @@
 
               <td>
                 <div class="validity-cell">
-                  <span
-                    class="status-chip"
-                    [class.chip-active]="estadoDe(item) === 'Activa'"
-                    [class.chip-expired]="estadoDe(item) === 'Vencida'"
-                  >
+                  <span class="status-chip" [class.chip-active]="estadoDe(item) === 'Activa'"
+                    [class.chip-expired]="estadoDe(item) === 'Vencida'">
                     {{ estadoDe(item) === 'Activa' ? '● Pagada / Activa' : '● Vencida' }}
                   </span>
                   <small>Pagó: {{ item.fechaPago }}</small>
@@ -449,48 +398,36 @@
 
               <td>
                 <div class="row-actions-group">
-                  <button
-                    type="button"
-                    class="action-btn btn-checkin"
-                    (click)="confirmarIngresoEnPorteria(item)"
-                    title="Registrar ingreso por cédula"
-                  >
+                  <button type="button" class="action-btn btn-checkin" (click)="confirmarIngresoEnPorteria(item)"
+                    title="Registrar ingreso por cédula">
                     🚪 Ingreso
                   </button>
-                  <button
-                    type="button"
-                    class="action-btn btn-edit"
-                    (click)="editarAfiliado(item)"
-                    title="Editar datos de la persona"
-                  >
+                  <button type="button" class="action-btn btn-edit" (click)="editarAfiliado(item)"
+                    title="Editar datos de la persona">
                     ✏️
                   </button>
-                  <button
-                    type="button"
-                    class="action-btn btn-delete"
-                    (click)="eliminarRegistro(item)"
-                    title="Eliminar registro"
-                  >
+                  <button type="button" class="action-btn btn-delete" (click)="eliminarRegistro(item)"
+                    title="Eliminar registro">
                     🗑️
                   </button>
                 </div>
               </td>
             </tr>
-          }
-          @empty {
+            }
+            @empty {
             <tr>
               <td colspan="8" class="empty-table-cell">
                 No se encontraron afiliados con ese criterio. Puedes registrar un nuevo pago con el botón superior.
               </td>
             </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </section>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
 
-  <!-- ── 5. BITÁCORA DE INGRESOS VERIFICADOS POR CÉDULA ── -->
-  @if (bitacoraIngresos.length > 0) {
+    <!-- ── 5. BITÁCORA DE INGRESOS VERIFICADOS POR CÉDULA ── -->
+    @if (bitacoraIngresos.length > 0) {
     <section class="Checkin-log-card" aria-labelledby="log-heading">
       <div class="log-header">
         <h3 id="log-heading">Bitácora Reciente de Ingresos Validados por Cédula</h3>
@@ -498,23 +435,24 @@
       </div>
       <div class="log-items-grid">
         @for (reg of bitacoraIngresos; track reg.id) {
-          <div class="log-item" [class.log-denied]="!reg.autorizado">
-            <span class="log-icon">{{ reg.autorizado ? '✅' : '⛔' }}</span>
-            <div class="log-info">
-              <strong>{{ reg.nombre }} · CC {{ reg.cedula }}</strong>
-              <span>{{ reg.observacion }}</span>
-              <small>{{ reg.gimnasioNombre }} · {{ reg.fechaHora }}</small>
-            </div>
+        <div class="log-item" [class.log-denied]="!reg.autorizado">
+          <span class="log-icon">{{ reg.autorizado ? '✅' : '⛔' }}</span>
+          <div class="log-info">
+            <strong>{{ reg.nombre }} · CC {{ reg.cedula }}</strong>
+            <span>{{ reg.observacion }}</span>
+            <small>{{ reg.gimnasioNombre }} · {{ reg.fechaHora }}</small>
           </div>
+        </div>
         }
       </div>
     </section>
-  }
+    }
 
-  <!-- ── 6. MODAL PARA REGISTRAR / EDITAR PERSONA Y PAGO DE MEMBRESÍA ── -->
-  @if (mostrarFormularioNuevo) {
+    <!-- ── 6. MODAL PARA REGISTRAR / EDITAR PERSONA Y PAGO DE MEMBRESÍA ── -->
+    @if (mostrarFormularioNuevo) {
     <div class="contabilidad-modal-backdrop" (click)="cerrarModalNuevoPago()">
-      <div class="contabilidad-modal-card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="modal-pago-titulo">
+      <div class="contabilidad-modal-card" (click)="$event.stopPropagation(); gymModalDropdownAbierto = false; metodoDropdownAbierto = false" role="dialog" aria-modal="true"
+        aria-labelledby="modal-pago-titulo">
         <div class="modal-head">
           <div>
             <span class="modal-kicker">REGISTRO CONTABLE Y AFILIACIÓN</span>
@@ -528,109 +466,74 @@
         <form class="modal-form-grid" (ngSubmit)="guardarPagoMembresia()">
           <div class="form-field span-2">
             <label for="form-gym-id">Gimnasio / Sede donde paga *</label>
-            <select
-              id="form-gym-id"
-              name="gimnasioId"
-              [(ngModel)]="formMembresia.gimnasioId"
-              (ngModelChange)="actualizarMontoSugeridoPorGimnasio()"
-              required
-            >
-              @for (g of misGimnasios; track g.id) {
-                <option [ngValue]="g.id">{{ g.nombre }} ({{ g.ciudad }})</option>
-              }
-            </select>
+<div class="custom-select-wrapper" [class.open]="gymModalDropdownAbierto" (click)="$event.stopPropagation()">
+  <button type="button" class="custom-select-trigger" (click)="toggleGymModalDropdown()">
+    <span>{{ nombreGymModalActivo }}</span>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  @if (gymModalDropdownAbierto) {
+    <div class="custom-select-dropdown">
+      @for (g of misGimnasios; track g.id) {
+        <button type="button" class="custom-select-option"
+                [class.active]="formMembresia.gimnasioId === g.id"
+                (click)="seleccionarGymModal(g.id)">
+          <span class="option-icon">🏢</span>
+          <span>{{ g.nombre }} ({{ g.ciudad }})</span>
+          @if (formMembresia.gimnasioId === g.id) {
+            <svg class="option-check" width="14" height="14" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          }
+        </button>
+      }
+    </div>
+  }
+</div>
           </div>
 
           <div class="form-field">
             <label for="form-nombre">Nombre completo *</label>
-            <input
-              id="form-nombre"
-              name="nombre"
-              type="text"
-              autocomplete="name"
-              placeholder="Ej. Carlos Andrés Mendoza"
-              [(ngModel)]="formMembresia.nombre"
-              required
-            />
+            <input id="form-nombre" name="nombre" type="text" autocomplete="name"
+              placeholder="Ej. Carlos Andrés Mendoza" [(ngModel)]="formMembresia.nombre" required />
           </div>
 
           <div class="form-field">
             <label for="form-cedula">Número de Cédula (Documento) *</label>
-            <input
-              id="form-cedula"
-              name="cedula"
-              type="text"
-              inputmode="numeric"
-              autocorrect="off"
-              autocapitalize="none"
-              spellcheck="false"
-              placeholder="Ej. 1118542390"
-              [(ngModel)]="formMembresia.cedula"
-              required
-            />
+            <input id="form-cedula" name="cedula" type="text" inputmode="numeric" autocorrect="off"
+              autocapitalize="none" spellcheck="false" placeholder="Ej. 1118542390" [(ngModel)]="formMembresia.cedula"
+              required />
           </div>
 
           <div class="form-field">
             <label for="form-correo">Correo electrónico *</label>
-            <input
-              id="form-correo"
-              name="correo"
-              type="email"
-              autocomplete="email"
-              autocorrect="off"
-              autocapitalize="none"
-              spellcheck="false"
-              placeholder="ejemplo@correo.com"
-              [(ngModel)]="formMembresia.correo"
-              required
-            />
+            <input id="form-correo" name="correo" type="email" autocomplete="email" autocorrect="off"
+              autocapitalize="none" spellcheck="false" placeholder="ejemplo@correo.com"
+              [(ngModel)]="formMembresia.correo" required />
           </div>
 
           <div class="form-field">
             <label for="form-celular">Número de celular *</label>
-            <input
-              id="form-celular"
-              name="celular"
-              type="text"
-              inputmode="numeric"
-              autocomplete="tel"
-              placeholder="Ej. 3104589210"
-              [(ngModel)]="formMembresia.celular"
-              required
-            />
+            <input id="form-celular" name="celular" type="text" inputmode="numeric" autocomplete="tel"
+              placeholder="Ej. 3104589210" [(ngModel)]="formMembresia.celular" required />
           </div>
 
           <div class="form-field span-2">
             <label for="form-direccion">Dirección de residencia *</label>
-            <input
-              id="form-direccion"
-              name="direccionResidencia"
-              type="text"
-              autocomplete="street-address"
+            <input id="form-direccion" name="direccionResidencia" type="text" autocomplete="street-address"
               placeholder="Ej. Calle 24 # 18-35, Barrio El Nogal · Yopal"
-              [(ngModel)]="formMembresia.direccionResidencia"
-              required
-            />
+              [(ngModel)]="formMembresia.direccionResidencia" required />
           </div>
 
           <div class="form-field span-2">
             <label>Modalidad pagada *</label>
             <div class="plan-selector-cards">
-              <button
-                type="button"
-                class="plan-option-btn"
-                [class.selected]="formMembresia.tipoMembresia === 'mensual'"
-                (click)="seleccionarTipoMembresiaForm('mensual')"
-              >
+              <button type="button" class="plan-option-btn" [class.selected]="formMembresia.tipoMembresia === 'mensual'"
+                (click)="seleccionarTipoMembresiaForm('mensual')">
                 <strong>📅 Membresía Mensual (30 días)</strong>
                 <span>Acceso ilimitado durante todo el mes</span>
               </button>
-              <button
-                type="button"
-                class="plan-option-btn"
-                [class.selected]="formMembresia.tipoMembresia === 'diaria'"
-                (click)="seleccionarTipoMembresiaForm('diaria')"
-              >
+              <button type="button" class="plan-option-btn" [class.selected]="formMembresia.tipoMembresia === 'diaria'"
+                (click)="seleccionarTipoMembresiaForm('diaria')">
                 <strong>🎟️ Pase Diario (1 día)</strong>
                 <span>Acceso válido por el día de hoy</span>
               </button>
@@ -639,36 +542,64 @@
 
           <div class="form-field">
             <label for="form-monto">Valor pagado (COP) *</label>
-            <input
-              id="form-monto"
-              name="monto"
-              type="number"
-              min="1000"
-              step="1000"
-              [(ngModel)]="formMembresia.monto"
-              required
-            />
+            <input id="form-monto" name="monto" type="number" min="1000" step="1000" [(ngModel)]="formMembresia.monto"
+              required />
           </div>
 
           <div class="form-field">
             <label for="form-metodo">Método de pago *</label>
-            <select id="form-metodo" name="metodoPago" [(ngModel)]="formMembresia.metodoPago">
-              <option value="Efectivo en Recepción">Efectivo en Recepción</option>
-              <option value="Transferencia Nequi / PSE">Transferencia Nequi / PSE</option>
-              <option value="Tarjeta Crédito / Débito">Tarjeta Crédito / Débito</option>
-              <option value="Pasarela Online The House Fit">Pasarela Online The House Fit</option>
-            </select>
+            <div class="custom-select-wrapper" [class.open]="metodoDropdownAbierto" (click)="$event.stopPropagation()">
+              <button type="button" id="form-metodo" class="custom-select-trigger" (click)="toggleMetodoDropdown()">
+                <span>{{ nombreMetodoActivo }}</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              @if (metodoDropdownAbierto) {
+                <div class="custom-select-dropdown">
+                  <button type="button" class="custom-select-option" [class.active]="formMembresia.metodoPago === 'Efectivo en Recepción'" (click)="seleccionarMetodo('Efectivo en Recepción')">
+                    <svg class="option-icon-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/></svg>
+                    <span>Efectivo en Recepción</span>
+                    @if (formMembresia.metodoPago === 'Efectivo en Recepción') {
+                      <svg class="option-check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    }
+                  </button>
+                  <button type="button" class="custom-select-option" [class.active]="formMembresia.metodoPago === 'Transferencia Nequi / PSE'" (click)="seleccionarMetodo('Transferencia Nequi / PSE')">
+                    <svg class="option-icon-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                    <span>Transferencia Nequi / PSE</span>
+                    @if (formMembresia.metodoPago === 'Transferencia Nequi / PSE') {
+                      <svg class="option-check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    }
+                  </button>
+                  <button type="button" class="custom-select-option" [class.active]="formMembresia.metodoPago === 'Tarjeta Crédito / Débito'" (click)="seleccionarMetodo('Tarjeta Crédito / Débito')">
+                    <svg class="option-icon-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                    <span>Tarjeta Crédito / Débito</span>
+                    @if (formMembresia.metodoPago === 'Tarjeta Crédito / Débito') {
+                      <svg class="option-check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    }
+                  </button>
+                  <button type="button" class="custom-select-option" [class.active]="formMembresia.metodoPago === 'Pasarela Online The House Fit'" (click)="seleccionarMetodo('Pasarela Online The House Fit')">
+                    <svg class="option-icon-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    <span>Pasarela Online The House Fit</span>
+                    @if (formMembresia.metodoPago === 'Pasarela Online The House Fit') {
+                      <svg class="option-check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    }
+                  </button>
+                </div>
+              }
+            </div>
           </div>
 
           <div class="modal-actions span-2">
             <button type="button" class="btn-cancel-modal" (click)="cerrarModalNuevoPago()">Cancelar</button>
             <button type="submit" class="btn-submit-modal">
-              <span>💾 Guardar Pago y Activar Ingreso por Cédula</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
+              <span>Registro y pago</span>
             </button>
           </div>
         </form>
       </div>
     </div>
-  }
+    }
   </main>
 </div>

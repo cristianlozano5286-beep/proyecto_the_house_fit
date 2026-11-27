@@ -95,6 +95,21 @@
               <span class="hero-tab-label">Calculadora IMC</span>
             </a>
           </li>
+
+          <li routerLinkActive="active-li">
+            <a
+              routerLink="/noticias"
+              routerLinkActive="active-tab"
+              [ariaCurrentWhenActive]="'page'"
+              class="hero-tab-item"
+              (click)="cerrarBuscador()"
+            >
+              <span class="hero-tab-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
+              </span>
+              <span class="hero-tab-label">Noticias</span>
+            </a>
+          </li>
         </ul>
       </nav>
 
@@ -144,6 +159,7 @@
         <a routerLink="/rutinas" routerLinkActive="active-link">Rutinas</a>
         <a routerLink="/tienda" routerLinkActive="active-link">Tienda</a>
         <a routerLink="/imc" routerLinkActive="active-link">IMC</a>
+        <a routerLink="/noticias" routerLinkActive="active-link">Noticias</a>
       </nav>
 
       <app-theme-toggle variante="pill"></app-theme-toggle>
@@ -857,6 +873,17 @@
       <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
     </svg>
     <span>Lab IMC</span>
+  </a>
+
+  <a routerLink="/noticias" routerLinkActive="active" class="mobile-tab">
+    <span class="mobile-tab-indicator"></span>
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"></path>
+      <path d="M18 14h-8"></path>
+      <path d="M15 18h-5"></path>
+      <path d="M10 6h8v4h-8V6Z"></path>
+    </svg>
+    <span>Noticias</span>
   </a>
 </nav>
 
